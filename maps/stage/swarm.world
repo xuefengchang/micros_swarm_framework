@@ -1,0 +1,71 @@
+include "swarm.inc"
+include "turtlebot_intruder.inc"
+
+define floorplan model
+(
+  # sombre, sensible, artistic
+  color "gray30"
+
+  # most maps will need a bounding box
+  boundary 1
+
+  gui_nose 0
+  gui_grid 0
+  gui_outline 0
+  gripper_return 0
+  fiducial_return 0
+  laser_return 1
+)
+
+resolution 0.02
+interval_sim 10  # simulation timestep in milliseconds
+
+window
+(
+  size [ 600.0 700.0 ]
+  center [ 0.0 0.0 ]
+  rotate [ 0.0 0.0 ]
+  scale 60
+)
+
+floorplan
+(
+  name "swarm"
+  bitmap "../swarm.png"
+  size [ 100.0 100.0 2.0 ]
+  pose [  50.0  50.0 0.0 0.0 ]
+)
+
+
+define block model
+(
+size [0.5 7 0.5]
+gui_nose 1
+)
+
+swarm( pose [ 48.0 48.0 0 0 ] name "era" color "blue")
+swarm( pose [ 49.0 48.0 0 0 ] name "era2" color "yellow")
+swarm( pose [ 50.0 48.0 0 0 ] name "era3" color "green")
+swarm( pose [ 51.0 48.0 0 0 ] name "era4" color "red")
+swarm( pose [ 52.0 48.0 0 0 ] name "era5" color "blue")
+swarm( pose [ 48.0 49.0 0 0 ] name "era6" color "blue")
+swarm( pose [ 49.0 49.0 0 0 ] name "era7" color "yellow")
+swarm( pose [ 50.0 49.0 0 0 ] name "era8" color "green")
+swarm( pose [ 51.0 49.0 0 0 ] name "era9" color "red")
+swarm( pose [ 52.0 49.0 0 0 ] name "era10" color "blue")
+swarm( pose [ 48.0 50.0 0 0 ] name "era11" color "blue")
+swarm( pose [ 49.0 50.0 0 0 ] name "era12" color "yellow")
+swarm( pose [ 50.0 50.0 0 0 ] name "era13" color "green")
+swarm( pose [ 51.0 50.0 0 0 ] name "era14" color "red")
+swarm( pose [ 52.0 50.0 0 0 ] name "era15" color "blue")
+swarm( pose [ 48.0 51.0 0 0 ] name "era16" color "blue")
+swarm( pose [ 49.0 51.0 0 0 ] name "era17" color "yellow")
+swarm( pose [ 50.0 51.0 0 0 ] name "era18" color "green")
+swarm( pose [ 51.0 51.0 0 0 ] name "era19" color "red")
+swarm( pose [ 52.0 51.0 0 0 ] name "era20" color "blue")
+#swarm( pose [ 8.0 8.0 0 0 ] name "era" color "blue")
+#swarm( pose [ 6.0 6.0 0 0 ] name "era2" color "yellow")
+#swarm( pose [ 6.0 4.0 0 0 ] name "era3" color "green")
+#swarm( pose [ 4.0 5.0 0 0 ] name "era4" color "red")
+#block( pose [ 6.0 3.0 0 0.0 ] color "red")
+
