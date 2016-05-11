@@ -2,6 +2,10 @@
 Changelog for package micros_swarm_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.4 (2016-05-11)
+-----------
+* repair the cmake bug
+
 0.0.3 (2016-05-11)
 -----------
 * repair the headers bug

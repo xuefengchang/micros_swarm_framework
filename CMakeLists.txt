@@ -8,6 +8,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  nav_msgs
+  geometry_msgs
   message_generation
 )
 
@@ -81,7 +83,9 @@ add_message_files(
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
     DEPENDENCIES
-        std_msgs
+        std_msgs 
+        nav_msgs
+        geometry_msgs
 )
 
 ################################################
@@ -116,7 +120,7 @@ generate_messages(
 catkin_package(
    INCLUDE_DIRS include
    LIBRARIES micros_swarm_framework
-   CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
+   CATKIN_DEPENDS roscpp rospy std_msgs nav_msgs geometry_msgs message_runtime
    DEPENDS system_lib
 )
 
@@ -137,8 +141,10 @@ link_directories(${catkin_LIBRARY_DIRS})
 add_library(micros_swarm_framework_kernel
     src/kernel.cpp
 )
+add_dependencies(micros_swarm_framework_kernel ${micros_swarm_framework_EXPORTED_TARGETS})
 
 add_executable(micros_swarm_framework_app1_node apps/app1.cpp)
+add_dependencies(micros_swarm_framework_app1_node ${micros_swarm_framework_EXPORTED_TARGETS})
 target_link_libraries(micros_swarm_framework_app1_node
    ${Boost_THREAD_LIBRARY}
    ${Boost_REGEX_LIBRARY}
@@ -149,6 +155,7 @@ target_link_libraries(micros_swarm_framework_app1_node
 )
 
 add_executable(micros_swarm_framework_app2_node apps/app2.cpp)
+add_dependencies(micros_swarm_framework_app2_node ${micros_swarm_framework_EXPORTED_TARGETS})
 target_link_libraries(micros_swarm_framework_app2_node
    ${Boost_THREAD_LIBRARY}
    ${Boost_REGEX_LIBRARY}
@@ -159,6 +166,7 @@ target_link_libraries(micros_swarm_framework_app2_node
 )
 
 add_executable(micros_swarm_framework_testnc_node test/testnc.cpp)
+add_dependencies(micros_swarm_framework_testnc_node ${micros_swarm_framework_EXPORTED_TARGETS})
 target_link_libraries(micros_swarm_framework_testnc_node
    ${Boost_THREAD_LIBRARY}
    ${Boost_REGEX_LIBRARY}
@@ -169,6 +177,7 @@ target_link_libraries(micros_swarm_framework_testnc_node
 )
 
 add_executable(micros_swarm_framework_kernel_node src/kernel_ros.cpp)
+add_dependencies(micros_swarm_framework_kernel_node ${micros_swarm_framework_EXPORTED_TARGETS})
 target_link_libraries(micros_swarm_framework_kernel_node
    ${Boost_THREAD_LIBRARY}
    ${Boost_REGEX_LIBRARY}
