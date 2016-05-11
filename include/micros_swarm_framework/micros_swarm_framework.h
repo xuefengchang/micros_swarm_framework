@@ -34,12 +34,12 @@
 #include <sstream>
 #include <fstream>
 
-#include <ros/ros.h>
+#include "ros/ros.h"
 
-#include <micros_swarm_framework/kernel.h>
-#include <micros_swarm_framework/swarm.h>
-#include <micros_swarm_framework/neighbors.h>
-#include <micros_swarm_framework/virtual_stigmergy.h>
-#include <micros_swarm_framework/neighbor_communication.h>
+#include "micros_swarm_framework/kernel.h"
+#include "micros_swarm_framework/swarm.h"
+#include "micros_swarm_framework/neighbors.h"
+#include "micros_swarm_framework/virtual_stigmergy.h"
+#include "micros_swarm_framework/neighbor_communication.h"
 
 #endif

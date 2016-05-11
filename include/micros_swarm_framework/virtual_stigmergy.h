@@ -23,9 +23,7 @@
 #include <iostream>
 #include <string>
 #include <time.h>
-#include <typeinfo>
 #include <stdlib.h>
-#include <cxxabi.h>
 #include <vector>
 #include <stack>
 #include <map>
@@ -33,9 +31,9 @@
 #include <queue>
 #include <algorithm>
 
-#include <ros/ros.h>
+#include "ros/ros.h"
 
-#include <micros_swarm_framework/kernel.h>
+#include "micros_swarm_framework/kernel.h"
 
 namespace micros_swarm_framework{
     

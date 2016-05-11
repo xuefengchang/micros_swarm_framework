@@ -28,9 +28,9 @@
 #include <queue>
 #include <algorithm>
 
-#include <ros/ros.h>
+#include "ros/ros.h"
 
-#include <micros_swarm_framework/kernel.h>
+#include "micros_swarm_framework/kernel.h"
 
 namespace micros_swarm_framework{
 
