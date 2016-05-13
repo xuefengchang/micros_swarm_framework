@@ -1,20 +1,23 @@
-/* 
- *  data_type.h - micros_swarm_framework data type
- *  Copyright (C) 2016 Xuefeng Chang
- *  
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *  
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *  
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+/**
+Software License Agreement (BSD)
+\file      data_type.h
+\authors Xuefeng Chang <changxuefengcn@163.com>
+\copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that
+the following conditions are met:
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the
+   following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+   following disclaimer in the documentation and/or other materials provided with the distribution.
+ * Neither the name of micROS Team, HPCL, nor the names of its contributors may be used to endorse or promote
+   products derived from this software without specific prior written permission.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WAR-
+RANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, IN-
+DIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef DATA_TYPE_H_
@@ -191,9 +194,9 @@ namespace micros_swarm_framework{
     
     class ShmVirtualStigmergyTuple{
         private:
-            shm_string virtual_stigmergy_value_;  //使用string类型来存储value
-            time_t virtual_stigmergy_timestamp_;  //虚拟共识结构最后修改的时间
-            unsigned int robot_id_;  //最后修改该虚拟共识结构的机器人的id
+            shm_string virtual_stigmergy_value_;
+            time_t virtual_stigmergy_timestamp_;
+            unsigned int robot_id_;
         public:
             ShmVirtualStigmergyTuple(shm_string value, time_t time, unsigned int id, const VoidAllocator &void_alloc)\
               :virtual_stigmergy_value_(value, void_alloc), virtual_stigmergy_timestamp_(time), robot_id_(id){}
@@ -260,17 +263,6 @@ namespace micros_swarm_framework{
                 return false;
             }
     };
-    
-    #define FUNCTION_OBJECT boost::function<void()>
-    
-    #define BOOL_FUNCTION_OBJECT boost::function<bool()>
-    
-    #define NEIGHBOR_FUNCTION_OBJECT(Type) boost::function<void(Type)>
-    
-    #define NB_VALUE _1 
-    
-    //this macro definition is used to bind the function and the parameter values
-    #define BIND_FUNCTION_AND_PARAMETER_VALUES boost::bind
     
     //this macro definition is used to serialize the user-defined data type
     #define SERIALIZE  friend class boost::serialization::access;\

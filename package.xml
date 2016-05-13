@@ -2,7 +2,10 @@
 <package>
   <name>micros_swarm_framework</name>
   <version>0.0.4</version>
-  <description>The micros_swarm_framework package</description>
+  <description>
+    A programming framework for robot swarms, including a communication kernel and  a synchronization protocol. This package also provides essential data structures for swarm robotics, 
+    such as Swarm, Neighbors, and Virtual Stigmergy.
+  </description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
@@ -13,19 +16,21 @@
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>GPLv2</license>
+  <license>BSD</license>
 
 
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/micros_swarm_framework</url> -->
+  <url type="website">http://wiki.ros.org/micros_swarm_framework</url>
 
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
   <!-- Authors do not have to be maintianers, but could be -->
   <!-- Example: -->
-  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+  <author email="changxuefengcn@163.com">Xuefeng Chang</author>
+  <author email="yanzhenwang@hotmail.com">Yanzhen Wang</author>
+  <author email="yixiaodong@nudt.edu.cn">Xiaodong Yi</author>
 
 
   <!-- The *_depend tags are used to specify dependencies -->

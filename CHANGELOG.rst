@@ -2,6 +2,14 @@
 Changelog for package micros_swarm_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.5 (2016-05-13)
+-----------
+* change the license to BSD
+* perfect the package information
+* optimize the kernel
+* optimize code structure
+* simplify synchronization protocol
+
 0.0.4 (2016-05-11)
 -----------
 * repair the cmake bug

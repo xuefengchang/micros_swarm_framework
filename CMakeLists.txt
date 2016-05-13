@@ -187,6 +187,8 @@ target_link_libraries(micros_swarm_framework_kernel_node
    -lrt
 )
 
+#set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
+
 #target_link_libraries(micros_swarm_framework_node -lrt)
 #target_link_libraries(micros_swarm_framework_node -lrt)
 
