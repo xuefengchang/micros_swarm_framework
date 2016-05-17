@@ -2,6 +2,11 @@
 Changelog for package micros_swarm_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.6 (2016-05-17)
+-----------
+* optimize the kernel code
+* change the readme file
+
 0.0.5 (2016-05-13)
 -----------
 * change the license to BSD

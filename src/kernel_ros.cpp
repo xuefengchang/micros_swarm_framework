@@ -26,8 +26,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "micros_swarm_framework/micros_swarm_framework.h"
 
-#define PUBLISH_ROBOT_ID_DURATION 0.1
-#define PUBLISH_SWARM_LIST_DURATION 1
+#define PUBLISH_ROBOT_ID_DURATION 1
+#define PUBLISH_SWARM_LIST_DURATION 10
 
 namespace micros_swarm_framework{
     
