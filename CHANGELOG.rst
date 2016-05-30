@@ -2,6 +2,10 @@
 Changelog for package micros_swarm_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.7 (2016-05-30)
+-----------
+* optimize the installation
+
 0.0.6 (2016-05-17)
 -----------
 * optimize the kernel code
