@@ -2,6 +2,12 @@
 Changelog for package micros_swarm_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.8 (2016-06-14)
+-----------
+* No longer using the TCP protocol in ROS, UDP protocol is used instead
+* Location class defined in the "data_type.h" header is renamed to Base
+* NeighborLocation class defined in the "data_type.h" header is renamed to NeighborBase
+
 0.0.7 (2016-05-30)
 -----------
 * optimize the installation
