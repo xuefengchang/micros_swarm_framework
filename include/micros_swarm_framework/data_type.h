@@ -70,14 +70,14 @@ namespace micros_swarm_framework{
     typedef boost::interprocess::basic_string<char, std::char_traits<char>, CharAllocator>  shm_string;
     
     //Robot position in the world coordinate system
-    class Location{
+    class Base{
         private:
             float x_;
             float y_;
             float z_;
         public:
-            Location() : x_(-1),y_(-1),z_(-1){}
-            Location(float x,float y,float z) : x_(x),y_(y),z_(z){}
+            Base() : x_(-1),y_(-1),z_(-1){}
+            Base(float x,float y,float z) : x_(x),y_(y),z_(z){}
             float getX(){return x_;}
             void setX(float x){x_=x;}
             
@@ -88,7 +88,7 @@ namespace micros_swarm_framework{
             void setZ(float z){z_=z;}
     };
     
-    class NeighborLocation{
+    class NeighborBase{
         private:
             //Polar coordinates of the neighbor robot with respect to the local robot
             float distance_;
@@ -100,7 +100,7 @@ namespace micros_swarm_framework{
             float y_;
             float z_;
         public:
-            NeighborLocation( float distance,float azimuth,float elevation,float x,float y,float z) \
+            NeighborBase( float distance,float azimuth,float elevation,float x,float y,float z) \
               :distance_(distance),azimuth_(azimuth),elevation_(elevation),x_(x),y_(y),z_(z){}
               
             float getDistance(){return distance_;}
@@ -122,9 +122,9 @@ namespace micros_swarm_framework{
             void setZ(float z){z_=z;}
     };
     
-    typedef std::pair<const unsigned int, NeighborLocation>  NeighborLocationType;  
-    typedef boost::interprocess::allocator<NeighborLocationType, segment_manager_t>  NeighborLocationTypeAllocator;
-    typedef boost::interprocess::map<unsigned int, NeighborLocation, std::less<unsigned int>, NeighborLocationTypeAllocator>  shm_neighbors_type;
+    typedef std::pair<const unsigned int, NeighborBase>  NeighborBaseType;  
+    typedef boost::interprocess::allocator<NeighborBaseType, segment_manager_t>  NeighborBaseTypeAllocator;
+    typedef boost::interprocess::map<unsigned int, NeighborBase, std::less<unsigned int>, NeighborBaseTypeAllocator>  shm_neighbors_type;
 
     typedef std::pair<const unsigned int, bool>  SwarmsType;  
     typedef boost::interprocess::allocator<SwarmsType, segment_manager_t>  SwarmsTypeAllocator;
@@ -247,12 +247,12 @@ namespace micros_swarm_framework{
     
     class CheckNeighborABC{
         public:
-            virtual bool isNeighbor(Location self, Location neighbor)=0;
+            virtual bool isNeighbor(Base self, Base neighbor)=0;
     };
     
     class CheckNeighbor : public CheckNeighborABC{
         public:
-            bool isNeighbor(Location self, Location neighbor)
+            bool isNeighbor(Base self, Base neighbor)
             {
                 float distance=sqrt((self.getX()-neighbor.getX())*(self.getX()-neighbor.getX())+(self.getY()-neighbor.getY())*(self.getY()-neighbor.getY())+ \
                     (self.getZ()-neighbor.getZ())*(self.getZ()-neighbor.getZ()));

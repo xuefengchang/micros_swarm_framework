@@ -26,8 +26,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "micros_swarm_framework/micros_swarm_framework.h"
 
-#define PUBLISH_ROBOT_ID_DURATION 1
-#define PUBLISH_SWARM_LIST_DURATION 10
+#define PUBLISH_ROBOT_ID_DURATION 0.1
+#define PUBLISH_SWARM_LIST_DURATION 5
 
 namespace micros_swarm_framework{
     
@@ -37,11 +37,11 @@ namespace micros_swarm_framework{
         
         unsigned int robot_id=kh.getRobotID();
         
-        micros_swarm_framework::Location l;
+        micros_swarm_framework::Base l;
         l.setX(-1);
         l.setY(-1);
         l.setZ(-1);
-        l=kh.getRobotLocation();
+        l=kh.getRobotBase();
         
         SingleRobotBroadcastID srbi(robot_id, l.getX(), l.getY(), l.getZ());
         

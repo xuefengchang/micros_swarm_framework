@@ -136,7 +136,7 @@ namespace micros_swarm_framework{
                 f_=f;
                 ros::NodeHandle n;
                 std::string topic_name="/neighbor_topic_"+key_;
-                neighbor_packet_subscriber_ = n.subscribe(topic_name, 1000, &NeighborCommunication::neighborPacketCallback, this);
+                neighbor_packet_subscriber_ = n.subscribe(topic_name, 1000, &NeighborCommunication::neighborPacketCallback, this, ros::TransportHints().udp());
             }
             
             void neighborIgnore()

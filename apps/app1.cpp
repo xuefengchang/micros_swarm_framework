@@ -43,10 +43,10 @@ float force_mag(float dist)
     return -(epsilon/dist) *(pow(delta/dist, 4) - pow(delta/dist, 2));
 }
 
-XY force_sum(micros_swarm_framework::NeighborLocation n, XY &s)
+XY force_sum(micros_swarm_framework::NeighborBase n, XY &s)
 {
     micros_swarm_framework::KernelHandle kh;
-    micros_swarm_framework::Location l=kh.getRobotLocation();
+    micros_swarm_framework::Base l=kh.getRobotBase();
     float xl=l.getX();
     float yl=l.getY();
     
@@ -74,7 +74,7 @@ XY direction()
     sum.x=0;
     sum.y=0;
     
-    micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborLocation> n(true);
+    micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
     sum=n.neighborsReduce(force_sum, sum);
     
     return sum;
@@ -119,14 +119,14 @@ void barrier_wait()
     }
 }
 
-void locationCallback(const nav_msgs::Odometry& lmsg)
+void baseCallback(const nav_msgs::Odometry& lmsg)
 {
     float x=lmsg.pose.pose.position.x;
     float y=lmsg.pose.pose.position.y;
     
     micros_swarm_framework::KernelHandle kh;
-    micros_swarm_framework::Location l(x, y, 0);
-    kh.setRobotLocation(l);
+    micros_swarm_framework::Base l(x, y, 0);
+    kh.setRobotBase(l);
 }
 
 int main(int argc, char** argv){
@@ -145,7 +145,7 @@ int main(int argc, char** argv){
     }
     micros_swarm_framework::KernelInitializer::initRobotID(robot_id);
     
-    ros::Subscriber sub = nh.subscribe("base_pose_ground_truth", 1000, locationCallback);
+    ros::Subscriber sub = nh.subscribe("base_pose_ground_truth", 1000, baseCallback, ros::TransportHints().udp());
     
     boost::thread barrier(&barrier_wait);
     barrier.join();
