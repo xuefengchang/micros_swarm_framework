@@ -2,6 +2,12 @@
 Changelog for package micros_swarm_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.9 (2016-07-07)
+-----------
+* Add another experiment which is called "Flocking"
+* Add linear velocity in the Base and NeighborBase classes
+* Add the breakupSwarm function in the "swarm.h" header
+
 0.0.8 (2016-06-14)
 -----------
 * No longer using the TCP protocol in ROS, UDP protocol is used instead
