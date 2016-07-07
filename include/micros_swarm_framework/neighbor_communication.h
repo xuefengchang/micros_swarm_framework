@@ -57,6 +57,7 @@ namespace micros_swarm_framework{
             {
                 micros_swarm_framework::KernelHandle kh;
                 unsigned int shm_rid=kh.getRobotID();
+                
                 //ignore the packet from local robot
                 if(packet.packet_source==shm_rid)
                 {

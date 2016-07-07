@@ -41,9 +41,12 @@ namespace micros_swarm_framework{
         l.setX(-1);
         l.setY(-1);
         l.setZ(-1);
+        l.setVX(0);
+        l.setVY(0);
+        l.setVZ(0);
         l=kh.getRobotBase();
         
-        SingleRobotBroadcastID srbi(robot_id, l.getX(), l.getY(), l.getZ());
+        SingleRobotBroadcastID srbi(robot_id, l.getX(), l.getY(), l.getZ(), l.getVX(), l.getVY(), l.getVZ());
         
         std::ostringstream archiveStream;
         boost::archive::text_oarchive archive(archiveStream);
@@ -107,6 +110,8 @@ int main(int argc, char** argv){
     
     micros_swarm_framework::KernelHandle kh;
     kh.setRobotID((unsigned int)robot_id);
+    
+    kh.setNeighborDistance(50);  //50 meters, default value
     
     ros::Timer publish_robot_id_timer = nh.createTimer(ros::Duration(PUBLISH_ROBOT_ID_DURATION), &micros_swarm_framework::publish_robot_id);
     ros::Timer publish_swarm_list_timer = nh.createTimer(ros::Duration(PUBLISH_SWARM_LIST_DURATION), &micros_swarm_framework::publish_swarm_list);

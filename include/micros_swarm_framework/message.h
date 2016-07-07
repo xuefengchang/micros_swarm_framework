@@ -74,6 +74,10 @@ namespace micros_swarm_framework{
             float robot_y_;
             float robot_z_;
             
+            float robot_vx_;
+            float robot_vy_;
+            float robot_vz_;
+            
             //using boost to serialize
             friend class boost::serialization::access;
             template<class Archive>
@@ -83,17 +87,22 @@ namespace micros_swarm_framework{
                 ar & robot_x_;
                 ar & robot_y_;
                 ar & robot_z_;
+                ar & robot_vx_;
+                ar & robot_vy_;
+                ar & robot_vz_;
             }
         public:
             SingleRobotBroadcastID(){}
-            SingleRobotBroadcastID(unsigned int robot_id, float robot_x ,float robot_y, float robot_z):\
-                 robot_id_(robot_id), robot_x_(robot_x), robot_y_(robot_y), robot_z_(robot_z){}
+            SingleRobotBroadcastID(unsigned int robot_id, float robot_x ,float robot_y, float robot_z, float robot_vx ,float robot_vy, float robot_vz):\
+                robot_id_(robot_id), robot_x_(robot_x), robot_y_(robot_y), robot_z_(robot_z),  robot_vx_(robot_vx), robot_vy_(robot_vy), robot_vz_(robot_vz){}
                  
             unsigned int getRobotID(){return robot_id_;}
             float getRobotX(){return robot_x_;}
             float getRobotY(){return robot_y_;}
             float getRobotZ(){return robot_z_;}
-        
+            float getRobotVX(){return robot_vx_;}
+            float getRobotVY(){return robot_vy_;}
+            float getRobotVZ(){return robot_vz_;}
     };
     
     class SingleRobotJoinSwarm{

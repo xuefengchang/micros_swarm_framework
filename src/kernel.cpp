@@ -68,6 +68,12 @@ namespace micros_swarm_framework{
         }
         
         try{
+             double *nd_p = segment.construct<double>("shm_neighbor_distance_")();
+        }catch(boost::interprocess::bad_alloc &ex){
+             std::cerr << ex.what() << std::endl;
+        }
+        
+        try{
              Base *l_p = segment.construct<Base>("shm_robot_base_")(); 
         }catch(boost::interprocess::bad_alloc &ex){
              std::cerr << ex.what() << std::endl;
@@ -99,7 +105,6 @@ namespace micros_swarm_framework{
         
         ros::NodeHandle n;
         packet_subscriber_ = n.subscribe("/micros_swarm_framework_topic", 1000, &KernelInitializer::packetCallback, this, ros::TransportHints().udp());
-        
     }
     
     void KernelInitializer::initRobotID(int robot_id)
@@ -146,16 +151,20 @@ namespace micros_swarm_framework{
                 float x=srbi.getRobotX();
                 float y=srbi.getRobotY();
                 float z=srbi.getRobotZ();
+                float vx=srbi.getRobotVX();
+                float vy=srbi.getRobotVY();
+                float vz=srbi.getRobotVZ();
                 
                 Base self=kh.getRobotBase();
-                Base neighbor(x, y, z);
+                Base neighbor(x, y, z, vx, vy, vz);
                 
-                CheckNeighbor cn;
+                double neighbor_distance=kh.getNeighborDistance();
+                CheckNeighbor cn(neighbor_distance);
                 micros_swarm_framework::CheckNeighborABC *cn_p=&cn;
                 
                 if(cn_p->isNeighbor(self, neighbor))
                 {
-                    kh.insertOrUpdateNeighbor(robot_id, distance, azimuth, elevation, x, y, z);
+                    kh.insertOrUpdateNeighbor(robot_id, distance, azimuth, elevation, x, y, z, vx, vy, vz);
                 }
                 else
                 {
@@ -365,6 +374,42 @@ namespace micros_swarm_framework{
         named_kernel_mtx.unlock();
     }
     
+    double KernelHandle::getNeighborDistance()
+    {
+        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
+        std::string shm_object_name="KernelData"+robot_id_string;
+        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
+        VoidAllocator alloc_inst (segment.get_segment_manager());
+    
+        std::pair<double*, std::size_t> kernel_neighbor_distance = segment.find<double>("shm_neighbor_distance_"); 
+        if(kernel_neighbor_distance.first==0)
+        {
+            return -1;
+        }
+        
+        return *(kernel_neighbor_distance.first);
+    }
+    
+    void KernelHandle::setNeighborDistance(double neighbor_distance)
+    {
+        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
+        std::string shm_object_name="KernelData"+robot_id_string;
+        std::string mutex_name="named_kernel_mtx"+robot_id_string;
+        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
+        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
+        VoidAllocator alloc_inst (segment.get_segment_manager());
+    
+        std::pair<double*, std::size_t> kernel_neighbor_distance = segment.find<double>("shm_neighbor_distance_"); 
+        if(kernel_neighbor_distance.first==0)
+        {
+            return;
+        }
+        
+        named_kernel_mtx.lock();
+        *(kernel_neighbor_distance.first)=neighbor_distance;
+        named_kernel_mtx.unlock();
+    }
+    
     Base KernelHandle::getRobotBase()
     {
         std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
@@ -375,7 +420,7 @@ namespace micros_swarm_framework{
         std::pair<Base*, std::size_t> kernel_robot_base = segment.find<Base>("shm_robot_base_"); 
         if(kernel_robot_base.first==0)
         {
-            Base l(-1,-1,-1);
+            Base l(-1,-1,-1,0,0,0);
             return l;
         }
         
@@ -429,7 +474,7 @@ namespace micros_swarm_framework{
         return result;
     }
      
-    void KernelHandle::insertOrUpdateNeighbor(unsigned int robot_id, float distance, float azimuth, float elevation, float x, float y, float z)
+    void KernelHandle::insertOrUpdateNeighbor(unsigned int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz)
     {
         std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
         std::string shm_object_name="KernelData"+robot_id_string;
@@ -451,7 +496,7 @@ namespace micros_swarm_framework{
     
         if(n_it!=n_pointer->end())
         {
-            NeighborBase new_neighbor_base(distance, azimuth, elevation, x, y, z);
+            NeighborBase new_neighbor_base(distance, azimuth, elevation, x, y, z,vx, vy, vz);
             
             named_kernel_mtx.lock();
             n_it->second = new_neighbor_base;
@@ -459,7 +504,7 @@ namespace micros_swarm_framework{
         }
         else
         {
-            NeighborBase new_neighbor_base(distance, azimuth, elevation, x, y, z);
+            NeighborBase new_neighbor_base(distance, azimuth, elevation, x, y, z, vx, vy, vz);
             NeighborBaseType new_type(robot_id, new_neighbor_base);    
             
             named_kernel_mtx.lock();

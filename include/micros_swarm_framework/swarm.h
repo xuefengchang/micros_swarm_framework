@@ -162,14 +162,14 @@ namespace micros_swarm_framework{
             f();
     }
     
-    /*
     void Swarm::breakupSwarm()
-    {
+    { 
+        if(inSwarm())
+            leaveSwarm();
         micros_swarm_framework::KernelHandle kh;
         kh.deleteSwarm(swarm_id_);
         this->~Swarm();
     }
-    */
     
     Swarm Swarm::intersectionSwarm(Swarm s, unsigned int new_swarm_id)
     {

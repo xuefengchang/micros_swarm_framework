@@ -165,6 +165,17 @@ target_link_libraries(micros_swarm_framework_app2_node
    -lrt
 )
 
+add_executable(micros_swarm_framework_app3_node apps/app3.cpp)
+add_dependencies(micros_swarm_framework_app3_node ${micros_swarm_framework_EXPORTED_TARGETS})
+target_link_libraries(micros_swarm_framework_app3_node
+   ${Boost_THREAD_LIBRARY}
+   ${Boost_REGEX_LIBRARY}
+   ${Boost_SERIALIZATION_LIBRARY}
+   ${catkin_LIBRARIES}
+   micros_swarm_framework_kernel
+   -lrt
+)
+
 add_executable(micros_swarm_framework_testnc_node test/testnc.cpp)
 add_dependencies(micros_swarm_framework_testnc_node ${micros_swarm_framework_EXPORTED_TARGETS})
 target_link_libraries(micros_swarm_framework_testnc_node
@@ -225,7 +236,7 @@ target_link_libraries(micros_swarm_framework_kernel_node
 # )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS micros_swarm_framework_kernel micros_swarm_framework_kernel_node micros_swarm_framework_app1_node micros_swarm_framework_app2_node
+install(TARGETS micros_swarm_framework_kernel micros_swarm_framework_kernel_node micros_swarm_framework_app1_node micros_swarm_framework_app2_node micros_swarm_framework_app3_node
     ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

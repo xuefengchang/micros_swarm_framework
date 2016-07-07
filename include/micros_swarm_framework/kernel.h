@@ -68,11 +68,14 @@ namespace micros_swarm_framework{
             static unsigned int getRobotID();
             static void setRobotID(unsigned int robot_id);
             
+            static double getNeighborDistance();
+            static void setNeighborDistance(double neighbor_distance);
+            
             static Base getRobotBase();
             static void setRobotBase(Base robot_base);
         
             static std::map<unsigned int, NeighborBase> getNeighbors();
-            static void insertOrUpdateNeighbor(unsigned int robot_id, float distance, float azimuth, float elevation, float x, float y, float z);
+            static void insertOrUpdateNeighbor(unsigned int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz);
             //delete an neighbor robot according to id
             static void deleteNeighbor(unsigned int robot_id);
             static void printNeighbor();

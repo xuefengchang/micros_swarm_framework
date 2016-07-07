@@ -1,0 +1,67 @@
+include "swarm.inc"
+include "turtlebot_intruder.inc"
+
+define floorplan model
+(
+  # sombre, sensible, artistic
+  color "gray30"
+
+  # most maps will need a bounding box
+  boundary 1
+
+  gui_nose 0
+  gui_grid 0
+  gui_outline 0
+  gripper_return 0
+  fiducial_return 0
+  laser_return 1
+)
+
+resolution 0.02
+interval_sim 10  # simulation timestep in milliseconds
+
+window
+(
+  size [ 600.0 700.0 ]
+  center [ 0.0 0.0 ]
+  rotate [ 0.0 0.0 ]
+  scale 60
+)
+
+floorplan
+(
+  name "swarm"
+  bitmap "../swarm.png"
+  size [ 200.0 200.0 2.0 ]
+  pose [  0.0  0.0 0.0 0.0 ]
+)
+
+
+define block model
+(
+size [0.5 7 0.5]
+gui_nose 1
+)
+
+
+
+swarm( pose [ -34.9 -38.1 0 0 ] name "rob0" color "blue")
+swarm( pose [ -76.1 -78.7 0 0 ] name "rob1" color "yellow")
+swarm( pose [ -62.2 -73.5 0 0 ] name "rob2" color "red")
+swarm( pose [ -84.4 -2.3 0 0 ] name "rob3" color "green")
+swarm( pose [ -21.9 -11.1 0 0 ] name "rob4" color "blue")
+swarm( pose [ -7 -92.1 0 0 ] name "rob5" color "yellow")
+swarm( pose [ -83.4 -90.6 0 0 ] name "rob6" color "red")
+swarm( pose [ -45.3 -5.6 0 0 ] name "rob7" color "green")
+swarm( pose [ -29.2 -90.4 0 0 ] name "rob8" color "blue")
+swarm( pose [ -17.2 -25.1 0 0 ] name "rob9" color "yellow")
+swarm( pose [ -73.8 -73 0 0 ] name "rob10" color "red")
+swarm( pose [ -8.9 -3.5 0 0 ] name "rob11" color "green")
+swarm( pose [ -37.5 -9.7 0 0 ] name "rob12" color "blue")
+swarm( pose [ -11.7 -33.6 0 0 ] name "rob13" color "yellow")
+swarm( pose [ -98.9 -91.2 0 0 ] name "rob14" color "red")
+swarm( pose [ -24.6 -98.6 0 0 ] name "rob15" color "green")
+swarm( pose [ -29.3 -65.5 0 0 ] name "rob16" color "blue")
+swarm( pose [ -77.3 -91.4 0 0 ] name "rob17" color "yellow")
+swarm( pose [ -39 -26.5 0 0 ] name "rob18" color "red")
+swarm( pose [ -58.5 -25.6 0 0 ] name "rob19" color "green")

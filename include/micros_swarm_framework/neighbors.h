@@ -195,6 +195,7 @@ namespace micros_swarm_framework{
                     std::cout<<"---"<<it->first<<":  "<<it->second.getDistance()<<","<< \
                         it->second.getAzimuth()<<","<<it->second.getElevation()<<","<< \
                         it->second.getX()<<","<<it->second.getY()<<","<<it->second.getZ()<< \
+                        it->second.getVX()<<","<<it->second.getVY()<<","<<it->second.getVZ()<< \
                         "---"<<std::endl;
                 }
             }

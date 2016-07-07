@@ -75,9 +75,14 @@ namespace micros_swarm_framework{
             float x_;
             float y_;
             float z_;
+            
+            //linear velocity
+            float vx_;
+            float vy_;
+            float vz_;
         public:
-            Base() : x_(-1),y_(-1),z_(-1){}
-            Base(float x,float y,float z) : x_(x),y_(y),z_(z){}
+            Base() : x_(-1),y_(-1),z_(-1),vx_(-1),vy_(-1),vz_(-1){}
+            Base(float x,float y,float z,float vx,float vy,float vz) : x_(x),y_(y),z_(z),vx_(vx),vy_(vy),vz_(vz){}
             float getX(){return x_;}
             void setX(float x){x_=x;}
             
@@ -86,6 +91,15 @@ namespace micros_swarm_framework{
             
             float getZ(){return z_;}
             void setZ(float z){z_=z;}
+            
+            float getVX(){return vx_;}
+            void setVX(float vx){vx_=vx;}
+            
+            float getVY(){return vy_;}
+            void setVY(float vy){vy_=vy;}
+            
+            float getVZ(){return vz_;}
+            void setVZ(float vz){vz_=vz;}
     };
     
     class NeighborBase{
@@ -99,9 +113,14 @@ namespace micros_swarm_framework{
             float x_;
             float y_;
             float z_;
+            
+            //linear velocity
+            float vx_;
+            float vy_;
+            float vz_;
         public:
-            NeighborBase( float distance,float azimuth,float elevation,float x,float y,float z) \
-              :distance_(distance),azimuth_(azimuth),elevation_(elevation),x_(x),y_(y),z_(z){}
+            NeighborBase( float distance,float azimuth,float elevation,float x,float y,float z,float vx,float vy,float vz) \
+              :distance_(distance),azimuth_(azimuth),elevation_(elevation),x_(x),y_(y),z_(z),vx_(vx),vy_(vy),vz_(vz){}
               
             float getDistance(){return distance_;}
             void setDistance(float distance){distance_=distance;}
@@ -120,6 +139,15 @@ namespace micros_swarm_framework{
             
             float getZ(){return z_;}
             void setZ(float z){z_=z;}
+            
+            float getVX(){return vx_;}
+            void setVX(float vx){vx_=vx;}
+            
+            float getVY(){return vy_;}
+            void setVY(float vy){vy_=vy;}
+            
+            float getVZ(){return vz_;}
+            void setVZ(float vz){vz_=vz;}
     };
     
     typedef std::pair<const unsigned int, NeighborBase>  NeighborBaseType;  
@@ -251,13 +279,26 @@ namespace micros_swarm_framework{
     };
     
     class CheckNeighbor : public CheckNeighborABC{
+        private:
+            double neighbor_distance_;
+    
         public:
+            CheckNeighbor(double neighbor_distance)
+            {
+                neighbor_distance_ = neighbor_distance;
+            }
+        
+            double getNeighborDistance()
+            {
+                return neighbor_distance_;
+            }
+        
             bool isNeighbor(Base self, Base neighbor)
             {
                 float distance=sqrt((self.getX()-neighbor.getX())*(self.getX()-neighbor.getX())+(self.getY()-neighbor.getY())*(self.getY()-neighbor.getY())+ \
                     (self.getZ()-neighbor.getZ())*(self.getZ()-neighbor.getZ()));
                     
-                if(distance<50)
+                if(distance<neighbor_distance_)
                     return true;
                     
                 return false;

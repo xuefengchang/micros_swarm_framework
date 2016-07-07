@@ -211,8 +211,11 @@ void baseCallback(const nav_msgs::Odometry& lmsg)
     float x=lmsg.pose.pose.position.x;
     float y=lmsg.pose.pose.position.y;
     
+    float vx=lmsg.twist.twist.linear.x;
+    float vy=lmsg.twist.twist.linear.y;
+    
     micros_swarm_framework::KernelHandle kh;
-    micros_swarm_framework::Base l(x, y, 0);
+    micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
     kh.setRobotBase(l);
 }
 
