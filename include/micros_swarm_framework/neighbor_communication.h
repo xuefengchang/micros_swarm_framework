@@ -65,7 +65,13 @@ namespace micros_swarm_framework{
                 }
     
                 const unsigned int packet_type=packet.packet_type;
-                std::string packet_data=packet.packet_data;
+                std::string packet_data;
+                #ifdef ROS
+                packet_data=packet.packet_data;
+                #endif
+                #ifdef OPENSPLICE_DSD
+                packet_data=(std::string)packet.packet_data;
+                #endif
         
                 std::istringstream archiveStream(packet_data);
                 boost::archive::text_iarchive archive(archiveStream);

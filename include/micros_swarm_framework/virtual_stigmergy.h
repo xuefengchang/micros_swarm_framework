@@ -80,7 +80,12 @@ namespace micros_swarm_framework{
                 p.packet_source=robot_id;
                 p.packet_version=1;
                 p.packet_type=VIRTUAL_STIGMERGY_PUT;
+                #ifdef ROS
                 p.packet_data=vsp_str;
+                #endif
+                #ifdef OPENSPLICE_DSD
+                p.packet_data=string_dup(vsp_str.data());
+                #endif
                 p.package_check_sum=0;
                 
                 kh.publishPacket(p);
@@ -120,7 +125,12 @@ namespace micros_swarm_framework{
                 p.packet_source=kh.getRobotID();
                 p.packet_version=1;
                 p.packet_type=VIRTUAL_STIGMERGY_QUERY;
-                p.packet_data=vsg_str;
+                #ifdef ROS
+                p.packet_data=vsp_str;
+                #endif
+                #ifdef OPENSPLICE_DSD
+                p.packet_data=string_dup(vsp_str.data());
+                #endif
                 p.package_check_sum=0;
                 kh.publishPacket(p);
                 

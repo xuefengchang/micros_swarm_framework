@@ -57,7 +57,12 @@ namespace micros_swarm_framework{
         p.packet_source=robot_id;
         p.packet_version=1;
         p.packet_type=SINGLE_ROBOT_BROADCAST_ID;
+        #ifdef ROS
         p.packet_data=srbi_str;
+        #endif
+        #ifdef OPENSPLICE_DSD
+        p.packet_data=string_dup(srbi_str.data());
+        #endif
         p.package_check_sum=0;
 
         kh.publishPacket(p);
@@ -84,7 +89,12 @@ namespace micros_swarm_framework{
         p.packet_source=robot_id;
         p.packet_version=1;
         p.packet_type=SINGLE_ROBOT_SWARM_LIST;
-        p.packet_data=srsl_str;
+        #ifdef ROS
+        p.packet_data=srbi_str;
+        #endif
+        #ifdef OPENSPLICE_DSD
+        p.packet_data=string_dup(srbi_str.data());
+        #endif
         p.package_check_sum=0;
 
         kh.publishPacket(p);

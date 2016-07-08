@@ -1,9 +1,59 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(micros_swarm_framework)
 
+# set DDS VENDOR
+option(USE_OPENSPLICE_DDS "Using OpenSplice DDS" ON)
+option(USE_OPENDDS "Using OpenDDS" OFF)
+
+if (${USE_OPENSPLICE_DDS})
+  if (NOT DEFINED ENV{OSPL_HOME})
+    message(FATAL_ERROR "OpenSplice DDS environment variable OSPL_HOME is not defined")
+  endif()
+  if (NOT EXISTS $ENV{OSPL_HOME})
+    message(FATAL_ERROR "OpenSplice DDS home directory (OSPL_HOME) dosen't exist")
+  endif()
+  set(DDS_INCLUDE_DIRS $ENV{OSPL_HOME}/include $ENV{OSPL_HOME}/include/sys $ENV{OSPL_HOME}/include/dcps/C++/SACPP)
+  set(DDS_LIBRARY_DIRS $ENV{OSPL_HOME}/lib)
+elseif (${USE_OPENDDS})
+  if (NOT DEFINED ENV{DDS_ROOT}) 
+    message(FATAL_ERROR "OpenDDS environment variable DDS_ROOT is not defined")
+  endif()
+  if (NOT EXISTS $ENV{DDS_ROOT})
+    message(FATAL_ERROR "OpenDDS home directory (DDS_ROOT) dosen't exist")
+  endif()
+  set(DDS_INCLUDE_DIRS $ENV{DDS_ROOT} $ENV{ACE_ROOT}/TAO $ENV{ACE_ROOT} $ENV{DDS_ROOT}/dds/InfoRepo $ENV{DDS_ROOT}/lib)
+  set(DDS_LIBRARY_DIRS $ENV{DDS_ROOT}/lib $ENV{ACE_ROOT}/lib)
+else()
+  message(FATAL_ERROR "Only OpenSpice DDS and OpenDDS are supported. The DDS_VENDOR variable in CMakeList.txt should be set correctly")
+endif()
+
+#add_definitions(-DROS)
+
+# set communication mechanism
+option(ROS "communication mechanism" ON)
+set(ROS OFF CACHE BOOL "ROS Option" FORCE)
+#message("ROS?" ${ROS})
+option(OPENSPLICE_DDS "communication mechanism" ON)
+set(OPENSPLICE_DDS ON CACHE BOOL "OPENSPLICE DDS Option" FORCE)
+#message("OPENSPLICE_DDS?" ${OPENSPLICE_DDS})
+option(OPEN_DDS "communication mechanism" ON)
+set(OPEN_DDS OFF CACHE BOOL "OPEN DDS Option" FORCE)
+#message("OPENSPLICE_DDS?" ${OPENSPLICE_DDS})
+
+if (ROS)
+  add_definitions(-DROS)
+endif()
+if (OPENSPLICE_DDS)
+  add_definitions(-DOPENSPLICE_DDS)
+endif()
+if (OPEN_DDS)
+  add_definitions(-DOPEN_DDS)
+endif()
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
@@ -24,6 +74,7 @@ include_directories(
     include 
     ${Boost_INCLUDE_DIRS}
     ${catkin_INCLUDE_DIRS}
+    ${DDS_INCLUDE_DIRS}
 )
 
 ## System dependencies are found with CMake's conventions
@@ -131,17 +182,50 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
-include_directories(
-  ${catkin_INCLUDE_DIRS}
+#include_directories(
+#  ${catkin_INCLUDE_DIRS}
+#)
+
+link_directories(
+    ${catkin_LIBRARY_DIRS} 
+    ${DDS_LIBRARY_DIRS}
 )
 
-link_directories(${catkin_LIBRARY_DIRS})
+add_library(opensplice_dds_pub_sub
+    src/opensplice_dds/MSFPPacket.cpp 
+    src/opensplice_dds/MSFPPacketDcps.cpp 
+    src/opensplice_dds/MSFPPacketDcps_impl.cpp 
+    src/opensplice_dds/MSFPPacketSplDcps.cpp
+    src/opensplice_dds/check_status.cpp
+    src/opensplice_dds/MSFPPacket_listener.cpp
+    src/opensplice_dds/publisher.cpp
+    src/opensplice_dds/subscriber.cpp
+)
 
 ## Declare a C++ library
 add_library(micros_swarm_framework_kernel
     src/kernel.cpp
 )
 add_dependencies(micros_swarm_framework_kernel ${micros_swarm_framework_EXPORTED_TARGETS})
+
+add_executable(micros_swarm_framework_kernel_node src/kernel_ros.cpp)
+add_dependencies(micros_swarm_framework_kernel_node ${micros_swarm_framework_EXPORTED_TARGETS})
+target_link_libraries(micros_swarm_framework_kernel_node
+   ${Boost_THREAD_LIBRARY}
+   ${Boost_REGEX_LIBRARY}
+   ${Boost_SERIALIZATION_LIBRARY}
+   ${catkin_LIBRARIES}
+   opensplice_dds_pub_sub
+   micros_swarm_framework_kernel
+   -lrt
+)
+if (OPENSPLICE_DDS)
+  target_link_libraries(micros_swarm_framework_kernel_node
+    opensplice_dds_pub_sub
+    libddskernel.so
+    libdcpsisocpp.so
+)
+endif()
 
 add_executable(micros_swarm_framework_app1_node apps/app1.cpp)
 add_dependencies(micros_swarm_framework_app1_node ${micros_swarm_framework_EXPORTED_TARGETS})
@@ -153,6 +237,13 @@ target_link_libraries(micros_swarm_framework_app1_node
    micros_swarm_framework_kernel
    -lrt
 )
+if (OPENSPLICE_DDS)
+  target_link_libraries(micros_swarm_framework_app1_node
+    opensplice_dds_pub_sub
+    libddskernel.so
+    libdcpsisocpp.so
+)
+endif()
 
 add_executable(micros_swarm_framework_app2_node apps/app2.cpp)
 add_dependencies(micros_swarm_framework_app2_node ${micros_swarm_framework_EXPORTED_TARGETS})
@@ -164,6 +255,13 @@ target_link_libraries(micros_swarm_framework_app2_node
    micros_swarm_framework_kernel
    -lrt
 )
+if (OPENSPLICE_DDS)
+  target_link_libraries(micros_swarm_framework_app2_node
+    opensplice_dds_pub_sub
+    libddskernel.so
+    libdcpsisocpp.so
+)
+endif()
 
 add_executable(micros_swarm_framework_app3_node apps/app3.cpp)
 add_dependencies(micros_swarm_framework_app3_node ${micros_swarm_framework_EXPORTED_TARGETS})
@@ -175,27 +273,46 @@ target_link_libraries(micros_swarm_framework_app3_node
    micros_swarm_framework_kernel
    -lrt
 )
+if (OPENSPLICE_DDS)
+  target_link_libraries(micros_swarm_framework_app3_node
+    opensplice_dds_pub_sub
+    libddskernel.so
+    libdcpsisocpp.so
+)
+endif()
 
-add_executable(micros_swarm_framework_testnc_node test/testnc.cpp)
-add_dependencies(micros_swarm_framework_testnc_node ${micros_swarm_framework_EXPORTED_TARGETS})
-target_link_libraries(micros_swarm_framework_testnc_node
-   ${Boost_THREAD_LIBRARY}
-   ${Boost_REGEX_LIBRARY}
-   ${Boost_SERIALIZATION_LIBRARY}
-   ${catkin_LIBRARIES}
-   micros_swarm_framework_kernel
-   -lrt
+#add_executable(micros_swarm_framework_testnc_node test/testnc.cpp)
+#add_dependencies(micros_swarm_framework_testnc_node ${micros_swarm_framework_EXPORTED_TARGETS})
+#target_link_libraries(micros_swarm_framework_testnc_node
+#   ${Boost_THREAD_LIBRARY}
+#   ${Boost_REGEX_LIBRARY}
+#   ${Boost_SERIALIZATION_LIBRARY}
+#   ${catkin_LIBRARIES}
+#   micros_swarm_framework_kernel#
+#   -lrt
+#)
+#if (OPENSPLICE_DDS)
+#  target_link_libraries(micros_swarm_framework_testnc_node
+#   opensplice_dds_pub_sub
+#)
+#endif()
+
+add_executable(pub src/opensplice_dds/pub.cpp)
+target_link_libraries(pub
+    opensplice_dds_pub_sub
+    libddskernel.so
+    libdcpsisocpp.so
+    #libdcpssacpp.so
+    #-lpthread
 )
 
-add_executable(micros_swarm_framework_kernel_node src/kernel_ros.cpp)
-add_dependencies(micros_swarm_framework_kernel_node ${micros_swarm_framework_EXPORTED_TARGETS})
-target_link_libraries(micros_swarm_framework_kernel_node
-   ${Boost_THREAD_LIBRARY}
-   ${Boost_REGEX_LIBRARY}
-   ${Boost_SERIALIZATION_LIBRARY}
-   ${catkin_LIBRARIES}
-   micros_swarm_framework_kernel
-   -lrt
+add_executable(sub src/opensplice_dds/sub.cpp)
+target_link_libraries(sub
+    opensplice_dds_pub_sub
+    libddskernel.so
+    libdcpsisocpp.so
+    #libdcpssacpp.so
+    #-lpthread
 )
 
 #set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
@@ -246,7 +363,7 @@ install(DIRECTORY include
     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-install(DIRECTORY apps doc launch maps
+install(DIRECTORY apps doc launch maps idl
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 

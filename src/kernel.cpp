@@ -103,8 +103,15 @@ namespace micros_swarm_framework{
             std::cerr << ex.what() << std::endl;
         }
         
+        #ifdef ROS
         ros::NodeHandle n;
         packet_subscriber_ = n.subscribe("/micros_swarm_framework_topic", 1000, &KernelInitializer::packetCallback, this, ros::TransportHints().udp());
+        #endif
+        
+        #ifdef OPENSPLICE_DDS
+        Subscriber packet_subscriber_("micros_swarm_framework_topic");
+        packet_subscriber_.subscribe(&KernelInitializer::PacketParser);
+        #endif
     }
     
     void KernelInitializer::initRobotID(int robot_id)
@@ -132,7 +139,12 @@ namespace micros_swarm_framework{
         }
     
         const unsigned int packet_type=msfp_packet.packet_type;
+        #ifdef ROS
         std::string packet_data=msfp_packet.packet_data;
+        #endif
+        #ifdef OPENSPLICE_DDS
+        std::string packet_data=(std::string)msfp_packet.packet_data;
+        #endif
         
         std::istringstream archiveStream(packet_data);
         boost::archive::text_iarchive archive(archiveStream);
@@ -236,7 +248,12 @@ namespace micros_swarm_framework{
                     p.packet_source=shm_rid;
                     p.packet_version=1;
                     p.packet_type=VIRTUAL_STIGMERGY_PUT;
+                    #ifdef ROS
                     p.packet_data=vsp_string;
+                    #endif
+                    #ifdef OPENSPLICE_DSD
+                    p.packet_data=string_dup(vsp_string.data());
+                    #endif
                     p.package_check_sum=0;
                     
                     kh.publishPacket(p);
@@ -253,7 +270,12 @@ namespace micros_swarm_framework{
                     p.packet_source=shm_rid;
                     p.packet_version=1;
                     p.packet_type=VIRTUAL_STIGMERGY_PUT;
+                    #ifdef ROS
                     p.packet_data=vsp_string;
+                    #endif
+                    #ifdef OPENSPLICE_DSD
+                    p.packet_data=string_dup(vsp_string.data());
+                    #endif
                     p.package_check_sum=0;
                     
                     kh.publishPacket(p);
@@ -301,7 +323,12 @@ namespace micros_swarm_framework{
                     p.packet_source=shm_rid;
                     p.packet_version=1;
                     p.packet_type=VIRTUAL_STIGMERGY_PUT;
+                    #ifdef ROS
                     p.packet_data=vsp_string;
+                    #endif
+                    #ifdef OPENSPLICE_DSD
+                    p.packet_data=string_dup(vsp_string.data());
+                    #endif
                     p.package_check_sum=0;
                     
                     kh.publishPacket(p);
@@ -1196,6 +1223,7 @@ namespace micros_swarm_framework{
     
     void KernelHandle::publishPacket(micros_swarm_framework::MSFPPacket msfp_packet)  //广播一条packet
     {
+        #ifdef ROS
         ros::NodeHandle n;
         static ros::Publisher packet_publisher = n.advertise<micros_swarm_framework::MSFPPacket>("/micros_swarm_framework_topic", 1000, true);
         
@@ -1216,5 +1244,12 @@ namespace micros_swarm_framework{
         {
             packet_publisher.publish(msfp_packet);
         }
+        #endif
+        
+        #ifdef OPENSPLICE_DDS
+        unsigned int shm_rid=getRobotID();
+        static micros_swarm_framework::Publisher publisher=Publisher("micros_swarm_framework_topic", shm_rid);
+        publisher.publish(msfp_packet);
+        #endif
     }
 };

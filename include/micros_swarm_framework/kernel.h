@@ -40,17 +40,33 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "micros_swarm_framework/data_type.h"
 #include "micros_swarm_framework/message.h"
+
+#ifdef ROS
 #include "micros_swarm_framework/MSFPPacket.h"
+#endif
+
+#ifdef OPENSPLICE_DDS
+#include "opensplice_dds/MSFPPacket.h"
+#include "opensplice_dds/check_status.h"
+#include "opensplice_dds/publisher.h"
+#include "opensplice_dds/subscriber.h"
+#endif
 
 namespace micros_swarm_framework{
 
     class  KernelInitializer{
         private:
             //subscriber of the packet in the kernel
+            #ifdef ROS
             ros::Subscriber packet_subscriber_;
+            #endif
+            
+            //#ifdef OPENSPLICE_DDS
+            //Subscriber packet_subscriber_;
+            //#endif
             
             //parser for the MSFPPacket
-            void PacketParser(const micros_swarm_framework::MSFPPacket& msfp_packet);
+            static void PacketParser(const micros_swarm_framework::MSFPPacket& msfp_packet);
             void packetCallback(const micros_swarm_framework::MSFPPacket& packet)
             {
                 PacketParser(packet);
@@ -104,6 +120,17 @@ namespace micros_swarm_framework{
             static void deleteVirtualStigmergyValue(unsigned int id, std::string key_std);
             static void printVirtualStigmergy();
             
+            /*
+            #ifdef OPENSPLICE_DDS
+            micros_swarm_framework::Publisher* publisher_;
+            
+            KernelHandle()
+            {
+                unsigned int shm_rid=getRobotID();
+                publisher_=new Publisher("micros_swarm_framework_topic", shm_rid);
+            }
+            #endif
+            */
             //publish a packet
             static void publishPacket(micros_swarm_framework::MSFPPacket msfp_packet);
     };

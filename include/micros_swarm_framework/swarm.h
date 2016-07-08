@@ -95,7 +95,12 @@ namespace micros_swarm_framework{
         p.packet_source=robot_id;
         p.packet_version=1;
         p.packet_type=SINGLE_ROBOT_JOIN_SWARM;
+        #ifdef ROS
         p.packet_data=srjs_str;
+        #endif
+        #ifdef OPENSPLICE_DSD
+        p.packet_data=string_dup(srjs_str.data());
+        #endif
         p.package_check_sum=0;
                 
         kh.publishPacket(p);
@@ -118,7 +123,12 @@ namespace micros_swarm_framework{
         p.packet_source=robot_id;
         p.packet_version=1;
         p.packet_type=SINGLE_ROBOT_LEAVE_SWARM;
+        #ifdef ROS
         p.packet_data=srjs_str;
+        #endif
+        #ifdef OPENSPLICE_DSD
+        p.packet_data=string_dup(srjs_str.data());
+        #endif
         p.package_check_sum=0;
                 
         kh.publishPacket(p);
