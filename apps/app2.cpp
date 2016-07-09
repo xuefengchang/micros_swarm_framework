@@ -27,7 +27,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm_framework/micros_swarm_framework.h"
 
 #define BARRIER_VSTIG  1
-#define ROBOT_SUM 3
+#define ROBOT_SUM 20
 
 #define RED_SWARM 1
 #define BLUE_SWARM 2

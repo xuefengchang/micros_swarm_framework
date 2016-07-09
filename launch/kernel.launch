@@ -55,7 +55,7 @@
     
     
     
-    <!--group ns="robot_10">
+    <group ns="robot_10">
         <node pkg="micros_swarm_framework" type="micros_swarm_framework_kernel_node" name="micros_swarm_framework_kernel_node10" output="screen">
             <param name="unique_robot_id" value="10"/>
         </node>
@@ -107,5 +107,5 @@
         <node pkg="micros_swarm_framework" type="micros_swarm_framework_kernel_node" name="micros_swarm_framework_kernel_node19" output="screen">
             <param name="unique_robot_id" value="19"/>
         </node>
-    </group-->
+    </group>
 </launch>

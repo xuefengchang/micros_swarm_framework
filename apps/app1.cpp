@@ -27,7 +27,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm_framework/micros_swarm_framework.h"
 
 #define BARRIER_VSTIG  1
-#define ROBOT_SUM 5
+#define ROBOT_SUM 20
 
 int delta = 4;
 int epsilon = 100;
