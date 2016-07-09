@@ -60,8 +60,9 @@ namespace micros_swarm_framework{
         #ifdef ROS
         p.packet_data=srbi_str;
         #endif
-        #ifdef OPENSPLICE_DSD
+        #ifdef OPENSPLICE_DDS
         p.packet_data=string_dup(srbi_str.data());
+        //std::cout<<"in publish_robot_id packet_data: "<<p.packet_data<<std::endl;
         #endif
         p.package_check_sum=0;
 
@@ -90,10 +91,11 @@ namespace micros_swarm_framework{
         p.packet_version=1;
         p.packet_type=SINGLE_ROBOT_SWARM_LIST;
         #ifdef ROS
-        p.packet_data=srbi_str;
+        p.packet_data=srsl_str;
         #endif
-        #ifdef OPENSPLICE_DSD
-        p.packet_data=string_dup(srbi_str.data());
+        #ifdef OPENSPLICE_DDS
+        p.packet_data=string_dup(srsl_str.data());
+        //std::cout<<"in publish_swarm_list packet_data: "<<p.packet_data<<std::endl;
         #endif
         p.package_check_sum=0;
 
@@ -122,6 +124,11 @@ int main(int argc, char** argv){
     kh.setRobotID((unsigned int)robot_id);
     
     kh.setNeighborDistance(50);  //50 meters, default value
+    
+    //#ifdef OPENSPLICE_DDS
+    //micros_swarm_framework::Subscriber packet_subscriber_("micros_swarm_framework_topic");
+    //packet_subscriber_.subscribe(&micros_swarm_framework::KernelInitializer::PacketParser);
+    //#endif
     
     ros::Timer publish_robot_id_timer = nh.createTimer(ros::Duration(PUBLISH_ROBOT_ID_DURATION), &micros_swarm_framework::publish_robot_id);
     ros::Timer publish_swarm_list_timer = nh.createTimer(ros::Duration(PUBLISH_SWARM_LIST_DURATION), &micros_swarm_framework::publish_swarm_list);

@@ -90,6 +90,7 @@ namespace micros_swarm_framework{
     void Publisher::publish(MSFPPacket packet)
     {
         packet_ = &packet;
+        //std::cout<<"packet_data: "<<packet.packet_data<<std::endl;
         packet_->packet_source = robot_id_;
 
         status = MSFPPacketDW->write(*packet_, userHandle);

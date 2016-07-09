@@ -83,7 +83,7 @@ namespace micros_swarm_framework{
                 #ifdef ROS
                 p.packet_data=vsp_str;
                 #endif
-                #ifdef OPENSPLICE_DSD
+                #ifdef OPENSPLICE_DDS
                 p.packet_data=string_dup(vsp_str.data());
                 #endif
                 p.package_check_sum=0;
@@ -128,8 +128,8 @@ namespace micros_swarm_framework{
                 #ifdef ROS
                 p.packet_data=vsp_str;
                 #endif
-                #ifdef OPENSPLICE_DSD
-                p.packet_data=string_dup(vsp_str.data());
+                #ifdef OPENSPLICE_DDS
+                p.packet_data=string_dup(vsg_str.data());
                 #endif
                 p.package_check_sum=0;
                 kh.publishPacket(p);

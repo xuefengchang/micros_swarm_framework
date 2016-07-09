@@ -61,17 +61,18 @@ namespace micros_swarm_framework{
             ros::Subscriber packet_subscriber_;
             #endif
             
-            //#ifdef OPENSPLICE_DDS
-            //Subscriber packet_subscriber_;
-            //#endif
+            #ifdef OPENSPLICE_DDS
+            Subscriber* packet_subscriber_;
+            #endif
             
+        public:
             //parser for the MSFPPacket
             static void PacketParser(const micros_swarm_framework::MSFPPacket& msfp_packet);
             void packetCallback(const micros_swarm_framework::MSFPPacket& packet)
             {
                 PacketParser(packet);
             }
-        public:
+      
             static int unique_robot_id_;
             static void initRobotID(int robot_id);
             

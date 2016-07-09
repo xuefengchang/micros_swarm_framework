@@ -35,7 +35,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm_framework/micros_swarm_framework.h"
 
 #define BARRIER_VSTIG  1
-#define ROBOT_SUM 20
+#define ROBOT_SUM 10
 
 #define PI 3.14159265358979323846
 #define EPSILON 0.1
@@ -188,6 +188,7 @@ void barrier_wait()
             break;
         ros::spinOnce();
         loop_rate.sleep();
+        barrier.virtualStigmergyPut(robot_id_string, 1);
     }
 }
 

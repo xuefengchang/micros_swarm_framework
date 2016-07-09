@@ -27,7 +27,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm_framework/micros_swarm_framework.h"
 
 #define BARRIER_VSTIG  1
-#define ROBOT_SUM 20
+#define ROBOT_SUM 5
 
 int delta = 4;
 int epsilon = 100;
@@ -112,10 +112,12 @@ void barrier_wait()
     ros::Rate loop_rate(1);
     while(ros::ok())
     {
+        std::cout<<"barrier size: "<<barrier.virtualStigmergySize()<<std::endl;
         if(barrier.virtualStigmergySize()==ROBOT_SUM)
             break;
         ros::spinOnce();
         loop_rate.sleep();
+        barrier.virtualStigmergyPut(robot_id_string, 1);
     }
 }
 
