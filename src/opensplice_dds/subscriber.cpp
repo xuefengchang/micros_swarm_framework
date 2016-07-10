@@ -102,7 +102,7 @@ namespace micros_swarm_framework{
         //DDS::StatusMask mask = DDS::DATA_AVAILABLE_STATUS;
         myListener->MSFPPacketDR_->set_listener(myListener, mask);
         //cout << "=== [MSFPPacketSubscriber] Ready ..." << endl;
-        myListener->closed_ = false;
+        //myListener->closed_ = false;
     
         /*
         //waitset used to avoid spinning in the loop below

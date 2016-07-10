@@ -61,7 +61,7 @@ namespace micros_swarm_framework{
         p.packet_data=srbi_str;
         #endif
         #ifdef OPENSPLICE_DDS
-        std::cout<<"srbi_str.data(): "<<srbi_str.data()<<std::endl;
+        //std::cout<<"srbi_str.data(): "<<srbi_str.data()<<std::endl;
         p.packet_data=srbi_str.data();
         #endif
         p.package_check_sum=0;
@@ -94,12 +94,14 @@ namespace micros_swarm_framework{
         p.packet_data=srsl_str;
         #endif
         #ifdef OPENSPLICE_DDS
-        std::cout<<"srsl_str.data(): "<<srsl_str.data()<<std::endl;
+        //std::cout<<"srsl_str.data(): "<<srsl_str.data()<<std::endl;
         p.packet_data=srsl_str.data();
         #endif
         p.package_check_sum=0;
 
         kh.publishPacket(p);
+
+        vector<unsigned int>().swap(swarm_list);
     }
 };
 
@@ -119,6 +121,11 @@ int main(int argc, char** argv){
     micros_swarm_framework::KernelInitializer::initRobotID(robot_id);
     
     micros_swarm_framework::KernelInitializer kernel_init;
+
+    #ifdef OPENSPLICE_DDS
+    micros_swarm_framework::Subscriber packet_subscriber_("micros_swarm_framework_topic");
+    packet_subscriber_.subscribe(&micros_swarm_framework::KernelInitializer::PacketParser);
+    #endif
     
     micros_swarm_framework::KernelHandle kh;
     kh.setRobotID((unsigned int)robot_id);

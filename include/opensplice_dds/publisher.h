@@ -44,6 +44,7 @@ namespace micros_swarm_framework{
         public:
             Publisher(std::string topic_name, unsigned int robot_id);
             void publish(MSFPPacket packet);
+            //void publish(MSFPPacket* packet);
             ~Publisher();
     };
 };

@@ -80,18 +80,33 @@ namespace micros_swarm_framework{
         
         packet_=new micros_swarm_framework::MSFPPacket();
         packet_->packet_source = robot_id_;
-      
         userHandle = MSFPPacketDW->register_instance(*packet_);
     }
     
+    
     void Publisher::publish(MSFPPacket packet)
     {
-        packet_ = &packet;
-        packet_->packet_source = robot_id_;
+        try {
+            packet_ = &packet;
+            //packet_->packet_source = robot_id_;
+            status = MSFPPacketDW->write(*packet_, userHandle);
+            checkStatus(status, "micros_swarm_framework::MSFPPacketDataWriter::write");
+        }
+        catch (const std::bad_alloc&) {
+            std::cout<<"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"<<std::endl;
+        }
+        
+    }
+    
 
+    /*
+    void Publisher::publish(MSFPPacket* packet)
+    {
+        packet_ = packet;
         status = MSFPPacketDW->write(*packet_, userHandle);
         checkStatus(status, "micros_swarm_framework::MSFPPacketDataWriter::write");
     }
+    */
     
     Publisher::~Publisher()
     {

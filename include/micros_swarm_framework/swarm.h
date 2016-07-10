@@ -99,7 +99,7 @@ namespace micros_swarm_framework{
         p.packet_data=srjs_str;
         #endif
         #ifdef OPENSPLICE_DDS
-        std::cout<<"srjs_str.data(): "<<srjs_str.data()<<std::endl;
+        //std::cout<<"srjs_str.data(): "<<srjs_str.data()<<std::endl;
         p.packet_data=srjs_str.data();
         #endif
         p.package_check_sum=0;
@@ -128,7 +128,7 @@ namespace micros_swarm_framework{
         p.packet_data=srjs_str;
         #endif
         #ifdef OPENSPLICE_DDS
-        std::cout<<"srjs_str.data(): "<<srjs_str.data()<<std::endl;
+        //std::cout<<"srjs_str.data(): "<<srjs_str.data()<<std::endl;
         p.packet_data=srjs_str.data();
         #endif
         p.package_check_sum=0;

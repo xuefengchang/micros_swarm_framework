@@ -133,6 +133,9 @@ namespace micros_swarm_framework{
                         result.data_.insert(std::pair<unsigned int, NeighborBase>(n_it->first,n_it->second));
                     }
                 }
+
+                set<unsigned int>().swap(sm);
+
                 return result;
             }
             
@@ -154,6 +157,8 @@ namespace micros_swarm_framework{
                         result.data_.insert(std::pair<unsigned int, NeighborBase>(n_it->first,n_it->second));
                     }
                 }
+
+                set<unsigned int>().swap(sm);
                 
                 return result;
             }

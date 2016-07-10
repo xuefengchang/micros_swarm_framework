@@ -108,10 +108,10 @@ namespace micros_swarm_framework{
         packet_subscriber_ = n.subscribe("/micros_swarm_framework_topic", 1000, &KernelInitializer::packetCallback, this, ros::TransportHints().udp());
         #endif
         
-        #ifdef OPENSPLICE_DDS
-        packet_subscriber_ = new Subscriber("micros_swarm_framework_topic");
-        packet_subscriber_->subscribe(&KernelInitializer::PacketParser);
-        #endif
+        //#ifdef OPENSPLICE_DDS
+        //packet_subscriber_ = Subscriber("micros_swarm_framework_topic");
+        //packet_subscriber_.subscribe(&KernelInitializer::PacketParser);
+        //#endif
     }
     
     void KernelInitializer::initRobotID(int robot_id)
@@ -129,6 +129,7 @@ namespace micros_swarm_framework{
     
     void KernelInitializer::PacketParser(const micros_swarm_framework::MSFPPacket& msfp_packet)
     {
+        
         micros_swarm_framework::KernelHandle kh;
         unsigned int shm_rid=kh.getRobotID();
         
@@ -137,20 +138,21 @@ namespace micros_swarm_framework{
         {
             return;
         }
-    
+        
         const unsigned int packet_type=msfp_packet.packet_type;
+        std::string packet_data="";
+        
         #ifdef ROS
-        std::string packet_data=msfp_packet.packet_data;
+        packet_data=msfp_packet.packet_data;
         #endif
         #ifdef OPENSPLICE_DDS
-        if(msfp_packet.packet_data==NULL)
-            std::cout<<"++++++++++++++++++++++"<<std::endl;
-        std::string packet_data=(std::string)msfp_packet.packet_data;
+        packet_data=(std::string)msfp_packet.packet_data;
         #endif
         
         std::istringstream archiveStream(packet_data);
+        try{
         boost::archive::text_iarchive archive(archiveStream);
-        
+
         switch(packet_type)
         {
             case SINGLE_ROBOT_BROADCAST_ID:{
@@ -219,7 +221,7 @@ namespace micros_swarm_framework{
                 unsigned int robot_id=srsl.getRobotID();
                 std::vector<unsigned int> swarm_list=srsl.getSwarmList();
                 kh.insertOrRefreshNeighborSwarm(robot_id, swarm_list);
-                
+                vector<unsigned int>().swap(swarm_list);
                 break;
             }
             case VIRTUAL_STIGMERGY_QUERY:
@@ -258,7 +260,7 @@ namespace micros_swarm_framework{
                     p.packet_data=vsp_string;
                     #endif
                     #ifdef OPENSPLICE_DDS
-                    std::cout<<"vsp_string.data(): "<<vsp_string.data()<<std::endl;
+                    //std::cout<<"vsp_string.data(): "<<vsp_string.data()<<std::endl;
                     p.packet_data=vsp_string.data();
                     #endif
                     p.package_check_sum=0;
@@ -281,7 +283,7 @@ namespace micros_swarm_framework{
                     p.packet_data=vsp_string;
                     #endif
                     #ifdef OPENSPLICE_DDS
-                    std::cout<<"vsp_string.data(): "<<vsp_string.data()<<std::endl;
+                    //std::cout<<"vsp_string.data(): "<<vsp_string.data()<<std::endl;
                     p.packet_data=vsp_string.data();
                     #endif
                     p.package_check_sum=0;
@@ -336,7 +338,7 @@ namespace micros_swarm_framework{
                     p.packet_data=vsp_string;
                     #endif
                     #ifdef OPENSPLICE_DDS
-                    std::cout<<"vsp_string.data(): "<<vsp_string.data()<<std::endl;
+                    //std::cout<<"vsp_string.data(): "<<vsp_string.data()<<std::endl;
                     p.packet_data=vsp_string.data();
                     #endif
                     p.package_check_sum=0;
@@ -360,6 +362,11 @@ namespace micros_swarm_framework{
                 std::cout<<"UNDEFINED PACKET TYPE!"<<std::endl;
             }
         }
+        }catch(const std::bad_alloc&){
+        std::cout<<"1111111111111111111111111"<<std::endl;
+        std::cout<<"%%%%: "<<packet_data<<std::endl;
+        return;
+        }
     }
     
     KernelInitializer::~KernelInitializer()
@@ -372,8 +379,6 @@ namespace micros_swarm_framework{
         
         boost::interprocess::shared_memory_object::remove(shm_object_name.data());
         boost::interprocess::named_mutex::remove(mutex_name.data());
-        
-        //publisher.~Publisher();
     }
     
     unsigned int KernelHandle::getRobotID()

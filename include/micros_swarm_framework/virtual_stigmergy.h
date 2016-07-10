@@ -84,7 +84,7 @@ namespace micros_swarm_framework{
                 p.packet_data=vsp_str;
                 #endif
                 #ifdef OPENSPLICE_DDS
-                std::cout<<"vsp_str.data(): "<<vsp_str.data()<<std::endl;
+                //std::cout<<"vsp_str.data(): "<<vsp_str.data()<<std::endl;
                 p.packet_data=vsp_str.data();
                 #endif
                 p.package_check_sum=0;
@@ -130,7 +130,7 @@ namespace micros_swarm_framework{
                 p.packet_data=vsp_str;
                 #endif
                 #ifdef OPENSPLICE_DDS
-                std::cout<<"vsg_str.data(): "<<vsg_str.data()<<std::endl;
+                //std::cout<<"vsg_str.data(): "<<vsg_str.data()<<std::endl;
                 p.packet_data=vsg_str.data();
                 #endif
                 p.package_check_sum=0;

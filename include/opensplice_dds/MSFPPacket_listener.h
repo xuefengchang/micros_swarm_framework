@@ -20,7 +20,7 @@
 #include <sstream>
 #include <iostream>
 #include "ccpp_dds_dcps.h" 
-#include "check_status.h"
+#include "opensplice_dds/check_status.h"
 #include "ccpp_MSFPPacket.h"
 
 namespace micros_swarm_framework{
@@ -29,16 +29,16 @@ namespace micros_swarm_framework{
     {
         public:
 
-            bool closed_;
+            //bool closed_;
             MSFPPacketDataReader_var MSFPPacketDR_;
-            DDS::GuardCondition_var guardCond_;
+            //DDS::GuardCondition_var guardCond_;
             
             void (*callBack_)(const MSFPPacket& packet);
 
 	        MSFPPacketListener () 
 	        {
-		        guardCond_ = new DDS::GuardCondition();
-		        closed_ = false;
+		        //guardCond_ = new DDS::GuardCondition();
+		        //closed_ = false;
 	        }
 
             //Callback method implementation

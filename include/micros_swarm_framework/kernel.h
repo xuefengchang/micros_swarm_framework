@@ -61,9 +61,9 @@ namespace micros_swarm_framework{
             ros::Subscriber packet_subscriber_;
             #endif
             
-            #ifdef OPENSPLICE_DDS
-            Subscriber* packet_subscriber_;
-            #endif
+            //#ifdef OPENSPLICE_DDS
+            //Subscriber packet_subscriber_;
+            //#endif
             
         public:
             //parser for the MSFPPacket

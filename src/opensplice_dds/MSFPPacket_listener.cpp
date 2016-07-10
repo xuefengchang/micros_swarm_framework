@@ -25,24 +25,28 @@ namespace micros_swarm_framework{
     void MSFPPacketListener::on_data_available(DDS::DataReader_ptr reader)
       THROW_ORB_EXCEPTIONS
     {
+        
         DDS::ReturnCode_t status;
         MSFPPacketSeq packetSeq;
         SampleInfoSeq infoSeq;
 
+        try{
         status = MSFPPacketDR_->take(packetSeq, infoSeq, LENGTH_UNLIMITED,
         ANY_SAMPLE_STATE, ANY_VIEW_STATE, ANY_INSTANCE_STATE);
-        checkStatus(status, "MSFPPacketDataReader::read");
-        
-        for (DDS::ULong i = 0; i < packetSeq.length(); i++)
+        //checkStatus(status, "MSFPPacketDataReader::read");
+
+        for (int i = 0; i < packetSeq.length(); i++)
         {
-            //cout<<packetSeq[i].packet_source<<": "<<packetSeq[i].packet_version<<", "<<packetSeq[i].packet_type<<", "<<packetSeq[i].packet_data<<", "<<packetSeq[i].package_check_sum<<endl;
             (*callBack_)(packetSeq[i]);
         }
-        status = MSFPPacketDR_->return_loan(packetSeq, infoSeq);
-        checkStatus(status, "MSFPPacketDataReader::return_loan");
+        //status = MSFPPacketDR_->return_loan(packetSeq, infoSeq);
+        //checkStatus(status, "MSFPPacketDataReader::return_loan");
         
         // unblock the waitset in Subscriber main loop
-        guardCond_->set_trigger_value(true);
+        //guardCond_->set_trigger_value(true);
+        }catch(const std::bad_alloc&){
+            std::cout<<"@@@@@@@@@@@@@@: "<<packetSeq.length()<<std::endl;
+        }
     };
 
     void MSFPPacketListener::on_requested_deadline_missed(DDS::DataReader_ptr
@@ -50,9 +54,9 @@ namespace micros_swarm_framework{
     {
         printf("\n=== [MSFPPacketListener::on_requested_deadline_missed] : triggered\n");
         printf("\n=== [MSFPPacketListener::on_requested_deadline_missed] : stopping\n");
-        closed_ = true;
+        //closed_ = true;
         // unblock the waitset in Subscriber main loop
-        guardCond_->set_trigger_value(true);
+        //guardCond_->set_trigger_value(true);
     };
 
     void MSFPPacketListener::on_requested_incompatible_qos(DDS::DataReader_ptr
