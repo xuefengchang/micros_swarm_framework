@@ -112,7 +112,6 @@ void barrier_wait()
     ros::Rate loop_rate(1);
     while(ros::ok())
     {
-        std::cout<<"barrier size: "<<barrier.virtualStigmergySize()<<std::endl;
         if(barrier.virtualStigmergySize()==ROBOT_SUM)
             break;
         ros::spinOnce();

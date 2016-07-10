@@ -7,7 +7,6 @@
 #include "opensplice_dds/check_status.h"
 #include "opensplice_dds/ccpp_MSFPPacket.h"
 #include "opensplice_dds/example_main.h"
-
 #include "opensplice_dds/publisher.h"
 
 using namespace DDS;
@@ -22,7 +21,7 @@ namespace micros_swarm_framework{
         
         robot_id_ = robot_id;
         
-        MSFPPacketTypeName = NULL;
+        MSFPPacketTypeName = NULL;  
         
         //Create a DomainParticipantFactory and a DomainParticipant, using Default QoS settings
         dpf = DomainParticipantFactory::get_instance ();
@@ -83,14 +82,11 @@ namespace micros_swarm_framework{
         packet_->packet_source = robot_id_;
       
         userHandle = MSFPPacketDW->register_instance(*packet_);
-        
-        std::cout<<"publisher initialized"<<std::endl;
     }
     
     void Publisher::publish(MSFPPacket packet)
     {
         packet_ = &packet;
-        //std::cout<<"packet_data: "<<packet.packet_data<<std::endl;
         packet_->packet_source = robot_id_;
 
         status = MSFPPacketDW->write(*packet_, userHandle);

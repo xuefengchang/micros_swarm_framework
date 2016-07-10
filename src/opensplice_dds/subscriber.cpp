@@ -87,7 +87,7 @@ namespace micros_swarm_framework{
         timeout = { 0, 200000000 };
 
         //Print a message that the MessageBoard has opened
-        cout << "subscriber_ started..."<< endl;
+        //cout << "subscriber_ started..."<< endl;
     }
     
     void Subscriber::subscribe(void (*callBack)(const MSFPPacket& packet))
@@ -97,11 +97,11 @@ namespace micros_swarm_framework{
         myListener->MSFPPacketDR_ = MSFPPacketDataReader::_narrow(MSFPPacketDR.in());
         checkHandle(myListener->MSFPPacketDR_.in(), "MSFPPacketDataReader::_narrow");
 
-        cout << "=== [MSFPPacketSubscriber] set_listener" << endl;
+        //cout << "=== [MSFPPacketSubscriber] set_listener" << endl;
         DDS::StatusMask mask = DDS::DATA_AVAILABLE_STATUS | DDS::REQUESTED_DEADLINE_MISSED_STATUS;
         //DDS::StatusMask mask = DDS::DATA_AVAILABLE_STATUS;
         myListener->MSFPPacketDR_->set_listener(myListener, mask);
-        cout << "=== [MSFPPacketSubscriber] Ready ..." << endl;
+        //cout << "=== [MSFPPacketSubscriber] Ready ..." << endl;
         myListener->closed_ = false;
     
         /*

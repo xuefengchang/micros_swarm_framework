@@ -203,6 +203,7 @@ void barrier_wait()
             break;
         ros::spinOnce();
         loop_rate.sleep();
+        barrier.virtualStigmergyPut(robot_id_string, 1);
     }
 }
 

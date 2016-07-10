@@ -129,7 +129,6 @@ namespace micros_swarm_framework{
     
     void KernelInitializer::PacketParser(const micros_swarm_framework::MSFPPacket& msfp_packet)
     {
-        //std::cout<<"parser packet"<<std::endl;
         micros_swarm_framework::KernelHandle kh;
         unsigned int shm_rid=kh.getRobotID();
         
@@ -144,8 +143,9 @@ namespace micros_swarm_framework{
         std::string packet_data=msfp_packet.packet_data;
         #endif
         #ifdef OPENSPLICE_DDS
+        if(msfp_packet.packet_data==NULL)
+            std::cout<<"++++++++++++++++++++++"<<std::endl;
         std::string packet_data=(std::string)msfp_packet.packet_data;
-        //std::cout<<"packet_data: "<<packet_data<<std::endl;
         #endif
         
         std::istringstream archiveStream(packet_data);
@@ -224,7 +224,7 @@ namespace micros_swarm_framework{
             }
             case VIRTUAL_STIGMERGY_QUERY:
             {
-                std::cout<<"VIRTUAL_STIGMERGY_PUT"<<std::endl;
+                //std::cout<<"VIRTUAL_STIGMERGY_PUT"<<std::endl;
                 VirtualStigmergyQuery vsq;
                 archive>>vsq;
                 
@@ -258,7 +258,8 @@ namespace micros_swarm_framework{
                     p.packet_data=vsp_string;
                     #endif
                     #ifdef OPENSPLICE_DDS
-                    p.packet_data=string_dup(vsp_string.data());
+                    std::cout<<"vsp_string.data(): "<<vsp_string.data()<<std::endl;
+                    p.packet_data=vsp_string.data();
                     #endif
                     p.package_check_sum=0;
                     
@@ -280,7 +281,8 @@ namespace micros_swarm_framework{
                     p.packet_data=vsp_string;
                     #endif
                     #ifdef OPENSPLICE_DDS
-                    p.packet_data=string_dup(vsp_string.data());
+                    std::cout<<"vsp_string.data(): "<<vsp_string.data()<<std::endl;
+                    p.packet_data=vsp_string.data();
                     #endif
                     p.package_check_sum=0;
                     
@@ -300,7 +302,7 @@ namespace micros_swarm_framework{
             }
             case VIRTUAL_STIGMERGY_PUT:
             {
-                std::cout<<"VIRTUAL_STIGMERGY_PUT"<<std::endl;
+                //std::cout<<"VIRTUAL_STIGMERGY_PUT"<<std::endl;
                 VirtualStigmergyPut vsp;
                 archive>>vsp;
                 
@@ -334,7 +336,8 @@ namespace micros_swarm_framework{
                     p.packet_data=vsp_string;
                     #endif
                     #ifdef OPENSPLICE_DDS
-                    p.packet_data=string_dup(vsp_string.data());
+                    std::cout<<"vsp_string.data(): "<<vsp_string.data()<<std::endl;
+                    p.packet_data=vsp_string.data();
                     #endif
                     p.package_check_sum=0;
                     

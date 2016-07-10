@@ -15,6 +15,8 @@ int main()
     
     char buf[MAX_PACKET_LEN];
     
+    std::string test=NULL;
+    
     micros_swarm_framework::Publisher publisher("micros_swarm_framework_topic", 1);
     
     for (int i = 1; i <= NUM_PACKET; i++) {
