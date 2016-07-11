@@ -94,8 +94,12 @@ namespace micros_swarm_framework{
     
     void Publisher::publish(MSFPPacket packet)
     {
-        std::string s=(std::string)packet.packet_data;
-        packet_ = &packet;
+        //packet_ = &packet;
+        packet_->packet_source = robot_id_;
+        packet_->packet_version=1;
+        packet_->packet_type=packet.packet_type;
+        packet_->packet_data=packet.packet_data;
+        packet_->package_check_sum=111;
         status = MSFPPacketDW->write(*packet_, userHandle);
         checkStatus(status, "micros_swarm_framework::MSFPPacketDataWriter::write");
     }
