@@ -46,7 +46,9 @@ namespace micros_swarm_framework{
         status = participant->get_default_topic_qos(topic_qos);
         checkStatus(status, "DDS::DomainParticipant::get_default_topic_qos");
         
-        topic_qos.reliability.kind = DDS::BEST_EFFORT_RELIABILITY_QOS;
+        //topic_qos.reliability.kind = DDS::BEST_EFFORT_RELIABILITY_QOS;
+        topic_qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
+        topic_qos.durability_service.history_kind=KEEP_LAST_HISTORY_QOS;
 
         //Make the tailored QoS the new default
         status = participant->set_default_topic_qos(topic_qos);
@@ -71,11 +73,17 @@ namespace micros_swarm_framework{
         //Create a Subscriber for the MessageBoard application
         subscriber_ = participant->create_subscriber(sub_qos, NULL, STATUS_MASK_NONE);
         checkHandle(subscriber_.in(), "DDS::DomainParticipant::create_subscriber");
+        
+        status = subscriber_->get_default_datareader_qos(dr_qos);
+        dr_qos.history.kind = KEEP_ALL_HISTORY_QOS;
+        dr_qos.destination_order.kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+        dr_qos.durability.kind = VOLATILE_DURABILITY_QOS;
 
         //Create a DataReader for the NamedMessage Topic (using the appropriate QoS)
         parentReader = subscriber_->create_datareader(
             MSFPPacketTopic.in(),
-            DATAREADER_QOS_USE_TOPIC_QOS,
+            //DATAREADER_QOS_USE_TOPIC_QOS,
+            dr_qos,
             NULL,
             STATUS_MASK_NONE);
         checkHandle(parentReader, "DDS::Subscriber::create_datareader");

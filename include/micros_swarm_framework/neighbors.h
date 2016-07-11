@@ -134,7 +134,7 @@ namespace micros_swarm_framework{
                     }
                 }
 
-                set<unsigned int>().swap(sm);
+                std::set<unsigned int>().swap(sm);
 
                 return result;
             }
@@ -158,7 +158,7 @@ namespace micros_swarm_framework{
                     }
                 }
 
-                set<unsigned int>().swap(sm);
+                std::set<unsigned int>().swap(sm);
                 
                 return result;
             }
@@ -183,6 +183,7 @@ namespace micros_swarm_framework{
                 if(get_data_now)
                 {
                     micros_swarm_framework::KernelHandle kh;
+                    data_.clear();
                     data_=kh.getNeighbors();
                 }
                 else

@@ -61,6 +61,8 @@ namespace micros_swarm_framework{
             Swarm unionSwarm(Swarm s, unsigned int new_swarm_id);
             Swarm differenceSwarm(Swarm s, unsigned int new_swarm_id);
             Swarm negationSwarm(unsigned int new_swarm_id);
+            
+            void printSwarm();
     };
     
     Swarm::Swarm(unsigned int swarm_id)
@@ -281,6 +283,23 @@ namespace micros_swarm_framework{
         ros::Duration(0.1).sleep();
         
         return result_swarm;
+    }
+    
+    void Swarm::printSwarm()
+    { 
+        std::set<unsigned int> s = getSwarmMembers();
+    
+        micros_swarm_framework::KernelHandle kh;
+        unsigned int robot_id=kh.getRobotID();
+    
+        std::set<unsigned int>::iterator it;  
+        std::cout<<"++++++++++++++++++++++++++++++++++"<<std::endl;
+        for(it=s.begin();it!=s.end();it++)
+        {
+            std::cout<<*it<<", ";
+        }
+        std::cout<<std::endl;
+        std::cout<<"++++++++++++++++++++++++++++++++++"<<std::endl;
     }
 };
 #endif

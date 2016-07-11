@@ -62,7 +62,7 @@ namespace micros_swarm_framework{
             #endif
             
             //#ifdef OPENSPLICE_DDS
-            //Subscriber packet_subscriber_;
+            //Subscriber* packet_subscriber_;
             //#endif
             
         public:
@@ -105,6 +105,7 @@ namespace micros_swarm_framework{
             static void deleteSwarm(unsigned int swarm_id);
             static void printSwarm();
             
+            static bool inNeighborSwarm(unsigned int robot_id, unsigned int swarm_id);
             static void joinNeighborSwarm(unsigned int robot_id, unsigned int swarm_id);
             static void leaveNeighborSwarm(unsigned int robot_id, unsigned int swarm_id);
             static void insertOrRefreshNeighborSwarm(unsigned int robot_id, std::vector<unsigned int> swarm_list);

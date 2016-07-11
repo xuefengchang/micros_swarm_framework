@@ -101,7 +101,7 @@ namespace micros_swarm_framework{
 
         kh.publishPacket(p);
 
-        vector<unsigned int>().swap(swarm_list);
+        std::vector<unsigned int>().swap(swarm_list);
     }
 };
 

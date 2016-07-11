@@ -109,8 +109,8 @@ namespace micros_swarm_framework{
         #endif
         
         //#ifdef OPENSPLICE_DDS
-        //packet_subscriber_ = Subscriber("micros_swarm_framework_topic");
-        //packet_subscriber_.subscribe(&KernelInitializer::PacketParser);
+        //packet_subscriber_ = new Subscriber("micros_swarm_framework_topic");
+        //packet_subscriber_->subscribe(&KernelInitializer::PacketParser);
         //#endif
     }
     
@@ -140,13 +140,11 @@ namespace micros_swarm_framework{
         }
         
         const unsigned int packet_type=msfp_packet.packet_type;
-        std::string packet_data="";
-        
         #ifdef ROS
-        packet_data=msfp_packet.packet_data;
+        std::string packet_data=msfp_packet.packet_data;
         #endif
         #ifdef OPENSPLICE_DDS
-        packet_data=(std::string)msfp_packet.packet_data;
+        std::string packet_data=(std::string)msfp_packet.packet_data;
         #endif
         
         std::istringstream archiveStream(packet_data);
@@ -197,7 +195,31 @@ namespace micros_swarm_framework{
              
                 unsigned int robot_id=srjs.getRobotID();
                 unsigned int swarm_id=srjs.getSwarmID();
-                kh.joinNeighborSwarm(robot_id, swarm_id);
+                //kh.joinNeighborSwarm(robot_id, swarm_id);
+                
+                if(!kh.inNeighborSwarm(robot_id, swarm_id))
+                {
+                    kh.joinNeighborSwarm(robot_id, swarm_id);
+                    
+                    std::ostringstream archiveStream;
+                    boost::archive::text_oarchive archive(archiveStream);
+                    archive<<srjs;
+                    std::string srjs_str=archiveStream.str();   
+                      
+                    micros_swarm_framework::MSFPPacket p;
+                    p.packet_source=shm_rid;
+                    p.packet_version=1;
+                    p.packet_type=SINGLE_ROBOT_JOIN_SWARM;
+                    #ifdef ROS
+                    p.packet_data=srjs_str;
+                    #endif
+                    #ifdef OPENSPLICE_DDS
+                    p.packet_data=srjs_str.data();
+                    #endif
+                    p.package_check_sum=0;
+                
+                    kh.publishPacket(p);
+                }
                 
                 break;
             }
@@ -208,7 +230,31 @@ namespace micros_swarm_framework{
                 
                 unsigned int robot_id=srls.getRobotID();
                 unsigned int swarm_id=srls.getSwarmID();
-                kh.leaveNeighborSwarm(robot_id, swarm_id);
+                //kh.leaveNeighborSwarm(robot_id, swarm_id);
+                
+                if(kh.inNeighborSwarm(robot_id, swarm_id))
+                {
+                    kh.leaveNeighborSwarm(robot_id, swarm_id);
+                    
+                    std::ostringstream archiveStream;
+                    boost::archive::text_oarchive archive(archiveStream);
+                    archive<<srls;
+                    std::string srls_str=archiveStream.str();   
+                      
+                    micros_swarm_framework::MSFPPacket p;
+                    p.packet_source=shm_rid;
+                    p.packet_version=1;
+                    p.packet_type=SINGLE_ROBOT_LEAVE_SWARM;
+                    #ifdef ROS
+                    p.packet_data=srls_str;
+                    #endif
+                    #ifdef OPENSPLICE_DDS
+                    p.packet_data=srls_str.data();
+                    #endif
+                    p.package_check_sum=0;
+                
+                    kh.publishPacket(p);
+                }
                 
                 break;
             }
@@ -221,7 +267,7 @@ namespace micros_swarm_framework{
                 unsigned int robot_id=srsl.getRobotID();
                 std::vector<unsigned int> swarm_list=srsl.getSwarmList();
                 kh.insertOrRefreshNeighborSwarm(robot_id, swarm_list);
-                vector<unsigned int>().swap(swarm_list);
+                std::vector<unsigned int>().swap(swarm_list);
                 break;
             }
             case VIRTUAL_STIGMERGY_QUERY:
@@ -364,7 +410,11 @@ namespace micros_swarm_framework{
         }
         }catch(const std::bad_alloc&){
         std::cout<<"1111111111111111111111111"<<std::endl;
-        std::cout<<"%%%%: "<<packet_data<<std::endl;
+        std::cout<<"packet_source: "<<msfp_packet.packet_source<<std::endl;
+        std::cout<<"packet_version: "<<msfp_packet.packet_version<<std::endl;
+        std::cout<<"packet_type: "<<msfp_packet.packet_type<<std::endl;
+        std::cout<<"packet_data: "<<msfp_packet.packet_data<<std::endl;
+        std::cout<<"package_check_sum: "<<msfp_packet.package_check_sum<<std::endl;
         return;
         }
     }
@@ -391,7 +441,7 @@ namespace micros_swarm_framework{
         std::pair<unsigned int*, std::size_t> kernel_robot_id = segment.find<unsigned int>("shm_robot_id_"); 
         if(kernel_robot_id.first==0)
         {
-            //return 0;
+            std::cout<<"could not get correct robot id!"<<std::endl;
             return INT_MAX;
         }
         
@@ -753,6 +803,42 @@ namespace micros_swarm_framework{
         }
     }
     
+    bool KernelHandle::inNeighborSwarm(unsigned int robot_id, unsigned int swarm_id)
+    {
+        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
+        std::string shm_object_name="KernelData"+robot_id_string;
+        //std::string mutex_name="named_kernel_mtx"+robot_id_string;
+        //boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
+        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
+        VoidAllocator alloc_inst (segment.get_segment_manager());
+    
+        std::pair<shm_neighbor_swarm_type*, std::size_t> neighbor_swarm = segment.find<shm_neighbor_swarm_type>("shm_neighbor_swarm_"); 
+        if(neighbor_swarm.first==0)
+        {
+            return false;
+        }
+  
+        shm_neighbor_swarm_type *ns_pointer=neighbor_swarm.first;
+        shm_neighbor_swarm_type::iterator ns_it;
+        ns_it=ns_pointer->find(robot_id);
+    
+        if(ns_it!=ns_pointer->end())
+        {
+            if(ns_it->second.swarmIDExist(swarm_id))
+            {
+               return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
     void KernelHandle::joinNeighborSwarm(unsigned int robot_id, unsigned int swarm_id)
     {
         std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
@@ -798,7 +884,6 @@ namespace micros_swarm_framework{
             ns_pointer->insert(new_type);
             named_kernel_mtx.unlock();
         }
-    
     }
     
     void KernelHandle::leaveNeighborSwarm(unsigned int robot_id, unsigned int swarm_id)

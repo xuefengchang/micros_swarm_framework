@@ -41,7 +41,9 @@ namespace micros_swarm_framework{
         //Set the ReliabilityQosPolicy to BEST_EFFORT_RELIABILITY
         status = participant->get_default_topic_qos(topic_qos);
         checkStatus(status, "DDS::DomainParticipant::get_default_topic_qos");
-        topic_qos.reliability.kind = DDS::BEST_EFFORT_RELIABILITY_QOS;
+        //topic_qos.reliability.kind = DDS::BEST_EFFORT_RELIABILITY_QOS;
+        topic_qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
+        topic_qos.durability_service.history_kind=KEEP_LAST_HISTORY_QOS;
 
         //Make the tailored QoS the new default
         status = participant->set_default_topic_qos(topic_qos);
@@ -65,11 +67,17 @@ namespace micros_swarm_framework{
         //Create a Publisher for the application
         publisher_ = participant->create_publisher(pub_qos, NULL, STATUS_MASK_NONE);
         checkHandle(publisher_.in(), "DDS::DomainParticipant::create_publisher");
-
+        
+        status = publisher_->get_default_datawriter_qos(dw_qos);
+        dw_qos.destination_order.kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+        dw_qos.history.kind = KEEP_ALL_HISTORY_QOS;
+        dw_qos.durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        
         //Create a DataWriter for the MSFPPacket Topic (using the appropriate QoS)
         parentWriter = publisher_->create_datawriter(
             MSFPPacketTopic.in(),
-            DATAWRITER_QOS_USE_TOPIC_QOS,
+            //DATAWRITER_QOS_USE_TOPIC_QOS,
+            dw_qos,
             NULL,
             STATUS_MASK_NONE);
         checkHandle(parentWriter, "DDS::Publisher::create_datawriter (MSFPPacket)");
@@ -86,16 +94,10 @@ namespace micros_swarm_framework{
     
     void Publisher::publish(MSFPPacket packet)
     {
-        try {
-            packet_ = &packet;
-            //packet_->packet_source = robot_id_;
-            status = MSFPPacketDW->write(*packet_, userHandle);
-            checkStatus(status, "micros_swarm_framework::MSFPPacketDataWriter::write");
-        }
-        catch (const std::bad_alloc&) {
-            std::cout<<"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"<<std::endl;
-        }
-        
+        std::string s=(std::string)packet.packet_data;
+        packet_ = &packet;
+        status = MSFPPacketDW->write(*packet_, userHandle);
+        checkStatus(status, "micros_swarm_framework::MSFPPacketDataWriter::write");
     }
     
 

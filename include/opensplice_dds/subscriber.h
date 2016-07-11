@@ -40,6 +40,7 @@ namespace micros_swarm_framework{
             //QosPolicy holders
             TopicQos  topic_qos;
             SubscriberQos  sub_qos;
+            DataReaderQos  dr_qos;
             DDS::StringSeq  parameterList;
 
             //Others

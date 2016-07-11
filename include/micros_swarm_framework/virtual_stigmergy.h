@@ -127,7 +127,7 @@ namespace micros_swarm_framework{
                 p.packet_version=1;
                 p.packet_type=VIRTUAL_STIGMERGY_QUERY;
                 #ifdef ROS
-                p.packet_data=vsp_str;
+                p.packet_data=vsg_str;
                 #endif
                 #ifdef OPENSPLICE_DDS
                 //std::cout<<"vsg_str.data(): "<<vsg_str.data()<<std::endl;
