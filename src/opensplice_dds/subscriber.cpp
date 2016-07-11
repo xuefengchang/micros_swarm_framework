@@ -48,7 +48,7 @@ namespace micros_swarm_framework{
         
         //topic_qos.reliability.kind = DDS::BEST_EFFORT_RELIABILITY_QOS;
         topic_qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
-        topic_qos.durability_service.history_kind=KEEP_LAST_HISTORY_QOS;
+        //topic_qos.durability_service.history_kind=KEEP_LAST_HISTORY_QOS;
 
         //Make the tailored QoS the new default
         status = participant->set_default_topic_qos(topic_qos);
@@ -92,7 +92,7 @@ namespace micros_swarm_framework{
         MSFPPacketDR = MSFPPacketDataReader::_narrow(parentReader);
         checkHandle(MSFPPacketDR.in(), "NetworkPartitionsData::MSFPPacketDataReader::_narrow");
 
-        timeout = { 0, 200000000 };
+        //timeout = { 0, 200000000 };
 
         //Print a message that the MessageBoard has opened
         //cout << "subscriber_ started..."<< endl;
@@ -106,8 +106,8 @@ namespace micros_swarm_framework{
         checkHandle(myListener->MSFPPacketDR_.in(), "MSFPPacketDataReader::_narrow");
 
         //cout << "=== [MSFPPacketSubscriber] set_listener" << endl;
-        DDS::StatusMask mask = DDS::DATA_AVAILABLE_STATUS | DDS::REQUESTED_DEADLINE_MISSED_STATUS;
-        //DDS::StatusMask mask = DDS::DATA_AVAILABLE_STATUS;
+        //DDS::StatusMask mask = DDS::DATA_AVAILABLE_STATUS | DDS::REQUESTED_DEADLINE_MISSED_STATUS;
+        DDS::StatusMask mask = DDS::DATA_AVAILABLE_STATUS;
         myListener->MSFPPacketDR_->set_listener(myListener, mask);
         //cout << "=== [MSFPPacketSubscriber] Ready ..." << endl;
         //myListener->closed_ = false;

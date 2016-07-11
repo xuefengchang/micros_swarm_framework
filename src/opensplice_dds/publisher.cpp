@@ -13,13 +13,13 @@ using namespace DDS;
 
 namespace micros_swarm_framework{
     
-    Publisher::Publisher(std::string topic_name, unsigned int robot_id)
+    Publisher::Publisher(std::string topic_name)
     {
         domain = 0;
         
         topic_name_ = topic_name.data();
         
-        robot_id_ = robot_id;
+        //robot_id_ = robot_id;
         
         MSFPPacketTypeName = NULL;  
         
@@ -43,7 +43,7 @@ namespace micros_swarm_framework{
         checkStatus(status, "DDS::DomainParticipant::get_default_topic_qos");
         //topic_qos.reliability.kind = DDS::BEST_EFFORT_RELIABILITY_QOS;
         topic_qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
-        topic_qos.durability_service.history_kind=KEEP_LAST_HISTORY_QOS;
+        //topic_qos.durability_service.history_kind=KEEP_LAST_HISTORY_QOS;
 
         //Make the tailored QoS the new default
         status = participant->set_default_topic_qos(topic_qos);
@@ -72,7 +72,7 @@ namespace micros_swarm_framework{
         dw_qos.destination_order.kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
         dw_qos.history.kind = KEEP_ALL_HISTORY_QOS;
         dw_qos.durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-        
+
         //Create a DataWriter for the MSFPPacket Topic (using the appropriate QoS)
         parentWriter = publisher_->create_datawriter(
             MSFPPacketTopic.in(),
@@ -86,21 +86,22 @@ namespace micros_swarm_framework{
         MSFPPacketDW = MSFPPacketDataWriter::_narrow(parentWriter);
         checkHandle(MSFPPacketDW.in(), "micros_swarm_framework::MSFPPacketDataWriter::_narrow");
         
-        packet_=new micros_swarm_framework::MSFPPacket();
-        packet_->packet_source = robot_id_;
-        userHandle = MSFPPacketDW->register_instance(*packet_);
+        //packet_=new micros_swarm_framework::MSFPPacket();
+        //packet_->packet_source = robot_id_;
+        //userHandle = MSFPPacketDW->register_instance(*packet_);
     }
     
-    
-    void Publisher::publish(MSFPPacket packet)
+    void Publisher::publish(const MSFPPacket& packet)
     {
-        //packet_ = &packet;
-        packet_->packet_source = robot_id_;
-        packet_->packet_version=1;
-        packet_->packet_type=packet.packet_type;
-        packet_->packet_data=packet.packet_data;
-        packet_->package_check_sum=111;
-        status = MSFPPacketDW->write(*packet_, userHandle);
+        //packet_->packet_source = robot_id_;
+        //packet_->packet_version=1;
+        //packet_->packet_type=packet.packet_type;
+        //packet_->packet_data=packet.packet_data;
+        //packet_->package_check_sum=111;
+        //status = MSFPPacketDW->write(*packet_, userHandle);
+        //checkStatus(status, "micros_swarm_framework::MSFPPacketDataWriter::write");
+        //userHandle = MSFPPacketDW->register_instance(packet);
+        status = MSFPPacketDW->write(packet, DDS::HANDLE_NIL);
         checkStatus(status, "micros_swarm_framework::MSFPPacketDataWriter::write");
     }
     
@@ -116,13 +117,13 @@ namespace micros_swarm_framework{
     
     Publisher::~Publisher()
     {
-        status = MSFPPacketDW->dispose(*packet_, userHandle);
-        checkStatus(status, "micros_swarm_framework::MSFPPacketDataWriter::dispose");
-        status = MSFPPacketDW->unregister_instance(*packet_, userHandle);
-        checkStatus(status, "micros_swarm_framework::MSFPPacketDataWriter::unregister_instance");
+        //status = MSFPPacketDW->dispose(*packet_, userHandle);
+        //checkStatus(status, "micros_swarm_framework::MSFPPacketDataWriter::dispose");
+        //status = MSFPPacketDW->unregister_instance(*packet_, userHandle);
+        //checkStatus(status, "micros_swarm_framework::MSFPPacketDataWriter::unregister_instance");
 
         //Release the data-samples
-        delete packet_;     
+        //delete packet_;     
 
         //Remove the DataWriters 
         status = publisher_->delete_datawriter(MSFPPacketDW.in() );

@@ -8,6 +8,6 @@ module micros_swarm_framework{
         string packet_data;
         long long package_check_sum;
     };
-#pragma keylist MSFPPacket packet_source
-
+//#pragma keylist MSFPPacket packet_source
+  #pragma keylist MSFPPacket
 };

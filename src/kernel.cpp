@@ -1323,7 +1323,7 @@ namespace micros_swarm_framework{
         }
     }
     
-    void KernelHandle::publishPacket(micros_swarm_framework::MSFPPacket msfp_packet)  //广播一条packet
+    void KernelHandle::publishPacket(const micros_swarm_framework::MSFPPacket& msfp_packet)  //广播一条packet
     {
         #ifdef ROS
         ros::NodeHandle n;
@@ -1349,8 +1349,8 @@ namespace micros_swarm_framework{
         #endif
         
         #ifdef OPENSPLICE_DDS
-        unsigned int shm_rid=getRobotID();
-        static micros_swarm_framework::Publisher publisher=Publisher("micros_swarm_framework_topic", shm_rid);
+        //unsigned int shm_rid=getRobotID();
+        static micros_swarm_framework::Publisher publisher=Publisher("micros_swarm_framework_topic");
         publisher.publish(msfp_packet);
         #endif
     }

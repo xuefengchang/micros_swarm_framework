@@ -134,7 +134,7 @@ namespace micros_swarm_framework{
             #endif
             */
             //publish a packet
-            static void publishPacket(micros_swarm_framework::MSFPPacket msfp_packet);
+            static void publishPacket(const micros_swarm_framework::MSFPPacket& msfp_packet);
     };
     
 };

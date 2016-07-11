@@ -11,7 +11,7 @@ __micros_swarm_framework_MSFPPacket__name(void)
 const char *
 __micros_swarm_framework_MSFPPacket__keys(void)
 {
-    return (const char*)"packet_source";
+    return (const char*)"";
 }
 
 #include <v_kernel.h>
