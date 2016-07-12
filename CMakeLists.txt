@@ -55,19 +55,20 @@ endif()
 ## is used, also find other catkin packages
 
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  std_msgs
-  nav_msgs
-  geometry_msgs
-  message_generation
+   nodelet
+   roscpp
+   rospy
+   std_msgs
+   nav_msgs
+   geometry_msgs
+   message_generation
 )
 
 find_package(Boost REQUIRED COMPONENTS
-  system
-  thread
-  regex
-  serialization
+   system
+   thread
+   regex
+   serialization
 )
     
 include_directories(

@@ -1,3 +1,24 @@
+/**
+Software License Agreement (BSD)
+\file      subscriber.cpp
+\authors Xuefeng Chang <changxuefengcn@163.com>
+\copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that
+the following conditions are met:
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the
+   following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+   following disclaimer in the documentation and/or other materials provided with the distribution.
+ * Neither the name of micROS Team, HPCL, nor the names of its contributors may be used to endorse or promote
+   products derived from this software without specific prior written permission.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WAR-
+RANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, IN-
+DIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 #include <iostream>
 #include <string>
@@ -15,12 +36,8 @@ namespace micros_swarm_framework{
     
     Subscriber::Subscriber(std::string topic_name)
     {
-        topic_name_ = topic_name.data();
-        
-        //packetSeq = new MSFPPacketSeq();
-        //infoSeq = new SampleInfoSeq();
         domain = 0;
-        //terminated = false;
+        topic_name_ = topic_name.data();
         MSFPPacketTypeName = NULL;
     
         //Create a DomainParticipantFactory and a DomainParticipant (using Default QoS settings)
@@ -48,7 +65,7 @@ namespace micros_swarm_framework{
         
         //topic_qos.reliability.kind = DDS::BEST_EFFORT_RELIABILITY_QOS;
         topic_qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
-        //topic_qos.durability_service.history_kind=KEEP_LAST_HISTORY_QOS;
+        topic_qos.durability_service.history_kind=KEEP_LAST_HISTORY_QOS;
 
         //Make the tailored QoS the new default
         status = participant->set_default_topic_qos(topic_qos);
@@ -82,7 +99,6 @@ namespace micros_swarm_framework{
         //Create a DataReader for the NamedMessage Topic (using the appropriate QoS)
         parentReader = subscriber_->create_datareader(
             MSFPPacketTopic.in(),
-            //DATAREADER_QOS_USE_TOPIC_QOS,
             dr_qos,
             NULL,
             STATUS_MASK_NONE);
@@ -91,11 +107,6 @@ namespace micros_swarm_framework{
         //Narrow the abstract parent into its typed representative
         MSFPPacketDR = MSFPPacketDataReader::_narrow(parentReader);
         checkHandle(MSFPPacketDR.in(), "NetworkPartitionsData::MSFPPacketDataReader::_narrow");
-
-        //timeout = { 0, 200000000 };
-
-        //Print a message that the MessageBoard has opened
-        //cout << "subscriber_ started..."<< endl;
     }
     
     void Subscriber::subscribe(void (*callBack)(const MSFPPacket& packet))
@@ -105,57 +116,10 @@ namespace micros_swarm_framework{
         myListener->MSFPPacketDR_ = MSFPPacketDataReader::_narrow(MSFPPacketDR.in());
         checkHandle(myListener->MSFPPacketDR_.in(), "MSFPPacketDataReader::_narrow");
 
-        //cout << "=== [MSFPPacketSubscriber] set_listener" << endl;
         //DDS::StatusMask mask = DDS::DATA_AVAILABLE_STATUS | DDS::REQUESTED_DEADLINE_MISSED_STATUS;
         DDS::StatusMask mask = DDS::DATA_AVAILABLE_STATUS;
         myListener->MSFPPacketDR_->set_listener(myListener, mask);
-        //cout << "=== [MSFPPacketSubscriber] Ready ..." << endl;
-        //myListener->closed_ = false;
-    
-        /*
-        //waitset used to avoid spinning in the loop below
-        DDS::WaitSet_var ws = new DDS::WaitSet();
-        ws->attach_condition(myListener->guardCond_);
-        DDS::ConditionSeq condSeq;
-        while (!myListener->closed_)
-        {
-            //To avoid spinning here. We can either use a sleep or better a WaitSet.
-            ws->wait(condSeq, timeout);
-            myListener->guardCond_->set_trigger_value(false);
-        }
-        cout << "=== [MSFPPacketSubscriber] Market Closed." << endl;
-        */
     }
-    
-    /*
-    void Subscriber::subscribe2()
-    {
-        while(!terminated)
-        {
-            //Note: using read does not remove the samples from unregistered instances from the DataReader. This means
-            //that the DataRase would use more and more resources. That's why we use take here instead
-            status = MSFPPacketDR->take(
-                packetSeq,
-                infoSeq,
-                LENGTH_UNLIMITED,
-                ANY_SAMPLE_STATE,
-                ANY_VIEW_STATE,
-                ALIVE_INSTANCE_STATE );
-            checkStatus(status, "NetworkPartitionsData::MSFPPacketDataReader::take");
-
-            for (ULong i = 0; i < packetSeq->length(); i++) {
-                MSFPPacket *packet = &(packetSeq[i]); 
-                cout<<packet->packet_source<<": "<<packet->packet_version<<", "<<packet->packet_type<<", "<<packet->packet_data<<", "<<packet->package_check_sum<<endl;
-            }
-
-            status = MSFPPacketDR->return_loan(packetSeq, infoSeq);
-            checkStatus(status, "NetworkPartitionsData::MSFPPacketDataReader::return_loan");
-
-            //Sleep for some amount of time, so as not to consume too many CPU cycles.
-            //sleep(1);
-        }
-    }
-    */
     
     Subscriber::~Subscriber()
     {
@@ -179,21 +143,7 @@ namespace micros_swarm_framework{
         status = dpf->delete_participant(participant.in());
         checkStatus(status, "DDS::DomainParticipantFactory::delete_participant");
         
-        cout << "Completed subscriber" << endl;
-        
-        /*
-        try {
-            if (!CORBA::is_nil (participant.in ())) {
-                participant->delete_contained_entities();
-            }
-            if (!CORBA::is_nil (dpf.in ())) {
-                dpf->delete_participant(participant.in ());
-            }
-        } catch (CORBA::Exception& e) {
-            std::cout<<"Exception caught in cleanup."<<std::endl;
-            exit(1);
-        }
-        */
+        //cout << "Completed subscriber" << endl;
     }
 };
 
