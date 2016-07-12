@@ -32,7 +32,7 @@ namespace micros_swarm_framework{
 
         status = MSFPPacketDR_->take(packetSeq, infoSeq, LENGTH_UNLIMITED,
         ANY_SAMPLE_STATE, ANY_VIEW_STATE, ANY_INSTANCE_STATE);
-        //checkStatus(status, "MSFPPacketDataReader::read");
+        checkStatus(status, "MSFPPacketDataReader::read");
 
         for (CORBA::ULong i = 0; i < packetSeq.length(); i++)
         {

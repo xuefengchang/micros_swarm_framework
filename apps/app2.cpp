@@ -206,7 +206,7 @@ void barrier_wait()
         loop_rate.sleep();
         std::cout<<kh.getRobotID()<<"barrier.virtualStigmergySize(): "<<barrier.virtualStigmergySize()<<std::endl;
         //if(count<10)
-         //   barrier.virtualStigmergyPut(robot_id_string, 1);
+        //    barrier.virtualStigmergyPut(robot_id_string, 1);
         //count++;
     }
 }
@@ -254,9 +254,8 @@ int main(int argc, char** argv){
     micros_swarm_framework::Swarm blue_swarm(BLUE_SWARM);
     blue_swarm.selectSwarm(bfblue);
     
-    //ros::Duration(5).sleep();   
-    red_swarm.printSwarm();
-    blue_swarm.printSwarm();
+    //red_swarm.printSwarm();
+    //blue_swarm.printSwarm();
     
     red_swarm.execute(&motion_red);
     blue_swarm.execute(&motion_blue);

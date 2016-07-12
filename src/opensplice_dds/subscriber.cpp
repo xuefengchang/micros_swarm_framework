@@ -17,10 +17,10 @@ namespace micros_swarm_framework{
     {
         topic_name_ = topic_name.data();
         
-        packetSeq = new MSFPPacketSeq();
-        infoSeq = new SampleInfoSeq();
+        //packetSeq = new MSFPPacketSeq();
+        //infoSeq = new SampleInfoSeq();
         domain = 0;
-        terminated = false;
+        //terminated = false;
         MSFPPacketTypeName = NULL;
     
         //Create a DomainParticipantFactory and a DomainParticipant (using Default QoS settings)
@@ -127,6 +127,7 @@ namespace micros_swarm_framework{
         */
     }
     
+    /*
     void Subscriber::subscribe2()
     {
         while(!terminated)
@@ -154,9 +155,11 @@ namespace micros_swarm_framework{
             //sleep(1);
         }
     }
+    */
     
     Subscriber::~Subscriber()
     {
+        
         //Remove the DataReade
         status = subscriber_->delete_datareader(MSFPPacketDR.in());
         checkStatus(status, "DDS::Subscriber::delete_datareader");
@@ -175,6 +178,22 @@ namespace micros_swarm_framework{
         //Remove the DomainParticipant
         status = dpf->delete_participant(participant.in());
         checkStatus(status, "DDS::DomainParticipantFactory::delete_participant");
+        
+        cout << "Completed subscriber" << endl;
+        
+        /*
+        try {
+            if (!CORBA::is_nil (participant.in ())) {
+                participant->delete_contained_entities();
+            }
+            if (!CORBA::is_nil (dpf.in ())) {
+                dpf->delete_participant(participant.in ());
+            }
+        } catch (CORBA::Exception& e) {
+            std::cout<<"Exception caught in cleanup."<<std::endl;
+            exit(1);
+        }
+        */
     }
 };
 

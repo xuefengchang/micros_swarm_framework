@@ -125,6 +125,7 @@ namespace micros_swarm_framework{
         //Release the data-samples
         //delete packet_;     
 
+        
         //Remove the DataWriters 
         status = publisher_->delete_datawriter(MSFPPacketDW.in() );
         checkStatus(status, "DDS::Publisher::delete_datawriter (MSFPPacketDW)");
@@ -143,6 +144,21 @@ namespace micros_swarm_framework{
         status = dpf->delete_participant( participant.in() );
         checkStatus(status, "DDS::DomainParticipantFactory::delete_participant");
 
-        cout << "Completed ter example" << endl;
+        cout << "Completed publisher" << endl;
+        
+        
+        /*
+        try {
+            if (!CORBA::is_nil (participant.in ())) {
+                participant->delete_contained_entities();
+            }
+            if (!CORBA::is_nil (dpf.in ())) {
+                dpf->delete_participant(participant.in ());
+            }
+        } catch (CORBA::Exception& e) {
+            std::cout<<"Exception caught in cleanup."<<std::endl;
+            exit(1);
+        }
+        */
     }
 };

@@ -1349,8 +1349,16 @@ namespace micros_swarm_framework{
         #endif
         
         #ifdef OPENSPLICE_DDS
-        //unsigned int shm_rid=getRobotID();
         static micros_swarm_framework::Publisher publisher=Publisher("micros_swarm_framework_topic");
+        static bool flag=false;
+        
+        if(!flag)
+        {
+            //ros::Duration(1).sleep();
+            boost::this_thread::sleep(boost::posix_time::seconds(20)); 
+            flag=true;
+        }
+        
         publisher.publish(msfp_packet);
         #endif
     }

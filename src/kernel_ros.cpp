@@ -24,6 +24,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/Twist.h"
 
+#include <boost/thread.hpp>
+
 #include "micros_swarm_framework/micros_swarm_framework.h"
 
 #define PUBLISH_ROBOT_ID_DURATION 0.1
@@ -125,6 +127,8 @@ int main(int argc, char** argv){
     #ifdef OPENSPLICE_DDS
     micros_swarm_framework::Subscriber packet_subscriber_("micros_swarm_framework_topic");
     packet_subscriber_.subscribe(&micros_swarm_framework::KernelInitializer::PacketParser);
+    //ros::Duration(1).sleep();
+    boost::this_thread::sleep(boost::posix_time::seconds(20)); 
     #endif
     
     micros_swarm_framework::KernelHandle kh;

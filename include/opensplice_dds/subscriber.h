@@ -34,14 +34,14 @@ namespace micros_swarm_framework{
             //Type-specific DDS entities
             MSFPPacketTypeSupport_var  MSFPPacketTS;
             MSFPPacketDataReader_var  MSFPPacketDR;
-            MSFPPacketSeq_var  packetSeq;
-            SampleInfoSeq_var  infoSeq;
+            //MSFPPacketSeq_var  packetSeq;
+            //SampleInfoSeq_var  infoSeq;
 
             //QosPolicy holders
             TopicQos  topic_qos;
             SubscriberQos  sub_qos;
             DataReaderQos  dr_qos;
-            DDS::StringSeq  parameterList;
+            //DDS::StringSeq  parameterList;
 
             //Others
             bool  terminated;
@@ -50,7 +50,7 @@ namespace micros_swarm_framework{
         public:
             Subscriber(std::string topic_name);
             void subscribe(void (*callBack)(const MSFPPacket& packet));
-            void subscribe2();
+            //void subscribe2();
             ~Subscriber();
     };
 };
