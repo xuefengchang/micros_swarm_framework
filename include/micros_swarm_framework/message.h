@@ -63,6 +63,9 @@ namespace micros_swarm_framework{
         
         NEIGHBOR_BROADCAST_KEY_VALUE,  //broadcast <key, value> tuple
         
+        BARRIER_SYN,  //userd for barrier, syn
+        BARRIER_ACK,  //used for barrier, ack
+        
         MSFP_PACKET_TYPE_COUNT  //MSFPPacket type count
     };
 
@@ -168,104 +171,6 @@ namespace micros_swarm_framework{
             std::vector<unsigned int> getSwarmList(){return swarm_list_;}
     };
     
-    class TaskAssignSwarmTask{
-        private:
-            unsigned int swarm_task_id_;
-            unsigned int swarm_id_;
-            std::string task_data_link_name_;
-            
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & swarm_task_id_;
-                ar & swarm_id_;
-                ar & task_data_link_name_;
-            }
-        public:
-            TaskAssignSwarmTask()
-            {
-                swarm_task_id_=-1;
-                swarm_id_=-1;
-                task_data_link_name_="";
-            }
-            
-            TaskAssignSwarmTask(unsigned int swarm_task_id, unsigned int swarm_id, std::string task_data_link_name):\
-                swarm_task_id_(swarm_task_id), swarm_id_(swarm_id), task_data_link_name_(task_data_link_name){}
-        
-            unsigned int getSwarmTaskID(){return swarm_task_id_;}
-            unsigned int getSwarmID(){return swarm_id_;}
-            std::string getTaskDataLinkName(){return task_data_link_name_;}
-            
-    };
-    
-    class SingleRobotReceiveSwarmTask{
-        private:
-            unsigned int swarm_task_id_;
-            unsigned int swarm_id_;
-            
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & swarm_task_id_;
-                ar & swarm_id_;
-            }
-        public:
-            SingleRobotReceiveSwarmTask(){}
-            SingleRobotReceiveSwarmTask(unsigned int swarm_task_id, unsigned int swarm_id):\
-                swarm_task_id_(swarm_task_id), swarm_id_(swarm_id){}
-                
-            unsigned int getSwarmTaskID(){return swarm_task_id_;}
-            unsigned int getSwarmID(){return swarm_id_;}
-    
-    };
-    
-    class TaskAssignSingleTask{
-        private:
-            unsigned int single_task_id_;
-            unsigned int robot_id_;
-            std::string task_data_link_name_;
-            
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & single_task_id_;
-                ar & robot_id_;
-                ar & task_data_link_name_;
-            }
-        public:
-            TaskAssignSingleTask(){}
-            TaskAssignSingleTask(unsigned int single_task_id, unsigned int robot_id, std::string task_data_link_name):\
-                single_task_id_(single_task_id), robot_id_(robot_id), task_data_link_name_(task_data_link_name){}
-        
-            unsigned int getSingleTaskID(){return single_task_id_;}
-            unsigned int getRobotID(){return robot_id_;}
-            std::string getTaskDataLinkName(){return task_data_link_name_;}
-    };
-    
-    class SingleRobotReceiveSingleTask{
-        private:
-            unsigned int single_task_id_;
-            unsigned int robot_id_;
-            
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & single_task_id_;
-                ar & robot_id_;
-            }
-        public:
-            SingleRobotReceiveSingleTask(){}
-            SingleRobotReceiveSingleTask(unsigned int single_task_id, unsigned int robot_id):\
-                single_task_id_(single_task_id), robot_id_(robot_id){}
-                
-            unsigned int getSingleTaskID(){return single_task_id_;}
-            unsigned int getRobotID(){return robot_id_;}
-    };
-    
     class VirtualStigmergyQuery
     {
         private:
@@ -329,6 +234,40 @@ namespace micros_swarm_framework{
             std::string getVirtualStigmergyKey(){return virtual_stigmergy_key_;}
             std::string getVirtualStigmergyValue(){return virtual_stigmergy_value_;}
             time_t getVirtualStigmergyTimestamp(){return virtual_stigmergy_timestamp_;}
+            unsigned int getRobotID(){return robot_id_;}
+    };
+    
+    class Barrier_Syn
+    {
+        private:
+            std::string s_;
+            
+            friend class boost::serialization::access;
+            template<class Archive>
+            void serialize(Archive & ar, const unsigned int version)
+            {
+                ar & s_;
+            }
+        public:
+            Barrier_Syn(){};
+            Barrier_Syn(std::string s):s_(s){}
+            std::string getString(){return s_;}
+    };
+    
+    class Barrier_Ack
+    {
+        private:
+            unsigned int robot_id_;
+            
+            friend class boost::serialization::access;
+            template<class Archive>
+            void serialize(Archive & ar, const unsigned int version)
+            {
+                ar & robot_id_;
+            }
+        public:
+            Barrier_Ack(){};
+            Barrier_Ack(unsigned int robot_id):robot_id_(robot_id){}
             unsigned int getRobotID(){return robot_id_;}
     };
     

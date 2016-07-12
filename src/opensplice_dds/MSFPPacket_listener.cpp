@@ -16,7 +16,12 @@
 
 #include "opensplice_dds/MSFPPacket_listener.h"
 #include "opensplice_dds/check_status.h"
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/string.hpp> 
+#include <boost/serialization/vector.hpp>
 #include <sstream>
+#include <fstream>
 
 using namespace DDS;
 
@@ -36,7 +41,11 @@ namespace micros_swarm_framework{
 
         for (CORBA::ULong i = 0; i < packetSeq.length(); i++)
         {
-            (*callBack_)(packetSeq[i]);
+            try{
+                (*callBack_)(packetSeq[i]);
+            }catch(const std::bad_alloc&){
+                return;
+            }
         }
         status = MSFPPacketDR_->return_loan(packetSeq, infoSeq);
         checkStatus(status, "MSFPPacketDataReader::return_loan");

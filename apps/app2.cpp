@@ -188,6 +188,48 @@ void motion_blue()
     }
 }
 
+/*
+void barrier_wait()
+{
+    //barrier
+    micros_swarm_framework::KernelHandle kh;
+    unsigned int robot_id=kh.getRobotID();
+    
+    micros_swarm_framework::Barrier_Syn bs("SYN");
+                
+    std::ostringstream archiveStream;
+    boost::archive::text_oarchive archive(archiveStream);
+    archive<<bs;
+    std::string bs_string=archiveStream.str();
+    
+    micros_swarm_framework::MSFPPacket p;
+    p.packet_source=robot_id;
+    p.packet_version=1;
+    p.packet_type=micros_swarm_framework::BARRIER_SYN;
+    #ifdef ROS
+    p.packet_data=bs_string;
+    #endif
+    #ifdef OPENSPLICE_DDS
+    p.packet_data=bs_string.data();
+    #endif
+    p.package_check_sum=0;
+    
+    ros::Rate loop_rate(1);
+    while(ros::ok())
+    {
+        kh.publishPacket(p);
+        int barrier_size=kh.getBarrierSize();
+        if(barrier_size==ROBOT_SUM-1)
+            break;
+        
+        ros::spinOnce();
+        loop_rate.sleep();
+        std::cout<<robot_id<<"barrier_size: "<<barrier_size<<std::endl;
+    }
+}
+*/
+
+
 void barrier_wait()
 {
     //barrier
@@ -210,6 +252,7 @@ void barrier_wait()
         //count++;
     }
 }
+
 
 void baseCallback(const nav_msgs::Odometry& lmsg)
 {

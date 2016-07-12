@@ -124,12 +124,12 @@ int main(int argc, char** argv){
     
     micros_swarm_framework::KernelInitializer kernel_init;
 
-    #ifdef OPENSPLICE_DDS
-    micros_swarm_framework::Subscriber packet_subscriber_("micros_swarm_framework_topic");
-    packet_subscriber_.subscribe(&micros_swarm_framework::KernelInitializer::PacketParser);
+    //#ifdef OPENSPLICE_DDS
+    //micros_swarm_framework::Subscriber packet_subscriber_("micros_swarm_framework_topic");
+    //packet_subscriber_.subscribe(&micros_swarm_framework::KernelInitializer::PacketParser);
     //ros::Duration(1).sleep();
-    boost::this_thread::sleep(boost::posix_time::seconds(20)); 
-    #endif
+    //boost::this_thread::sleep(boost::posix_time::seconds(20)); 
+    //#endif
     
     micros_swarm_framework::KernelHandle kh;
     kh.setRobotID((unsigned int)robot_id);

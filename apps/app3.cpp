@@ -190,9 +190,9 @@ void barrier_wait()
         ros::spinOnce();
         loop_rate.sleep();
         std::cout<<kh.getRobotID()<<"barrier.virtualStigmergySize(): "<<barrier.virtualStigmergySize()<<std::endl;
-        if(count<10)
-            barrier.virtualStigmergyPut(robot_id_string, 1);
-        count++;
+        //if(count<10)
+        //    barrier.virtualStigmergyPut(robot_id_string, 1);
+        //count++;
     }
 }
 

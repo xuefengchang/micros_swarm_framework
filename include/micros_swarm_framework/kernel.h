@@ -61,9 +61,9 @@ namespace micros_swarm_framework{
             ros::Subscriber packet_subscriber_;
             #endif
             
-            //#ifdef OPENSPLICE_DDS
-            //Subscriber* packet_subscriber_;
-            //#endif
+            #ifdef OPENSPLICE_DDS
+            Subscriber* packet_subscriber_;
+            #endif
             
         public:
             //parser for the MSFPPacket
@@ -122,17 +122,9 @@ namespace micros_swarm_framework{
             static void deleteVirtualStigmergyValue(unsigned int id, std::string key_std);
             static void printVirtualStigmergy();
             
-            /*
-            #ifdef OPENSPLICE_DDS
-            micros_swarm_framework::Publisher* publisher_;
-            
-            KernelHandle()
-            {
-                unsigned int shm_rid=getRobotID();
-                publisher_=new Publisher("micros_swarm_framework_topic", shm_rid);
-            }
-            #endif
-            */
+            static void insertBarrier(int robot_id);
+            static int getBarrierSize();
+      
             //publish a packet
             static void publishPacket(const micros_swarm_framework::MSFPPacket& msfp_packet);
     };

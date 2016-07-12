@@ -103,15 +103,22 @@ namespace micros_swarm_framework{
             std::cerr << ex.what() << std::endl;
         }
         
+        try{
+            shm_int_vector *sbt_p=segment.construct<shm_int_vector>("shm_barrier_")(alloc_inst);
+        }catch(boost::interprocess::bad_alloc &ex){
+            std::cerr << ex.what() << std::endl;
+        }
+        
         #ifdef ROS
         ros::NodeHandle n;
         packet_subscriber_ = n.subscribe("/micros_swarm_framework_topic", 1000, &KernelInitializer::packetCallback, this, ros::TransportHints().udp());
         #endif
         
-        //#ifdef OPENSPLICE_DDS
-        //packet_subscriber_ = new Subscriber("micros_swarm_framework_topic");
-        //packet_subscriber_->subscribe(&KernelInitializer::PacketParser);
-        //#endif
+        #ifdef OPENSPLICE_DDS
+        packet_subscriber_ = new Subscriber("micros_swarm_framework_topic");
+        packet_subscriber_->subscribe(&KernelInitializer::PacketParser);
+        boost::this_thread::sleep(boost::posix_time::seconds(20)); 
+        #endif
     }
     
     void KernelInitializer::initRobotID(int robot_id)
@@ -138,7 +145,8 @@ namespace micros_swarm_framework{
         {
             return;
         }
-        
+       
+        try{
         const unsigned int packet_type=msfp_packet.packet_type;
         #ifdef ROS
         std::string packet_data=msfp_packet.packet_data;
@@ -148,7 +156,6 @@ namespace micros_swarm_framework{
         #endif
         
         std::istringstream archiveStream(packet_data);
-        try{
         boost::archive::text_iarchive archive(archiveStream);
 
         switch(packet_type)
@@ -374,7 +381,7 @@ namespace micros_swarm_framework{
                     std::ostringstream archiveStream2;
                     boost::archive::text_oarchive archive2(archiveStream2);
                     archive2<<vsp;
-                    std::string vsp_string=archiveStream.str();
+                    std::string vsp_string=archiveStream2.str();
                     
                     micros_swarm_framework::MSFPPacket p;
                     p.packet_source=shm_rid;
@@ -402,20 +409,57 @@ namespace micros_swarm_framework{
                 }
                 break;
             }
+            case BARRIER_SYN:
+            {
+                //std::cout<<"BARRIER_SYN"<<std::endl;
+                
+                Barrier_Syn bs;
+                archive>>bs;
+                if(bs.getString()!="SYN")
+                {
+                    return;
+                }
+                
+                Barrier_Ack ba(msfp_packet.packet_source);
+                
+                std::ostringstream archiveStream2;
+                boost::archive::text_oarchive archive2(archiveStream2);
+                archive2<<ba;
+                std::string ba_string=archiveStream2.str();
+                    
+                micros_swarm_framework::MSFPPacket p;
+                p.packet_source=shm_rid;
+                p.packet_version=1;
+                p.packet_type=BARRIER_ACK;
+                #ifdef ROS
+                p.packet_data=ba_string;
+                #endif
+                #ifdef OPENSPLICE_DDS
+                p.packet_data=ba_string.data();
+                #endif
+                p.package_check_sum=0;
+                    
+                kh.publishPacket(p);
+                
+                ros::Duration(0.1).sleep();
+            }
+            case BARRIER_ACK:
+            {
+                //std::cout<<"BARRIER_ACK"<<std::endl;
+                Barrier_Ack ba;
+                archive>>ba;
+                
+                if(shm_rid==ba.getRobotID())
+                    kh.insertBarrier(msfp_packet.packet_source);
+            }
             
             default:
             {
-                std::cout<<"UNDEFINED PACKET TYPE!"<<std::endl;
+                //std::cout<<"UNDEFINED PACKET TYPE!"<<std::endl;
             }
         }
-        }catch(const std::bad_alloc&){
-        std::cout<<"1111111111111111111111111"<<std::endl;
-        std::cout<<"packet_source: "<<msfp_packet.packet_source<<std::endl;
-        std::cout<<"packet_version: "<<msfp_packet.packet_version<<std::endl;
-        std::cout<<"packet_type: "<<msfp_packet.packet_type<<std::endl;
-        std::cout<<"packet_data: "<<msfp_packet.packet_data<<std::endl;
-        std::cout<<"package_check_sum: "<<msfp_packet.package_check_sum<<std::endl;
-        return;
+        }catch(const boost::archive::archive_exception&){
+            return;
         }
     }
     
@@ -1321,6 +1365,51 @@ namespace micros_swarm_framework{
             std::cout<<"]"<<std::endl;
             std::cout<<std::endl;
         }
+    }
+    
+    void KernelHandle::insertBarrier(int robot_id)
+    {
+        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
+        std::string shm_object_name="KernelData"+robot_id_string;
+        std::string mutex_name="named_kernel_mtx"+robot_id_string;
+        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
+        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
+        VoidAllocator alloc_inst (segment.get_segment_manager());
+    
+        std::pair<shm_int_vector*, std::size_t> barrier = segment.find<shm_int_vector>("shm_barrier_"); 
+        if(barrier.first==0)
+        {
+            return;
+        }
+  
+        shm_int_vector *b_pointer=barrier.first;
+        shm_int_vector::iterator res=std::find(b_pointer->begin(), b_pointer->end(), robot_id);
+    
+        if(res==b_pointer->end())
+        {
+            named_kernel_mtx.lock();
+            b_pointer->push_back(robot_id);
+            named_kernel_mtx.unlock();
+        }
+    }
+    
+    int KernelHandle::getBarrierSize()
+    {
+        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
+        std::string shm_object_name="KernelData"+robot_id_string;
+        std::string mutex_name="named_kernel_mtx"+robot_id_string;
+        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
+        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
+        VoidAllocator alloc_inst (segment.get_segment_manager());
+    
+        std::pair<shm_int_vector*, std::size_t> barrier = segment.find<shm_int_vector>("shm_barrier_"); 
+        if(barrier.first==0)
+        {
+            return -1;
+        }
+        
+        shm_int_vector *b_pointer=barrier.first;
+        return b_pointer->size();
     }
     
     void KernelHandle::publishPacket(const micros_swarm_framework::MSFPPacket& msfp_packet)  //广播一条packet
