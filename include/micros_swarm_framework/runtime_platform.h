@@ -36,12 +36,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <boost/shared_ptr.hpp> 
 
-#include <boost/interprocess/sync/named_mutex.hpp>
-
 #include "ros/ros.h"
-
-#include "micros_swarm_framework/data_type.h"
-#include "micros_swarm_framework/message.h"
 
 #ifdef ROS
 #include "micros_swarm_framework/MSFPPacket.h"
@@ -54,20 +49,24 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "opensplice_dds/subscriber.h"
 #endif
 
+#include "micros_swarm_framework/data_type.h"
+#include "micros_swarm_framework/message.h"
+#include "micros_swarm_framework/communication_interface.h"
+
 namespace micros_swarm_framework{
 
     class  RuntimePlatform{
         private:
-           int robot_id_;
-           int robot_type_;
-           int robot_status_;
-           Base robot_base_;
-           std::map<int, NeighborBase> neighbors_;
-           std::map<int, bool> swarms_;
-           std::map<int, OthersSwarm> others_swarms_;
-           std::map<int, std::map<std::string, VirtualStigmergyTuple> > virtual_stigmergy_;
-           double neighbor_distance_;
-           std::set<int> barrier_; 
+            int robot_id_;
+            int robot_type_;
+            int robot_status_;
+            Base robot_base_;
+            std::map<int, NeighborBase> neighbors_;
+            std::map<int, bool> swarms_;
+            std::map<int, OthersSwarmTuple> others_swarms_;
+            std::map<int, std::map<std::string, VirtualStigmergyTuple> > virtual_stigmergy_;
+            double neighbor_distance_;
+            std::set<int> barrier_; 
         public:
             RuntimePlatform();
             RuntimePlatform(int robot_id);
@@ -79,6 +78,7 @@ namespace micros_swarm_framework{
             
             Base getRobotBase();
             void setRobotBase(Base robot_base);
+            void printRobotBase();
         
             std::map<int, NeighborBase> getNeighbors();
             void insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz);
@@ -104,7 +104,7 @@ namespace micros_swarm_framework{
             void printOthersSwarm();
             
             void createVirtualStigmergy(int id);
-            void insertOrUpdateVirtualStigmergy(int id, std::string key_std, std::string value_std, time_t time_now, int robot_id);
+            void insertOrUpdateVirtualStigmergy(int id, std::string key, std::string value, time_t time_now, int robot_id);
             VirtualStigmergyTuple getVirtualStigmergyTuple(int id, std::string key);
             int getVirtualStigmergySize(int id);
             void deleteVirtualStigmergy(int id);
@@ -115,8 +115,7 @@ namespace micros_swarm_framework{
             void setNeighborDistance(double neighbor_distance);
             
             void insertBarrier(int robot_id);
-            int getBarrierSize();
-     
+            int getBarrierSize(); 
     };
 };
 

@@ -33,18 +33,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <set>
 #include <queue>
 #include <algorithm>
- 
-#include <boost/interprocess/managed_shared_memory.hpp>
-#include <boost/interprocess/shared_memory_object.hpp>
-#include <boost/interprocess/allocators/allocator.hpp> 
-#include <boost/interprocess/containers/string.hpp>
-#include <boost/interprocess/containers/vector.hpp>
-#include <boost/interprocess/containers/map.hpp>
-#include <boost/interprocess/offset_ptr.hpp>
 
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
-
 #include <boost/thread.hpp>
 
 #include <boost/archive/text_oarchive.hpp>
@@ -55,20 +46,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "ros/ros.h"
 
 namespace micros_swarm_framework{
-    
-    //shared memory data type and allocator definition.
-    typedef boost::interprocess::managed_shared_memory::segment_manager  segment_manager_t;  
-
-    typedef boost::interprocess::allocator<void, segment_manager_t>  VoidAllocator;  
-    typedef boost::interprocess::allocator<int, segment_manager_t>  IntAllocator;  
-    typedef boost::interprocess::vector<int, IntAllocator>  shm_int_vector;  
-
-    typedef boost::interprocess::allocator<shm_int_vector, segment_manager_t>  IntVectorAllocator;  
-    typedef boost::interprocess::vector<shm_int_vector, IntVectorAllocator>  shm_int_vector_vector;  
-
-    typedef boost::interprocess::allocator<char, segment_manager_t>  CharAllocator;  
-    typedef boost::interprocess::basic_string<char, std::char_traits<char>, CharAllocator>  shm_string;
-    
     //Robot position in the world coordinate system
     class Base{
         private:
@@ -150,32 +127,25 @@ namespace micros_swarm_framework{
             void setVZ(float vz){vz_=vz;}
     };
     
-    typedef std::pair<const unsigned int, NeighborBase>  NeighborBaseType;  
-    typedef boost::interprocess::allocator<NeighborBaseType, segment_manager_t>  NeighborBaseTypeAllocator;
-    typedef boost::interprocess::map<unsigned int, NeighborBase, std::less<unsigned int>, NeighborBaseTypeAllocator>  shm_neighbors_type;
-
-    typedef std::pair<const unsigned int, bool>  SwarmsType;  
-    typedef boost::interprocess::allocator<SwarmsType, segment_manager_t>  SwarmsTypeAllocator;
-    typedef boost::interprocess::map<unsigned int, bool, std::less<unsigned int>, SwarmsTypeAllocator>  shm_swarms_type;
-    
     //This data structure contains all other robots's swarm information
-    class NeighborSwarm{
+    class OthersSwarmTuple{
         private:
-            shm_int_vector swarm_id_vector_;
+            std::vector<int> swarm_id_vector_;
             //when age_ is larger than the threshold, remove the tuple of the map 
-            unsigned int age_;
+            int age_;
         public:
-            NeighborSwarm(const VoidAllocator &void_alloc, unsigned int age):swarm_id_vector_(void_alloc), age_(age){}
-            ~NeighborSwarm(){}
+            OthersSwarmTuple(std::vector<int> swarm_id_vector, int age):swarm_id_vector_(swarm_id_vector), age_(age){}
+            ~OthersSwarmTuple(){}
     
-        void addSwarmID(unsigned int swarm_id)
+        void addSwarmID(int swarm_id)
         {
             swarm_id_vector_.push_back(swarm_id);
         }
         
-        void removeSwarmID(unsigned int swarm_id)
+        void removeSwarmID(int swarm_id)
         {
-            shm_int_vector::iterator iv_it;
+            /*
+            std::vector<int>::iterator iv_it;
             for(iv_it=swarm_id_vector_.begin();iv_it!=swarm_id_vector_.end();iv_it++)
             {
                 if((*iv_it)==swarm_id)
@@ -183,9 +153,12 @@ namespace micros_swarm_framework{
                 else
                     iv_it++;
             }
+            */
+            
+            swarm_id_vector_.erase(std::remove(swarm_id_vector_.begin(), swarm_id_vector_.end(), swarm_id), swarm_id_vector_.end());
         }
     
-        shm_int_vector getSwarmIDVector()
+        std::vector<int> getSwarmIDVector()
         {
             return swarm_id_vector_;
         }
@@ -195,82 +168,56 @@ namespace micros_swarm_framework{
             swarm_id_vector_.clear();
         }
     
-        void setAge(unsigned int age)
+        void setAge(int age)
         {
             age_=age;
         }
     
-        unsigned int getAge()
+        int getAge()
         {
             return age_;
         }
         
-        bool swarmIDExist(unsigned int swarm_id)
+        bool swarmIDExist(int swarm_id)
         {
-            for(int i=0;i<swarm_id_vector_.size();i++)
+            std::vector<int>::iterator it;
+            it=std::find(swarm_id_vector_.begin(), swarm_id_vector_.end(), swarm_id);
+    
+            if(it!=swarm_id_vector_.end())
             {
-                if(swarm_id_vector_[i]==swarm_id)
-                    return true;
+                return true;
             }
-            return false;
+            
+            return false; 
         }
     };
-
-    typedef std::pair<const unsigned int, NeighborSwarm>  NeighborSwarmType;  
-    typedef boost::interprocess::allocator<NeighborSwarmType, segment_manager_t>  NeighborSwarmTypeAllocator;
-    typedef boost::interprocess::map<unsigned int, NeighborSwarm, std::less<unsigned int>, NeighborSwarmTypeAllocator>  shm_neighbor_swarm_type;
     
-    class ShmVirtualStigmergyTuple{
-        private:
-            shm_string virtual_stigmergy_value_;
-            time_t virtual_stigmergy_timestamp_;
-            unsigned int robot_id_;
-        public:
-            ShmVirtualStigmergyTuple(shm_string value, time_t time, unsigned int id, const VoidAllocator &void_alloc)\
-              :virtual_stigmergy_value_(value, void_alloc), virtual_stigmergy_timestamp_(time), robot_id_(id){}
-             
-            shm_string getVirtualStigmergyValue(){return virtual_stigmergy_value_;}
-            void setVirtualStigmergyValue(shm_string value)
-            {
-                virtual_stigmergy_value_=value;
-            }
-    
-            time_t getVirtualStigmergyTimestamp(){return virtual_stigmergy_timestamp_;}
-            void setVirtualStigmergyTimestamp(time_t time_now){virtual_stigmergy_timestamp_=time_now;}
-    
-            unsigned int getRobotID(){return robot_id_;}
-            void setRobotID(unsigned int robot_id){robot_id_=robot_id;}
-    };
-
-    typedef std::pair<const shm_string, ShmVirtualStigmergyTuple>  ShmVirtualStigmergyTupleType;  
-    typedef boost::interprocess::allocator<ShmVirtualStigmergyTupleType, segment_manager_t>  ShmVirtualStigmergyTupleTypeAllocator;
-    typedef boost::interprocess::map<shm_string, ShmVirtualStigmergyTuple, std::less<shm_string>, ShmVirtualStigmergyTupleTypeAllocator>  shm_virtual_stigmergy_tuple_type;
-
-    typedef std::pair<const unsigned int, shm_virtual_stigmergy_tuple_type>  VirtualStigmergyType;  
-    typedef boost::interprocess::allocator<VirtualStigmergyType, segment_manager_t>  VirtualStigmergyTypeAllocator;
-    typedef boost::interprocess::map<unsigned int, shm_virtual_stigmergy_tuple_type, std::less<unsigned int>, VirtualStigmergyTypeAllocator>  shm_virtual_stigmergy_type;
-    
-    class VstigTuple{
+    class VirtualStigmergyTuple{
         private:
             std::string vstig_value_;
             time_t vstig_timestamp_;
             //the id of the robot which last change the virtual stigmergy
             unsigned int robot_id_;
         public:
-            VstigTuple( std::string value, time_t time, unsigned int id)\
+            VirtualStigmergyTuple( std::string value, time_t time, unsigned int id)\
               :vstig_value_(value), vstig_timestamp_(time), robot_id_(id){}
 
-            std::string getVstigValue(){return vstig_value_;}
-            void setVstigValue(std::string value)
+            std::string getVirtualStigmergyValue(){return vstig_value_;}
+            void setVirtualStigmergyValue(std::string value)
             {
                 vstig_value_=value;
             }
     
-            time_t getVstigTimestamp(){return vstig_timestamp_;}
-            void setVstigTimestamp(time_t time_now){vstig_timestamp_=time_now;}
+            time_t getVirtualStigmergyTimestamp(){return vstig_timestamp_;}
+            void setVirtualStigmergyTimestamp(time_t time_now){vstig_timestamp_=time_now;}
     
             unsigned int getRobotID(){return robot_id_;}
             void setRobotID(unsigned int robot_id){robot_id_=robot_id;}
+            
+            void print()
+            {
+                std::cout<<vstig_value_<<", "<<vstig_timestamp_<<", "<<robot_id_<<std::endl;
+            }
     };
     
     class CheckNeighborABC{
@@ -306,7 +253,7 @@ namespace micros_swarm_framework{
     };
     
     //this macro definition is used to serialize the user-defined data type
-    #define SERIALIZE  friend class boost::serialization::access;\
+    #define BOOST_SERIALIZE  friend class boost::serialization::access;\
                        template<class Archive>\
                        void serialize(Archive & ar, const unsigned int version)
                        
@@ -318,7 +265,7 @@ namespace micros_swarm_framework{
             float b_;
             std::string c_;
             
-            SERIALIZE
+            BOOST_SERIALIZE
             {
                 MEMBER a_;
                 MEMBER b_;

@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager"  args="manager" output="screen"/>
+
+</launch>
+

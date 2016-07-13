@@ -84,6 +84,13 @@ namespace micros_swarm_framework{
     {
         robot_base_=robot_base;
     }
+    
+    void RuntimePlatform::printRobotBase()
+    {
+        std::cout<<"robot base: "<<robot_base_.getX()<<", "<<robot_base_.getY()<<", "<<\
+            robot_base_.getZ()<<", "<<robot_base_.getVX()<<", "<<robot_base_.getVY()<<", "<<\
+            robot_base_.getVZ()<<std::endl;
+    }
      
     std::map<int, NeighborBase> RuntimePlatform::getNeighbors()
     {
@@ -92,9 +99,9 @@ namespace micros_swarm_framework{
      
     void RuntimePlatform::insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz)
     {
-        std::map<int, NeighborBase>::iterator n_it=std::find(neighbors_->begin(), neighbors_->end(), robot_id);
+        std::map<int, NeighborBase>::iterator n_it=neighbors_.find(robot_id);
     
-        if(n_it!=neighbors_->end())
+        if(n_it!=neighbors_.end())
         {
             NeighborBase new_neighbor_base(distance, azimuth, elevation, x, y, z,vx, vy, vz);
             n_it->second = new_neighbor_base;
@@ -102,7 +109,7 @@ namespace micros_swarm_framework{
         else
         {
             NeighborBase new_neighbor_base(distance, azimuth, elevation, x, y, z, vx, vy, vz);
-            neighbors_.insert(new_neighbor_base);
+            neighbors_.insert(std::pair<int, NeighborBase>(robot_id ,new_neighbor_base));
         }
     }
     
@@ -120,14 +127,15 @@ namespace micros_swarm_framework{
             std::cout<<n_it->first<<": ";
             
             std::cout<<n_it->second.getDistance()<<","<<n_it->second.getAzimuth()<<","<<n_it->second.getElevation()<<","<<\
-                n_it->second.getX()<<","<<n_it->second.getY()<<","<<n_it->second.getZ();
+                n_it->second.getX()<<","<<n_it->second.getY()<<","<<n_it->second.getZ()<<", "<<
+                n_it->second.getVX()<<","<<n_it->second.getVY()<<","<<n_it->second.getVZ();
             std::cout<<std::endl;
         }
     }
      
     void RuntimePlatform::insertOrUpdateSwarm(int swarm_id, bool value)
     {
-        std::map<int, bool>::iterator s_it=std::find(swarms_.begin(), swarms_.end(), swarm_id);
+        std::map<int, bool>::iterator s_it=swarms_.find(swarm_id);
     
         if(s_it!=swarms_.end())
         {
@@ -135,13 +143,13 @@ namespace micros_swarm_framework{
         }
         else
         {
-            swarms_.insert(new_type);
+            swarms_.insert(std::pair<int, bool>(swarm_id, value));
         }
     }
     
     bool RuntimePlatform::getSwarm(int swarm_id)
     {
-        std::map<int, bool>::iterator s_it=std::find(swarms_.begin(), swarms_.end(), swarm_id);
+        std::map<int, bool>::iterator s_it=swarms_.find(swarm_id);
     
         if(s_it!=swarms_.end())
         {
@@ -186,8 +194,8 @@ namespace micros_swarm_framework{
     
     bool RuntimePlatform::inOthersSwarm(int robot_id, int swarm_id)
     {
-        std::map<int, OthersSwarm>::iterator os_it;
-        os_it=std::find(others_swarms_.begin(), others_swarms_.end(), robot_id);
+        std::map<int, OthersSwarmTuple>::iterator os_it;
+        os_it=others_swarms_.find(robot_id);
     
         if(os_it!=others_swarms_.end())
         {
@@ -206,311 +214,154 @@ namespace micros_swarm_framework{
         }
     }
     
-    void KernelHandle::joinNeighborSwarm(unsigned int robot_id, unsigned int swarm_id)
+    void RuntimePlatform::joinOthersSwarm(int robot_id, int swarm_id)
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        std::string mutex_name="named_kernel_mtx"+robot_id_string;
-        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        VoidAllocator alloc_inst (segment.get_segment_manager());
+        std::map<int, OthersSwarmTuple>::iterator os_it;
+        os_it=others_swarms_.find(robot_id);
     
-        std::pair<shm_neighbor_swarm_type*, std::size_t> neighbor_swarm = segment.find<shm_neighbor_swarm_type>("shm_neighbor_swarm_"); 
-        if(neighbor_swarm.first==0)
+        if(os_it!=others_swarms_.end())
         {
-            return;
-        }
-  
-        shm_neighbor_swarm_type *ns_pointer=neighbor_swarm.first;
-        shm_neighbor_swarm_type::iterator ns_it;
-        ns_it=ns_pointer->find(robot_id);
-    
-        if(ns_it!=ns_pointer->end())
-        {
-            if(ns_it->second.swarmIDExist(swarm_id))
+            if(os_it->second.swarmIDExist(swarm_id))
             {
-                named_kernel_mtx.lock();
-                ns_it->second.setAge(0);
-                named_kernel_mtx.unlock();
+                os_it->second.setAge(0);
             }
             else
-            {
-                named_kernel_mtx.lock();
-                ns_it->second.addSwarmID(swarm_id);
-                ns_it->second.setAge(0);
-                named_kernel_mtx.unlock();
+            {           
+                os_it->second.addSwarmID(swarm_id);
+                os_it->second.setAge(0);
             }
         }
         else
         {
-            NeighborSwarm new_neighbor_swarm(alloc_inst, 0);
-            new_neighbor_swarm.addSwarmID(swarm_id);
-            NeighborSwarmType new_type(robot_id, new_neighbor_swarm);
+            std::vector<int> swarm_list;
+            swarm_list.push_back(swarm_id);
+            OthersSwarmTuple new_others_swarm(swarm_list, 0);
             
-            named_kernel_mtx.lock();
-            ns_pointer->insert(new_type);
-            named_kernel_mtx.unlock();
+            others_swarms_.insert(std::pair<int, OthersSwarmTuple>(robot_id, new_others_swarm));
         }
     }
     
-    void KernelHandle::leaveNeighborSwarm(unsigned int robot_id, unsigned int swarm_id)
+    void RuntimePlatform::leaveOthersSwarm(int robot_id, int swarm_id)
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        std::string mutex_name="named_kernel_mtx"+robot_id_string;
-        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        VoidAllocator alloc_inst (segment.get_segment_manager());
+        std::map<int, OthersSwarmTuple>::iterator os_it;
+        os_it=others_swarms_.find(robot_id);
     
-        std::pair<shm_neighbor_swarm_type*, std::size_t> neighbor_swarm = segment.find<shm_neighbor_swarm_type>("shm_neighbor_swarm_"); 
-        if(neighbor_swarm.first==0)
+        if(os_it!=others_swarms_.end())
         {
-            return;
-        }
-  
-        shm_neighbor_swarm_type *ns_pointer=neighbor_swarm.first;
-        shm_neighbor_swarm_type::iterator ns_it;
-        ns_it=ns_pointer->find(robot_id);
-    
-        if(ns_it!=ns_pointer->end())
-        {
-            if(ns_it->second.swarmIDExist(swarm_id))
+            if(os_it->second.swarmIDExist(swarm_id))
             {
-                named_kernel_mtx.lock();
-                ns_it->second.removeSwarmID(swarm_id);
-                ns_it->second.setAge(0);
-                named_kernel_mtx.unlock();
+                os_it->second.removeSwarmID(swarm_id);
+                os_it->second.setAge(0);
             }
             else
             {
-                std::cout<<"robot"<<robot_id<<"is not in swarm"<<swarm_id<<"."<<std::endl;
+                std::cout<<"robot"<<robot_id<<" is not in swarm"<<swarm_id<<"."<<std::endl;
             }
         }
-        else  //不存在
+        else  //not exist
         {
             std::cout<<"robot_id "<<robot_id<<" neighbor_swarm tuple is not exist."<<std::endl;
             return;
         }
-    
     }
             
-    void KernelHandle::insertOrRefreshNeighborSwarm(unsigned int robot_id, std::vector<unsigned int> swarm_list)
+    void RuntimePlatform::insertOrRefreshOthersSwarm(int robot_id, std::vector<int> swarm_list)
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        std::string mutex_name="named_kernel_mtx"+robot_id_string;
-        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        VoidAllocator alloc_inst (segment.get_segment_manager());
+        std::map<int, OthersSwarmTuple>::iterator os_it;
+        os_it=others_swarms_.find(robot_id);
     
-        std::pair<shm_neighbor_swarm_type*, std::size_t> neighbor_swarm = segment.find<shm_neighbor_swarm_type>("shm_neighbor_swarm_"); 
-        if(neighbor_swarm.first==0)
+        if(os_it!=others_swarms_.end())
         {
-            return;
-        }
-  
-        shm_neighbor_swarm_type *ns_pointer=neighbor_swarm.first;
-        shm_neighbor_swarm_type::iterator ns_it;
-        ns_it=ns_pointer->find(robot_id);
-    
-        if(ns_it!=ns_pointer->end())
-        {
-            named_kernel_mtx.lock();
-            ns_it->second.clearSwarmIDVector();
+            os_it->second.clearSwarmIDVector();
             
             for(int i=0;i<swarm_list.size();i++)
             {
-                ns_it->second.addSwarmID(swarm_list[i]);
+                os_it->second.addSwarmID(swarm_list[i]);
             }
-            ns_it->second.setAge(0);  //age置为0
-            
-            named_kernel_mtx.unlock();
+            os_it->second.setAge(0);
         }
         else
         {
-            NeighborSwarm new_neighbor_swarm(alloc_inst, 0);
-            
-            for(int i=0;i<swarm_list.size();i++)
-            {
-                new_neighbor_swarm.addSwarmID(swarm_list[i]);
-            }
-            
-            NeighborSwarmType new_type(robot_id, new_neighbor_swarm);
-            
-            named_kernel_mtx.lock();
-            ns_pointer->insert(new_type);
-            named_kernel_mtx.unlock();
-            return;
+            OthersSwarmTuple new_others_swarm(swarm_list, 0);  
+            others_swarms_.insert(std::pair<int, OthersSwarmTuple>(robot_id ,new_others_swarm));   
         }
     }
     
-    std::set<unsigned int> KernelHandle::getSwarmMembers(unsigned int swarm_id)
+    std::set<int> RuntimePlatform::getSwarmMembers(int swarm_id)
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        //std::string mutex_name="named_kernel_mtx"+robot_id_string;
-        //boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        VoidAllocator alloc_inst (segment.get_segment_manager());
-    
-        std::set<unsigned int> result;
+        std::set<int> result;
         result.clear();
-    
-        std::pair<shm_neighbor_swarm_type*, std::size_t> neighbor_swarm = segment.find<shm_neighbor_swarm_type>("shm_neighbor_swarm_"); 
-        if(neighbor_swarm.first==0)
-        {
-            return result;
-        }
-  
-        shm_neighbor_swarm_type *ns_pointer=neighbor_swarm.first;
-        shm_neighbor_swarm_type::iterator ns_it;
         
-        for(ns_it=ns_pointer->begin(); ns_it!=ns_pointer->end(); ns_it++)
+        std::map<int, OthersSwarmTuple>::iterator os_it;
+        
+        for(os_it=others_swarms_.begin(); os_it!=others_swarms_.end(); os_it++)
         {
-            shm_int_vector tmp=ns_it->second.getSwarmIDVector();
+            std::vector<int> tmp=os_it->second.getSwarmIDVector();
             
             if (std::find(tmp.begin(), tmp.end(), swarm_id) != tmp.end())
-                result.insert(ns_it->first);
+                result.insert(os_it->first);
         }
         
         return result;
     }
     
-    void KernelHandle::deleteNeighborSwarm(unsigned int robot_id)
+    void RuntimePlatform::deleteOthersSwarm(int robot_id)
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        std::string mutex_name="named_kernel_mtx"+robot_id_string;
-        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        VoidAllocator alloc_inst (segment.get_segment_manager());  
-    
-        std::pair<shm_neighbor_swarm_type*, std::size_t> neighbor_swarm = segment.find<shm_neighbor_swarm_type>("shm_neighbor_swarm_"); 
-        if(neighbor_swarm.first==0)
-        {
-            return;
-        }
-  
-        shm_neighbor_swarm_type *ns_pointer=neighbor_swarm.first;
-    
-        named_kernel_mtx.lock();
-        ns_pointer->erase(robot_id);
-        named_kernel_mtx.unlock();
+        others_swarms_.erase(robot_id);
     }
     
-    void KernelHandle::printNeighborSwarm()
+    void RuntimePlatform::printOthersSwarm()
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        VoidAllocator alloc_inst (segment.get_segment_manager());
+        std::map<int, OthersSwarmTuple>::iterator os_it;
         
-        std::pair<shm_neighbor_swarm_type*, std::size_t> neighbor_swarm = segment.find<shm_neighbor_swarm_type>("shm_neighbor_swarm_"); 
-        if(neighbor_swarm.first==0)
+        for(os_it=others_swarms_.begin(); os_it!=others_swarms_.end(); os_it++)
         {
-            return;
-        }
-        
-        shm_neighbor_swarm_type *nst_pointer=neighbor_swarm.first;
-        shm_neighbor_swarm_type::iterator nst_it;
-        
-        for (nst_it=nst_pointer->begin(); nst_it!=nst_pointer->end(); nst_it++)
-        {
-            std::cout<<"neighbor swarm "<<nst_it->first<<": ";
+            std::cout<<"others swarm "<<os_it->first<<": ";
             
-            shm_int_vector temp=nst_it->second.getSwarmIDVector();
+            std::vector<int> temp=os_it->second.getSwarmIDVector();
             for(int i=0;i<temp.size();i++)
             {
                 std::cout<<temp[i]<<",";
             }
-            std::cout<<"age: "<<nst_it->second.getAge();
+            std::cout<<"age: "<<os_it->second.getAge();
             std::cout<<std::endl;
         }
     }
             
-    void KernelHandle::createVirtualStigmergy(unsigned int id)
+    void RuntimePlatform::createVirtualStigmergy(int id)
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        std::string mutex_name="named_kernel_mtx"+robot_id_string;
-        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        
-        std::string id_string=boost::lexical_cast<std::string>(id);
-        std::string virtual_stigmergy_name="shm_virtual_stigmergy_tuple_"+id_string;
-        const char *p=virtual_stigmergy_name.data();
-        
-        VoidAllocator alloc_inst (segment.get_segment_manager());  
+        std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
+        vst_it=virtual_stigmergy_.find(id);
     
-        std::pair<shm_virtual_stigmergy_type*, std::size_t> virtual_stigmergy = segment.find<shm_virtual_stigmergy_type>("shm_virtual_stigmergy_"); 
-        if(virtual_stigmergy.first==0)
-        {
-            return;
-        }
-  
-        shm_virtual_stigmergy_type *vst_pointer=virtual_stigmergy.first;
-        shm_virtual_stigmergy_type::iterator vst_it;
-        vst_it=vst_pointer->find(id);
-    
-        if(vst_it!=vst_pointer->end())
+        if(vst_it!=virtual_stigmergy_.end())
         {
             return;
         }
         else
         {
-            shm_virtual_stigmergy_tuple_type *tmp=segment.construct<shm_virtual_stigmergy_tuple_type>(p)(std::less<shm_string>(), alloc_inst);
-            VirtualStigmergyType vst(id, *tmp);
-            
-            named_kernel_mtx.lock();
-            vst_pointer->insert(vst);
-            named_kernel_mtx.unlock();
+            std::map<std::string, VirtualStigmergyTuple> vst;
+            virtual_stigmergy_.insert(std::pair<int, std::map<std::string, VirtualStigmergyTuple> >(id, vst)); 
         }
     }
     
-    
-    void KernelHandle::insertOrUpdateVirtualStigmergy(unsigned int id, std::string key_std, std::string value_std, time_t time_now, unsigned int robot_id)
+    void RuntimePlatform::insertOrUpdateVirtualStigmergy(int id, std::string key, std::string value, time_t time_now, int robot_id)
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        std::string mutex_name="named_kernel_mtx"+robot_id_string;
-        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
+        std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
+        vst_it=virtual_stigmergy_.find(id);
     
-        VoidAllocator alloc_inst (segment.get_segment_manager());
-        
-        micros_swarm_framework::shm_string  key(key_std.data(), alloc_inst);
-        micros_swarm_framework::shm_string  value(value_std.data(), alloc_inst);
-    
-        std::pair<shm_virtual_stigmergy_type*, std::size_t> virtual_stigmergy = segment.find<shm_virtual_stigmergy_type>("shm_virtual_stigmergy_"); 
-        if(virtual_stigmergy.first==0)
+        if(vst_it!=virtual_stigmergy_.end())
         {
-            return;
-        }
-  
-        shm_virtual_stigmergy_type *vst_pointer=virtual_stigmergy.first;
-        shm_virtual_stigmergy_type::iterator vst_it;
-        vst_it=vst_pointer->find(id);
-    
-        if(vst_it!=vst_pointer->end())
-        {
-            shm_virtual_stigmergy_tuple_type::iterator svstt_it=vst_it->second.find(key);
+            std::map<std::string, VirtualStigmergyTuple>::iterator svstt_it=vst_it->second.find(key);
         
             if(svstt_it!=vst_it->second.end())
             {
-                ShmVirtualStigmergyTuple new_tuple(value, time_now, robot_id, alloc_inst);
-                
-                named_kernel_mtx.lock();
+                VirtualStigmergyTuple new_tuple(value, time_now, robot_id);
                 svstt_it->second = new_tuple;
-                named_kernel_mtx.unlock();
             }
             else
             {
-                ShmVirtualStigmergyTuple new_tuple(value, time_now, robot_id, alloc_inst);
-                ShmVirtualStigmergyTupleType new_tuple_type(key,new_tuple);
-                
-                named_kernel_mtx.lock();
-                vst_it->second.insert(new_tuple_type);
-                named_kernel_mtx.unlock();
+                VirtualStigmergyTuple new_tuple(value, time_now, robot_id);
+                vst_it->second.insert(std::pair<std::string, VirtualStigmergyTuple>(key ,new_tuple));
             }
         }
         else
@@ -520,131 +371,59 @@ namespace micros_swarm_framework{
         }
     }
     
-    VstigTuple KernelHandle::getVirtualStigmergyTuple(unsigned int id, std::string key_std)
+    VirtualStigmergyTuple RuntimePlatform::getVirtualStigmergyTuple(int id, std::string key)
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        VoidAllocator alloc_inst (segment.get_segment_manager());
-        
-        micros_swarm_framework::shm_string  key(key_std.data(), alloc_inst);
+        std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
+        vst_it=virtual_stigmergy_.find(id);
     
-        std::pair<shm_virtual_stigmergy_type*, std::size_t> virtual_stigmergy = segment.find<shm_virtual_stigmergy_type>("shm_virtual_stigmergy_"); 
-        if(virtual_stigmergy.first==0)
+        if(vst_it!=virtual_stigmergy_.end())
         {
-            
-        }
-  
-        shm_virtual_stigmergy_type *vst_pointer=virtual_stigmergy.first;
-        shm_virtual_stigmergy_type::iterator vst_it;
-        vst_it=vst_pointer->find(id);
-    
-        if(vst_it!=vst_pointer->end())
-        {
-            shm_virtual_stigmergy_tuple_type::iterator svstt_it=vst_it->second.find(key);
+            std::map<std::string, VirtualStigmergyTuple>::iterator svstt_it=vst_it->second.find(key);
         
             if(svstt_it!=vst_it->second.end())
-            {
-                shm_string value_shm=svstt_it->second.getVirtualStigmergyValue();
-                std::string value(value_shm.data(), value_shm.size());
-                time_t time_now=svstt_it->second.getVirtualStigmergyTimestamp();
-                unsigned int robot_id=svstt_it->second.getRobotID();
-                VstigTuple new_tuple(value, time_now, robot_id);
-                
-                return new_tuple;
+            {     
+                return svstt_it->second;
             }
         }
         
         std::string value="";
         time_t time_now=0;
         unsigned int robot_id=0;
-        VstigTuple tuple(value, time_now, robot_id);
+        VirtualStigmergyTuple vst_tuple(value, time_now, robot_id);
             
-        return tuple;
+        return vst_tuple;
     }
     
-    unsigned int KernelHandle::getVirtualStigmergySize(unsigned int id)
+    int RuntimePlatform::getVirtualStigmergySize(int id)
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        //std::string mutex_name="named_kernel_mtx"+robot_id_string;
-        //boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        VoidAllocator alloc_inst (segment.get_segment_manager());
+        std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
+        vst_it=virtual_stigmergy_.find(id);
     
-        std::pair<shm_virtual_stigmergy_type*, std::size_t> virtual_stigmergy = segment.find<shm_virtual_stigmergy_type>("shm_virtual_stigmergy_"); 
-        if(virtual_stigmergy.first==0)
+        if(vst_it!=virtual_stigmergy_.end())
         {
-            return 0;
-        }
-  
-        shm_virtual_stigmergy_type *vst_pointer=virtual_stigmergy.first;
-        shm_virtual_stigmergy_type::iterator vst_it;
-        vst_it=vst_pointer->find(id);
-    
-        if(vst_it!=vst_pointer->end())
-        {
-            unsigned int size=vst_it->second.size();
             return vst_it->second.size();
         }
         
         return 0;
     }
     
-    void KernelHandle::deleteVirtualStigmergy(unsigned int id)
+    void RuntimePlatform::deleteVirtualStigmergy(int id)
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        std::string mutex_name="named_kernel_mtx"+robot_id_string;
-        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-    
-        VoidAllocator alloc_inst (segment.get_segment_manager());  
-    
-        std::pair<shm_virtual_stigmergy_type*, std::size_t> virtual_stigmergy = segment.find<shm_virtual_stigmergy_type>("shm_virtual_stigmergy_"); 
-        if(virtual_stigmergy.first==0)
-        {
-            return;
-        }
-  
-        shm_virtual_stigmergy_type *vst_pointer=virtual_stigmergy.first;
-    
-        named_kernel_mtx.lock();
-        vst_pointer->erase(id);
-        named_kernel_mtx.unlock();
+        virtual_stigmergy_.erase(id);
     }
     
-    void KernelHandle::deleteVirtualStigmergyValue(unsigned int id, std::string key_std)
+    void RuntimePlatform::deleteVirtualStigmergyValue(int id, std::string key)
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        std::string mutex_name="named_kernel_mtx"+robot_id_string;
-        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
+        std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
+        vst_it=virtual_stigmergy_.find(id);
     
-        VoidAllocator alloc_inst (segment.get_segment_manager());
-        
-        micros_swarm_framework::shm_string  key(key_std.data(), alloc_inst);
-    
-        std::pair<shm_virtual_stigmergy_type*, std::size_t> virtual_stigmergy = segment.find<shm_virtual_stigmergy_type>("shm_virtual_stigmergy_"); 
-        if(virtual_stigmergy.first==0)
+        if(vst_it!=virtual_stigmergy_.end())
         {
-            return;
-        }
-  
-        shm_virtual_stigmergy_type *vst_pointer=virtual_stigmergy.first;
-        shm_virtual_stigmergy_type::iterator vst_it;
-        vst_it=vst_pointer->find(id);
-    
-        if(vst_it!=vst_pointer->end())
-        {
-            shm_virtual_stigmergy_tuple_type::iterator svstt_it=vst_it->second.find(key);
+            std::map<std::string, VirtualStigmergyTuple>::iterator svstt_it=vst_it->second.find(key);
         
             if(svstt_it!=vst_it->second.end())
             {
-                named_kernel_mtx.lock();
                 vst_it->second.erase(key);
-                named_kernel_mtx.unlock();
             }
             else
             {
@@ -657,28 +436,15 @@ namespace micros_swarm_framework{
         }
     }
     
-    void KernelHandle::printVirtualStigmergy()
+   void RuntimePlatform::printVirtualStigmergy()
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        VoidAllocator alloc_inst (segment.get_segment_manager());
+        std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
+        std::map<std::string, VirtualStigmergyTuple>::iterator svstt_it;
         
-        std::pair<shm_virtual_stigmergy_type*, std::size_t> virtual_stigmergy = segment.find<shm_virtual_stigmergy_type>("shm_virtual_stigmergy_"); 
-        if(virtual_stigmergy.first==0)
-        {
-            return;
-        }
-        
-        shm_virtual_stigmergy_type *vst_pointer=virtual_stigmergy.first;
-        shm_virtual_stigmergy_type::iterator vst_it;
-        shm_virtual_stigmergy_tuple_type *svstt_pointer;
-        shm_virtual_stigmergy_tuple_type::iterator svstt_it;
-        
-        for (vst_it=vst_pointer->begin(); vst_it!=vst_pointer->end(); vst_it++)
+        for (vst_it=virtual_stigmergy_.begin(); vst_it!=virtual_stigmergy_.end(); vst_it++)
         {
             std::cout<<"["<<vst_it->first<<":"<<std::endl;
-            svstt_pointer=&(vst_it->second);
+            std::map<std::string, VirtualStigmergyTuple>* svstt_pointer=&(vst_it->second);
             for (svstt_it=svstt_pointer->begin(); svstt_it!=svstt_pointer->end(); svstt_it++)
             {
                 std::cout<<"("<<svstt_it->first<<","<< \
@@ -690,124 +456,24 @@ namespace micros_swarm_framework{
         }
     }
     
-    double KernelHandle::getNeighborDistance()
+    double RuntimePlatform::getNeighborDistance()
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        VoidAllocator alloc_inst (segment.get_segment_manager());
-    
-        std::pair<double*, std::size_t> kernel_neighbor_distance = segment.find<double>("shm_neighbor_distance_"); 
-        if(kernel_neighbor_distance.first==0)
-        {
-            return -1;
-        }
-        
-        return *(kernel_neighbor_distance.first);
+        return neighbor_distance_;
     }
     
-    void KernelHandle::setNeighborDistance(double neighbor_distance)
+    void RuntimePlatform::setNeighborDistance(double neighbor_distance)
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        std::string mutex_name="named_kernel_mtx"+robot_id_string;
-        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        VoidAllocator alloc_inst (segment.get_segment_manager());
-    
-        std::pair<double*, std::size_t> kernel_neighbor_distance = segment.find<double>("shm_neighbor_distance_"); 
-        if(kernel_neighbor_distance.first==0)
-        {
-            return;
-        }
-        
-        named_kernel_mtx.lock();
-        *(kernel_neighbor_distance.first)=neighbor_distance;
-        named_kernel_mtx.unlock();
+        neighbor_distance_=neighbor_distance;
     }
     
-    void KernelHandle::insertBarrier(int robot_id)
+    void RuntimePlatform::insertBarrier(int robot_id)
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        std::string mutex_name="named_kernel_mtx"+robot_id_string;
-        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        VoidAllocator alloc_inst (segment.get_segment_manager());
-    
-        std::pair<shm_int_vector*, std::size_t> barrier = segment.find<shm_int_vector>("shm_barrier_"); 
-        if(barrier.first==0)
-        {
-            return;
-        }
-  
-        shm_int_vector *b_pointer=barrier.first;
-        shm_int_vector::iterator res=std::find(b_pointer->begin(), b_pointer->end(), robot_id);
-    
-        if(res==b_pointer->end())
-        {
-            named_kernel_mtx.lock();
-            b_pointer->push_back(robot_id);
-            named_kernel_mtx.unlock();
-        }
+        barrier_.insert(robot_id);
     }
     
-    int KernelHandle::getBarrierSize()
+    int RuntimePlatform::getBarrierSize()
     {
-        std::string robot_id_string=boost::lexical_cast<std::string>(KernelInitializer::unique_robot_id_);
-        std::string shm_object_name="KernelData"+robot_id_string;
-        std::string mutex_name="named_kernel_mtx"+robot_id_string;
-        boost::interprocess::named_mutex named_kernel_mtx(boost::interprocess::open_or_create, mutex_name.data()); 
-        boost::interprocess::managed_shared_memory segment(boost::interprocess::open_or_create ,shm_object_name.data(), 102400);
-        VoidAllocator alloc_inst (segment.get_segment_manager());
-    
-        std::pair<shm_int_vector*, std::size_t> barrier = segment.find<shm_int_vector>("shm_barrier_"); 
-        if(barrier.first==0)
-        {
-            return -1;
-        }
-        
-        shm_int_vector *b_pointer=barrier.first;
-        return b_pointer->size();
+        return barrier_.size();
     }
     
-    void KernelHandle::publishPacket(const micros_swarm_framework::MSFPPacket& msfp_packet)  //广播一条packet
-    {
-        #ifdef ROS
-        ros::NodeHandle n;
-        static ros::Publisher packet_publisher = n.advertise<micros_swarm_framework::MSFPPacket>("/micros_swarm_framework_topic", 1000, true);
-        
-        static bool flag=false;
-        
-        if(!flag)
-        {
-            ros::Duration(1).sleep();
-            if(!packet_publisher)
-            {
-                ROS_INFO("packet_publisher could not initialize");
-            }
-            
-            flag=true;
-        }
-        
-        if(ros::ok())
-        {
-            packet_publisher.publish(msfp_packet);
-        }
-        #endif
-        
-        #ifdef OPENSPLICE_DDS
-        static micros_swarm_framework::Publisher publisher=Publisher("micros_swarm_framework_topic");
-        static bool flag=false;
-        
-        if(!flag)
-        {
-            //ros::Duration(1).sleep();
-            boost::this_thread::sleep(boost::posix_time::seconds(20)); 
-            flag=true;
-        }
-        
-        publisher.publish(msfp_packet);
-        #endif
-    }
 };

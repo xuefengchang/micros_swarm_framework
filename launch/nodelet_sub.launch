@@ -1,0 +1,8 @@
+<launch>
+
+                 
+  <node pkg="nodelet" type="nodelet" name="sub" args="load nodelet_test/NodeletSub pub_sub_manager" output="screen">
+    <remap from="chatter" to="hello"/>
+  </node>
+</launch>
+

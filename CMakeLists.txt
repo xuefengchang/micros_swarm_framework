@@ -31,10 +31,10 @@ endif()
 
 # set communication mechanism
 option(ROS "communication mechanism" ON)
-set(ROS OFF CACHE BOOL "ROS Option" FORCE)
+set(ROS ON CACHE BOOL "ROS Option" FORCE)
 #message("ROS?" ${ROS})
 option(OPENSPLICE_DDS "communication mechanism" ON)
-set(OPENSPLICE_DDS ON CACHE BOOL "OPENSPLICE DDS Option" FORCE)
+set(OPENSPLICE_DDS OFF CACHE BOOL "OPENSPLICE DDS Option" FORCE)
 #message("OPENSPLICE_DDS?" ${OPENSPLICE_DDS})
 option(OPEN_DDS "communication mechanism" ON)
 set(OPEN_DDS OFF CACHE BOOL "OPEN DDS Option" FORCE)
@@ -204,83 +204,24 @@ add_library(opensplice_dds_pub_sub
 )
 
 ## Declare a C++ library
-add_library(micros_swarm_framework_kernel
-    src/kernel.cpp
+add_library(micros_swarm_framework_rtp
+    src/runtime_platform.cpp
 )
-add_dependencies(micros_swarm_framework_kernel ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(micros_swarm_framework_rtp ${micros_swarm_framework_EXPORTED_TARGETS})
 
-add_executable(micros_swarm_framework_kernel_node src/kernel_ros.cpp)
-add_dependencies(micros_swarm_framework_kernel_node ${micros_swarm_framework_EXPORTED_TARGETS})
-target_link_libraries(micros_swarm_framework_kernel_node
+add_library(micros_swarm_framework_rtp_kernel
+    src/runtime_platform_kernel.cpp
+)
+
+add_executable(main src/main.cpp)
+add_dependencies(main ${micros_swarm_framework_EXPORTED_TARGETS})
+target_link_libraries(main
    ${Boost_THREAD_LIBRARY}
    ${Boost_REGEX_LIBRARY}
    ${Boost_SERIALIZATION_LIBRARY}
    ${catkin_LIBRARIES}
-   opensplice_dds_pub_sub
-   micros_swarm_framework_kernel
-   -lrt
+   micros_swarm_framework_rtp
 )
-if (OPENSPLICE_DDS)
-  target_link_libraries(micros_swarm_framework_kernel_node
-    opensplice_dds_pub_sub
-    libddskernel.so
-    libdcpsisocpp.so
-)
-endif()
-
-add_executable(micros_swarm_framework_app1_node apps/app1.cpp)
-add_dependencies(micros_swarm_framework_app1_node ${micros_swarm_framework_EXPORTED_TARGETS})
-target_link_libraries(micros_swarm_framework_app1_node
-   ${Boost_THREAD_LIBRARY}
-   ${Boost_REGEX_LIBRARY}
-   ${Boost_SERIALIZATION_LIBRARY}
-   ${catkin_LIBRARIES}
-   micros_swarm_framework_kernel
-   -lrt
-)
-if (OPENSPLICE_DDS)
-  target_link_libraries(micros_swarm_framework_app1_node
-    opensplice_dds_pub_sub
-    libddskernel.so
-    libdcpsisocpp.so
-)
-endif()
-
-add_executable(micros_swarm_framework_app2_node apps/app2.cpp)
-add_dependencies(micros_swarm_framework_app2_node ${micros_swarm_framework_EXPORTED_TARGETS})
-target_link_libraries(micros_swarm_framework_app2_node
-   ${Boost_THREAD_LIBRARY}
-   ${Boost_REGEX_LIBRARY}
-   ${Boost_SERIALIZATION_LIBRARY}
-   ${catkin_LIBRARIES}
-   micros_swarm_framework_kernel
-   -lrt
-)
-if (OPENSPLICE_DDS)
-  target_link_libraries(micros_swarm_framework_app2_node
-    opensplice_dds_pub_sub
-    libddskernel.so
-    libdcpsisocpp.so
-)
-endif()
-
-add_executable(micros_swarm_framework_app3_node apps/app3.cpp)
-add_dependencies(micros_swarm_framework_app3_node ${micros_swarm_framework_EXPORTED_TARGETS})
-target_link_libraries(micros_swarm_framework_app3_node
-   ${Boost_THREAD_LIBRARY}
-   ${Boost_REGEX_LIBRARY}
-   ${Boost_SERIALIZATION_LIBRARY}
-   ${catkin_LIBRARIES}
-   micros_swarm_framework_kernel
-   -lrt
-)
-if (OPENSPLICE_DDS)
-  target_link_libraries(micros_swarm_framework_app3_node
-    opensplice_dds_pub_sub
-    libddskernel.so
-    libdcpsisocpp.so
-)
-endif()
 
 #add_executable(micros_swarm_framework_testnc_node test/testnc.cpp)
 #add_dependencies(micros_swarm_framework_testnc_node ${micros_swarm_framework_EXPORTED_TARGETS})
@@ -303,8 +244,6 @@ target_link_libraries(pub
     opensplice_dds_pub_sub
     libddskernel.so
     libdcpsisocpp.so
-    #libdcpssacpp.so
-    #-lpthread
 )
 
 add_executable(sub src/opensplice_dds/sub.cpp)
@@ -312,8 +251,6 @@ target_link_libraries(sub
     opensplice_dds_pub_sub
     libddskernel.so
     libdcpsisocpp.so
-    #libdcpssacpp.so
-    #-lpthread
 )
 
 #set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
@@ -354,19 +291,19 @@ target_link_libraries(sub
 # )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS micros_swarm_framework_kernel micros_swarm_framework_kernel_node micros_swarm_framework_app1_node micros_swarm_framework_app2_node micros_swarm_framework_app3_node
-    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+#install(TARGETS micros_swarm_framework_kernel micros_swarm_framework_kernel_node micros_swarm_framework_app1_node micros_swarm_framework_app2_node micros_swarm_framework_app3_node
+#    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+#)
 
-install(DIRECTORY include
-    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-)
+#install(DIRECTORY include
+#    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#)
 
-install(DIRECTORY apps doc launch maps idl
-    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
+#install(DIRECTORY apps doc launch maps idl
+#    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+#)
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/
