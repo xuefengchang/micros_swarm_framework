@@ -71,7 +71,7 @@ namespace micros_swarm_framework{
 
     class SingleRobotBroadcastID{
         private:   
-            unsigned int robot_id_;
+            int robot_id_;
             
             float robot_x_;
             float robot_y_;
@@ -96,10 +96,10 @@ namespace micros_swarm_framework{
             }
         public:
             SingleRobotBroadcastID(){}
-            SingleRobotBroadcastID(unsigned int robot_id, float robot_x ,float robot_y, float robot_z, float robot_vx ,float robot_vy, float robot_vz):\
+            SingleRobotBroadcastID(int robot_id, float robot_x ,float robot_y, float robot_z, float robot_vx ,float robot_vy, float robot_vz):\
                 robot_id_(robot_id), robot_x_(robot_x), robot_y_(robot_y), robot_z_(robot_z),  robot_vx_(robot_vx), robot_vy_(robot_vy), robot_vz_(robot_vz){}
                  
-            unsigned int getRobotID(){return robot_id_;}
+            int getRobotID(){return robot_id_;}
             float getRobotX(){return robot_x_;}
             float getRobotY(){return robot_y_;}
             float getRobotZ(){return robot_z_;}
@@ -110,8 +110,8 @@ namespace micros_swarm_framework{
     
     class SingleRobotJoinSwarm{
         private:
-            unsigned int robot_id_;
-            unsigned int swarm_id_;
+            int robot_id_;
+            int swarm_id_;
             
             friend class boost::serialization::access;
             template<class Archive>
@@ -122,17 +122,17 @@ namespace micros_swarm_framework{
             }
         public:
             SingleRobotJoinSwarm(){}
-            SingleRobotJoinSwarm(unsigned int robot_id, unsigned int swarm_id):\
+            SingleRobotJoinSwarm(int robot_id, int swarm_id):\
                 robot_id_(robot_id), swarm_id_(swarm_id){}
                 
-            unsigned int getRobotID(){return robot_id_;}
-            unsigned int getSwarmID(){return swarm_id_;}
+            int getRobotID(){return robot_id_;}
+            int getSwarmID(){return swarm_id_;}
     };
     
     class SingleRobotLeaveSwarm{
         private:
-            unsigned int robot_id_;
-            unsigned int swarm_id_;
+            int robot_id_;
+            int swarm_id_;
             
             friend class boost::serialization::access;
             template<class Archive>
@@ -143,17 +143,17 @@ namespace micros_swarm_framework{
             }
         public:
             SingleRobotLeaveSwarm(){}
-            SingleRobotLeaveSwarm(unsigned int robot_id, unsigned int swarm_id):\
+            SingleRobotLeaveSwarm(int robot_id, int swarm_id):\
                 robot_id_(robot_id), swarm_id_(swarm_id){}
                 
-            unsigned int getRobotID(){return robot_id_;}
-            unsigned int getSwarmID(){return swarm_id_;}
+            int getRobotID(){return robot_id_;}
+            int getSwarmID(){return swarm_id_;}
     };
     
     class SingleRobotSwarmList{
         private:
-            unsigned int robot_id_;
-            std::vector<unsigned int> swarm_list_;
+            int robot_id_;
+            std::vector<int> swarm_list_;
             
             friend class boost::serialization::access;
             template<class Archive>
@@ -164,21 +164,21 @@ namespace micros_swarm_framework{
             }
         public:
             SingleRobotSwarmList(){}
-            SingleRobotSwarmList(unsigned int robot_id, std::vector<unsigned int> swarm_list):\
+            SingleRobotSwarmList(int robot_id, std::vector<int> swarm_list):\
                 robot_id_(robot_id), swarm_list_(swarm_list){}
                 
-            unsigned int getRobotID(){return robot_id_;}
-            std::vector<unsigned int> getSwarmList(){return swarm_list_;}
+            int getRobotID(){return robot_id_;}
+            std::vector<int> getSwarmList(){return swarm_list_;}
     };
     
     class VirtualStigmergyQuery
     {
         private:
-            unsigned int virtual_stigmergy_id_;
+            int virtual_stigmergy_id_;
             std::string virtual_stigmergy_key_;
             std::string virtual_stigmergy_value_;
             time_t virtual_stigmergy_timestamp_;
-            unsigned int robot_id_;
+            int robot_id_;
             
             friend class boost::serialization::access;
             template<class Archive>
@@ -193,25 +193,25 @@ namespace micros_swarm_framework{
         public:
             VirtualStigmergyQuery(){}
 
-            VirtualStigmergyQuery(unsigned int id, std::string key, std::string value, time_t time_now, unsigned int robot_id):\
+            VirtualStigmergyQuery(int id, std::string key, std::string value, time_t time_now, int robot_id):\
                 virtual_stigmergy_id_(id), virtual_stigmergy_key_(key), virtual_stigmergy_value_(value),\
                 virtual_stigmergy_timestamp_(time_now), robot_id_(robot_id){}
                 
-            unsigned int getVirtualStigmergyID(){return virtual_stigmergy_id_;}
+            int getVirtualStigmergyID(){return virtual_stigmergy_id_;}
             std::string getVirtualStigmergyKey(){return virtual_stigmergy_key_;}
             std::string getVirtualStigmergyValue(){return virtual_stigmergy_value_;}
             time_t getVirtualStigmergyTimestamp(){return virtual_stigmergy_timestamp_;}
-            unsigned int getRobotID(){return robot_id_;}
+            int getRobotID(){return robot_id_;}
     };
 
     class VirtualStigmergyPut
     {
         private:
-            unsigned int virtual_stigmergy_id_;
+            int virtual_stigmergy_id_;
             std::string virtual_stigmergy_key_;
             std::string virtual_stigmergy_value_;
             time_t virtual_stigmergy_timestamp_;
-            unsigned int robot_id_;
+            int robot_id_;
             
             friend class boost::serialization::access;
             template<class Archive>
@@ -226,15 +226,15 @@ namespace micros_swarm_framework{
         public:
             VirtualStigmergyPut(){};
             
-             VirtualStigmergyPut(unsigned int id, std::string key, std::string value, time_t time_now, unsigned int robot_id):\
+             VirtualStigmergyPut(int id, std::string key, std::string value, time_t time_now, int robot_id):\
                 virtual_stigmergy_id_(id), virtual_stigmergy_key_(key), virtual_stigmergy_value_(value),\
                 virtual_stigmergy_timestamp_(time_now), robot_id_(robot_id){}
                 
-            unsigned int getVirtualStigmergyID(){return virtual_stigmergy_id_;}
+            int getVirtualStigmergyID(){return virtual_stigmergy_id_;}
             std::string getVirtualStigmergyKey(){return virtual_stigmergy_key_;}
             std::string getVirtualStigmergyValue(){return virtual_stigmergy_value_;}
             time_t getVirtualStigmergyTimestamp(){return virtual_stigmergy_timestamp_;}
-            unsigned int getRobotID(){return robot_id_;}
+            int getRobotID(){return robot_id_;}
     };
     
     class Barrier_Syn
@@ -257,7 +257,7 @@ namespace micros_swarm_framework{
     class Barrier_Ack
     {
         private:
-            unsigned int robot_id_;
+            int robot_id_;
             
             friend class boost::serialization::access;
             template<class Archive>
@@ -268,7 +268,7 @@ namespace micros_swarm_framework{
         public:
             Barrier_Ack(){};
             Barrier_Ack(unsigned int robot_id):robot_id_(robot_id){}
-            unsigned int getRobotID(){return robot_id_;}
+            int getRobotID(){return robot_id_;}
     };
     
     template<class Type>

@@ -65,6 +65,11 @@ namespace micros_swarm_framework{
             ros::Publisher packet_publisher_;
             ros::Subscriber packet_subscriber_;
         public:
+            ROSCommunication()
+            {
+                
+            }
+        
             ROSCommunication(ros::NodeHandle node_handle)
             {
                 name_="ROS";

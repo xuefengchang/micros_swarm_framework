@@ -172,7 +172,7 @@ generate_messages(
 catkin_package(
    INCLUDE_DIRS include
    LIBRARIES micros_swarm_framework
-   CATKIN_DEPENDS roscpp rospy std_msgs nav_msgs geometry_msgs message_runtime
+   CATKIN_DEPENDS roscpp rospy std_msgs nav_msgs geometry_msgs message_runtime 
    DEPENDS system_lib
 )
 
@@ -190,8 +190,12 @@ catkin_package(
 link_directories(
     ${catkin_LIBRARY_DIRS} 
     ${DDS_LIBRARY_DIRS}
+    ${Boost_THREAD_LIBRARY}
+    ${Boost_REGEX_LIBRARY}
+    ${Boost_SERIALIZATION_LIBRARY}
 )
 
+## Declare a C++ library
 add_library(opensplice_dds_pub_sub
     src/opensplice_dds/MSFPPacket.cpp 
     src/opensplice_dds/MSFPPacketDcps.cpp 
@@ -204,24 +208,29 @@ add_library(opensplice_dds_pub_sub
 )
 
 ## Declare a C++ library
-add_library(micros_swarm_framework_rtp
-    src/runtime_platform.cpp
-)
-add_dependencies(micros_swarm_framework_rtp ${micros_swarm_framework_EXPORTED_TARGETS})
-
 add_library(micros_swarm_framework_rtp_kernel
+    src/runtime_platform.cpp
     src/runtime_platform_kernel.cpp
 )
 
-add_executable(main src/main.cpp)
-add_dependencies(main ${micros_swarm_framework_EXPORTED_TARGETS})
-target_link_libraries(main
+target_link_libraries(micros_swarm_framework_rtp_kernel
    ${Boost_THREAD_LIBRARY}
    ${Boost_REGEX_LIBRARY}
    ${Boost_SERIALIZATION_LIBRARY}
    ${catkin_LIBRARIES}
-   micros_swarm_framework_rtp
 )
+
+#add_dependencies(micros_swarm_framework_rtp_kernel ${Boost_THREAD_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_SERIALIZATION_LIBRARY})
+
+#add_executable(main src/main.cpp)
+#add_dependencies(main ${micros_swarm_framework_EXPORTED_TARGETS})
+#target_link_libraries(main
+#   ${Boost_THREAD_LIBRARY}
+#   ${Boost_REGEX_LIBRARY}
+#   ${Boost_SERIALIZATION_LIBRARY}
+#   ${catkin_LIBRARIES}
+#   micros_swarm_framework_rtp_kernel
+#)
 
 #add_executable(micros_swarm_framework_testnc_node test/testnc.cpp)
 #add_dependencies(micros_swarm_framework_testnc_node ${micros_swarm_framework_EXPORTED_TARGETS})
@@ -239,19 +248,19 @@ target_link_libraries(main
 #)
 #endif()
 
-add_executable(pub src/opensplice_dds/pub.cpp)
-target_link_libraries(pub
-    opensplice_dds_pub_sub
-    libddskernel.so
-    libdcpsisocpp.so
-)
+#add_executable(pub src/opensplice_dds/pub.cpp)
+#target_link_libraries(pub
+#    opensplice_dds_pub_sub
+#    libddskernel.so
+#    libdcpsisocpp.so
+#)
 
-add_executable(sub src/opensplice_dds/sub.cpp)
-target_link_libraries(sub
-    opensplice_dds_pub_sub
-    libddskernel.so
-    libdcpsisocpp.so
-)
+#add_executable(sub src/opensplice_dds/sub.cpp)
+#target_link_libraries(sub
+#    opensplice_dds_pub_sub
+#    libddskernel.so
+#    libdcpsisocpp.so
+#)
 
 #set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 
@@ -319,7 +328,7 @@ target_link_libraries(sub
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
 
-#############
+############# CMake can not determine linker language for target: /usr/lib/x86_64-linux-gnu/libboost_thread.so
 ## Testing ##
 #############
 
