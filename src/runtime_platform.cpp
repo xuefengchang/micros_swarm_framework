@@ -61,11 +61,11 @@ namespace micros_swarm_framework{
         barrier_.clear();
     }
 
-    RuntimePlatform& RuntimePlatform::Instance() 
-    {
-        static RuntimePlatform single_instance;
-        return single_instance;
-    }
+    //RuntimePlatform& RuntimePlatform::Instance() 
+    //{
+    //    static RuntimePlatform single_instance;
+    //    return single_instance;
+    //}
     
     int RuntimePlatform::getRobotID()
     {

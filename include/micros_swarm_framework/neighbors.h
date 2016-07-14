@@ -42,12 +42,15 @@ namespace micros_swarm_framework{
     
     template<class Type>
     class Neighbors{
+        private:
+            boost::shared_ptr<RuntimePlatform> rtp_;
         public:
             std::map<int, Type> data_;
             
             Neighbors()
             {
                 data_.clear();
+                rtp_=Singleton<RuntimePlatform>::getSingleton();
             }
             
             void printData()
@@ -121,8 +124,7 @@ namespace micros_swarm_framework{
             
                 typename std::map<int, Type>::iterator n_it;
                 
-                boost::shared_ptr<RuntimePlatform> rtp=Singleton<RuntimePlatform>::getSingleton();
-                std::set<int> sm=rtp->getSwarmMembers(swarm_id);
+                std::set<int> sm=rtp_->getSwarmMembers(swarm_id);
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
@@ -145,8 +147,7 @@ namespace micros_swarm_framework{
             
                 typename std::map<int, Type>::iterator n_it;
                 
-                boost::shared_ptr<RuntimePlatform> rtp=Singleton<RuntimePlatform>::getSingleton();
-                std::set<int> sm=rtp->getSwarmMembers(swarm_id);
+                std::set<int> sm=rtp_->getSwarmMembers(swarm_id);
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
@@ -170,22 +171,24 @@ namespace micros_swarm_framework{
      */
     template<>
     class Neighbors<NeighborBase>{
+        private:
+            boost::shared_ptr<RuntimePlatform> rtp_;
         public:
             std::map<int, NeighborBase> data_;
             
             Neighbors()
             {
                 data_.clear();
+                rtp_=Singleton<RuntimePlatform>::getSingleton();
             }
             
             Neighbors(bool get_data_now)
             {
                 if(get_data_now)
                 {
-                    //micros_swarm_framework::KernelHandle kh;
-                    boost::shared_ptr<RuntimePlatform> rtp=Singleton<RuntimePlatform>::getSingleton();
+                    rtp_=Singleton<RuntimePlatform>::getSingleton();
                     data_.clear();
-                    data_=rtp->getNeighbors();
+                    data_=rtp_->getNeighbors();
                 }
                 else
                 {
@@ -270,8 +273,7 @@ namespace micros_swarm_framework{
             
                 typename std::map<int, NeighborBase>::iterator n_it;
                 
-                boost::shared_ptr<RuntimePlatform> rtp=Singleton<RuntimePlatform>::getSingleton();
-                std::set<int> sm=rtp->getSwarmMembers(swarm_id);
+                std::set<int> sm=rtp_->getSwarmMembers(swarm_id);
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
@@ -292,8 +294,7 @@ namespace micros_swarm_framework{
             
                 typename std::map<int, NeighborBase>::iterator n_it;
                 
-                boost::shared_ptr<RuntimePlatform> rtp=Singleton<RuntimePlatform>::getSingleton();
-                std::set<int> sm=rtp->getSwarmMembers(swarm_id);
+                std::set<int> sm=rtp_->getSwarmMembers(swarm_id);
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {

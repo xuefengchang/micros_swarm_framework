@@ -59,6 +59,7 @@ namespace micros_swarm_framework{
             ros::NodeHandle node_handle_;
             boost::shared_ptr<RuntimePlatform> rtp_;
             boost::shared_ptr<CommunicationInterface> communicator_;
+            boost::shared_ptr<PacketParser> parser_;
             ros::Timer timer_;
             
             RuntimePlatformKernel();
@@ -121,6 +122,8 @@ namespace micros_swarm_framework{
         rtp_=Singleton<RuntimePlatform>::getSingleton(1);
         //communicator_.reset(new ROSCommunication(node_handle_));
         communicator_=Singleton<ROSCommunication>::getSingleton(node_handle_);
+        parser_.reset(new PacketParser(rtp_, communicator_));
+        //communicator_->receive(&PacketParser::parser);
         communicator_->receive(packetParser);
     
         //chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);

@@ -44,8 +44,8 @@ namespace micros_swarm_framework{
     class Swarm{
         private:
             int swarm_id_; 
-            boost::shared_ptr<RuntimePlatform> rtp;
-            boost::shared_ptr<CommunicationInterface> communicator;
+            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<CommunicationInterface> communicator_;
         public:
             Swarm(){swarm_id_=-1;};
             Swarm(int swarm_id);
@@ -70,22 +70,22 @@ namespace micros_swarm_framework{
     Swarm::Swarm(int swarm_id)
     {
         swarm_id_=swarm_id;
-        rtp=Singleton<RuntimePlatform>::getSingleton();
-        communicator=Singleton<ROSCommunication>::getSingleton();
+        rtp_=Singleton<RuntimePlatform>::getSingleton();
+        communicator_=Singleton<ROSCommunication>::getSingleton();
         
-        rtp->insertOrUpdateSwarm(swarm_id_, 0);
+        rtp_->insertOrUpdateSwarm(swarm_id_, 0);
     }
     
     std::set<int> Swarm::getSwarmMembers()
     {
-        std::set<int> result=rtp->getSwarmMembers(swarm_id_);
+        std::set<int> result=rtp_->getSwarmMembers(swarm_id_);
         return result;
     }
     
     void Swarm::joinSwarm()
     {
-        int robot_id=rtp->getRobotID();
-        rtp->insertOrUpdateSwarm(swarm_id_, 1);
+        int robot_id=rtp_->getRobotID();
+        rtp_->insertOrUpdateSwarm(swarm_id_, 1);
         
         SingleRobotJoinSwarm srjs(robot_id, swarm_id_);
         
@@ -106,13 +106,13 @@ namespace micros_swarm_framework{
         #endif
         p.package_check_sum=0;
                 
-        communicator->broadcast(p);
+        communicator_->broadcast(p);
     }
     
     void Swarm::leaveSwarm()
     {
-        int robot_id=rtp->getRobotID();
-        rtp->insertOrUpdateSwarm(swarm_id_, 0);
+        int robot_id=rtp_->getRobotID();
+        rtp_->insertOrUpdateSwarm(swarm_id_, 0);
         
         SingleRobotLeaveSwarm srls(robot_id, swarm_id_);
         
@@ -133,7 +133,7 @@ namespace micros_swarm_framework{
         #endif
         p.package_check_sum=0;
                 
-        communicator->broadcast(p);
+        communicator_->broadcast(p);
     }
     
     void Swarm::selectSwarm(boost::function<bool()> bf)
@@ -162,7 +162,7 @@ namespace micros_swarm_framework{
             
     bool Swarm::inSwarm()
     {
-        if(rtp->getSwarm(swarm_id_))
+        if(rtp_->getSwarm(swarm_id_))
             return true;
         return false;
     }
@@ -177,7 +177,7 @@ namespace micros_swarm_framework{
     { 
         if(inSwarm())
             leaveSwarm();
-        rtp->deleteSwarm(swarm_id_);
+        rtp_->deleteSwarm(swarm_id_);
         this->~Swarm();
     }
     
@@ -193,7 +193,7 @@ namespace micros_swarm_framework{
     
         Swarm result_swarm(new_swarm_id);
         
-        int robot_id=rtp->getRobotID();
+        int robot_id=rtp_->getRobotID();
     
         std::set<int>::iterator it;  
         it = result.find(robot_id);
@@ -219,7 +219,7 @@ namespace micros_swarm_framework{
     
         Swarm result_swarm(new_swarm_id);
         
-        int robot_id=rtp->getRobotID();
+        int robot_id=rtp_->getRobotID();
     
         std::set<int>::iterator it;  
         it = result.find(robot_id);
@@ -245,7 +245,7 @@ namespace micros_swarm_framework{
     
         Swarm result_swarm(new_swarm_id);
     
-        int robot_id=rtp->getRobotID();
+        int robot_id=rtp_->getRobotID();
     
         std::set<int>::iterator it;  
         it = result.find(robot_id);
@@ -263,7 +263,7 @@ namespace micros_swarm_framework{
     {
         Swarm result_swarm(new_swarm_id);
         
-        int robot_id=rtp->getRobotID();
+        int robot_id=rtp_->getRobotID();
     
         std::set<int>::iterator it;  
         it = getSwarmMembers().find(robot_id);
@@ -281,7 +281,7 @@ namespace micros_swarm_framework{
     { 
         std::set<int> s = getSwarmMembers();
         
-        int robot_id=rtp->getRobotID();
+        int robot_id=rtp_->getRobotID();
     
         std::set<int>::iterator it;  
         std::cout<<"++++++++++++++++++++++++++++++++++"<<std::endl;

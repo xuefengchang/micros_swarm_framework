@@ -71,7 +71,7 @@ namespace micros_swarm_framework{
             RuntimePlatform();
             RuntimePlatform(int robot_id);
             
-            static RuntimePlatform& Instance();
+            //static RuntimePlatform& Instance();
             
             int getRobotID();
             void setRobotID(int robot_id);
