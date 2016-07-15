@@ -220,9 +220,16 @@ target_link_libraries(micros_swarm_framework_rtp_kernel
    ${catkin_LIBRARIES}
 )
 
+add_library(micros_swarm_framework_app2
+    apps/app2.cpp
+)
+#target_link_libraries(micros_swarm_framework_app2
+#   micros_swarm_framework_rtp_kernel
+#)
+
 #add_dependencies(micros_swarm_framework_rtp_kernel ${Boost_THREAD_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_SERIALIZATION_LIBRARY})
 
-#add_executable(main src/main.cpp)
+#add_executable(main test/main.cpp)
 #add_dependencies(main ${micros_swarm_framework_EXPORTED_TARGETS})
 #target_link_libraries(main
 #   ${Boost_THREAD_LIBRARY}

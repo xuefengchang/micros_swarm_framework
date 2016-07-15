@@ -38,6 +38,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "ros/ros.h"
 
 #include "micros_swarm_framework/runtime_platform.h"
+#include "micros_swarm_framework/communication_interface.h"
+#include "micros_swarm_framework/ros_communication.h"
 
 namespace micros_swarm_framework{
     

@@ -50,8 +50,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #endif
 
 #include "micros_swarm_framework/data_type.h"
-#include "micros_swarm_framework/message.h"
-#include "micros_swarm_framework/communication_interface.h"
+//#include "micros_swarm_framework/message.h"
+//#include "micros_swarm_framework/communication_interface.h"
 
 namespace micros_swarm_framework{
 
@@ -63,7 +63,7 @@ namespace micros_swarm_framework{
             Base robot_base_;
             std::map<int, NeighborBase> neighbors_;
             std::map<int, bool> swarms_;
-            std::map<int, OthersSwarmTuple> others_swarms_;
+            std::map<int, NeighborSwarmTuple> neighbor_swarms_;
             std::map<int, std::map<std::string, VirtualStigmergyTuple> > virtual_stigmergy_;
             double neighbor_distance_;
             std::set<int> barrier_; 
@@ -94,14 +94,14 @@ namespace micros_swarm_framework{
             void deleteSwarm(int swarm_id);
             void printSwarm();
             
-            bool inOthersSwarm(int robot_id, int swarm_id);
-            void joinOthersSwarm(int robot_id, int swarm_id);
-            void leaveOthersSwarm(int robot_id, int swarm_id);
-            void insertOrRefreshOthersSwarm(int robot_id, std::vector<int> swarm_list);
+            bool inNeighborSwarm(int robot_id, int swarm_id);
+            void joinNeighborSwarm(int robot_id, int swarm_id);
+            void leaveNeighborSwarm(int robot_id, int swarm_id);
+            void insertOrRefreshNeighborSwarm(int robot_id, std::vector<int> swarm_list);
             //get the member robot set of a swarm 
             std::set<int> getSwarmMembers(int swarm_id);
-            void deleteOthersSwarm(int robot_id);
-            void printOthersSwarm();
+            void deleteNeighborSwarm(int robot_id);
+            void printNeighborSwarm();
             
             void createVirtualStigmergy(int id);
             void insertOrUpdateVirtualStigmergy(int id, std::string key, std::string value, time_t time_now, int robot_id);

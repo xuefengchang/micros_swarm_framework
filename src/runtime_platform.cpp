@@ -45,7 +45,7 @@ namespace micros_swarm_framework{
         
         neighbors_.clear();
         swarms_.clear();
-        others_swarms_.clear();
+        neighbor_swarms_.clear();
         virtual_stigmergy_.clear();
         barrier_.clear();
     }
@@ -56,7 +56,7 @@ namespace micros_swarm_framework{
         
         neighbors_.clear();
         swarms_.clear();
-        others_swarms_.clear();
+        neighbor_swarms_.clear();
         virtual_stigmergy_.clear();
         barrier_.clear();
     }
@@ -194,12 +194,12 @@ namespace micros_swarm_framework{
         }
     }
     
-    bool RuntimePlatform::inOthersSwarm(int robot_id, int swarm_id)
+    bool RuntimePlatform::inNeighborSwarm(int robot_id, int swarm_id)
     {
-        std::map<int, OthersSwarmTuple>::iterator os_it;
-        os_it=others_swarms_.find(robot_id);
+        std::map<int, NeighborSwarmTuple>::iterator os_it;
+        os_it=neighbor_swarms_.find(robot_id);
     
-        if(os_it!=others_swarms_.end())
+        if(os_it!=neighbor_swarms_.end())
         {
             if(os_it->second.swarmIDExist(swarm_id))
             {
@@ -216,12 +216,12 @@ namespace micros_swarm_framework{
         }
     }
     
-    void RuntimePlatform::joinOthersSwarm(int robot_id, int swarm_id)
+    void RuntimePlatform::joinNeighborSwarm(int robot_id, int swarm_id)
     {
-        std::map<int, OthersSwarmTuple>::iterator os_it;
-        os_it=others_swarms_.find(robot_id);
+        std::map<int, NeighborSwarmTuple>::iterator os_it;
+        os_it=neighbor_swarms_.find(robot_id);
     
-        if(os_it!=others_swarms_.end())
+        if(os_it!=neighbor_swarms_.end())
         {
             if(os_it->second.swarmIDExist(swarm_id))
             {
@@ -237,18 +237,18 @@ namespace micros_swarm_framework{
         {
             std::vector<int> swarm_list;
             swarm_list.push_back(swarm_id);
-            OthersSwarmTuple new_others_swarm(swarm_list, 0);
+            NeighborSwarmTuple new_neighbor_swarm(swarm_list, 0);
             
-            others_swarms_.insert(std::pair<int, OthersSwarmTuple>(robot_id, new_others_swarm));
+            neighbor_swarms_.insert(std::pair<int, NeighborSwarmTuple>(robot_id, new_neighbor_swarm));
         }
     }
     
-    void RuntimePlatform::leaveOthersSwarm(int robot_id, int swarm_id)
+    void RuntimePlatform::leaveNeighborSwarm(int robot_id, int swarm_id)
     {
-        std::map<int, OthersSwarmTuple>::iterator os_it;
-        os_it=others_swarms_.find(robot_id);
+        std::map<int, NeighborSwarmTuple>::iterator os_it;
+        os_it=neighbor_swarms_.find(robot_id);
     
-        if(os_it!=others_swarms_.end())
+        if(os_it!=neighbor_swarms_.end())
         {
             if(os_it->second.swarmIDExist(swarm_id))
             {
@@ -267,12 +267,12 @@ namespace micros_swarm_framework{
         }
     }
             
-    void RuntimePlatform::insertOrRefreshOthersSwarm(int robot_id, std::vector<int> swarm_list)
+    void RuntimePlatform::insertOrRefreshNeighborSwarm(int robot_id, std::vector<int> swarm_list)
     {
-        std::map<int, OthersSwarmTuple>::iterator os_it;
-        os_it=others_swarms_.find(robot_id);
+        std::map<int, NeighborSwarmTuple>::iterator os_it;
+        os_it=neighbor_swarms_.find(robot_id);
     
-        if(os_it!=others_swarms_.end())
+        if(os_it!=neighbor_swarms_.end())
         {
             os_it->second.clearSwarmIDVector();
             
@@ -284,8 +284,8 @@ namespace micros_swarm_framework{
         }
         else
         {
-            OthersSwarmTuple new_others_swarm(swarm_list, 0);  
-            others_swarms_.insert(std::pair<int, OthersSwarmTuple>(robot_id ,new_others_swarm));   
+            NeighborSwarmTuple new_neighbor_swarm(swarm_list, 0);  
+            neighbor_swarms_.insert(std::pair<int, NeighborSwarmTuple>(robot_id ,new_neighbor_swarm));   
         }
     }
     
@@ -294,9 +294,9 @@ namespace micros_swarm_framework{
         std::set<int> result;
         result.clear();
         
-        std::map<int, OthersSwarmTuple>::iterator os_it;
+        std::map<int, NeighborSwarmTuple>::iterator os_it;
         
-        for(os_it=others_swarms_.begin(); os_it!=others_swarms_.end(); os_it++)
+        for(os_it=neighbor_swarms_.begin(); os_it!=neighbor_swarms_.end(); os_it++)
         {
             std::vector<int> tmp=os_it->second.getSwarmIDVector();
             
@@ -307,18 +307,18 @@ namespace micros_swarm_framework{
         return result;
     }
     
-    void RuntimePlatform::deleteOthersSwarm(int robot_id)
+    void RuntimePlatform::deleteNeighborSwarm(int robot_id)
     {
-        others_swarms_.erase(robot_id);
+        neighbor_swarms_.erase(robot_id);
     }
     
-    void RuntimePlatform::printOthersSwarm()
+    void RuntimePlatform::printNeighborSwarm()
     {
-        std::map<int, OthersSwarmTuple>::iterator os_it;
+        std::map<int, NeighborSwarmTuple>::iterator os_it;
         
-        for(os_it=others_swarms_.begin(); os_it!=others_swarms_.end(); os_it++)
+        for(os_it=neighbor_swarms_.begin(); os_it!=neighbor_swarms_.end(); os_it++)
         {
-            std::cout<<"others swarm "<<os_it->first<<": ";
+            std::cout<<"neighbor swarm "<<os_it->first<<": ";
             
             std::vector<int> temp=os_it->second.getSwarmIDVector();
             for(int i=0;i<temp.size();i++)

@@ -20,38 +20,32 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <iostream>
-#include <ros/ros.h>
-#include <nodelet/nodelet.h>
-#include <pluginlib/class_list_macros.h>
+//#include <iostream>
+//#include <ros/ros.h>
+//#include <nodelet/nodelet.h>
+//#include <pluginlib/class_list_macros.h>
 
-#include <fstream>
-#include <sstream>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/string.hpp> 
-#include <boost/serialization/vector.hpp>
+//#include <fstream>
+//#include <sstream>
+//#include <boost/archive/text_oarchive.hpp>
+//#include <boost/archive/text_iarchive.hpp>
+//#include <boost/serialization/string.hpp> 
+//#include <boost/serialization/vector.hpp>
 
-#include "micros_swarm_framework/singleton.h"
-#include "micros_swarm_framework/runtime_platform.h"
-#include "micros_swarm_framework/communication_interface.h"
-#include "micros_swarm_framework/packet_parser.h"
-#include "micros_swarm_framework/neighbors.h"
-#include "micros_swarm_framework/swarm.h"
+//#include "micros_swarm_framework/singleton.h"
+//#include "micros_swarm_framework/runtime_platform.h"
+//#include "micros_swarm_framework/communication_interface.h"
+//#include "micros_swarm_framework/packet_parser.h"
+//#include "micros_swarm_framework/neighbors.h"
+//#include "micros_swarm_framework/swarm.h"
+//#include "micros_swarm_framework/virtual_stigmergy.h"
+
+#include "micros_swarm_framework/micros_swarm_framework.h"
+
+#define PUBLISH_ROBOT_ID_DURATION 0.1
+#define PUBLISH_SWARM_LIST_DURATION 5
 
 namespace micros_swarm_framework{
-
-    /*
-    void packetParser(const MSFPPacket& packet)
-    {
-        MSFPPacket p=packet;
-        std::cout<<p.packet_source<<", "<<p.packet_version<<", "<<p.packet_type<<", "<<\
-            p.packet_data<<", "<<p.package_check_sum<<std::endl;
-    }
-    */
-    
-    //boost::shared_ptr<RuntimePlatform> rtp=Singleton<RuntimePlatform>::getSingleton(1);
-    //boost::shared_ptr<CommunicationInterface> communicator_;
     
     class RuntimePlatformKernel : public nodelet::Nodelet
     {
@@ -60,13 +54,15 @@ namespace micros_swarm_framework{
             boost::shared_ptr<RuntimePlatform> rtp_;
             boost::shared_ptr<CommunicationInterface> communicator_;
             boost::shared_ptr<PacketParser> parser_;
-            ros::Timer timer_;
+            
+            ros::Timer publish_robot_id_timer_;
+            ros::Timer publish_swarm_list_timer_;
             
             RuntimePlatformKernel();
             ~RuntimePlatformKernel();
-            //void (*packetCallBack_)(const MSFPPacket& packet);
-            void timerCallback(const ros::TimerEvent&);
             virtual void onInit();
+            void publish_robot_id(const ros::TimerEvent&);
+            void publish_swarm_list(const ros::TimerEvent&);
     };
 
     RuntimePlatformKernel::RuntimePlatformKernel()
@@ -78,67 +74,99 @@ namespace micros_swarm_framework{
     {
     }
     
-    void RuntimePlatformKernel::timerCallback(const ros::TimerEvent&)
+    void RuntimePlatformKernel::publish_robot_id(const ros::TimerEvent&)
     {
-        /*
-        MSFPPacket p;
-        p.packet_source=1;
-        p.packet_version=2;
-        p.packet_type=3;
-        p.packet_data="test";
-        p.package_check_sum=19911203;
-        */
-        
         int robot_id=rtp_->getRobotID();
-        Barrier_Syn bs("SYN");
-  
+        
+        micros_swarm_framework::Base l;
+        l.setX(-1);
+        l.setY(-1);
+        l.setZ(-1);
+        l.setVX(0);
+        l.setVY(0);
+        l.setVZ(0);
+        l=rtp_->getRobotBase();
+        
+        SingleRobotBroadcastID srbi(robot_id, l.getX(), l.getY(), l.getZ(), l.getVX(), l.getVY(), l.getVZ());
+        
         std::ostringstream archiveStream;
         boost::archive::text_oarchive archive(archiveStream);
-        archive<<bs;
-        std::string bs_string=archiveStream.str();
-    
-        
+        archive<<srbi;
+        std::string srbi_str=archiveStream.str();
+                      
         micros_swarm_framework::MSFPPacket p;
         p.packet_source=robot_id;
         p.packet_version=1;
-        p.packet_type=BARRIER_SYN;
+        p.packet_type=SINGLE_ROBOT_BROADCAST_ID;
         #ifdef ROS
-        p.packet_data=bs_string;
+        p.packet_data=srbi_str;
         #endif
         #ifdef OPENSPLICE_DDS
-        p.packet_data=bs_string.data();
+        //std::cout<<"srbi_str.data(): "<<srbi_str.data()<<std::endl;
+        p.packet_data=srbi_str.data();
         #endif
         p.package_check_sum=0;
+
+        communicator_->broadcast(p);
+    }
+    
+    void RuntimePlatformKernel::publish_swarm_list(const ros::TimerEvent&)
+    {    
+        int robot_id=rtp_->getRobotID();
         
-        communicator_->broadcast(p); 
+        std::vector<int> swarm_list;
+        swarm_list.clear();
+        swarm_list=rtp_->getSwarmList();
+        
+        SingleRobotSwarmList srsl(robot_id, swarm_list);
+        
+        std::ostringstream archiveStream;
+        boost::archive::text_oarchive archive(archiveStream);
+        archive<<srsl;
+        std::string srsl_str=archiveStream.str();
+                      
+        micros_swarm_framework::MSFPPacket p;
+        p.packet_source=robot_id;
+        p.packet_version=1;
+        p.packet_type=SINGLE_ROBOT_SWARM_LIST;
+        #ifdef ROS
+        p.packet_data=srsl_str;
+        #endif
+        #ifdef OPENSPLICE_DDS
+        p.packet_data=srsl_str.data();
+        #endif
+        p.package_check_sum=0;
+
+        communicator_->broadcast(p);
+
+        std::vector<int>().swap(swarm_list);
     }
     
     void RuntimePlatformKernel::onInit()
     {
-        //std::cout << "Initializing nodelet 1..." << std::endl;
-        //NODELET_DEBUG("Initializing nodelet 2...");
         RuntimePlatformKernel::node_handle_ = getPrivateNodeHandle();
     
-        rtp_=Singleton<RuntimePlatform>::getSingleton(1);
-        //communicator_.reset(new ROSCommunication(node_handle_));
+        int robot_id=-1;
+        //bool param_ok = ros::param::get ("~unique_robot_id", robot_id);
+        bool param_ok =node_handle_.getParam("unique_robot_id", robot_id);
+        if(!param_ok)
+        {
+            std::cout<<"could not get parameter unique_robot_id"<<std::endl;
+            //exit(1);
+        }else{
+            //std::cout<<"unique_robot_id = "<<robot_id<<std::endl;
+        }
+    
+        rtp_=Singleton<RuntimePlatform>::getSingleton(robot_id);
         communicator_=Singleton<ROSCommunication>::getSingleton(node_handle_);
-        parser_.reset(new PacketParser(rtp_, communicator_));
-        //communicator_->receive(&PacketParser::parser);
         communicator_->receive(packetParser);
-    
-        //chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
-    
-        //std::cout << "Initializing nodelet 3..." << std::endl;
-        timer_ = node_handle_.createTimer(ros::Duration(0.1), &RuntimePlatformKernel::timerCallback, this);
-        //std::cout << "Initializing nodelet 4..." << std::endl;
         
-        boost::thread thr1(task("C++",20));
-        boost::thread thr2(task("Java",40));
-        boost::thread thr3(task("Python",60));
-
-        thr1.join();
-        thr2.join();
-        thr3.join();    
+        rtp_->setNeighborDistance(50);
+        publish_robot_id_timer_ = node_handle_.createTimer(ros::Duration(PUBLISH_ROBOT_ID_DURATION), &RuntimePlatformKernel::publish_robot_id,this);
+        publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(PUBLISH_SWARM_LIST_DURATION), &RuntimePlatformKernel::publish_swarm_list,this);
+        
+        std::cout<<"The micros_swarm_framework_kernel started successfully."<<std::endl;
+        std::cout<<"local robot id is: "<<robot_id<<std::endl;
     }
 };
 

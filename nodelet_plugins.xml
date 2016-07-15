@@ -4,3 +4,10 @@
     </class>
     
 </library>
+
+<library path="lib/libmicros_swarm_framework_app2">
+    <class name="micros_swarm_framework/App2" type="micros_swarm_framework::App2" base_class_type="nodelet::Nodelet">
+        <description>micros_swarm_framework app2.</description>
+    </class>
+    
+</library>

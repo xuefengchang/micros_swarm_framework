@@ -20,8 +20,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef COMMUNICATION_INTERFACE_H_
-#define COMMUNICATION_INTERFACE_H_
+#ifndef ROS_COMMUNICATION_H_
+#define ROS_COMMUNICATION_H_
 
 #include <iostream>
 #include <string>
@@ -47,19 +47,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "opensplice_dds/subscriber.h"
 #endif
 
-namespace micros_swarm_framework{
+#include "micros_swarm_framework/communication_interface.h"
 
-    class CommunicationInterface{
-        public:   
-            std::string name_;
-            std::queue<MSFPPacket> in_queue_;  //TODO
-            std::queue<MSFPPacket> out_queue_;  //TODO
-            
-            virtual void broadcast(micros_swarm_framework::MSFPPacket msfp_packet)=0;
-            virtual void receive(void (*callback)(const MSFPPacket& packet))=0;
-    };
+namespace micros_swarm_framework{
     
-    /*
     class ROSCommunication : public CommunicationInterface{
         private:
             ros::NodeHandle node_handle_;
@@ -104,6 +95,5 @@ namespace micros_swarm_framework{
                 packet_subscriber_ = node_handle_.subscribe("/micros_swarm_framework_topic", 1000, callback, ros::TransportHints().udp());
             }
     };
-    */
 };
 #endif

@@ -128,14 +128,14 @@ namespace micros_swarm_framework{
     };
     
     //This data structure contains all other robots's swarm information
-    class OthersSwarmTuple{
+    class NeighborSwarmTuple{
         private:
             std::vector<int> swarm_id_vector_;
             //when age_ is larger than the threshold, remove the tuple of the map 
             int age_;
         public:
-            OthersSwarmTuple(std::vector<int> swarm_id_vector, int age):swarm_id_vector_(swarm_id_vector), age_(age){}
-            ~OthersSwarmTuple(){}
+            NeighborSwarmTuple(std::vector<int> swarm_id_vector, int age):swarm_id_vector_(swarm_id_vector), age_(age){}
+            ~NeighborSwarmTuple(){}
     
         void addSwarmID(int swarm_id)
         {

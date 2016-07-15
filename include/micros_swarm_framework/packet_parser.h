@@ -50,6 +50,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "opensplice_dds/subscriber.h"
 #endif
 
+#include "micros_swarm_framework/communication_interface.h"
+#include "micros_swarm_framework/ros_communication.h"
+
 namespace micros_swarm_framework{
 
     //boost::shared_ptr<RuntimePlatform> rtp=Singleton<RuntimePlatform>::getSingleton();
@@ -70,6 +73,7 @@ namespace micros_swarm_framework{
         communicator_=communicator;
     }
 
+    
     void PacketParser::parser(const MSFPPacket& packet)
     {
         //MSFPPacket p=packet;
@@ -151,9 +155,9 @@ namespace micros_swarm_framework{
                 int robot_id=srjs.getRobotID();
                 int swarm_id=srjs.getSwarmID();
                 
-                if(!rtp_->inOthersSwarm(robot_id, swarm_id))
+                if(!rtp_->inNeighborSwarm(robot_id, swarm_id))
                 {
-                    rtp_->joinOthersSwarm(robot_id, swarm_id);
+                    rtp_->joinNeighborSwarm(robot_id, swarm_id);
                     
                     std::ostringstream archiveStream;
                     boost::archive::text_oarchive archive(archiveStream);
@@ -186,9 +190,9 @@ namespace micros_swarm_framework{
                 int swarm_id=srls.getSwarmID();
                 //kh.leaveNeighborSwarm(robot_id, swarm_id);
                 
-                if(rtp_->inOthersSwarm(robot_id, swarm_id))
+                if(rtp_->inNeighborSwarm(robot_id, swarm_id))
                 {
-                    rtp_->leaveOthersSwarm(robot_id, swarm_id);
+                    rtp_->leaveNeighborSwarm(robot_id, swarm_id);
                     
                     std::ostringstream archiveStream;
                     boost::archive::text_oarchive archive(archiveStream);
@@ -220,7 +224,7 @@ namespace micros_swarm_framework{
                 
                 int robot_id=srsl.getRobotID();
                 std::vector<int> swarm_list=srsl.getSwarmList();
-                rtp_->insertOrRefreshOthersSwarm(robot_id, swarm_list);
+                rtp_->insertOrRefreshNeighborSwarm(robot_id, swarm_list);
                 std::vector<int>().swap(swarm_list);
                 break;
             }
@@ -416,19 +420,17 @@ namespace micros_swarm_framework{
         
         static boost::shared_ptr<RuntimePlatform> rtp=Singleton<RuntimePlatform>::getSingleton();
         static boost::shared_ptr<CommunicationInterface> communicator=Singleton<ROSCommunication>::getSingleton();
-        //boost::shared_ptr<RuntimePlatform> rtp=Singleton<RuntimePlatform>::getSingleton();
         
         int shm_rid=rtp->getRobotID();
-        std::cout<<"robot id: "<<shm_rid<<std::endl;
+        //std::cout<<"robot id: "<<shm_rid<<std::endl;
         
         //std::cout<<"后: "<<Singleton<RuntimePlatform>::getSingleton().use_count()<<std::endl;
         
         //ignore the packet of the local robot
-        //if(packet.packet_source==shm_rid)
-        //{
-        //    return;
-        //}
-        
+        if(packet.packet_source==shm_rid)
+        {
+            return;
+        }
         
         try{
         const int packet_type=packet.packet_type;
@@ -487,9 +489,9 @@ namespace micros_swarm_framework{
                 int robot_id=srjs.getRobotID();
                 int swarm_id=srjs.getSwarmID();
                 
-                if(!rtp->inOthersSwarm(robot_id, swarm_id))
+                if(!rtp->inNeighborSwarm(robot_id, swarm_id))
                 {
-                    rtp->joinOthersSwarm(robot_id, swarm_id);
+                    rtp->joinNeighborSwarm(robot_id, swarm_id);
                     
                     std::ostringstream archiveStream;
                     boost::archive::text_oarchive archive(archiveStream);
@@ -522,9 +524,9 @@ namespace micros_swarm_framework{
                 int swarm_id=srls.getSwarmID();
                 //kh.leaveNeighborSwarm(robot_id, swarm_id);
                 
-                if(rtp->inOthersSwarm(robot_id, swarm_id))
+                if(rtp->inNeighborSwarm(robot_id, swarm_id))
                 {
-                    rtp->leaveOthersSwarm(robot_id, swarm_id);
+                    rtp->leaveNeighborSwarm(robot_id, swarm_id);
                     
                     std::ostringstream archiveStream;
                     boost::archive::text_oarchive archive(archiveStream);
@@ -556,7 +558,7 @@ namespace micros_swarm_framework{
                 
                 int robot_id=srsl.getRobotID();
                 std::vector<int> swarm_list=srsl.getSwarmList();
-                rtp->insertOrRefreshOthersSwarm(robot_id, swarm_list);
+                rtp->insertOrRefreshNeighborSwarm(robot_id, swarm_list);
                 std::vector<int>().swap(swarm_list);
                 break;
             }
@@ -692,8 +694,7 @@ namespace micros_swarm_framework{
             }
             case BARRIER_SYN:
             {
-                std::cout<<"BARRIER_SYN"<<std::endl;
-                
+                //std::cout<<"BARRIER_SYN"<<std::endl;            
                 Barrier_Syn bs;
                 archive>>bs;
                 if(bs.getString()!="SYN")
