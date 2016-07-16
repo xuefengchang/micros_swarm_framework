@@ -94,7 +94,7 @@ namespace micros_swarm_framework{
             void deleteSwarm(int swarm_id);
             void printSwarm();
             
-            bool inNeighborSwarm(int robot_id, int swarm_id);
+            //bool inNeighborSwarm(int robot_id, int swarm_id);
             void joinNeighborSwarm(int robot_id, int swarm_id);
             void leaveNeighborSwarm(int robot_id, int swarm_id);
             void insertOrRefreshNeighborSwarm(int robot_id, std::vector<int> swarm_list);

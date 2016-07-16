@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      micros_swarm_framework.h
+\file      barrier.h 
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,44 +20,85 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef MICROS_SWARM_FRAMEWORK_H_
-#define MICROS_SWARM_FRAMEWORK_H_
+#ifndef BARRIER_H_
+#define BARRIER_H_
 
 #include <iostream>
 #include <string>
 #include <time.h>
 #include <stdlib.h>
-#include <limits.h>
 #include <vector>
 #include <stack>
 #include <map>
 #include <set>
 #include <queue>
 #include <algorithm>
-#include <functional>
-#include <sstream>
-#include <fstream>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/string.hpp> 
-#include <boost/serialization/vector.hpp>
 
-#include <ros/ros.h>
-#include <nodelet/nodelet.h>
-#include <pluginlib/class_list_macros.h>
+#include "ros/ros.h"
 
-#include "micros_swarm_framework/data_type.h"
 #include "micros_swarm_framework/runtime_platform.h"
-#include "micros_swarm_framework/message.h"
-#include "micros_swarm_framework/singleton.h"
 #include "micros_swarm_framework/communication_interface.h"
 #include "micros_swarm_framework/ros_communication.h"
-#include "micros_swarm_framework/packet_parser.h"
 
-#include "micros_swarm_framework/swarm.h"
-#include "micros_swarm_framework/neighbors.h"
-#include "micros_swarm_framework/virtual_stigmergy.h"
-#include "micros_swarm_framework/barrier.h"
-//#include "micros_swarm_framework/neighbor_communication.h"
-
+namespace micros_swarm_framework{
+    
+    class Barrier{
+        private:
+            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<CommunicationInterface> communicator_;
+            ros::Timer barrier_timer_;
+            int num_;
+        public:
+            Barrier(ros::NodeHandle nh, int num);
+            ~Barrier();
+            void check(const ros::TimerEvent&);
+    };
+    
+    void Barrier::check(const ros::TimerEvent&)
+    {
+        int barrier_size=rtp_->getBarrierSize();
+        if(barrier_size>=num_-1)
+        {
+            std::cout<<"The micros_swarm_framework_kernel started successfully."<<std::endl;
+            std::cout<<"local robot id is: "<<rtp_->getRobotID()<<std::endl;
+            
+            barrier_timer_.stop();
+        }
+                
+        //barrier
+        int robot_id=rtp_->getRobotID();
+    
+        micros_swarm_framework::Barrier_Syn bs("SYN");
+                
+        std::ostringstream archiveStream;
+        boost::archive::text_oarchive archive(archiveStream);
+        archive<<bs;
+        std::string bs_string=archiveStream.str();
+    
+        micros_swarm_framework::MSFPPacket p;
+        p.packet_source=robot_id;
+        p.packet_version=1;
+        p.packet_type=micros_swarm_framework::BARRIER_SYN;
+        #ifdef ROS
+        p.packet_data=bs_string;
+        #endif
+        #ifdef OPENSPLICE_DDS
+        p.packet_data=bs_string.data();
+        #endif
+        p.package_check_sum=0;
+    
+        communicator_->broadcast(p);
+    }
+    
+    Barrier::Barrier(ros::NodeHandle nh, int num)
+    {
+        num_=num;
+        barrier_timer_=nh.createTimer(ros::Duration(1), &Barrier::check, this);
+    }
+    
+    Barrier::~Barrier()
+    {
+    
+    }
+};
 #endif

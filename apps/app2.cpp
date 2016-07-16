@@ -35,23 +35,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm_framework{
 
-    int delta_kin = 5;
-    int epsilon_kin = 100;
-
-    int delta_nonkin = 30;
-    int epsilon_nonkin = 1000;
-
     struct XY
     {
         float x;
         float y;
     };
-    
-    boost::shared_ptr<RuntimePlatform> rtp_=Singleton<RuntimePlatform>::getSingleton();
-    //std::cout<<"*************"<<rtp_->getRobotID()<<","<<rtp_.use_count()<<std::endl;
-    boost::shared_ptr<CommunicationInterface> communicator_=Singleton<ROSCommunication>::getSingleton();
-    
-    ros::NodeHandle nh;
     
     class App2 : public nodelet::Nodelet
     {
@@ -59,44 +47,62 @@ namespace micros_swarm_framework{
             ros::NodeHandle node_handle_;
             boost::shared_ptr<RuntimePlatform> rtp_;
             boost::shared_ptr<CommunicationInterface> communicator_;
-            boost::shared_ptr<PacketParser> parser_;
-            ros::Timer timer_;
+            ros::Timer red_timer_;
+            ros::Timer blue_timer_;
+            ros::Publisher pub_;
+            ros::Subscriber sub_;
+            
+            //app parameters
+            int delta_kin;
+            int epsilon_kin;
+            int delta_nonkin;
+            int epsilon_nonkin;
             
             App2();
             ~App2();
-            //XY force_sum_kin(micros_swarm_framework::NeighborBase n, XY &s);
-            //XY force_sum_nonkin(micros_swarm_framework::NeighborBase n, XY &s);
-            //XY direction_red();
-            //XY direction_blue();
-            //bool red(int id);
-            //bool blue(int id);
-            //void motion_red();
-            //void motion_blue();
-            //void barrier_wait();
-            //void baseCallback(const nav_msgs::Odometry& lmsg);
             virtual void onInit();
+            
+            //app functions
+            float force_mag_kin(float dist);
+            float force_mag_nonkin(float dist);
+            XY force_sum_kin(micros_swarm_framework::NeighborBase n, XY &s);
+            XY force_sum_nonkin(micros_swarm_framework::NeighborBase n, XY &s);
+            XY direction_red();
+            XY direction_blue();
+            bool red(int id);
+            bool blue(int id);
+            void motion_red();
+            void motion_blue();
+            void publish_red_cmd(const ros::TimerEvent&);
+            void publish_blue_cmd(const ros::TimerEvent&);
+            void baseCallback(const nav_msgs::Odometry& lmsg);  
     };
 
     App2::App2()
     {
-        
+        //set parameters
+        delta_kin = 5;
+        epsilon_kin = 100;
+
+        delta_nonkin = 30;
+        epsilon_nonkin = 1000;
     }
     
     App2::~App2()
     {
     }
     
-    float force_mag_kin(float dist)
+    float App2::force_mag_kin(float dist)
     {
         return -(epsilon_kin/dist) *(pow(delta_kin/dist, 4) - pow(delta_kin/dist, 2));
     }
 
-    float force_mag_nonkin(float dist)
+    float App2::force_mag_nonkin(float dist)
     {
         return -(epsilon_nonkin/dist) *(pow(delta_nonkin/dist, 4) - pow(delta_nonkin/dist, 2));
     }
 
-    XY force_sum_kin(micros_swarm_framework::NeighborBase n, XY &s)
+    XY App2::force_sum_kin(micros_swarm_framework::NeighborBase n, XY &s)
     {
         micros_swarm_framework::Base l=rtp_->getRobotBase();
         float xl=l.getX();
@@ -113,14 +119,12 @@ namespace micros_swarm_framework{
         float fx=(fm/dist)*(xn-xl);
         float fy=(fm/dist)*(yn-yl);
     
-        //std::cout<<"virtual force: "<<fx<<", "<<fy<<std::endl;
-    
         s.x+=fx;
         s.y+=fy;
         return s;
     }
 
-    XY force_sum_nonkin(micros_swarm_framework::NeighborBase n, XY &s)
+    XY App2::force_sum_nonkin(micros_swarm_framework::NeighborBase n, XY &s)
     {
         micros_swarm_framework::Base l=rtp_->getRobotBase();
         float xl=l.getX();
@@ -137,134 +141,90 @@ namespace micros_swarm_framework{
         float fx=(fm/dist)*(xn-xl);
         float fy=(fm/dist)*(yn-yl);
     
-        //std::cout<<"virtual force: "<<fx<<", "<<fy<<std::endl;
-    
         s.x+=fx;
         s.y+=fy;
         return s;
     }
 
-    XY direction_red()
+    XY App2::direction_red()
     {
         XY sum;
         sum.x=0;
         sum.y=0;
     
         micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
-        sum=n.neighborsKin(RED_SWARM).neighborsReduce(force_sum_kin, sum);
-        sum=n.neighborsNonKin(RED_SWARM).neighborsReduce(force_sum_nonkin, sum);
+        boost::function<XY(NeighborBase, XY &)> bf_kin=boost::bind(&App2::force_sum_kin, this, _1, _2);
+        boost::function<XY(NeighborBase, XY &)> bf_nonkin=boost::bind(&App2::force_sum_nonkin, this, _1, _2);
+        sum=n.neighborsKin(RED_SWARM).neighborsReduce(bf_kin, sum);
+        sum=n.neighborsNonKin(RED_SWARM).neighborsReduce(bf_nonkin, sum);
     
         return sum;
     }
 
-    XY direction_blue()
+    XY App2::direction_blue()
     {
         XY sum;
         sum.x=0;
         sum.y=0;
     
         micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
-        sum=n.neighborsKin(BLUE_SWARM).neighborsReduce(force_sum_kin, sum);
-        sum=n.neighborsNonKin(BLUE_SWARM).neighborsReduce(force_sum_nonkin, sum);
+        boost::function<XY(NeighborBase, XY &)> bf_kin=boost::bind(&App2::force_sum_kin, this, _1, _2);
+        boost::function<XY(NeighborBase, XY &)> bf_nonkin=boost::bind(&App2::force_sum_nonkin, this, _1, _2);
+        sum=n.neighborsKin(BLUE_SWARM).neighborsReduce(bf_kin, sum);
+        sum=n.neighborsNonKin(BLUE_SWARM).neighborsReduce(bf_nonkin, sum);
     
         return sum;
     }
 
-    bool red(int id)
+    bool App2::red(int id)
     {
         if(id<=9)
             return true;
         return false;
     }
 
-    bool blue(int id)
+    bool App2::blue(int id)
     {
         if(id>=10)
             return true;
         return false;
     }
-
-    void motion_red()
+    
+    void App2::publish_red_cmd(const ros::TimerEvent&)
     {
-        //ros::NodeHandle nh;
-    
-        static ros::Publisher pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-    
-        ros::Rate loop_rate(10);
-    
-        while(ros::ok())
-        {
-            XY v=direction_red();
-            geometry_msgs::Twist t;
-            t.linear.x=v.x;
-            t.linear.y=v.y;
         
-            pub.publish(t);
-            ros::spinOnce();
-            loop_rate.sleep();
-        }
-    }
-
-    void motion_blue()
-    {
-        //ros::NodeHandle nh;
-    
-        static ros::Publisher pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-    
-        ros::Rate loop_rate(10);
-    
-        while(ros::ok())
-        {
-            XY v=direction_blue();
-            geometry_msgs::Twist t;
-            t.linear.x=v.x;
-            t.linear.y=v.y;
+        XY v=direction_red();
+        geometry_msgs::Twist t;
+        t.linear.x=v.x;
+        t.linear.y=v.y;
         
-            pub.publish(t);
-            ros::spinOnce();
-            loop_rate.sleep();
-        }
-    }
-
-    void barrier_wait()
-    {
-        //barrier
-        int robot_id=rtp_->getRobotID();
-    
-        micros_swarm_framework::Barrier_Syn bs("SYN");
-                
-        std::ostringstream archiveStream;
-        boost::archive::text_oarchive archive(archiveStream);
-        archive<<bs;
-        std::string bs_string=archiveStream.str();
-    
-        micros_swarm_framework::MSFPPacket p;
-        p.packet_source=robot_id;
-        p.packet_version=1;
-        p.packet_type=micros_swarm_framework::BARRIER_SYN;
-        #ifdef ROS
-        p.packet_data=bs_string;
-        #endif
-        #ifdef OPENSPLICE_DDS
-        p.packet_data=bs_string.data();
-        #endif
-        p.package_check_sum=0;
-    
-        ros::Rate loop_rate(1);
-        while(ros::ok())
-        {
-            communicator_->broadcast(p);
-            int barrier_size=rtp_->getBarrierSize();
-            if(barrier_size==ROBOT_SUM-1)
-                break;
+        pub_.publish(t);
         
-            ros::spinOnce();
-            loop_rate.sleep();
-            std::cout<<robot_id<<"barrier_size: "<<barrier_size<<std::endl;
-        }
     }
     
-    void baseCallback(const nav_msgs::Odometry& lmsg)
+    void App2::publish_blue_cmd(const ros::TimerEvent&)
+    {
+        
+        XY v=direction_blue();
+        geometry_msgs::Twist t;
+        t.linear.x=v.x;
+        t.linear.y=v.y;
+        
+        pub_.publish(t);
+        
+    }
+
+    void App2::motion_red()
+    {
+        red_timer_ = node_handle_.createTimer(ros::Duration(0.1), &App2::publish_red_cmd, this);
+    }
+
+    void App2::motion_blue()
+    {
+        blue_timer_ = node_handle_.createTimer(ros::Duration(0.1), &App2::publish_blue_cmd, this);
+    }
+    
+    void App2::baseCallback(const nav_msgs::Odometry& lmsg)
     {
         float x=lmsg.pose.pose.position.x;
         float y=lmsg.pose.pose.position.y;
@@ -278,32 +238,31 @@ namespace micros_swarm_framework{
     
     void App2::onInit()
     {
-        node_handle_ = getPrivateNodeHandle();
-        nh = getPrivateNodeHandle();
+        node_handle_ = getNodeHandle();
         rtp_=Singleton<RuntimePlatform>::getSingleton();
-        //std::cout<<"*************"<<rtp_->getRobotID()<<","<<rtp_.use_count()<<std::endl;
         communicator_=Singleton<ROSCommunication>::getSingleton();
-        //std::cout<<"*************"<<communicator_->name_<<","<<communicator_.use_count()<<std::endl;
-        //communicator_->receive(packetParser);
     
-        ros::Subscriber sub = node_handle_.subscribe("base_pose_ground_truth", 1000, baseCallback, ros::TransportHints().udp());
-    
-        boost::thread barrier(&barrier_wait);
-        barrier.join();  
+        sub_ = node_handle_.subscribe("base_pose_ground_truth", 1000, &App2::baseCallback, this, ros::TransportHints().udp());
+        pub_ = node_handle_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         
-        boost::function<bool()> bfred=boost::bind(&red, rtp_->getRobotID());
-        boost::function<bool()> bfblue=boost::bind(&blue, rtp_->getRobotID());
+        boost::function<bool()> bfred=boost::bind(&App2::red, this, rtp_->getRobotID());
+        boost::function<bool()> bfblue=boost::bind(&App2::blue, this, rtp_->getRobotID());
     
         micros_swarm_framework::Swarm red_swarm(RED_SWARM);
         red_swarm.selectSwarm(bfred);
         micros_swarm_framework::Swarm blue_swarm(BLUE_SWARM);
         blue_swarm.selectSwarm(bfblue);
     
-        //red_swarm.printSwarm();
-        //blue_swarm.printSwarm();
-    
-        red_swarm.execute(&motion_red);
-        blue_swarm.execute(&motion_blue);
+        red_swarm.printSwarm();
+        blue_swarm.printSwarm();
+        
+        red_swarm.execute(boost::bind(&App2::motion_red, this));
+        blue_swarm.execute(boost::bind(&App2::motion_blue, this));
+        
+        //micros_swarm_framework::VirtualStigmergy<bool> barrier(1);
+        //std::string robot_id_string=boost::lexical_cast<std::string>(rtp_->getRobotID());
+        //barrier.virtualStigmergyPut(robot_id_string, 1);
+        
     }
 };
 

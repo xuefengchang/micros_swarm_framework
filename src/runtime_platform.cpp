@@ -194,6 +194,7 @@ namespace micros_swarm_framework{
         }
     }
     
+    /*
     bool RuntimePlatform::inNeighborSwarm(int robot_id, int swarm_id)
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
@@ -215,6 +216,7 @@ namespace micros_swarm_framework{
             return false;
         }
     }
+    */
     
     void RuntimePlatform::joinNeighborSwarm(int robot_id, int swarm_id)
     {

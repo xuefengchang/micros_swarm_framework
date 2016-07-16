@@ -55,9 +55,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm_framework{
 
-    //boost::shared_ptr<RuntimePlatform> rtp=Singleton<RuntimePlatform>::getSingleton();
-    //extern boost::shared_ptr<RuntimePlatform> rtp;
-
     class PacketParser{
         private:
             boost::shared_ptr<RuntimePlatform> rtp_;
@@ -76,28 +73,15 @@ namespace micros_swarm_framework{
     
     void PacketParser::parser(const MSFPPacket& packet)
     {
-        //MSFPPacket p=packet;
-        //std::cout<<p.packet_source<<", "<<p.packet_version<<", "<<p.packet_type<<", "<<\
-            p.packet_data<<", "<<p.package_check_sum<<std::endl;
-
-        //MSFPPacket p=packet;
-        //std::cout<<p.packet_source<<", "<<p.packet_version<<", "<<p.packet_type<<", "<<\
-            p.packet_data<<", "<<p.package_check_sum<<std::endl;
-    
-        //std::cout<<"前: "<<Singleton<RuntimePlatform>::getSingleton().use_count()<<std::endl;
-        
         int shm_rid=rtp_->getRobotID();
         std::cout<<"robot id: "<<shm_rid<<std::endl;
         
-        //std::cout<<"后: "<<Singleton<RuntimePlatform>::getSingleton().use_count()<<std::endl;
-        
         //ignore the packet of the local robot
-        //if(packet.packet_source==shm_rid)
-        //{
-        //    return;
-        //}
-        
-        
+        if(packet.packet_source==shm_rid)
+        {
+            return;
+        }
+
         try{
         const int packet_type=packet.packet_type;
         #ifdef ROS
@@ -113,7 +97,6 @@ namespace micros_swarm_framework{
         switch(packet_type)
         {
             case SINGLE_ROBOT_BROADCAST_ID:{
-                //std::cout<<"SINGLE_ROBOT_BROADCAST_ID"<<std::endl;
                 micros_swarm_framework::SingleRobotBroadcastID srbi;
                 
                 archive>>srbi;
@@ -148,13 +131,14 @@ namespace micros_swarm_framework{
                 break;
             }
             case SINGLE_ROBOT_JOIN_SWARM:{
-                //std::cout<<"SINGLE_ROBOT_JOIN_SWARM"<<std::endl;
                 SingleRobotJoinSwarm srjs;
                 archive>>srjs;
              
                 int robot_id=srjs.getRobotID();
                 int swarm_id=srjs.getSwarmID();
+                rtp_->joinNeighborSwarm(robot_id, swarm_id);
                 
+                /*
                 if(!rtp_->inNeighborSwarm(robot_id, swarm_id))
                 {
                     rtp_->joinNeighborSwarm(robot_id, swarm_id);
@@ -178,6 +162,7 @@ namespace micros_swarm_framework{
                 
                     communicator_->broadcast(p);
                 }
+                */
                 
                 break;
             }
@@ -188,8 +173,9 @@ namespace micros_swarm_framework{
                 
                 int robot_id=srls.getRobotID();
                 int swarm_id=srls.getSwarmID();
-                //kh.leaveNeighborSwarm(robot_id, swarm_id);
+                rtp_->leaveNeighborSwarm(robot_id, swarm_id);
                 
+                /*
                 if(rtp_->inNeighborSwarm(robot_id, swarm_id))
                 {
                     rtp_->leaveNeighborSwarm(robot_id, swarm_id);
@@ -213,12 +199,12 @@ namespace micros_swarm_framework{
                 
                     communicator_->broadcast(p);
                 }
+                */
                 
                 break;
             }
             case SINGLE_ROBOT_SWARM_LIST:
             {
-                //std::cout<<"SINGLE_ROBOT_SWARM_LIST"<<std::endl;
                 SingleRobotSwarmList srsl;
                 archive>>srsl;
                 
@@ -230,7 +216,6 @@ namespace micros_swarm_framework{
             }
             case VIRTUAL_STIGMERGY_QUERY:
             {
-                //std::cout<<"VIRTUAL_STIGMERGY_PUT"<<std::endl;
                 VirtualStigmergyQuery vsq;
                 archive>>vsq;
                 
@@ -306,7 +291,6 @@ namespace micros_swarm_framework{
             }
             case VIRTUAL_STIGMERGY_PUT:
             {
-                //std::cout<<"VIRTUAL_STIGMERGY_PUT"<<std::endl;
                 VirtualStigmergyPut vsp;
                 archive>>vsp;
                 
@@ -392,7 +376,6 @@ namespace micros_swarm_framework{
             }
             case BARRIER_ACK:
             {
-                //std::cout<<"BARRIER_ACK"<<std::endl;
                 Barrier_Ack ba;
                 archive>>ba;
                 
@@ -412,19 +395,10 @@ namespace micros_swarm_framework{
 
     void packetParser(const MSFPPacket& packet)
     {
-        //MSFPPacket p=packet;
-        //std::cout<<p.packet_source<<", "<<p.packet_version<<", "<<p.packet_type<<", "<<\
-            p.packet_data<<", "<<p.package_check_sum<<std::endl;
-    
-        //std::cout<<"前: "<<Singleton<RuntimePlatform>::getSingleton().use_count()<<std::endl;
-        
         static boost::shared_ptr<RuntimePlatform> rtp=Singleton<RuntimePlatform>::getSingleton();
         static boost::shared_ptr<CommunicationInterface> communicator=Singleton<ROSCommunication>::getSingleton();
         
         int shm_rid=rtp->getRobotID();
-        //std::cout<<"robot id: "<<shm_rid<<std::endl;
-        
-        //std::cout<<"后: "<<Singleton<RuntimePlatform>::getSingleton().use_count()<<std::endl;
         
         //ignore the packet of the local robot
         if(packet.packet_source==shm_rid)
@@ -488,7 +462,9 @@ namespace micros_swarm_framework{
              
                 int robot_id=srjs.getRobotID();
                 int swarm_id=srjs.getSwarmID();
+                rtp->joinNeighborSwarm(robot_id, swarm_id);
                 
+                /*
                 if(!rtp->inNeighborSwarm(robot_id, swarm_id))
                 {
                     rtp->joinNeighborSwarm(robot_id, swarm_id);
@@ -512,6 +488,7 @@ namespace micros_swarm_framework{
                 
                     communicator->broadcast(p);
                 }
+                */
                 
                 break;
             }
@@ -522,8 +499,9 @@ namespace micros_swarm_framework{
                 
                 int robot_id=srls.getRobotID();
                 int swarm_id=srls.getSwarmID();
-                //kh.leaveNeighborSwarm(robot_id, swarm_id);
+                rtp->leaveNeighborSwarm(robot_id, swarm_id);
                 
+                /*
                 if(rtp->inNeighborSwarm(robot_id, swarm_id))
                 {
                     rtp->leaveNeighborSwarm(robot_id, swarm_id);
@@ -547,6 +525,7 @@ namespace micros_swarm_framework{
                 
                     communicator->broadcast(p);
                 }
+                */
                 
                 break;
             }
@@ -690,6 +669,7 @@ namespace micros_swarm_framework{
                 {
                     //do nothing
                 }
+                //std::cout<<"virtual stigmergy size: "<<rtp->getVirtualStigmergySize(id)<<std::endl;
                 break;
             }
             case BARRIER_SYN:

@@ -204,7 +204,7 @@ namespace micros_swarm_framework{
             result_swarm.joinSwarm();
         }
         
-        ros::Duration(0.1).sleep();
+        //ros::Duration(0.1).sleep();
         
         return result_swarm;
     }
@@ -230,7 +230,7 @@ namespace micros_swarm_framework{
             result_swarm.joinSwarm();
         }
         
-        ros::Duration(0.1).sleep();
+        //ros::Duration(0.1).sleep();
         
         return result_swarm;
     }
@@ -256,7 +256,7 @@ namespace micros_swarm_framework{
             result_swarm.joinSwarm();
         }
         
-        ros::Duration(0.1).sleep();
+        //ros::Duration(0.1).sleep();
         
         return result_swarm;
     }
@@ -274,25 +274,24 @@ namespace micros_swarm_framework{
             result_swarm.joinSwarm();
         }
         
-        ros::Duration(0.1).sleep();
+        //ros::Duration(0.1).sleep();
         
         return result_swarm;
     }
     
     void Swarm::printSwarm()
-    { 
+    {
         std::set<int> s = getSwarmMembers();
         
         int robot_id=rtp_->getRobotID();
     
         std::set<int>::iterator it;  
-        std::cout<<"++++++++++++++++++++++++++++++++++"<<std::endl;
+        std::cout<<"swarm "<<swarm_id_<<" members: "<<std::endl;
         for(it=s.begin();it!=s.end();it++)
         {
             std::cout<<*it<<", ";
         }
         std::cout<<std::endl;
-        std::cout<<"++++++++++++++++++++++++++++++++++"<<std::endl;
     }
 };
 #endif

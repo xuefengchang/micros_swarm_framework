@@ -1,112 +1,90 @@
 <launch>
-
     <group ns="robot_0">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node0" output="screen">
-            <param name="unique_robot_id" value="0"/>
+        <node pkg="nodelet" type="nodelet" name="app3_0" args="load micros_swarm_framework/App3 micros_swarm_framework_manager0" output="screen">
         </node>
     </group>
     <group ns="robot_1">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node1" output="screen">
-            <param name="unique_robot_id" value="1"/>
+        <node pkg="nodelet" type="nodelet" name="app3_1" args="load micros_swarm_framework/App3 micros_swarm_framework_manager1" output="screen">
         </node>
     </group>
     <group ns="robot_2">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node2" output="screen">
-            <param name="unique_robot_id" value="2"/>
+        <node pkg="nodelet" type="nodelet" name="app3_2" args="load micros_swarm_framework/App3 micros_swarm_framework_manager2" output="screen">
         </node>
     </group>
     <group ns="robot_3">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node3" output="screen">
-            <param name="unique_robot_id" value="3"/>
+        <node pkg="nodelet" type="nodelet" name="app3_3" args="load micros_swarm_framework/App3 micros_swarm_framework_manager3" output="screen">
         </node>
     </group>
     <group ns="robot_4">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node4" output="screen">
-            <param name="unique_robot_id" value="4"/>
+        <node pkg="nodelet" type="nodelet" name="app3_4" args="load micros_swarm_framework/App3 micros_swarm_framework_manager4" output="screen">
         </node>
     </group>
     
     
     <group ns="robot_5">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node5" output="screen">
-            <param name="unique_robot_id" value="5"/>
+        <node pkg="nodelet" type="nodelet" name="app3_5" args="load micros_swarm_framework/App3 micros_swarm_framework_manager5" output="screen">
         </node>
     </group>
     <group ns="robot_6">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node6" output="screen">
-            <param name="unique_robot_id" value="6"/>
+        <node pkg="nodelet" type="nodelet" name="app3_6" args="load micros_swarm_framework/App3 micros_swarm_framework_manager6" output="screen">
         </node>
     </group>
     <group ns="robot_7">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node7" output="screen">
-            <param name="unique_robot_id" value="7"/>
+        <node pkg="nodelet" type="nodelet" name="app3_7" args="load micros_swarm_framework/App3 micros_swarm_framework_manager7" output="screen">
         </node>
     </group>
     <group ns="robot_8">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node8" output="screen">
-            <param name="unique_robot_id" value="8"/>
+        <node pkg="nodelet" type="nodelet" name="app3_8" args="load micros_swarm_framework/App3 micros_swarm_framework_manager8" output="screen">
         </node>
     </group>
     <group ns="robot_9">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node9" output="screen">
-            <param name="unique_robot_id" value="9"/>
+        <node pkg="nodelet" type="nodelet" name="app3_9" args="load micros_swarm_framework/App3 micros_swarm_framework_manager9" output="screen">
         </node>
     </group>
-    
     
     
     <group ns="robot_10">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node10" output="screen">
-            <param name="unique_robot_id" value="10"/>
+        <node pkg="nodelet" type="nodelet" name="app3_10" args="load micros_swarm_framework/App3 micros_swarm_framework_manager10" output="screen">
         </node>
     </group>
     <group ns="robot_11">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node11" output="screen">
-            <param name="unique_robot_id" value="11"/>
+        <node pkg="nodelet" type="nodelet" name="app3_11" args="load micros_swarm_framework/App3 micros_swarm_framework_manager11" output="screen">
         </node>
     </group>
     <group ns="robot_12">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node12" output="screen">
-            <param name="unique_robot_id" value="12"/>
+        <node pkg="nodelet" type="nodelet" name="app3_12" args="load micros_swarm_framework/App3 micros_swarm_framework_manager12" output="screen">
         </node>
     </group>
     <group ns="robot_13">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node13" output="screen">
-            <param name="unique_robot_id" value="13"/>
+        <node pkg="nodelet" type="nodelet" name="app3_13" args="load micros_swarm_framework/App3 micros_swarm_framework_manager13" output="screen">
         </node>
     </group>
     <group ns="robot_14">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node14" output="screen">
-            <param name="unique_robot_id" value="14"/>
+        <node pkg="nodelet" type="nodelet" name="app3_14" args="load micros_swarm_framework/App3 micros_swarm_framework_manager14" output="screen">
         </node>
     </group>
-    
     
     
     <group ns="robot_15">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node15" output="screen">
-            <param name="unique_robot_id" value="15"/>
+        <node pkg="nodelet" type="nodelet" name="app3_15" args="load micros_swarm_framework/App3 micros_swarm_framework_manager15" output="screen">
         </node>
     </group>
     <group ns="robot_16">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node16" output="screen">
-            <param name="unique_robot_id" value="16"/>
+        <node pkg="nodelet" type="nodelet" name="app3_16" args="load micros_swarm_framework/App3 micros_swarm_framework_manager16" output="screen">
         </node>
     </group>
     <group ns="robot_17">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node17" output="screen">
-            <param name="unique_robot_id" value="17"/>
+        <node pkg="nodelet" type="nodelet" name="app3_17" args="load micros_swarm_framework/App3 micros_swarm_framework_manager17" output="screen">
         </node>
     </group>
     <group ns="robot_18">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node18" output="screen">
-            <param name="unique_robot_id" value="18"/>
+        <node pkg="nodelet" type="nodelet" name="app3_18" args="load micros_swarm_framework/App3 micros_swarm_framework_manager18" output="screen">
         </node>
     </group>
     <group ns="robot_19">
-        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app3_node" name="micros_swarm_framework_app3_node19" output="screen">
-            <param name="unique_robot_id" value="19"/>
+        <node pkg="nodelet" type="nodelet" name="app3_19" args="load micros_swarm_framework/App3 micros_swarm_framework_manager19" output="screen">
         </node>
     </group>
-    
+
 </launch>
+

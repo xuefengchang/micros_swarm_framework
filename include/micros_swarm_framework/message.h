@@ -237,6 +237,27 @@ namespace micros_swarm_framework{
             int getRobotID(){return robot_id_;}
     };
     
+    template<class Type>
+    class NeighborBroadcastKeyValue{
+        private:   
+            std::string key_;
+            Type value_;
+            
+            friend class boost::serialization::access;
+            template<class Archive>
+            void serialize(Archive & ar, const unsigned int version)
+            {
+                ar & key_;
+                ar & value_;
+            }
+        public:
+            NeighborBroadcastKeyValue(){}
+            NeighborBroadcastKeyValue(std::string key, Type value): key_(key), value_(value){}
+                 
+            std::string getKey(){return key_;}
+            Type getValue(){return value_;}
+    };
+    
     class Barrier_Syn
     {
         private:
@@ -271,25 +292,5 @@ namespace micros_swarm_framework{
             int getRobotID(){return robot_id_;}
     };
     
-    template<class Type>
-    class NeighborBroadcastKeyValue{
-        private:   
-            std::string key_;
-            Type value_;
-            
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & key_;
-                ar & value_;
-            }
-        public:
-            NeighborBroadcastKeyValue(){}
-            NeighborBroadcastKeyValue(std::string key, Type value): key_(key), value_(value){}
-                 
-            std::string getKey(){return key_;}
-            Type getValue(){return value_;}
-    };
 };
 #endif

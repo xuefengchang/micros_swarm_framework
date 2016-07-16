@@ -20,30 +20,10 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-//#include <iostream>
-//#include <ros/ros.h>
-//#include <nodelet/nodelet.h>
-//#include <pluginlib/class_list_macros.h>
-
-//#include <fstream>
-//#include <sstream>
-//#include <boost/archive/text_oarchive.hpp>
-//#include <boost/archive/text_iarchive.hpp>
-//#include <boost/serialization/string.hpp> 
-//#include <boost/serialization/vector.hpp>
-
-//#include "micros_swarm_framework/singleton.h"
-//#include "micros_swarm_framework/runtime_platform.h"
-//#include "micros_swarm_framework/communication_interface.h"
-//#include "micros_swarm_framework/packet_parser.h"
-//#include "micros_swarm_framework/neighbors.h"
-//#include "micros_swarm_framework/swarm.h"
-//#include "micros_swarm_framework/virtual_stigmergy.h"
-
 #include "micros_swarm_framework/micros_swarm_framework.h"
 
-#define PUBLISH_ROBOT_ID_DURATION 0.1
-#define PUBLISH_SWARM_LIST_DURATION 5
+//#define PUBLISH_ROBOT_ID_DURATION 0.1
+//#define PUBLISH_SWARM_LIST_DURATION 5
 
 namespace micros_swarm_framework{
     
@@ -57,12 +37,19 @@ namespace micros_swarm_framework{
             
             ros::Timer publish_robot_id_timer_;
             ros::Timer publish_swarm_list_timer_;
+            ros::Timer barrier_timer_;
+            
+            double publish_robot_id_duration_;
+            double publish_swarm_list_duration_;
+            double default_neighbor_distance_;
+            int total_robot_numbers_;
             
             RuntimePlatformKernel();
             ~RuntimePlatformKernel();
             virtual void onInit();
             void publish_robot_id(const ros::TimerEvent&);
             void publish_swarm_list(const ros::TimerEvent&);
+            void barrier_check(const ros::TimerEvent&);
     };
 
     RuntimePlatformKernel::RuntimePlatformKernel()
@@ -102,7 +89,6 @@ namespace micros_swarm_framework{
         p.packet_data=srbi_str;
         #endif
         #ifdef OPENSPLICE_DDS
-        //std::cout<<"srbi_str.data(): "<<srbi_str.data()<<std::endl;
         p.packet_data=srbi_str.data();
         #endif
         p.package_check_sum=0;
@@ -111,7 +97,7 @@ namespace micros_swarm_framework{
     }
     
     void RuntimePlatformKernel::publish_swarm_list(const ros::TimerEvent&)
-    {    
+    {
         int robot_id=rtp_->getRobotID();
         
         std::vector<int> swarm_list;
@@ -142,31 +128,103 @@ namespace micros_swarm_framework{
         std::vector<int>().swap(swarm_list);
     }
     
+    void RuntimePlatformKernel::barrier_check(const ros::TimerEvent&)
+    {
+        int barrier_size=rtp_->getBarrierSize();
+        if(barrier_size>=total_robot_numbers_-1)
+        {
+            std::cout<<"The micros_swarm_framework_kernel started successfully."<<std::endl;
+            //std::cout<<"local robot id is: "<<rtp_->getRobotID()<<std::endl;
+            
+            barrier_timer_.stop();
+        }
+                
+        //barrier
+        int robot_id=rtp_->getRobotID();
+    
+        micros_swarm_framework::Barrier_Syn bs("SYN");
+                
+        std::ostringstream archiveStream;
+        boost::archive::text_oarchive archive(archiveStream);
+        archive<<bs;
+        std::string bs_string=archiveStream.str();
+    
+        micros_swarm_framework::MSFPPacket p;
+        p.packet_source=robot_id;
+        p.packet_version=1;
+        p.packet_type=micros_swarm_framework::BARRIER_SYN;
+        #ifdef ROS
+        p.packet_data=bs_string;
+        #endif
+        #ifdef OPENSPLICE_DDS
+        p.packet_data=bs_string.data();
+        #endif
+        p.package_check_sum=0;
+    
+        communicator_->broadcast(p);
+    }
+    
     void RuntimePlatformKernel::onInit()
     {
         RuntimePlatformKernel::node_handle_ = getPrivateNodeHandle();
-    
-        int robot_id=-1;
-        //bool param_ok = ros::param::get ("~unique_robot_id", robot_id);
-        bool param_ok =node_handle_.getParam("unique_robot_id", robot_id);
+        
+        bool param_ok =node_handle_.getParam("/publish_robot_id_duration", publish_robot_id_duration_);
         if(!param_ok)
         {
-            std::cout<<"could not get parameter unique_robot_id"<<std::endl;
+            std::cout<<"could not get parameter publish_robot_id_duration!"<<std::endl;
             //exit(1);
         }else{
-            //std::cout<<"unique_robot_id = "<<robot_id<<std::endl;
+            std::cout<<"publish_robot_id_duration = "<<publish_robot_id_duration_<<std::endl;
+        }
+        
+        param_ok =node_handle_.getParam("/publish_swarm_list_duration", publish_swarm_list_duration_);
+        if(!param_ok)
+        {
+            std::cout<<"could not get parameter publish_swarm_list_duration!"<<std::endl;
+            //exit(1);
+        }else{
+            std::cout<<"publish_swarm_list_duration = "<<publish_swarm_list_duration_<<std::endl;
+        }
+        
+        param_ok =node_handle_.getParam("/default_neighbor_distance", default_neighbor_distance_);
+        if(!param_ok)
+        {
+            std::cout<<"could not get parameter default_neighbor_distance!"<<std::endl;
+            //exit(1);
+        }else{
+            std::cout<<"default_neighbor_distance = "<<default_neighbor_distance_<<std::endl;
+        }
+        
+        param_ok =node_handle_.getParam("/total_robot_numbers", total_robot_numbers_);
+        if(!param_ok)
+        {
+            std::cout<<"could not get parameter total_robot_numbers!"<<std::endl;
+            //exit(1);
+        }else{
+            std::cout<<"total_robot_numbers = "<<total_robot_numbers_<<std::endl;
+        }
+    
+        int robot_id=-1;
+        param_ok =node_handle_.getParam("unique_robot_id", robot_id);
+        if(!param_ok)
+        {
+            std::cout<<"could not get parameter unique_robot_id!"<<std::endl;
+            //exit(1);
+        }else{
+            std::cout<<"unique_robot_id = "<<robot_id<<std::endl;
         }
     
         rtp_=Singleton<RuntimePlatform>::getSingleton(robot_id);
         communicator_=Singleton<ROSCommunication>::getSingleton(node_handle_);
         communicator_->receive(packetParser);
         
-        rtp_->setNeighborDistance(50);
-        publish_robot_id_timer_ = node_handle_.createTimer(ros::Duration(PUBLISH_ROBOT_ID_DURATION), &RuntimePlatformKernel::publish_robot_id,this);
-        publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(PUBLISH_SWARM_LIST_DURATION), &RuntimePlatformKernel::publish_swarm_list,this);
+        rtp_->setNeighborDistance(default_neighbor_distance_);
+        publish_robot_id_timer_ = node_handle_.createTimer(ros::Duration(publish_robot_id_duration_), &RuntimePlatformKernel::publish_robot_id, this);
+        publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(publish_swarm_list_duration_), &RuntimePlatformKernel::publish_swarm_list, this);
+        barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimePlatformKernel::barrier_check, this);
         
-        std::cout<<"The micros_swarm_framework_kernel started successfully."<<std::endl;
-        std::cout<<"local robot id is: "<<robot_id<<std::endl;
+        //std::cout<<"The micros_swarm_framework_kernel started successfully."<<std::endl;
+        //std::cout<<"local robot id is: "<<robot_id<<std::endl;
     }
 };
 

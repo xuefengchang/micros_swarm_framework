@@ -5,9 +5,25 @@
     
 </library>
 
+<library path="lib/libmicros_swarm_framework_app1">
+    <class name="micros_swarm_framework/App1" type="micros_swarm_framework::App1" base_class_type="nodelet::Nodelet">
+        <description>micros_swarm_framework app1.</description>
+    </class>
+    
+</library>
+
 <library path="lib/libmicros_swarm_framework_app2">
     <class name="micros_swarm_framework/App2" type="micros_swarm_framework::App2" base_class_type="nodelet::Nodelet">
         <description>micros_swarm_framework app2.</description>
     </class>
     
 </library>
+
+<library path="lib/libmicros_swarm_framework_app3">
+    <class name="micros_swarm_framework/App3" type="micros_swarm_framework::App3" base_class_type="nodelet::Nodelet">
+        <description>micros_swarm_framework app3.</description>
+    </class>
+    
+</library>
+
+

@@ -1,4 +1,10 @@
 <launch>
+    <!--set runtime platform kernel parameters-->
+    <param name="publish_robot_id_duration" type="double" value="0.1"/>
+    <param name="publish_swarm_list_duration" type="double" value="5.0"/>
+    <param name="default_neighbor_distance" type="double" value="50"/>
+    <param name="total_robot_numbers" type="int" value="20"/>
+
     <group ns="robot_0">
         <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager0"  args="manager" output="screen"/>
         <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel0" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager0" output="screen">

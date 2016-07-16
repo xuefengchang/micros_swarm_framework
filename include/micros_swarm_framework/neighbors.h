@@ -73,6 +73,16 @@ namespace micros_swarm_framework{
                 }
             }
             
+            void neighborsForeach(boost::function<void(Type)> foreach)  //for class member functions
+            {
+                typename std::map<int, Type>::iterator n_it;
+    
+                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
+                {
+                    foreach(n_it->second);
+                }
+            }
+            
             template<class T2>
             Neighbors<T2> neighborsMap( T2(*map)(Type) )
             {
@@ -88,15 +98,42 @@ namespace micros_swarm_framework{
                 return n2;
             }
             
+            template<class T2>
+            Neighbors<T2> neighborsMap(boost::function<T2(Type)> map)  //for class member functions
+            {
+                Neighbors<T2> n2;
+                typename std::map<int, Type>::iterator n_it1;
+    
+                for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
+                {
+                    T2 temp=map(n_it1->second);
+            
+                    n2.data_.insert(std::pair<int, T2>(n_it1->first,temp));
+                }        
+                return n2;
+            }
             
             template<class T2>
-            T2 neighborsReduce( T2(*reduce)(Type, T2 &), T2 t2)
+            T2 neighborsReduce(T2(*reduce)(Type, T2 &), T2 t2)
             {
                 typename std::map<int, Type>::iterator n_it1;
     
                 for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
                 {
                     t2=(*reduce)(n_it1->second, t2);
+                }
+            
+                return t2;
+            }
+            
+            template<class T2>
+            T2 neighborsReduce(boost::function<T2(Type, T2&)> reduce, T2 t2)  //for class member functions
+            {
+                typename std::map<int, Type>::iterator n_it1;
+    
+                for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
+                {
+                    t2=reduce(n_it1->second, t2);
                 }
             
                 return t2;
@@ -111,6 +148,22 @@ namespace micros_swarm_framework{
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
                     if((*filter)(n_it->first, n_it->second))
+                    {
+                        result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
+                    }
+                }
+                return result;
+            }
+            
+            Neighbors<Type> neighborsFilter(boost::function<bool(int, Type)> filter)  //for class member functions
+            {
+                Neighbors<Type> result;
+            
+                typename std::map<int, Type>::iterator n_it;
+    
+                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
+                {
+                    if(filter(n_it->first, n_it->second))
                     {
                         result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
                     }
@@ -220,8 +273,18 @@ namespace micros_swarm_framework{
                 }
             }
             
+            void neighborsForeach(boost::function<void(NeighborBase)> foreach)  //for class member functions
+            {
+                typename std::map<int, NeighborBase>::iterator n_it;
+    
+                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
+                {
+                    foreach(n_it->second);
+                }
+            }
+            
             template<class T>
-            Neighbors<T> neighborsMap( T(*map)(NeighborBase) )
+            Neighbors<T> neighborsMap(T(*map)(NeighborBase) )
             {
                 Neighbors<T> n;
                 typename std::map<int, NeighborBase>::iterator n_it;
@@ -236,15 +299,43 @@ namespace micros_swarm_framework{
                 return n;
             }
             
+            template<class T>
+            Neighbors<T> neighborsMap(boost::function<T(NeighborBase)> map)  //for class member functions
+            {
+                Neighbors<T> n;
+                typename std::map<int, NeighborBase>::iterator n_it;
+    
+                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
+                {
+                    T temp=map(n_it->second);
+            
+                    n.data_.insert(std::pair<int, T>(n_it->first,temp));
+                }
+                
+                return n;
+            }
             
             template<class T>
-            T neighborsReduce( T(*reduce)(NeighborBase, T &), T t)
+            T neighborsReduce(T(*reduce)(NeighborBase, T &), T t)
             {
                 typename std::map<int, NeighborBase>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
                     t=(*reduce)(n_it->second, t);
+                }
+            
+                return t;
+            }
+            
+            template<class T>
+            T neighborsReduce(boost::function<T(NeighborBase, T &)> reduce, T t)  //for class member functions
+            {
+                typename std::map<int, NeighborBase>::iterator n_it;
+    
+                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
+                {
+                    t=reduce(n_it->second, t);
                 }
             
                 return t;
@@ -259,6 +350,23 @@ namespace micros_swarm_framework{
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
                     if((*filter)(n_it->first, n_it->second))
+                    {
+                        result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
+                    }
+                }
+                
+                return result;
+            }
+            
+            Neighbors<NeighborBase> neighborsFilter(boost::function<bool(int, NeighborBase)> filter)  //for class member functions
+            {
+                Neighbors<NeighborBase> result;
+            
+                typename std::map<int, NeighborBase>::iterator n_it;
+    
+                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
+                {
+                    if(filter(n_it->first, n_it->second))
                     {
                         result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
