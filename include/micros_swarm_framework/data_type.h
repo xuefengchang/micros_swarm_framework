@@ -224,6 +224,7 @@ namespace micros_swarm_framework{
             }
     };
     
+    /*
     class CheckNeighborABC{
         public:
             virtual bool isNeighbor(Base self, Base neighbor)=0;
@@ -255,6 +256,7 @@ namespace micros_swarm_framework{
                 return false;
             }
     };
+    */
     
     //this macro definition is used to serialize the user-defined data type
     #define BOOST_SERIALIZE  friend class boost::serialization::access;\

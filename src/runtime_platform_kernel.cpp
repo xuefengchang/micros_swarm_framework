@@ -33,7 +33,6 @@ namespace micros_swarm_framework{
             ros::NodeHandle node_handle_;
             boost::shared_ptr<RuntimePlatform> rtp_;
             boost::shared_ptr<CommunicationInterface> communicator_;
-            boost::shared_ptr<PacketParser> parser_;
             
             ros::Timer publish_robot_id_timer_;
             ros::Timer publish_swarm_list_timer_;
@@ -133,7 +132,7 @@ namespace micros_swarm_framework{
         int barrier_size=rtp_->getBarrierSize();
         if(barrier_size>=total_robot_numbers_-1)
         {
-            std::cout<<"The micros_swarm_framework_kernel started successfully."<<std::endl;
+            std::cout<<"robot "<<rtp_->getRobotID()<<" runtime_platform_kernel started successfully."<<std::endl;
             //std::cout<<"local robot id is: "<<rtp_->getRobotID()<<std::endl;
             
             barrier_timer_.stop();
