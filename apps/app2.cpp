@@ -32,6 +32,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define RED_SWARM 1
 #define BLUE_SWARM 2
 
+#include <boost/any.hpp> 
+
 
 namespace micros_swarm_framework{
 
@@ -262,7 +264,6 @@ namespace micros_swarm_framework{
         //micros_swarm_framework::VirtualStigmergy<bool> barrier(1);
         //std::string robot_id_string=boost::lexical_cast<std::string>(rtp_->getRobotID());
         //barrier.virtualStigmergyPut(robot_id_string, 1);
-        
     }
 };
 

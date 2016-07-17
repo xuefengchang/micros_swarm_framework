@@ -24,6 +24,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define DATA_TYPE_H_
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <time.h>
 #include <stdlib.h>
@@ -36,7 +37,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
-#include <boost/thread.hpp>
+#include <boost/variant.hpp>
+#include <boost/function.hpp>
+#include <boost/foreach.hpp>
+#include <boost/any.hpp> 
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -288,6 +292,24 @@ namespace micros_swarm_framework{
                 std::cout<<"c_ = "<<c_<<std::endl;
             }
     };
+    
+    typedef boost::variant<boost::function<void(int)>,
+                           boost::function<void(float)>,
+                           boost::function<void(double)>,
+                           boost::function<void(bool)>,
+                           boost::function<void(std::string)>,
+                           boost::function<void()> >NeighborCommunicationCallBack;
+                           
+    template <class Type>  
+    Type stringToNumber(const std::string& str)  
+    {  
+        std::istringstream iss(str);  
+        Type number;  
+        iss >> number;
+        
+        return number;      
+    } 
+    
 };
 
 #endif

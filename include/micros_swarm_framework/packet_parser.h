@@ -702,6 +702,8 @@ namespace micros_swarm_framework{
                 p.package_check_sum=0;
                     
                 communicator->broadcast(p);
+                
+                break;
             }
             case BARRIER_ACK:
             {
@@ -711,6 +713,64 @@ namespace micros_swarm_framework{
                 
                 if(shm_rid==ba.getRobotID())
                     rtp->insertBarrier(packet.packet_source);
+                    
+                break;
+            }
+            case NEIGHBOR_BROADCAST_KEY_VALUE:
+            {
+                //std::cout<<"NEIGHBOR_BROADCAST_KEY_VALUE"<<std::endl;
+                NeighborBroadcastKeyValue nbkv;
+                archive>>nbkv;
+
+                std::string type=nbkv.getType();
+                std::string key=nbkv.getKey();
+                std::string value=nbkv.getValue();
+                
+                if(type=="int")
+                {
+                    int r=stringToNumber<int>(value);
+                    
+                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);  
+                    boost::function<void(int)> f=boost::get<boost::function<void(int)> >(cb);
+                    f(r);
+                }
+                else if(type=="float")
+                {
+                    float r=stringToNumber<float>(value);
+                    
+                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);  
+                    boost::function<void(float)> f=boost::get<boost::function<void(float)> >(cb);
+                    f(r);
+                }
+                else if(type=="double")
+                {
+                    double r=stringToNumber<double>(value);
+                    
+                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);  
+                    boost::function<void(double)> f=boost::get<boost::function<void(double)> >(cb);
+                    f(r);
+                }
+                else if(type=="bool")
+                {
+                    bool r=stringToNumber<bool>(value);
+                    
+                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);  
+                    boost::function<void(bool)> f=boost::get<boost::function<void(bool)> >(cb);
+                    f(r);
+                }
+                else if(type=="string")
+                { 
+                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);  
+                    boost::function<void(std::string)> f=boost::get<boost::function<void(std::string)> >(cb);
+                    f(value);
+                }
+                else
+                {
+                    std::cout<<"wrong data type in neighbor communication!"<<std::endl;
+                    return;
+                }
+               
+                break;
             }
             
             default:

@@ -480,4 +480,40 @@ namespace micros_swarm_framework{
         return barrier_.size();
     }
     
+    void RuntimePlatform::insertOrUpdateCallbackFunctions(std::string key, NeighborCommunicationCallBack cb)
+    {
+        std::map<std::string, NeighborCommunicationCallBack>::iterator nccb_it;
+        nccb_it=callback_functions_.find(key);
+    
+        if(nccb_it!=callback_functions_.end())
+        {
+            nccb_it->second = cb;
+        }
+        else
+        {
+            callback_functions_.insert(std::pair<std::string, NeighborCommunicationCallBack>(key ,cb));
+        } 
+    }
+    
+    NeighborCommunicationCallBack RuntimePlatform::getCallbackFunctions(std::string key)
+    {
+        std::map<std::string, NeighborCommunicationCallBack>::iterator nccb_it;
+        nccb_it=callback_functions_.find(key);
+    
+        if(nccb_it!=callback_functions_.end())
+        {
+            return nccb_it->second;
+        }
+        
+        std::cout<<"could not get the callback function which has the key "<<key<<"!"<<std::endl;
+        //boost::function<void()> f;
+        //return f;
+        exit(-1);
+    }
+    
+    void RuntimePlatform::deleteCallbackFunctions(std::string key)
+    {
+        callback_functions_.erase(key);
+    }
+    
 };

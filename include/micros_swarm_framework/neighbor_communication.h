@@ -42,72 +42,23 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm_framework{
     
-    template<class Type>
     class NeighborCommunication{
         private:
             boost::shared_ptr<RuntimePlatform> rtp_;
             boost::shared_ptr<CommunicationInterface> communicator_;
-            std::string key_;
-            boost::function<void(Type)> f_;
+            std::string type_;
         public:
         
-            NeighborCommunication(std::string key)
+            NeighborCommunication(std::string type)
             {
-                key_ = key;
-                
+                type_=type;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
                 communicator_=Singleton<ROSCommunication>::getSingleton();
             }
             
-            void neighborPacketCallback(const micros_swarm_framework::MSFPPacket& packet)
+            void neighborBroadcast(std::string key, std::string value)
             {
-                micros_swarm_framework::KernelHandle kh;
-                unsigned int shm_rid=kh.getRobotID();
-                
-                //ignore the packet from local robot
-                if(packet.packet_source==shm_rid)
-                {
-                    return;
-                }
-    
-                const unsigned int packet_type=packet.packet_type;
-                std::string packet_data;
-                #ifdef ROS
-                packet_data=packet.packet_data;
-                #endif
-                #ifdef OPENSPLICE_DDS
-                packet_data=(std::string)packet.packet_data;
-                #endif
-        
-                std::istringstream archiveStream(packet_data);
-                boost::archive::text_iarchive archive(archiveStream);
-        
-                switch(packet_type)
-                {
-                    case NEIGHBOR_BROADCAST_KEY_VALUE:{
-                        micros_swarm_framework::NeighborBroadcastKeyValue<Type> nbkv;
-                        archive>>nbkv;
-                        
-                        std::string key=nbkv.getKey();
-                        Type value=nbkv.getValue();
-                        
-                        if(key_==key)
-                            f_(value);
-                        else
-                            std::cout<<"received wrong key."<<std::endl;
-               
-                        break;
-                    }
-                    default:
-                    {
-                        std::cout<<"UNDEFINED PACKET TYPE!"<<std::endl;
-                    }
-                }
-            }
-            
-            void neighborBroadcast(Type value)
-            {
-                micros_swarm_framework::NeighborBroadcastKeyValue<Type> nbkv(key_, value);
+                micros_swarm_framework::NeighborBroadcastKeyValue nbkv(type_, key, value);
                 
                 std::ostringstream archiveStream;
                 boost::archive::text_oarchive archive(archiveStream);
@@ -129,17 +80,15 @@ namespace micros_swarm_framework{
                 communicator_->broadcast(p);
             }
             
-            void neighborListen(boost::function<void(Type)> f)
+            template<class Type>
+            void neighborListen(std::string key, boost::function<void(Type)> f)
             {
-                f_=f;
-                ros::NodeHandle n;
-                std::string topic_name="/neighbor_topic_"+key_;
-                neighbor_packet_subscriber_ = n.subscribe(topic_name, 1000, &NeighborCommunication::neighborPacketCallback, this, ros::TransportHints().udp());
+                rtp_->insertOrUpdateCallbackFunctions(key, f);
             }
             
-            void neighborIgnore()
+            void neighborIgnore(std::string key)
             {
-                 neighbor_packet_subscriber_.shutdown();
+                rtp_->deleteCallbackFunctions(key);
             }
     };
 };

@@ -66,7 +66,8 @@ namespace micros_swarm_framework{
             std::map<int, NeighborSwarmTuple> neighbor_swarms_;
             std::map<int, std::map<std::string, VirtualStigmergyTuple> > virtual_stigmergy_;
             double neighbor_distance_;
-            std::set<int> barrier_; 
+            std::set<int> barrier_;
+            std::map<std::string, NeighborCommunicationCallBack> callback_functions_;
         public:
             RuntimePlatform();
             RuntimePlatform(int robot_id);
@@ -115,7 +116,11 @@ namespace micros_swarm_framework{
             void setNeighborDistance(double neighbor_distance);
             
             void insertBarrier(int robot_id);
-            int getBarrierSize(); 
+            int getBarrierSize();
+            
+            void insertOrUpdateCallbackFunctions(std::string key, NeighborCommunicationCallBack cb);
+            NeighborCommunicationCallBack getCallbackFunctions(std::string key);
+            void deleteCallbackFunctions(std::string key);
     };
 };
 
