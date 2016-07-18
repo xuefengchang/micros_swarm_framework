@@ -62,7 +62,12 @@ namespace micros_swarm_framework{
     {
         node_handle_ = getNodeHandle();
         rtp_=Singleton<RuntimePlatform>::getSingleton();
+        #ifdef ROS
         communicator_=Singleton<ROSCommunication>::getSingleton();
+        #endif
+        #ifdef OPENSPLICE_DDS
+        communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+        #endif
     
         NeighborCommunication nc=NeighborCommunication("double");
         

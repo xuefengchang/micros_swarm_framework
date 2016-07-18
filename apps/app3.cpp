@@ -255,14 +255,18 @@ namespace micros_swarm_framework{
     {
         node_handle_ = getNodeHandle();
         rtp_=Singleton<RuntimePlatform>::getSingleton();
+        #ifdef ROS
         communicator_=Singleton<ROSCommunication>::getSingleton();
+        #endif
+        #ifdef OPENSPLICE_DDS
+        communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+        #endif
     
         rtp_->setNeighborDistance(12);
         sub_ = node_handle_.subscribe("base_pose_ground_truth", 1000, &App3::baseCallback, this, ros::TransportHints().udp());
         pub_ = node_handle_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         
         timer_ = node_handle_.createTimer(ros::Duration(interval), &App3::publish_cmd, this);
-    
     }
 };
 

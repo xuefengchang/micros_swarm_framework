@@ -212,7 +212,12 @@ namespace micros_swarm_framework{
         }
     
         rtp_=Singleton<RuntimePlatform>::getSingleton(robot_id);
+        #ifdef ROS
         communicator_=Singleton<ROSCommunication>::getSingleton(node_handle_);
+        #endif
+        #ifdef OPENSPLICE_DDS
+        communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+        #endif
         communicator_->receive(packetParser);
         
         rtp_->setNeighborDistance(default_neighbor_distance_);

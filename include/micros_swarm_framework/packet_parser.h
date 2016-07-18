@@ -51,14 +51,24 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #endif
 
 #include "micros_swarm_framework/communication_interface.h"
+#ifdef ROS
 #include "micros_swarm_framework/ros_communication.h"
+#endif
+#ifdef OPENSPLICE_DDS
+#include "micros_swarm_framework/opensplice_dds_communication.h"
+#endif
 
 namespace micros_swarm_framework{
 
     void packetParser(const MSFPPacket& packet)
     {
-        static boost::shared_ptr<RuntimePlatform> rtp=Singleton<RuntimePlatform>::getSingleton();
+        static boost::shared_ptr<RuntimePlatform> rtp=Singleton<RuntimePlatform>::getSingleton();   
+        #ifdef ROS
         static boost::shared_ptr<CommunicationInterface> communicator=Singleton<ROSCommunication>::getSingleton();
+        #endif
+        #ifdef OPENSPLICE_DDS
+        static boost::shared_ptr<CommunicationInterface> communicator=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+        #endif
         
         int shm_rid=rtp->getRobotID();
         

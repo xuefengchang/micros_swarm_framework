@@ -39,7 +39,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "micros_swarm_framework/runtime_platform.h"
 #include "micros_swarm_framework/communication_interface.h"
+#ifdef ROS
 #include "micros_swarm_framework/ros_communication.h"
+#endif
+#ifdef OPENSPLICE_DDS
+#include "micros_swarm_framework/opensplice_dds_communication.h"
+#endif
 
 namespace micros_swarm_framework{
     
@@ -73,7 +78,12 @@ namespace micros_swarm_framework{
     {
         swarm_id_=swarm_id;
         rtp_=Singleton<RuntimePlatform>::getSingleton();
+        #ifdef ROS
         communicator_=Singleton<ROSCommunication>::getSingleton();
+        #endif
+        #ifdef OPENSPLICE_DDS
+        communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+        #endif
         
         rtp_->insertOrUpdateSwarm(swarm_id_, 0);
     }

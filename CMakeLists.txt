@@ -225,7 +225,7 @@ if (OPENSPLICE_DDS)
     opensplice_dds_pub_sub
     libddskernel.so
     libdcpsisocpp.so
-)
+  )
 endif()
 
 add_library(micros_swarm_framework_app1
@@ -237,7 +237,7 @@ if (OPENSPLICE_DDS)
     opensplice_dds_pub_sub
     libddskernel.so
     libdcpsisocpp.so
-)
+  )
 endif()
 
 add_library(micros_swarm_framework_app2
@@ -249,7 +249,7 @@ if (OPENSPLICE_DDS)
     opensplice_dds_pub_sub
     libddskernel.so
     libdcpsisocpp.so
-)
+  )
 endif()
 
 add_library(micros_swarm_framework_app3
@@ -261,7 +261,7 @@ if (OPENSPLICE_DDS)
     opensplice_dds_pub_sub
     libddskernel.so
     libdcpsisocpp.so
-)
+  )
 endif()
 
 add_library(micros_swarm_framework_testnc
