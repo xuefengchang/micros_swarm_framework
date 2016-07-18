@@ -56,9 +56,11 @@ namespace micros_swarm_framework{
                 communicator_=Singleton<ROSCommunication>::getSingleton();
             }
             
-            void neighborBroadcast(std::string key, std::string value)
+            template<class Type>
+            void neighborBroadcast(std::string key, Type value)
             {
-                micros_swarm_framework::NeighborBroadcastKeyValue nbkv(type_, key, value);
+                std::string value_str=boost::lexical_cast<std::string>(value);
+                micros_swarm_framework::NeighborBroadcastKeyValue nbkv(type_, key, value_str);
                 
                 std::ostringstream archiveStream;
                 boost::archive::text_oarchive archive(archiveStream);
