@@ -3,7 +3,9 @@ project(micros_swarm_framework)
 
 # set DDS VENDOR
 option(USE_OPENSPLICE_DDS "Using OpenSplice DDS" OFF)
+set(USE_OPENSPLICE_DDS OFF CACHE BOOL "Using OpenSplice DDS" FORCE)
 option(USE_OPENDDS "Using OpenDDS" OFF)
+set(USE_OPENDDS OFF CACHE BOOL "Using OpenDDS" FORCE)
 
 if (${USE_OPENSPLICE_DDS})
   if (NOT DEFINED ENV{OSPL_HOME})
@@ -24,7 +26,7 @@ elseif (${USE_OPENDDS})
   set(DDS_INCLUDE_DIRS $ENV{DDS_ROOT} $ENV{ACE_ROOT}/TAO $ENV{ACE_ROOT} $ENV{DDS_ROOT}/dds/InfoRepo $ENV{DDS_ROOT}/lib)
   set(DDS_LIBRARY_DIRS $ENV{DDS_ROOT}/lib $ENV{ACE_ROOT}/lib)
 else()
-  message(FATAL_ERROR "Only OpenSpice DDS and OpenDDS are supported. The DDS_VENDOR variable in CMakeList.txt should be set correctly")
+  message("OpenSpice DDS and OpenDDS are not set correctly. Using ROS default.")
 endif()
 
 # set communication mechanism
