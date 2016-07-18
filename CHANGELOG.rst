@@ -2,6 +2,14 @@
 Changelog for package micros_swarm_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.12 (2016-07-18)
+-----------
+* reconstructe the whole architecture using nodelet to improve performance
+* is extensible to Opensplice DDS
+* add neighbor communication mechanism
+* standard the interface definition
+* repair bugs in cmake file
+
 0.0.11 (2016-07-18)
 -----------
 * repair bugs in cmake file
