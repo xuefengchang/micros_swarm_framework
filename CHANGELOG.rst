@@ -2,7 +2,7 @@
 Changelog for package micros_swarm_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.1.0 (2016-07-18)
+0.0.10 (2016-07-18)
 -----------
 * reconstructe the whole architecture using nodelet to improve performance
 * is extensible to Opensplice DDS
