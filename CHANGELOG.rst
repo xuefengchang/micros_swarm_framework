@@ -2,6 +2,13 @@
 Changelog for package micros_swarm_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.0 (2016-07-18)
+-----------
+* reconstructe the whole architecture using nodelet to improve performance
+* is extensible to Opensplice DDS
+* add neighbor communication mechanism
+* standard the interface definition
+
 0.0.9 (2016-07-07)
 -----------
 * Add another experiment which is called "Flocking"
