@@ -2,6 +2,10 @@
 Changelog for package micros_swarm_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.11 (2016-07-18)
+-----------
+* repair bugs in cmake file
+
 0.0.10 (2016-07-18)
 -----------
 * reconstructe the whole architecture using nodelet to improve performance
