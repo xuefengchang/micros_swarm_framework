@@ -96,12 +96,12 @@ namespace micros_swarm_framework{
     
     float App2::force_mag_kin(float dist)
     {
-        return -(epsilon_kin/dist) *(pow(delta_kin/dist, 4) - pow(delta_kin/dist, 2));
+        return -(epsilon_kin/(dist+0.1)) *(pow(delta_kin/(dist+0.1), 4) - pow(delta_kin/(dist+0.1), 2));
     }
 
     float App2::force_mag_nonkin(float dist)
     {
-        return -(epsilon_nonkin/dist) *(pow(delta_nonkin/dist, 4) - pow(delta_nonkin/dist, 2));
+        return -(epsilon_nonkin/(dist+0.1)) *(pow(delta_nonkin/(dist+0.1), 4) - pow(delta_nonkin/(dist+0.1), 2));
     }
 
     XY App2::force_sum_kin(micros_swarm_framework::NeighborBase n, XY &s)
@@ -118,8 +118,8 @@ namespace micros_swarm_framework{
         float fm = force_mag_kin(dist)/1000;
         if(fm>0.5) fm=0.5;
     
-        float fx=(fm/dist)*(xn-xl);
-        float fy=(fm/dist)*(yn-yl);
+        float fx=(fm/(dist+0.1))*(xn-xl);
+        float fy=(fm/(dist+0.1))*(yn-yl);
     
         s.x+=fx;
         s.y+=fy;
@@ -140,8 +140,8 @@ namespace micros_swarm_framework{
         float fm = force_mag_nonkin(dist)/1000;
         if(fm>0.5) fm=0.5;
     
-        float fx=(fm/dist)*(xn-xl);
-        float fy=(fm/dist)*(yn-yl);
+        float fx=(fm/(dist+0.1))*(xn-xl);
+        float fy=(fm/(dist+0.1))*(yn-yl);
     
         s.x+=fx;
         s.y+=fy;

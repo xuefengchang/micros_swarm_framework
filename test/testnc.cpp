@@ -40,7 +40,7 @@ namespace micros_swarm_framework{
             
             TestNC();
             ~TestNC();
-            void callback(float value);
+            void callback(bool value);
             virtual void onInit(); 
     };
 
@@ -53,7 +53,7 @@ namespace micros_swarm_framework{
     {
     }
     
-    void TestNC::callback(float value)
+    void TestNC::callback(bool value)
     {
         std::cout<<"I received the value: "<<value<<std::endl;
     }
@@ -64,16 +64,16 @@ namespace micros_swarm_framework{
         rtp_=Singleton<RuntimePlatform>::getSingleton();
         communicator_=Singleton<ROSCommunication>::getSingleton();
     
-        NeighborCommunication nc=NeighborCommunication("float");
+        NeighborCommunication nc=NeighborCommunication("bool");
         
-        boost::function<void(float)> cb=boost::bind(&TestNC::callback, this, _1);
+        boost::function<void(bool)> cb=boost::bind(&TestNC::callback, this, _1);
         nc.neighborListen("testkey", cb);
         
-        ros::Duration(5).sleep();   
+        nc.neighborIgnore("testkey");
         
-        for(int i=0;i<100;i++)
+        for(int i=0;i<10;i++)
         {
-            nc.neighborBroadcast("testkey", "3.14");
+            nc.neighborBroadcast("testkey", "0");
             ros::Duration(1).sleep();
         }
     }

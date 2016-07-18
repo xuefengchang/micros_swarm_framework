@@ -65,7 +65,7 @@ namespace micros_swarm_framework{
         //ignore the packet of the local robot
         if(packet.packet_source==shm_rid)
         {
-            return;
+            //return;
         }
         
         try{
@@ -392,7 +392,9 @@ namespace micros_swarm_framework{
                 {
                     int r=stringToNumber<int>(value);
                     
-                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);  
+                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);
+                    if(cb.which()==5)  //void(void), callback function not exist
+                        return;
                     boost::function<void(int)> f=boost::get<boost::function<void(int)> >(cb);
                     f(r);
                 }
@@ -400,7 +402,9 @@ namespace micros_swarm_framework{
                 {
                     float r=stringToNumber<float>(value);
                     
-                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);  
+                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);
+                    if(cb.which()==5)  //void(void), callback function not exist
+                        return;
                     boost::function<void(float)> f=boost::get<boost::function<void(float)> >(cb);
                     f(r);
                 }
@@ -409,6 +413,8 @@ namespace micros_swarm_framework{
                     double r=stringToNumber<double>(value);
                     
                     NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);  
+                    if(cb.which()==5)  //void(void), callback function not exist
+                        return;
                     boost::function<void(double)> f=boost::get<boost::function<void(double)> >(cb);
                     f(r);
                 }
@@ -417,12 +423,16 @@ namespace micros_swarm_framework{
                     bool r=stringToNumber<bool>(value);
                     
                     NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);  
+                    if(cb.which()==5)  //void(void), callback function not exist
+                        return;
                     boost::function<void(bool)> f=boost::get<boost::function<void(bool)> >(cb);
                     f(r);
                 }
                 else if(type=="string")
                 { 
-                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);  
+                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);
+                    if(cb.which()==5)  //void(void), callback function not exist
+                        return;
                     boost::function<void(std::string)> f=boost::get<boost::function<void(std::string)> >(cb);
                     f(value);
                 }

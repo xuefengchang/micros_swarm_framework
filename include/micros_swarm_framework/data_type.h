@@ -224,40 +224,6 @@ namespace micros_swarm_framework{
             }
     };
     
-    /*
-    class CheckNeighborABC{
-        public:
-            virtual bool isNeighbor(Base self, Base neighbor)=0;
-    };
-    
-    class CheckNeighbor : public CheckNeighborABC{
-        private:
-            double neighbor_distance_;
-    
-        public:
-            CheckNeighbor(double neighbor_distance)
-            {
-                neighbor_distance_ = neighbor_distance;
-            }
-        
-            double getNeighborDistance()
-            {
-                return neighbor_distance_;
-            }
-        
-            bool isNeighbor(Base self, Base neighbor)
-            {
-                float distance=sqrt((self.getX()-neighbor.getX())*(self.getX()-neighbor.getX())+(self.getY()-neighbor.getY())*(self.getY()-neighbor.getY())+ \
-                    (self.getZ()-neighbor.getZ())*(self.getZ()-neighbor.getZ()));
-                    
-                if(distance<neighbor_distance_)
-                    return true;
-                    
-                return false;
-            }
-    };
-    */
-    
     //this macro definition is used to serialize the user-defined data type
     #define BOOST_SERIALIZE  friend class boost::serialization::access;\
                        template<class Archive>\

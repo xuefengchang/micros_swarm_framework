@@ -74,7 +74,7 @@ namespace micros_swarm_framework{
     
     float App1::force_mag(float dist)
     {
-        return -(epsilon/dist) *(pow(delta/dist, 4) - pow(delta/dist, 2));
+        return -(epsilon/(dist+0.1)) *(pow(delta/(dist+0.1), 4) - pow(delta/(dist+0.1), 2));
     }
 
     XY App1::force_sum(micros_swarm_framework::NeighborBase n, XY &s)
@@ -91,8 +91,8 @@ namespace micros_swarm_framework{
         float fm = force_mag(dist)/1000;
         if(fm>0.5) fm=0.5;
     
-        float fx=(fm/dist)*(xn-xl);
-        float fy=(fm/dist)*(yn-yl);
+        float fx=(fm/(dist+0.1))*(xn-xl);
+        float fy=(fm/(dist+0.1))*(yn-yl);
     
         s.x+=fx;
         s.y+=fy;

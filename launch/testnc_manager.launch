@@ -9,9 +9,6 @@
     <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel0" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager0" output="screen">
         <param name="unique_robot_id" type="int" value="0"/>
     </node>
-  
-    <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_testnc" args="load micros_swarm_framework/TestNC micros_swarm_framework_manager0" output="screen">
-    </node>
 
 </launch>
 

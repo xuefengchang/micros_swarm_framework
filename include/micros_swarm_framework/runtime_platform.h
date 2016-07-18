@@ -119,6 +119,7 @@ namespace micros_swarm_framework{
             int getBarrierSize();
             
             void insertOrUpdateCallbackFunctions(std::string key, NeighborCommunicationCallBack cb);
+            void doNothing();
             NeighborCommunicationCallBack getCallbackFunctions(std::string key);
             void deleteCallbackFunctions(std::string key);
     };

@@ -495,6 +495,11 @@ namespace micros_swarm_framework{
         } 
     }
     
+    void RuntimePlatform::doNothing()
+    {
+        
+    }
+    
     NeighborCommunicationCallBack RuntimePlatform::getCallbackFunctions(std::string key)
     {
         std::map<std::string, NeighborCommunicationCallBack>::iterator nccb_it;
@@ -506,9 +511,8 @@ namespace micros_swarm_framework{
         }
         
         std::cout<<"could not get the callback function which has the key "<<key<<"!"<<std::endl;
-        //boost::function<void()> f;
-        //return f;
-        exit(-1);
+        boost::function<void()> f=boost::bind(&RuntimePlatform::doNothing, this);
+        return f;
     }
     
     void RuntimePlatform::deleteCallbackFunctions(std::string key)
