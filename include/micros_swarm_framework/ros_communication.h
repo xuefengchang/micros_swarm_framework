@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      communication_interface.h
+\file      ros_communication.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -71,8 +71,6 @@ namespace micros_swarm_framework{
             
             void broadcast(micros_swarm_framework::MSFPPacket msfp_packet)
             {
-                //packet_publisher_ = node_handle_.advertise<micros_swarm_framework::MSFPPacket>("/micros_swarm_framework_topic", 1000, true);
-        
                 static bool flag=false;
                 if(!flag)
                 {

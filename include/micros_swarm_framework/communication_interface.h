@@ -58,52 +58,5 @@ namespace micros_swarm_framework{
             virtual void broadcast(micros_swarm_framework::MSFPPacket msfp_packet)=0;
             virtual void receive(void (*callback)(const MSFPPacket& packet))=0;
     };
-    
-    /*
-    class ROSCommunication : public CommunicationInterface{
-        private:
-            ros::NodeHandle node_handle_;
-            ros::Publisher packet_publisher_;
-            ros::Subscriber packet_subscriber_;
-        public:
-            ROSCommunication()
-            {
-                name_="ERROR";
-            }
-        
-            ROSCommunication(ros::NodeHandle node_handle)
-            {
-                name_="ROS";
-                node_handle_=node_handle;
-                packet_publisher_ = node_handle_.advertise<micros_swarm_framework::MSFPPacket>("/micros_swarm_framework_topic", 1000, true);
-            }
-            
-            void broadcast(micros_swarm_framework::MSFPPacket msfp_packet)
-            {
-                //packet_publisher_ = node_handle_.advertise<micros_swarm_framework::MSFPPacket>("/micros_swarm_framework_topic", 1000, true);
-        
-                static bool flag=false;
-                if(!flag)
-                {
-                    ros::Duration(1).sleep();
-                    if(!packet_publisher_)
-                    {
-                        ROS_INFO("packet_publisher could not initialize");
-                    }
-                    flag=true;
-                }
-        
-                if(ros::ok())
-                {
-                    packet_publisher_.publish(msfp_packet);
-                }
-            }
-            
-            void receive(void (*callback)(const MSFPPacket& packet))
-            {
-                packet_subscriber_ = node_handle_.subscribe("/micros_swarm_framework_topic", 1000, callback, ros::TransportHints().udp());
-            }
-    };
-    */
 };
 #endif

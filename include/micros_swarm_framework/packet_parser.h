@@ -65,7 +65,7 @@ namespace micros_swarm_framework{
         //ignore the packet of the local robot
         if(packet.packet_source==shm_rid)
         {
-            //return;
+            return;
         }
         
         try{

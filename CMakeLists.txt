@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(micros_swarm_framework)
 
 # set DDS VENDOR
-option(USE_OPENSPLICE_DDS "Using OpenSplice DDS" ON)
+option(USE_OPENSPLICE_DDS "Using OpenSplice DDS" OFF)
 option(USE_OPENDDS "Using OpenDDS" OFF)
 
 if (${USE_OPENSPLICE_DDS})
@@ -192,7 +192,6 @@ link_directories(
     ${Boost_REGEX_LIBRARY}
     ${Boost_SERIALIZATION_LIBRARY}
 )
-
 
 ## Declare a C++ library
 if (OPENSPLICE_DDS)

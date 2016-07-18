@@ -132,9 +132,7 @@ namespace micros_swarm_framework{
         int barrier_size=rtp_->getBarrierSize();
         if(barrier_size>=total_robot_numbers_-1)
         {
-            std::cout<<"robot "<<rtp_->getRobotID()<<" runtime_platform_kernel started successfully."<<std::endl;
-            //std::cout<<"local robot id is: "<<rtp_->getRobotID()<<std::endl;
-            
+            std::cout<<"robot "<<rtp_->getRobotID()<<" runtime_platform_kernel started successfully."<<std::endl;    
             barrier_timer_.stop();
         }
                 
@@ -221,9 +219,6 @@ namespace micros_swarm_framework{
         publish_robot_id_timer_ = node_handle_.createTimer(ros::Duration(publish_robot_id_duration_), &RuntimePlatformKernel::publish_robot_id, this);
         publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(publish_swarm_list_duration_), &RuntimePlatformKernel::publish_swarm_list, this);
         barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimePlatformKernel::barrier_check, this);
-        
-        //std::cout<<"The micros_swarm_framework_kernel started successfully."<<std::endl;
-        //std::cout<<"local robot id is: "<<robot_id<<std::endl;
     }
 };
 

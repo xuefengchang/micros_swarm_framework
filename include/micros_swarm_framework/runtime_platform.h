@@ -50,8 +50,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #endif
 
 #include "micros_swarm_framework/data_type.h"
-//#include "micros_swarm_framework/message.h"
-//#include "micros_swarm_framework/communication_interface.h"
 
 namespace micros_swarm_framework{
 

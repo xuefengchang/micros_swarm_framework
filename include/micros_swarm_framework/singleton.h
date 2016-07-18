@@ -34,37 +34,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 boost::mutex mut;
 
 namespace micros_swarm_framework{
-
-    class Book
-    {
-        public:
-            Book(std::string  bookName = std::string(),const int price = 0):bookName(bookName),price(price)
-            {
-            }
-            ~Book(){}
-
-            void setBookName(std::string  bookName)
-            {
-                mut.lock();
-                this->bookName = bookName;
-                mut.unlock();
-            }
-            void setPrice(const int price)
-            {
-                mut.lock();
-                this->price = price;
-                mut.unlock();
-            }
-            void display()
-            {
-                mut.lock();
-                std::cout<<"book:"<<bookName<<" "<<"price:"<<price<<std::endl;
-                mut.unlock();
-            }
-        private:
-            std::string bookName;
-            int price;
-    };
     
     template<class T>
     class Singleton
@@ -135,49 +104,7 @@ namespace micros_swarm_framework{
     
     template<class T>
     boost::shared_ptr<T> Singleton<T>::object;
-    
-    class task
-    {
-        public:
-            task(std::string bookName = std::string(),const int price = 0):bookName(bookName),price(price){}
-            ~task(){}
-            task(const task& tsk)
-            {
-                bookName = tsk.bookName;
-                price = tsk.price;
-            }
-            task& operator = (const task& tsk)
-            {
-                bookName = tsk.bookName;
-                price = tsk.price;
-            }
-            void operator()()const
-            {
-                Singleton<Book>::getSingleton()->setBookName(bookName);
-                Singleton<Book>::getSingleton()->setPrice(price);
-                Singleton<Book>::getSingleton()->display();
-                std::cout<<Singleton<Book>::getSingleton().use_count()<<std::endl;
-            }
-        private:
-            std::string bookName;
-            int price;
-    };
 };
     
 #endif
-
-
-/*
-int main()
-{
-    boost::thread thr1(task("C++",20));
-    boost::thread thr2(task("Java",40));
-    boost::thread thr3(task("Python",60));
-
-    thr1.join();
-    thr2.join();
-    thr3.join();
-    return 0;
-}
-*/
 
