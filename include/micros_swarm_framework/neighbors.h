@@ -20,8 +20,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef NEIGHBOR_H_
-#define NEIGHBOR_H_
+#ifndef NEIGHBORS_H_
+#define NEIGHBORS_H_
 
 #include <iostream>
 #include <string>
@@ -36,23 +36,26 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "ros/ros.h"
 
-#include "micros_swarm_framework/kernel.h"
+#include "micros_swarm_framework/runtime_platform.h"
 
 namespace micros_swarm_framework{
     
     template<class Type>
     class Neighbors{
+        private:
+            boost::shared_ptr<RuntimePlatform> rtp_;
         public:
-            std::map<unsigned int, Type> data_;
+            std::map<int, Type> data_;
             
             Neighbors()
             {
                 data_.clear();
+                rtp_=Singleton<RuntimePlatform>::getSingleton();
             }
             
             void printData()
             {
-                typename std::map<unsigned int, Type>::iterator it;
+                typename std::map<int, Type>::iterator it;
                 
                 for(it=data_.begin();it!=data_.end();it++)
                 {
@@ -62,7 +65,7 @@ namespace micros_swarm_framework{
             
             void neighborsForeach(void(*foreach)(Type))
             {
-                typename std::map<unsigned int, Type>::iterator n_it;
+                typename std::map<int, Type>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
@@ -70,26 +73,50 @@ namespace micros_swarm_framework{
                 }
             }
             
+            void neighborsForeach(boost::function<void(Type)> foreach)  //for class member functions
+            {
+                typename std::map<int, Type>::iterator n_it;
+    
+                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
+                {
+                    foreach(n_it->second);
+                }
+            }
+            
             template<class T2>
             Neighbors<T2> neighborsMap( T2(*map)(Type) )
             {
                 Neighbors<T2> n2;
-                typename std::map<unsigned int, Type>::iterator n_it1;
+                typename std::map<int, Type>::iterator n_it1;
     
                 for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
                 {
                     T2 temp=(*map)(n_it1->second);
             
-                    n2.data_.insert(std::pair<unsigned int, T2>(n_it1->first,temp));
+                    n2.data_.insert(std::pair<int, T2>(n_it1->first,temp));
                 }        
                 return n2;
             }
             
+            template<class T2>
+            Neighbors<T2> neighborsMap(boost::function<T2(Type)> map)  //for class member functions
+            {
+                Neighbors<T2> n2;
+                typename std::map<int, Type>::iterator n_it1;
+    
+                for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
+                {
+                    T2 temp=map(n_it1->second);
+            
+                    n2.data_.insert(std::pair<int, T2>(n_it1->first,temp));
+                }        
+                return n2;
+            }
             
             template<class T2>
-            T2 neighborsReduce( T2(*reduce)(Type, T2 &), T2 t2)
+            T2 neighborsReduce(T2(*reduce)(Type, T2 &), T2 t2)
             {
-                typename std::map<unsigned int, Type>::iterator n_it1;
+                typename std::map<int, Type>::iterator n_it1;
     
                 for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
                 {
@@ -99,61 +126,93 @@ namespace micros_swarm_framework{
                 return t2;
             }
             
-            Neighbors<Type> neighborsFilter(bool(*filter)(unsigned int, Type))
+            template<class T2>
+            T2 neighborsReduce(boost::function<T2(Type, T2&)> reduce, T2 t2)  //for class member functions
+            {
+                typename std::map<int, Type>::iterator n_it1;
+    
+                for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
+                {
+                    t2=reduce(n_it1->second, t2);
+                }
+            
+                return t2;
+            }
+            
+            Neighbors<Type> neighborsFilter(bool(*filter)(int, Type))
             {
                 Neighbors<Type> result;
             
-                typename std::map<unsigned int, Type>::iterator n_it;
+                typename std::map<int, Type>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
                     if((*filter)(n_it->first, n_it->second))
                     {
-                        result.data_.insert(std::pair<unsigned int, Type>(n_it->first,n_it->second));
+                        result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
                     }
                 }
                 return result;
             }
             
-            Neighbors<Type> neighborsKin(unsigned int swarm_id)
+            Neighbors<Type> neighborsFilter(boost::function<bool(int, Type)> filter)  //for class member functions
             {
                 Neighbors<Type> result;
             
-                typename std::map<unsigned int, Type>::iterator n_it;
-                
-                micros_swarm_framework::KernelHandle kh;
-                std::set<unsigned int> sm=kh.getSwarmMembers(swarm_id);
+                typename std::map<int, Type>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    std::set<unsigned int>::iterator sm_it;
+                    if(filter(n_it->first, n_it->second))
+                    {
+                        result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
+                    }
+                }
+                return result;
+            }
+            
+            Neighbors<Type> neighborsKin(int swarm_id)
+            {
+                Neighbors<Type> result;
+            
+                typename std::map<int, Type>::iterator n_it;
+                
+                std::set<int> sm=rtp_->getSwarmMembers(swarm_id);
+    
+                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
+                {
+                    std::set<int>::iterator sm_it;
                     sm_it=sm.find(n_it->first);
                     if(sm_it!=sm.end())
                     {
-                        result.data_.insert(std::pair<unsigned int, NeighborBase>(n_it->first,n_it->second));
+                        result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
                 }
+
+                std::set<int>().swap(sm);
+
                 return result;
             }
             
-            Neighbors<Type> neighborsNonKin(unsigned int swarm_id)
+            Neighbors<Type> neighborsNonKin(int swarm_id)
             {
                 Neighbors<Type> result;
             
-                typename std::map<unsigned int, Type>::iterator n_it;
+                typename std::map<int, Type>::iterator n_it;
                 
-                micros_swarm_framework::KernelHandle kh;
-                std::set<unsigned int> sm=kh.getSwarmMembers(swarm_id);
+                std::set<int> sm=rtp_->getSwarmMembers(swarm_id);
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    std::set<unsigned int>::iterator sm_it;
+                    std::set<int>::iterator sm_it;
                     sm_it=sm.find(n_it->first);
                     if(sm_it==sm.end())
                     {
-                        result.data_.insert(std::pair<unsigned int, NeighborBase>(n_it->first,n_it->second));
+                        result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
                 }
+
+                std::set<int>().swap(sm);
                 
                 return result;
             }
@@ -165,20 +224,24 @@ namespace micros_swarm_framework{
      */
     template<>
     class Neighbors<NeighborBase>{
+        private:
+            boost::shared_ptr<RuntimePlatform> rtp_;
         public:
-            std::map<unsigned int, NeighborBase> data_;
+            std::map<int, NeighborBase> data_;
             
             Neighbors()
             {
                 data_.clear();
+                rtp_=Singleton<RuntimePlatform>::getSingleton();
             }
             
             Neighbors(bool get_data_now)
             {
                 if(get_data_now)
                 {
-                    micros_swarm_framework::KernelHandle kh;
-                    data_=kh.getNeighbors();
+                    rtp_=Singleton<RuntimePlatform>::getSingleton();
+                    data_.clear();
+                    data_=rtp_->getNeighbors();
                 }
                 else
                 {
@@ -188,7 +251,7 @@ namespace micros_swarm_framework{
             
             void printData()
             {
-                typename std::map<unsigned int, NeighborBase>::iterator it;
+                typename std::map<int, NeighborBase>::iterator it;
                 
                 for(it=data_.begin();it!=data_.end();it++)
                 {
@@ -202,7 +265,7 @@ namespace micros_swarm_framework{
             
             void neighborsForeach(void(*foreach)(NeighborBase))
             {
-                typename std::map<unsigned int, NeighborBase>::iterator n_it;
+                typename std::map<int, NeighborBase>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
@@ -210,27 +273,52 @@ namespace micros_swarm_framework{
                 }
             }
             
+            void neighborsForeach(boost::function<void(NeighborBase)> foreach)  //for class member functions
+            {
+                typename std::map<int, NeighborBase>::iterator n_it;
+    
+                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
+                {
+                    foreach(n_it->second);
+                }
+            }
+            
             template<class T>
-            Neighbors<T> neighborsMap( T(*map)(NeighborBase) )
+            Neighbors<T> neighborsMap(T(*map)(NeighborBase) )
             {
                 Neighbors<T> n;
-                typename std::map<unsigned int, NeighborBase>::iterator n_it;
+                typename std::map<int, NeighborBase>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
                     T temp=(*map)(n_it->second);
             
-                    n.data_.insert(std::pair<unsigned int, T>(n_it->first,temp));
+                    n.data_.insert(std::pair<int, T>(n_it->first,temp));
                 }
                 
                 return n;
             }
             
+            template<class T>
+            Neighbors<T> neighborsMap(boost::function<T(NeighborBase)> map)  //for class member functions
+            {
+                Neighbors<T> n;
+                typename std::map<int, NeighborBase>::iterator n_it;
+    
+                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
+                {
+                    T temp=map(n_it->second);
+            
+                    n.data_.insert(std::pair<int, T>(n_it->first,temp));
+                }
+                
+                return n;
+            }
             
             template<class T>
-            T neighborsReduce( T(*reduce)(NeighborBase, T &), T t)
+            T neighborsReduce(T(*reduce)(NeighborBase, T &), T t)
             {
-                typename std::map<unsigned int, NeighborBase>::iterator n_it;
+                typename std::map<int, NeighborBase>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
@@ -240,61 +328,89 @@ namespace micros_swarm_framework{
                 return t;
             }
             
-            Neighbors<NeighborBase> neighborsFilter(bool(*filter)(unsigned int, NeighborBase))
+            template<class T>
+            T neighborsReduce(boost::function<T(NeighborBase, T &)> reduce, T t)  //for class member functions
+            {
+                typename std::map<int, NeighborBase>::iterator n_it;
+    
+                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
+                {
+                    t=reduce(n_it->second, t);
+                }
+            
+                return t;
+            }
+            
+            Neighbors<NeighborBase> neighborsFilter(bool(*filter)(int, NeighborBase))
             {
                 Neighbors<NeighborBase> result;
             
-                typename std::map<unsigned int, NeighborBase>::iterator n_it;
+                typename std::map<int, NeighborBase>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
                     if((*filter)(n_it->first, n_it->second))
                     {
-                        result.data_.insert(std::pair<unsigned int, NeighborBase>(n_it->first,n_it->second));
+                        result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
                 }
                 
                 return result;
             }
             
-            Neighbors<NeighborBase> neighborsKin(unsigned int swarm_id)
+            Neighbors<NeighborBase> neighborsFilter(boost::function<bool(int, NeighborBase)> filter)  //for class member functions
             {
                 Neighbors<NeighborBase> result;
             
-                typename std::map<unsigned int, NeighborBase>::iterator n_it;
-                
-                micros_swarm_framework::KernelHandle kh;
-                std::set<unsigned int> sm=kh.getSwarmMembers(swarm_id);
+                typename std::map<int, NeighborBase>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    std::set<unsigned int>::iterator sm_it;
+                    if(filter(n_it->first, n_it->second))
+                    {
+                        result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
+                    }
+                }
+                
+                return result;
+            }
+            
+            Neighbors<NeighborBase> neighborsKin(int swarm_id)
+            {
+                Neighbors<NeighborBase> result;
+            
+                typename std::map<int, NeighborBase>::iterator n_it;
+                
+                std::set<int> sm=rtp_->getSwarmMembers(swarm_id);
+    
+                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
+                {
+                    std::set<int>::iterator sm_it;
                     sm_it=sm.find(n_it->first);
                     if(sm_it!=sm.end())
                     {
-                        result.data_.insert(std::pair<unsigned int, NeighborBase>(n_it->first,n_it->second));
+                        result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
                 }
                 
                 return result;
             }
             
-            Neighbors<NeighborBase> neighborsNonKin(unsigned int swarm_id)
+            Neighbors<NeighborBase> neighborsNonKin(int swarm_id)
             {
                 Neighbors<NeighborBase> result;
             
-                typename std::map<unsigned int, NeighborBase>::iterator n_it;
+                typename std::map<int, NeighborBase>::iterator n_it;
                 
-                micros_swarm_framework::KernelHandle kh;
-                std::set<unsigned int> sm=kh.getSwarmMembers(swarm_id);
+                std::set<int> sm=rtp_->getSwarmMembers(swarm_id);
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    std::set<unsigned int>::iterator sm_it;
+                    std::set<int>::iterator sm_it;
                     sm_it=sm.find(n_it->first);
                     if(sm_it==sm.end())
                     {
-                        result.data_.insert(std::pair<unsigned int, NeighborBase>(n_it->first,n_it->second));
+                        result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
                 }
                 

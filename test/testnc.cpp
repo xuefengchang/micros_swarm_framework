@@ -21,43 +21,68 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 */
 
 #include "std_msgs/String.h"
-#include "geometry_msgs/PoseStamped.h"
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/Twist.h"
 
 #include "micros_swarm_framework/micros_swarm_framework.h"
 
-#define BARRIER_VSTIG  1
-#define ROBOT_SUM 20
-
-static float nbres=0;
-
-void testnb(float value, int a)
-{
-    nbres=nbres+value+a;
-    std::cout<<"nbres="<<nbres<<std::endl;
-}
-
-int main(int argc, char** argv){
-    ros::init(argc, argv, "micros_swarm_framework_testnc_node");
-    ros::NodeHandle nh;
+namespace micros_swarm_framework{
     
-    micros_swarm_framework::KernelInitializer::initRobotID(0);
-
-    micros_swarm_framework::NeighborCommunication<float> nc("test");
-    boost::function<void(float)> nfo = boost::bind(&testnb, _1, 1);
-    nc.neighborListen(nfo);
-    ros::Rate loop_rate(10);
-    
-    while(ros::ok())
+    class TestNC : public nodelet::Nodelet
     {
-      if(nbres>314)
-          nc.neighborIgnore();
-      ros::spinOnce();
-      loop_rate.sleep();
+        public:
+            ros::NodeHandle node_handle_;
+            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<CommunicationInterface> communicator_;
+            ros::Timer timer_;
+            ros::Publisher pub_;
+            ros::Subscriber sub_;
+            
+            TestNC();
+            ~TestNC();
+            void callback(double value);
+            virtual void onInit(); 
+    };
+
+    TestNC::TestNC()
+    {
+        
     }
     
-    ros::spin();
+    TestNC::~TestNC()
+    {
+    }
     
-    return 0;
-}
+    void TestNC::callback(double value)
+    {
+        std::cout<<"I received the value: "<<value<<std::endl;
+    }
+    
+    void TestNC::onInit()
+    {
+        node_handle_ = getNodeHandle();
+        rtp_=Singleton<RuntimePlatform>::getSingleton();
+        #ifdef ROS
+        communicator_=Singleton<ROSCommunication>::getSingleton();
+        #endif
+        #ifdef OPENSPLICE_DDS
+        communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+        #endif
+    
+        NeighborCommunication nc=NeighborCommunication("double");
+        
+        boost::function<void(double)> cb=boost::bind(&TestNC::callback, this, _1);
+        nc.neighborListen("testkey", cb);
+        
+        //nc.neighborIgnore("testkey");
+        
+        for(int i=0;i<10;i++)
+        {
+            nc.neighborBroadcast("testkey", 3.14);
+            ros::Duration(1).sleep();
+        }
+    }
+};
+
+// Register the nodelet
+PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::TestNC, nodelet::Nodelet)

@@ -1,0 +1,12 @@
+
+module micros_swarm_framework{
+
+    struct MSFPPacket {
+        long packet_source;
+        unsigned short packet_version;
+        unsigned short packet_type;
+        string packet_data;
+        long long package_check_sum;
+    };
+  #pragma keylist MSFPPacket
+};

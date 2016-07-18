@@ -34,9 +34,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "micros_swarm_framework/micros_swarm_framework.h"
 
-#define BARRIER_VSTIG  1
-#define ROBOT_SUM 20
-
 #define PI 3.14159265358979323846
 #define EPSILON 0.1
 #define A 5
@@ -165,7 +162,7 @@ pair<double,double> f_r()
 {
     pair<double,double> re = pair<double,double>(0,0);
     static pair<double,double> q_r = pair<double,double>(0,0);
-    pair<double,double> p_r = pair<double,double>(0.1,0.1);
+    pair<double,double> p_r = pair<double,double>(0.5,0.5);
     q_r.first += p_r.first * interval;
     q_r.second += p_r.second * interval;
     re.first = -C1*get_vector(q_r,my_position).first - C2*get_vector(p_r,my_velocity).first;
@@ -173,80 +170,54 @@ pair<double,double> f_r()
     return re;
 }
 
-void barrier_wait()
-{
-    //barrier
-    micros_swarm_framework::KernelHandle kh;
-    micros_swarm_framework::VirtualStigmergy<bool> barrier(BARRIER_VSTIG);
-    std::string robot_id_string=boost::lexical_cast<std::string>(micros_swarm_framework::KernelInitializer::unique_robot_id_);
-    barrier.virtualStigmergyPut(robot_id_string, 1);
+namespace micros_swarm_framework{
     
-    ros::Rate loop_rate(1);
-    while(ros::ok())
+    class App3 : public nodelet::Nodelet
     {
-        if(barrier.virtualStigmergySize()==ROBOT_SUM)
-            break;
-        ros::spinOnce();
-        loop_rate.sleep();
+        public:
+            ros::NodeHandle node_handle_;
+            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<CommunicationInterface> communicator_;
+            ros::Timer timer_;
+            ros::Publisher pub_;
+            ros::Subscriber sub_;
+            
+            int hz;
+            double interval;
+            
+            App3();
+            ~App3();
+            virtual void onInit();
+            
+            //app functions
+            void publish_cmd(const ros::TimerEvent&);
+            void baseCallback(const nav_msgs::Odometry& lmsg);  
+    };
+
+    App3::App3()
+    {
+        //set parameters
+        hz=10;
+        interval=1.0/hz;
     }
-}
-
-void locationCallback(const nav_msgs::Odometry& lmsg)
-{
-    float x=lmsg.pose.pose.position.x;
-    float y=lmsg.pose.pose.position.y;
-
-    float vx=lmsg.twist.twist.linear.x;
-    float vy=lmsg.twist.twist.linear.y;
     
-    micros_swarm_framework::KernelHandle kh;
-    micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
-    kh.setRobotBase(l);
-}
-
-int main(int argc, char** argv){
-    
-    ros::init(argc, argv, "micros_swarm_framework_app1_node");
-    ros::NodeHandle nh;
-
-    micros_swarm_framework::KernelHandle kh;
-    
-    int robot_id=-1;
-    bool param_ok = ros::param::get ("~unique_robot_id", robot_id);
-    if(!param_ok)
+    App3::~App3()
     {
-        std::cout<<"could not get parameter unique_robot_id"<<std::endl;
-        exit(1);
-    }else{
-        std::cout<<"unique_robot_id = "<<robot_id<<std::endl;
     }
-    micros_swarm_framework::KernelInitializer::initRobotID(robot_id);
     
-    kh.setNeighborDistance(12);
-    
-    ros::Subscriber sub = nh.subscribe("base_pose_ground_truth", 1000, locationCallback, ros::TransportHints().udp());
-    
-    boost::thread barrier(&barrier_wait);
-    barrier.join();
-
-    ros::Publisher pub = nh.advertise<geometry_msgs::Twist>("cmd_vel",1000);
-    int hz=10;
-    interval=1.0/hz;
-    ros::Rate loop_rate(hz);
-    geometry_msgs:: Twist msg;
-    while(ros::ok())
+    void App3::publish_cmd(const ros::TimerEvent&)
     {
-        ros::spinOnce();
+        geometry_msgs:: Twist msg;
         micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
 
-        typename std::map<unsigned int, micros_swarm_framework::NeighborBase>::iterator it; 
+        typename std::map<int, micros_swarm_framework::NeighborBase>::iterator it; 
         for(it=n.data_.begin();it!=n.data_.end();it++)
         {
             NeighborHandle* nh=new NeighborHandle(it->first, it->second.getX(), it->second.getY(), it->second.getVX(), it->second.getVY());
             neighbor_list.push_back(nh);
         }
 
-        micros_swarm_framework::Base nl=kh.getRobotBase();
+        micros_swarm_framework::Base nl=rtp_->getRobotBase();
 
         my_position=pair<double,double>(nl.getX(), nl.getY());
         my_velocity=pair<double,double>(nl.getVX(), nl.getVY());
@@ -263,11 +234,41 @@ int main(int argc, char** argv){
             msg.linear.y=1;
         if (msg.linear.y <-1)
             msg.linear.y=-1;
-        pub.publish(msg);
+        pub_.publish(msg);
       
-        neighbor_list.clear();
-        loop_rate.sleep();
+        neighbor_list.clear();  
     }
     
-    return 0;
-}
+    void App3::baseCallback(const nav_msgs::Odometry& lmsg)
+    {
+        float x=lmsg.pose.pose.position.x;
+        float y=lmsg.pose.pose.position.y;
+    
+        float vx=lmsg.twist.twist.linear.x;
+        float vy=lmsg.twist.twist.linear.y;
+    
+        micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
+        rtp_->setRobotBase(l);
+    }
+    
+    void App3::onInit()
+    {
+        node_handle_ = getNodeHandle();
+        rtp_=Singleton<RuntimePlatform>::getSingleton();
+        #ifdef ROS
+        communicator_=Singleton<ROSCommunication>::getSingleton();
+        #endif
+        #ifdef OPENSPLICE_DDS
+        communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+        #endif
+    
+        rtp_->setNeighborDistance(12);
+        sub_ = node_handle_.subscribe("base_pose_ground_truth", 1000, &App3::baseCallback, this, ros::TransportHints().udp());
+        pub_ = node_handle_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+        
+        timer_ = node_handle_.createTimer(ros::Duration(interval), &App3::publish_cmd, this);
+    }
+};
+
+// Register the nodelet
+PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App3, nodelet::Nodelet)

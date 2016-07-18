@@ -26,136 +26,138 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "micros_swarm_framework/micros_swarm_framework.h"
 
-#define BARRIER_VSTIG  1
-#define ROBOT_SUM 20
+namespace micros_swarm_framework{
 
-int delta = 4;
-int epsilon = 100;
-
-struct XY
-{
-    float x;
-    float y;
-};
-
-float force_mag(float dist)
-{
-    return -(epsilon/dist) *(pow(delta/dist, 4) - pow(delta/dist, 2));
-}
-
-XY force_sum(micros_swarm_framework::NeighborBase n, XY &s)
-{
-    micros_swarm_framework::KernelHandle kh;
-    micros_swarm_framework::Base l=kh.getRobotBase();
-    float xl=l.getX();
-    float yl=l.getY();
-    
-    float xn=n.getX();
-    float yn=n.getY();
-    
-    float dist=sqrt(pow((xl-xn),2)+pow((yl-yn),2));
-    
-    float fm = force_mag(dist)/1000;
-    if(fm>0.5) fm=0.5;
-    
-    float fx=(fm/dist)*(xn-xl);
-    float fy=(fm/dist)*(yn-yl);
-    
-    //std::cout<<"virtual force: "<<fx<<", "<<fy<<std::endl;
-    
-    s.x+=fx;
-    s.y+=fy;
-    return s;
-}
-
-XY direction()
-{
-    XY sum;
-    sum.x=0;
-    sum.y=0;
-    
-    micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
-    sum=n.neighborsReduce(force_sum, sum);
-    
-    return sum;
-}
-
-void motion()
-{
-    ros::NodeHandle nh;
-    
-    ros::Publisher pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-    
-    ros::Rate loop_rate(10);
-    
-    while(ros::ok())
+    struct XY
     {
+        float x;
+        float y;
+    };
+    
+    class App1 : public nodelet::Nodelet
+    {
+        public:
+            ros::NodeHandle node_handle_;
+            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<CommunicationInterface> communicator_;
+            ros::Timer timer_;
+            ros::Publisher pub_;
+            ros::Subscriber sub_;
+            
+            //app parameters
+            int delta;
+            int epsilon;
+            
+            App1();
+            ~App1();
+            virtual void onInit();
+            
+            //app functions
+            float force_mag(float dist);
+            XY force_sum(micros_swarm_framework::NeighborBase n, XY &s);
+            XY direction();
+            void motion();
+            void publish_cmd(const ros::TimerEvent&);
+            void baseCallback(const nav_msgs::Odometry& lmsg);  
+    };
+
+    App1::App1()
+    {
+        //set parameters
+        delta = 4;
+        epsilon = 100;
+    }
+    
+    App1::~App1()
+    {
+    }
+    
+    float App1::force_mag(float dist)
+    {
+        return -(epsilon/(dist+0.1)) *(pow(delta/(dist+0.1), 4) - pow(delta/(dist+0.1), 2));
+    }
+
+    XY App1::force_sum(micros_swarm_framework::NeighborBase n, XY &s)
+    {
+        micros_swarm_framework::Base l=rtp_->getRobotBase();
+        float xl=l.getX();
+        float yl=l.getY();
+    
+        float xn=n.getX();
+        float yn=n.getY();
+    
+        float dist=sqrt(pow((xl-xn),2)+pow((yl-yn),2));
+     
+        float fm = force_mag(dist)/1000;
+        if(fm>0.5) fm=0.5;
+    
+        float fx=(fm/(dist+0.1))*(xn-xl);
+        float fy=(fm/(dist+0.1))*(yn-yl);
+    
+        s.x+=fx;
+        s.y+=fy;
+        return s;
+    }
+
+    XY App1::direction()
+    {
+        XY sum;
+        sum.x=0;
+        sum.y=0;
+    
+        micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
+        boost::function<XY(NeighborBase, XY &)> bf=boost::bind(&App1::force_sum, this, _1, _2);
+        sum=n.neighborsReduce(bf, sum);
+    
+        return sum;
+    }
+    
+    void App1::publish_cmd(const ros::TimerEvent&)
+    {
+        
         XY v=direction();
         geometry_msgs::Twist t;
         t.linear.x=v.x;
         t.linear.y=v.y;
         
-        pub.publish(t);
-        ros::spinOnce();
-        loop_rate.sleep();
+        pub_.publish(t);
+        
     }
-}
 
-void barrier_wait()
-{
-    //barrier
-    micros_swarm_framework::KernelHandle kh;
-    micros_swarm_framework::VirtualStigmergy<bool> barrier(BARRIER_VSTIG);
-    std::string robot_id_string=boost::lexical_cast<std::string>(micros_swarm_framework::KernelInitializer::unique_robot_id_);
-    barrier.virtualStigmergyPut(robot_id_string, 1);
-    
-    ros::Rate loop_rate(1);
-    while(ros::ok())
+    void App1::motion()
     {
-        if(barrier.virtualStigmergySize()==ROBOT_SUM)
-            break;
-        ros::spinOnce();
-        loop_rate.sleep();
+        timer_ = node_handle_.createTimer(ros::Duration(0.1), &App1::publish_cmd, this);
     }
-}
-
-void baseCallback(const nav_msgs::Odometry& lmsg)
-{
-    float x=lmsg.pose.pose.position.x;
-    float y=lmsg.pose.pose.position.y;
     
-    float vx=lmsg.twist.twist.linear.x;
-    float vy=lmsg.twist.twist.linear.y;
-    
-    micros_swarm_framework::KernelHandle kh;
-    micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
-    kh.setRobotBase(l);
-}
-
-int main(int argc, char** argv){
-    
-    ros::init(argc, argv, "micros_swarm_framework_app1_node");
-    ros::NodeHandle nh;
-    
-    int robot_id=-1;
-    bool param_ok = ros::param::get ("~unique_robot_id", robot_id);
-    if(!param_ok)
+    void App1::baseCallback(const nav_msgs::Odometry& lmsg)
     {
-        std::cout<<"could not get parameter unique_robot_id"<<std::endl;
-        exit(1);
-    }else{
-        std::cout<<"unique_robot_id = "<<robot_id<<std::endl;
+        float x=lmsg.pose.pose.position.x;
+        float y=lmsg.pose.pose.position.y;
+    
+        float vx=lmsg.twist.twist.linear.x;
+        float vy=lmsg.twist.twist.linear.y;
+    
+        micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
+        rtp_->setRobotBase(l);
     }
-    micros_swarm_framework::KernelInitializer::initRobotID(robot_id);
     
-    ros::Subscriber sub = nh.subscribe("base_pose_ground_truth", 1000, baseCallback, ros::TransportHints().udp());
+    void App1::onInit()
+    {
+        node_handle_ = getNodeHandle();
+        rtp_=Singleton<RuntimePlatform>::getSingleton();
+        #ifdef ROS
+        communicator_=Singleton<ROSCommunication>::getSingleton();
+        #endif
+        #ifdef OPENSPLICE_DDS
+        communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+        #endif
     
-    boost::thread barrier(&barrier_wait);
-    barrier.join();
+        sub_ = node_handle_.subscribe("base_pose_ground_truth", 1000, &App1::baseCallback, this, ros::TransportHints().udp());
+        pub_ = node_handle_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
     
-    boost::thread robot_move(&motion);
-    
-    ros::spin();
-    
-    return 0;
-}
+        motion();
+    }
+};
+
+// Register the nodelet
+PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App1, nodelet::Nodelet)

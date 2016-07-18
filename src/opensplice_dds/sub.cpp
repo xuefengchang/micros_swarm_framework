@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      micros_swarm_framework.h
+\file      sub.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,49 +20,26 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef MICROS_SWARM_FRAMEWORK_H_
-#define MICROS_SWARM_FRAMEWORK_H_
-
 #include <iostream>
-#include <string>
-#include <time.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <vector>
-#include <stack>
-#include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
-#include <functional>
-#include <sstream>
-#include <fstream>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/string.hpp> 
-#include <boost/serialization/vector.hpp>
+#include "opensplice_dds/check_status.h"
+#include "opensplice_dds/subscriber.h"
 
-#include <ros/ros.h>
-#include <nodelet/nodelet.h>
-#include <pluginlib/class_list_macros.h>
+using namespace DDS;
 
-#include "micros_swarm_framework/data_type.h"
-#include "micros_swarm_framework/check_neighbor.h"
-#include "micros_swarm_framework/runtime_platform.h"
-#include "micros_swarm_framework/message.h"
-#include "micros_swarm_framework/singleton.h"
-#include "micros_swarm_framework/communication_interface.h"
-#ifdef ROS
-#include "micros_swarm_framework/ros_communication.h"
-#endif
-#ifdef OPENSPLICE_DDS
-#include "micros_swarm_framework/opensplice_dds_communication.h"
-#endif
-#include "micros_swarm_framework/packet_parser.h"
+void callBack(const micros_swarm_framework::MSFPPacket& packet)
+{
+    std::cout<<packet.packet_source<<": "<<packet.packet_version<<", "<<packet.packet_type<<", "<<packet.packet_data<<", "<<packet.package_check_sum<<std::endl;
+}
 
-#include "micros_swarm_framework/swarm.h"
-#include "micros_swarm_framework/neighbors.h"
-#include "micros_swarm_framework/virtual_stigmergy.h"
-#include "micros_swarm_framework/neighbor_communication.h"
-
-#endif
+int main()
+{
+    micros_swarm_framework::Subscriber subscriber("micros_swarm_framework_topic");
+    subscriber.subscribe(callBack);
+    
+    while(1)
+    {
+        sleep(1);
+    }
+    
+    return 0;
+}

@@ -36,22 +36,37 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "ros/ros.h"
 
-#include "micros_swarm_framework/kernel.h"
+#include "micros_swarm_framework/runtime_platform.h"
+#include "micros_swarm_framework/communication_interface.h"
+#ifdef ROS
+#include "micros_swarm_framework/ros_communication.h"
+#endif
+#ifdef OPENSPLICE_DDS
+#include "micros_swarm_framework/opensplice_dds_communication.h"
+#endif
 
 namespace micros_swarm_framework{
     
     template<class Type>
     class VirtualStigmergy{
         private:
-            unsigned int vstig_id_;
+            int vstig_id_;
+            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<CommunicationInterface> communicator_;
         public:
             VirtualStigmergy(){vstig_id_=-1;}
             
-            VirtualStigmergy(unsigned int vstig_id)
+            VirtualStigmergy(int vstig_id)
             {
                 vstig_id_=vstig_id;
-                micros_swarm_framework::KernelHandle kh;
-                kh.createVirtualStigmergy(vstig_id_);
+                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                #ifdef ROS
+                communicator_=Singleton<ROSCommunication>::getSingleton();
+                #endif
+                #ifdef OPENSPLICE_DDS
+                communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+                #endif
+                rtp_->createVirtualStigmergy(vstig_id_);
             }
             
             void virtualStigmergyPut(std::string key, Type data)
@@ -61,13 +76,12 @@ namespace micros_swarm_framework{
                 archive<<data;
                 std::string s=archiveStream.str();
                 
-                micros_swarm_framework::KernelHandle kh;
-                unsigned int id=vstig_id_;
+                int id=vstig_id_;
                 std::string key_str=key;
                 std::string value_str=s;
                 time_t time_now=time(0);
-                unsigned int robot_id=kh.getRobotID();
-                kh.insertOrUpdateVirtualStigmergy(id, key_str, value_str, time_now, robot_id);
+                int robot_id=rtp_->getRobotID();
+                rtp_->insertOrUpdateVirtualStigmergy(id, key_str, value_str, time_now, robot_id);
                 
                 VirtualStigmergyPut vsp(id, key_str, value_str, time_now, robot_id);
                 
@@ -80,35 +94,40 @@ namespace micros_swarm_framework{
                 p.packet_source=robot_id;
                 p.packet_version=1;
                 p.packet_type=VIRTUAL_STIGMERGY_PUT;
+                #ifdef ROS
                 p.packet_data=vsp_str;
+                #endif
+                #ifdef OPENSPLICE_DDS
+                //std::cout<<"vsp_str.data(): "<<vsp_str.data()<<std::endl;
+                p.packet_data=vsp_str.data();
+                #endif
                 p.package_check_sum=0;
                 
-                kh.publishPacket(p);
+                communicator_->broadcast(p);
                 
                 ros::Duration(0.1).sleep();   
             }
             
             Type virtualStigmergyGet(std::string key)
             {
-                micros_swarm_framework::KernelHandle kh;
-                VstigTuple vst=kh.getVirtualStigmergyTuple(vstig_id_, key);
+                VirtualStigmergyTuple vst=rtp_->getVirtualStigmergyTuple(vstig_id_, key);
                 
-                if(vst.getVstigTimestamp()==0)
+                if(vst.getVirtualStigmergyTimestamp()==0)
                 {
                     std::cout<<"ID"<<vstig_id_<<" virtual stigmergy, "<<key<<"is not exist."<<std::endl;
                 }
                 
-                std::string data_str=vst.getVstigValue();
+                std::string data_str=vst.getVirtualStigmergyValue();
                 Type data;
                 std::istringstream archiveStream(data_str);
                 boost::archive::text_iarchive archive(archiveStream);
                 archive>>data;
                 
-                unsigned int id=vstig_id_;
+                int id=vstig_id_;
                 std::string key_std=key;
-                std::string value_std=vst.getVstigValue();
-                time_t time_now=vst.getVstigTimestamp();
-                unsigned int robot_id=vst.getRobotID();
+                std::string value_std=vst.getVirtualStigmergyValue();
+                time_t time_now=vst.getVirtualStigmergyTimestamp();
+                int robot_id=vst.getRobotID();
                 VirtualStigmergyQuery vsq(id, key_std, value_std, time_now, robot_id);
                 
                 std::ostringstream archiveStream2;
@@ -117,22 +136,28 @@ namespace micros_swarm_framework{
                 std::string vsg_str=archiveStream2.str();  
                 
                 micros_swarm_framework::MSFPPacket p;
-                p.packet_source=kh.getRobotID();
+                p.packet_source=rtp_->getRobotID();
                 p.packet_version=1;
                 p.packet_type=VIRTUAL_STIGMERGY_QUERY;
+                #ifdef ROS
                 p.packet_data=vsg_str;
+                #endif
+                #ifdef OPENSPLICE_DDS
+                //std::cout<<"vsg_str.data(): "<<vsg_str.data()<<std::endl;
+                p.packet_data=vsg_str.data();
+                #endif
                 p.package_check_sum=0;
-                kh.publishPacket(p);
+                
+                communicator_->broadcast(p);
                 
                 ros::Duration(0.1).sleep();
                 
                 return data;  
             }
             
-            unsigned int virtualStigmergySize()
+            int virtualStigmergySize()
             {
-                micros_swarm_framework::KernelHandle kh;
-                return kh.getVirtualStigmergySize(vstig_id_);
+                return rtp_->getVirtualStigmergySize(vstig_id_);
             }
     };
 }

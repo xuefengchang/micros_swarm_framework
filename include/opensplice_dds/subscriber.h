@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      micros_swarm_framework.h
+\file      subscriber.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,49 +20,50 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef MICROS_SWARM_FRAMEWORK_H_
-#define MICROS_SWARM_FRAMEWORK_H_
+#ifndef SUBSCRIBER_H_
+#define SUBSCRIBER_H_
 
 #include <iostream>
-#include <string>
-#include <time.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <vector>
-#include <stack>
-#include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
-#include <functional>
-#include <sstream>
-#include <fstream>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/string.hpp> 
-#include <boost/serialization/vector.hpp>
+#include <string.h>
+#include "ccpp_dds_dcps.h"
+#include "check_status.h"
+#include "ccpp_MSFPPacket.h"
+#include "example_main.h"
+#include "MSFPPacket_listener.h"
 
-#include <ros/ros.h>
-#include <nodelet/nodelet.h>
-#include <pluginlib/class_list_macros.h>
+using namespace DDS;
 
-#include "micros_swarm_framework/data_type.h"
-#include "micros_swarm_framework/check_neighbor.h"
-#include "micros_swarm_framework/runtime_platform.h"
-#include "micros_swarm_framework/message.h"
-#include "micros_swarm_framework/singleton.h"
-#include "micros_swarm_framework/communication_interface.h"
-#ifdef ROS
-#include "micros_swarm_framework/ros_communication.h"
+namespace micros_swarm_framework{
+    class Subscriber
+    {
+        private:
+            DomainId_t  domain;
+            ReturnCode_t  status;
+            
+            const char *topic_name_;
+            
+            char  *MSFPPacketTypeName;
+            
+            //Generic DDS entities
+            DomainParticipantFactory_var  dpf;
+            DomainParticipant_var  participant;
+            Topic_var  MSFPPacketTopic;
+            Subscriber_var  subscriber_;
+            DataReader_ptr  parentReader;
+
+            MSFPPacketTypeSupport_var  MSFPPacketTS;
+            MSFPPacketDataReader_var  MSFPPacketDR;
+
+            //QosPolicy holders
+            TopicQos  topic_qos;
+            SubscriberQos  sub_qos;
+            DataReaderQos  dr_qos;
+        public:
+            Subscriber(std::string topic_name);
+            void subscribe(void (*callBack)(const MSFPPacket& packet));
+            ~Subscriber();
+    };
+};
+
 #endif
-#ifdef OPENSPLICE_DDS
-#include "micros_swarm_framework/opensplice_dds_communication.h"
-#endif
-#include "micros_swarm_framework/packet_parser.h"
 
-#include "micros_swarm_framework/swarm.h"
-#include "micros_swarm_framework/neighbors.h"
-#include "micros_swarm_framework/virtual_stigmergy.h"
-#include "micros_swarm_framework/neighbor_communication.h"
-
-#endif

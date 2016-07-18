@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      micros_swarm_framework.h
+\file      MSFPPacket_listener.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,49 +20,51 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef MICROS_SWARM_FRAMEWORK_H_
-#define MICROS_SWARM_FRAMEWORK_H_
+#ifndef MSFPPACKET_LISTENER_H_
+#define MSFPPACKET_LISTENER_H_
 
-#include <iostream>
 #include <string>
-#include <time.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <vector>
-#include <stack>
-#include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
-#include <functional>
 #include <sstream>
-#include <fstream>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/string.hpp> 
-#include <boost/serialization/vector.hpp>
+#include <iostream>
+#include "ccpp_dds_dcps.h" 
+#include "opensplice_dds/check_status.h"
+#include "ccpp_MSFPPacket.h"
 
-#include <ros/ros.h>
-#include <nodelet/nodelet.h>
-#include <pluginlib/class_list_macros.h>
+namespace micros_swarm_framework{
 
-#include "micros_swarm_framework/data_type.h"
-#include "micros_swarm_framework/check_neighbor.h"
-#include "micros_swarm_framework/runtime_platform.h"
-#include "micros_swarm_framework/message.h"
-#include "micros_swarm_framework/singleton.h"
-#include "micros_swarm_framework/communication_interface.h"
-#ifdef ROS
-#include "micros_swarm_framework/ros_communication.h"
-#endif
-#ifdef OPENSPLICE_DDS
-#include "micros_swarm_framework/opensplice_dds_communication.h"
-#endif
-#include "micros_swarm_framework/packet_parser.h"
+    class MSFPPacketListener: public virtual DDS::DataReaderListener
+    {
+        public:
+            MSFPPacketDataReader_var MSFPPacketDR_;
+            
+            void (*callBack_)(const MSFPPacket& packet);
 
-#include "micros_swarm_framework/swarm.h"
-#include "micros_swarm_framework/neighbors.h"
-#include "micros_swarm_framework/virtual_stigmergy.h"
-#include "micros_swarm_framework/neighbor_communication.h"
+	        MSFPPacketListener () 
+	        {
+		        
+	        }
 
+            //Callback method implementation
+            virtual void on_data_available(DDS::DataReader_ptr reader)
+              THROW_ORB_EXCEPTIONS;
+
+            virtual void on_requested_deadline_missed(DDS::DataReader_ptr reader,
+              const DDS::RequestedDeadlineMissedStatus &status)THROW_ORB_EXCEPTIONS;
+
+            virtual void on_requested_incompatible_qos(DDS::DataReader_ptr reader,
+              const DDS::RequestedIncompatibleQosStatus &status)THROW_ORB_EXCEPTIONS;
+
+            virtual void on_sample_rejected(DDS::DataReader_ptr reader, const DDS
+              ::SampleRejectedStatus &status)THROW_ORB_EXCEPTIONS;
+
+            virtual void on_liveliness_changed(DDS::DataReader_ptr reader, const DDS
+              ::LivelinessChangedStatus &status)THROW_ORB_EXCEPTIONS;
+
+            virtual void on_subscription_matched(DDS::DataReader_ptr reader, const
+              DDS::SubscriptionMatchedStatus &status)THROW_ORB_EXCEPTIONS;
+
+            virtual void on_sample_lost(DDS::DataReader_ptr reader, const DDS
+              ::SampleLostStatus &status)THROW_ORB_EXCEPTIONS;
+    };
+};
 #endif

@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_testnc" args="load micros_swarm_framework/TestNC micros_swarm_framework_manager0" output="screen">
+    </node>
+
+</launch>
+

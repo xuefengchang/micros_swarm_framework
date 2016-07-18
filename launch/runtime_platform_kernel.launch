@@ -1,0 +1,136 @@
+<launch>
+    <!--set runtime platform kernel parameters-->
+    <param name="publish_robot_id_duration" type="double" value="0.1"/>
+    <param name="publish_swarm_list_duration" type="double" value="5.0"/>
+    <param name="default_neighbor_distance" type="double" value="50"/>
+    <param name="total_robot_numbers" type="int" value="20"/>
+
+    <group ns="robot_0">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager0"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel0" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager0" output="screen">
+            <param name="unique_robot_id" type="int" value="0"/>
+        </node>
+    </group>
+    <group ns="robot_1">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager1"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel1" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager1" output="screen">
+            <param name="unique_robot_id" type="int" value="1"/>
+        </node>
+    </group>
+    <group ns="robot_2">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager2"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel2" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager2" output="screen">
+            <param name="unique_robot_id" type="int" value="2"/>
+        </node>
+    </group>
+    <group ns="robot_3">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager3"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel3" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager3" output="screen">
+            <param name="unique_robot_id" type="int" value="3"/>
+        </node>
+    </group>
+    <group ns="robot_4">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager4"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel4" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager4" output="screen">
+            <param name="unique_robot_id" type="int" value="4"/>
+        </node>
+    </group>
+    
+    
+    <group ns="robot_5">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager5"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel5" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager5" output="screen">
+            <param name="unique_robot_id" type="int" value="5"/>
+        </node>
+    </group>
+    <group ns="robot_6">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager6"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel6" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager6" output="screen">
+            <param name="unique_robot_id" type="int" value="6"/>
+        </node>
+    </group>
+    <group ns="robot_7">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager7"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel7" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager7" output="screen">
+            <param name="unique_robot_id" type="int" value="7"/>
+        </node>
+    </group>
+    <group ns="robot_8">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager8"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel8" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager8" output="screen">
+            <param name="unique_robot_id" type="int" value="8"/>
+        </node>
+    </group>
+    <group ns="robot_9">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager9"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel9" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager9" output="screen">
+            <param name="unique_robot_id" type="int" value="9"/>
+        </node>
+    </group>
+    
+    
+    <group ns="robot_10">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager10"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel10" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager10" output="screen">
+            <param name="unique_robot_id" type="int" value="10"/>
+        </node>
+    </group>
+    <group ns="robot_11">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager11"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel11" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager11" output="screen">
+            <param name="unique_robot_id" type="int" value="11"/>
+        </node>
+    </group>
+    <group ns="robot_12">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager12"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel12" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager12" output="screen">
+            <param name="unique_robot_id" type="int" value="12"/>
+        </node>
+    </group>
+    <group ns="robot_13">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager13"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel13" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager13" output="screen">
+            <param name="unique_robot_id" type="int" value="13"/>
+        </node>
+    </group>
+    <group ns="robot_14">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager14"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel14" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager14" output="screen">
+            <param name="unique_robot_id" type="int" value="14"/>
+        </node>
+    </group>
+    
+    
+    <group ns="robot_15">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager15"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel15" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager15" output="screen">
+            <param name="unique_robot_id" type="int" value="15"/>
+        </node>
+    </group>
+    <group ns="robot_16">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager16"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel16" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager16" output="screen">
+            <param name="unique_robot_id" type="int" value="16"/>
+        </node>
+    </group>
+    <group ns="robot_17">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager17"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel17" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager17" output="screen">
+            <param name="unique_robot_id" type="int" value="17"/>
+        </node>
+    </group>
+    <group ns="robot_18">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager18"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel18" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager18" output="screen">
+            <param name="unique_robot_id" type="int" value="18"/>
+        </node>
+    </group>
+    <group ns="robot_19">
+        <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_manager19"  args="manager" output="screen"/>
+        <node pkg="nodelet" type="nodelet" name="runtime_platform_kernel19" args="load micros_swarm_framework/RuntimePlatformKernel micros_swarm_framework_manager19" output="screen">
+            <param name="unique_robot_id" type="int" value="19"/>
+        </node>
+    </group>
+
+</launch>
+
