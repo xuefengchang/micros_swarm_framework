@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>micros_swarm_framework</name>
-  <version>0.0.10</version>
+  <version>0.0.11</version>
   <description>
     A programming framework for robot swarms, including a communication kernel and  a synchronization protocol. This package also provides essential data structures for swarm robotics, 
     such as Swarm, Neighbors, and Virtual Stigmergy.
