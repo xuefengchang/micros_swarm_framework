@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      check_neighbor.h
+\file      app2.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,66 +20,52 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CHECK_NEIGHBOR_H_
-#define CHECK_NEIGHBOR_H_
+#ifndef APP2_H_
+#define APP2_H_
 
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <time.h>
-#include <stdlib.h>
-#include <vector>
-#include <stack>
-#include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
+#include "std_msgs/String.h"
+#include "nav_msgs/Odometry.h"
+#include "geometry_msgs/Twist.h"
 
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-#include <boost/variant.hpp>
-#include <boost/function.hpp>
-#include <boost/foreach.hpp>
-
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/string.hpp> 
-#include <boost/serialization/vector.hpp> 
-
-#include "ros/ros.h"
+#include "micros_swarm_framework/micros_swarm_framework.h"
 
 namespace micros_swarm_framework{
     
-    class CheckNeighborInterface{
-        public:
-            virtual bool isNeighbor(Base self, Base neighbor)=0;
-    };
+    struct XY;
     
-    class CheckNeighbor : public CheckNeighborInterface{
-        private:
-            double neighbor_distance_;
-    
+    class App2 : public Application
+    {
         public:
-            CheckNeighbor(double neighbor_distance)
-            {
-                neighbor_distance_ = neighbor_distance;
-            }
-        
-            double getNeighborDistance()
-            {
-                return neighbor_distance_;
-            }
-        
-            bool isNeighbor(Base self, Base neighbor)
-            {
-                float distance=sqrt((self.getX()-neighbor.getX())*(self.getX()-neighbor.getX())+(self.getY()-neighbor.getY())*(self.getY()-neighbor.getY())+ \
-                    (self.getZ()-neighbor.getZ())*(self.getZ()-neighbor.getZ()));
-                    
-                if(distance<neighbor_distance_)
-                    return true;
-                    
-                return false;
-            }
+            ros::Timer red_timer_;
+            ros::Timer blue_timer_;
+            ros::Publisher pub_;
+            ros::Subscriber sub_;
+            
+            //app parameters
+            int delta_kin;
+            int epsilon_kin;
+            int delta_nonkin;
+            int epsilon_nonkin;
+            
+            App2(ros::NodeHandle nh);
+            ~App2();
+            virtual void start();
+            
+            //app functions
+            void init();
+            float force_mag_kin(float dist);
+            float force_mag_nonkin(float dist);
+            XY force_sum_kin(micros_swarm_framework::NeighborBase n, XY &s);
+            XY force_sum_nonkin(micros_swarm_framework::NeighborBase n, XY &s);
+            XY direction_red();
+            XY direction_blue();
+            bool red(int id);
+            bool blue(int id);
+            void motion_red();
+            void motion_blue();
+            void publish_red_cmd(const ros::TimerEvent&);
+            void publish_blue_cmd(const ros::TimerEvent&);
+            void baseCallback(const nav_msgs::Odometry& lmsg);  
     };
 };
 

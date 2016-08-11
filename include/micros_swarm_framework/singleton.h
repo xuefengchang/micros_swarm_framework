@@ -31,9 +31,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 
-boost::mutex mut;
-
 namespace micros_swarm_framework{
+    
+    //boost::mutex micros_swarm_framework_mut;  
     
     template<class T>
     class Singleton
@@ -43,10 +43,10 @@ namespace micros_swarm_framework{
             {
                 if(object.use_count() == 0)
                 {
-                    mut.lock();
+                    micros_swarm_framework_mut.lock();
                     if(object.use_count()==0)
                         object = boost::shared_ptr<T>(new T());
-                    mut.unlock();
+                    micros_swarm_framework_mut.unlock();
                 }  
                 return object;
             }
@@ -54,15 +54,13 @@ namespace micros_swarm_framework{
             template<class P1>
             static boost::shared_ptr<T> getSingleton(P1 p1)  //one parameter construction
             {
-                
                 if(object.use_count() == 0)
                 {
-                    mut.lock();
+                    micros_swarm_framework_mut.lock();
                     if(object.use_count()==0)
                         object = boost::shared_ptr<T>(new T(p1));
-                    mut.unlock();
+                    micros_swarm_framework_mut.unlock();
                 }
-                
                 return object;
             }
             
@@ -71,10 +69,10 @@ namespace micros_swarm_framework{
             {
                 if(object.use_count() == 0)
                 {
-                    mut.lock();
+                    micros_swarm_framework_mut.lock();
                     if(object.use_count()==0)
                         object = boost::shared_ptr<T>(new T(p1, p2));
-                    mut.unlock();
+                    micros_swarm_framework_mut.unlock();
                 }
                 return object;
             }
@@ -84,10 +82,10 @@ namespace micros_swarm_framework{
             {
                 if(object.use_count() == 0)
                 {
-                    mut.lock();
+                    micros_swarm_framework_mut.lock();
                     if(object.use_count()==0)
                         object = boost::shared_ptr<T>(new T(p1, p2, p3));
-                    mut.unlock();
+                    micros_swarm_framework_mut.unlock();
                 }
                 return object;
             }
@@ -100,10 +98,14 @@ namespace micros_swarm_framework{
             Singleton(){}
         private:
             static boost::shared_ptr<T> object;
+            static boost::mutex micros_swarm_framework_mut;  //TODO, is this ok for multi thread???
     };
     
     template<class T>
     boost::shared_ptr<T> Singleton<T>::object;
+    
+    template<class T>
+    boost::mutex Singleton<T>::micros_swarm_framework_mut;
 };
     
 #endif

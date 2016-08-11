@@ -65,12 +65,10 @@ namespace micros_swarm_framework{
             std::map<int, std::map<std::string, VirtualStigmergyTuple> > virtual_stigmergy_;
             double neighbor_distance_;
             std::set<int> barrier_;
-            std::map<std::string, NeighborCommunicationCallBack> callback_functions_;
+            std::map<std::string, boost::function<void(const std::string&)> > callback_functions_;
         public:
             RuntimePlatform();
             RuntimePlatform(int robot_id);
-            
-            //static RuntimePlatform& Instance();
             
             int getRobotID();
             void setRobotID(int robot_id);
@@ -78,7 +76,7 @@ namespace micros_swarm_framework{
             Base getRobotBase();
             void setRobotBase(Base robot_base);
             void printRobotBase();
-        
+            
             std::map<int, NeighborBase> getNeighbors();
             void insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz);
             //delete an neighbor robot according to id
@@ -116,9 +114,9 @@ namespace micros_swarm_framework{
             void insertBarrier(int robot_id);
             int getBarrierSize();
             
-            void insertOrUpdateCallbackFunctions(std::string key, NeighborCommunicationCallBack cb);
-            void doNothing();
-            NeighborCommunicationCallBack getCallbackFunctions(std::string key);
+            void insertOrUpdateCallbackFunctions(std::string key, boost::function<void(const std::string&)> cb);
+            void doNothing(const std::string& value_str);
+            boost::function<void(const std::string&)> getCallbackFunctions(std::string key);
             void deleteCallbackFunctions(std::string key);
     };
 };

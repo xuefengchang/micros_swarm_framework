@@ -46,23 +46,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <nodelet/nodelet.h>
 #include <pluginlib/class_list_macros.h>
 
-#include "micros_swarm_framework/data_type.h"
-#include "micros_swarm_framework/check_neighbor.h"
-#include "micros_swarm_framework/runtime_platform.h"
-#include "micros_swarm_framework/message.h"
-#include "micros_swarm_framework/singleton.h"
-#include "micros_swarm_framework/communication_interface.h"
-#ifdef ROS
-#include "micros_swarm_framework/ros_communication.h"
-#endif
-#ifdef OPENSPLICE_DDS
-#include "micros_swarm_framework/opensplice_dds_communication.h"
-#endif
-#include "micros_swarm_framework/packet_parser.h"
-
 #include "micros_swarm_framework/swarm.h"
 #include "micros_swarm_framework/neighbors.h"
 #include "micros_swarm_framework/virtual_stigmergy.h"
 #include "micros_swarm_framework/neighbor_communication.h"
+#include "micros_swarm_framework/application.h"
 
 #endif

@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      check_neighbor.h
+\file      app1_broker.cpp 
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,67 +20,38 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CHECK_NEIGHBOR_H_
-#define CHECK_NEIGHBOR_H_
-
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <time.h>
-#include <stdlib.h>
-#include <vector>
-#include <stack>
-#include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
-
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-#include <boost/variant.hpp>
-#include <boost/function.hpp>
-#include <boost/foreach.hpp>
-
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/string.hpp> 
-#include <boost/serialization/vector.hpp> 
-
-#include "ros/ros.h"
+#include "apps/app1.h"
 
 namespace micros_swarm_framework{
     
-    class CheckNeighborInterface{
+    class App1Broker : public nodelet::Nodelet
+    {
         public:
-            virtual bool isNeighbor(Base self, Base neighbor)=0;
+            ros::NodeHandle nh_;
+            boost::shared_ptr<Application> app_;
+                     
+            App1Broker();
+            ~App1Broker();
+            virtual void onInit();
     };
+
+    App1Broker::App1Broker()
+    {
     
-    class CheckNeighbor : public CheckNeighborInterface{
-        private:
-            double neighbor_distance_;
+    }
     
-        public:
-            CheckNeighbor(double neighbor_distance)
-            {
-                neighbor_distance_ = neighbor_distance;
-            }
+    App1Broker::~App1Broker()
+    {
         
-            double getNeighborDistance()
-            {
-                return neighbor_distance_;
-            }
-        
-            bool isNeighbor(Base self, Base neighbor)
-            {
-                float distance=sqrt((self.getX()-neighbor.getX())*(self.getX()-neighbor.getX())+(self.getY()-neighbor.getY())*(self.getY()-neighbor.getY())+ \
-                    (self.getZ()-neighbor.getZ())*(self.getZ()-neighbor.getZ()));
-                    
-                if(distance<neighbor_distance_)
-                    return true;
-                    
-                return false;
-            }
-    };
+    }
+    
+    void App1Broker::onInit()
+    {
+        nh_ = getNodeHandle();
+        app_=Singleton<App1>::getSingleton(nh_);
+        app_->start();
+    }
 };
 
-#endif
+// Register the nodelet
+PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App1Broker, nodelet::Nodelet)

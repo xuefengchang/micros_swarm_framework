@@ -19,21 +19,14 @@ OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTE
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#include <iostream>
-#include "std_msgs/String.h"
-#include "nav_msgs/Odometry.h"
-#include "geometry_msgs/Twist.h"
 
-#include "micros_swarm_framework/micros_swarm_framework.h"
+#include "apps/app2.h"
 
 #define BARRIER_VSTIG  1
 #define ROBOT_SUM 20
 
 #define RED_SWARM 1
 #define BLUE_SWARM 2
-
-#include <boost/any.hpp> 
-
 
 namespace micros_swarm_framework{
 
@@ -42,45 +35,17 @@ namespace micros_swarm_framework{
         float x;
         float y;
     };
-    
-    class App2 : public nodelet::Nodelet
-    {
-        public:
-            ros::NodeHandle node_handle_;
-            boost::shared_ptr<RuntimePlatform> rtp_;
-            boost::shared_ptr<CommunicationInterface> communicator_;
-            ros::Timer red_timer_;
-            ros::Timer blue_timer_;
-            ros::Publisher pub_;
-            ros::Subscriber sub_;
-            
-            //app parameters
-            int delta_kin;
-            int epsilon_kin;
-            int delta_nonkin;
-            int epsilon_nonkin;
-            
-            App2();
-            ~App2();
-            virtual void onInit();
-            
-            //app functions
-            float force_mag_kin(float dist);
-            float force_mag_nonkin(float dist);
-            XY force_sum_kin(micros_swarm_framework::NeighborBase n, XY &s);
-            XY force_sum_nonkin(micros_swarm_framework::NeighborBase n, XY &s);
-            XY direction_red();
-            XY direction_blue();
-            bool red(int id);
-            bool blue(int id);
-            void motion_red();
-            void motion_blue();
-            void publish_red_cmd(const ros::TimerEvent&);
-            void publish_blue_cmd(const ros::TimerEvent&);
-            void baseCallback(const nav_msgs::Odometry& lmsg);  
-    };
 
-    App2::App2()
+    App2::App2(ros::NodeHandle nh):Application(nh)
+    {
+        
+    }
+    
+    App2::~App2()
+    {
+    }
+    
+    void App2::init()
     {
         //set parameters
         delta_kin = 5;
@@ -88,10 +53,6 @@ namespace micros_swarm_framework{
 
         delta_nonkin = 30;
         epsilon_nonkin = 1000;
-    }
-    
-    App2::~App2()
-    {
     }
     
     float App2::force_mag_kin(float dist)
@@ -106,7 +67,7 @@ namespace micros_swarm_framework{
 
     XY App2::force_sum_kin(micros_swarm_framework::NeighborBase n, XY &s)
     {
-        micros_swarm_framework::Base l=rtp_->getRobotBase();
+        micros_swarm_framework::Base l=getRobotBase();
         float xl=l.getX();
         float yl=l.getY();
     
@@ -128,7 +89,7 @@ namespace micros_swarm_framework{
 
     XY App2::force_sum_nonkin(micros_swarm_framework::NeighborBase n, XY &s)
     {
-        micros_swarm_framework::Base l=rtp_->getRobotBase();
+        micros_swarm_framework::Base l=getRobotBase();
         float xl=l.getX();
         float yl=l.getY();
     
@@ -218,12 +179,12 @@ namespace micros_swarm_framework{
 
     void App2::motion_red()
     {
-        red_timer_ = node_handle_.createTimer(ros::Duration(0.1), &App2::publish_red_cmd, this);
+        red_timer_ = nh_.createTimer(ros::Duration(0.1), &App2::publish_red_cmd, this);
     }
 
     void App2::motion_blue()
     {
-        blue_timer_ = node_handle_.createTimer(ros::Duration(0.1), &App2::publish_blue_cmd, this);
+        blue_timer_ = nh_.createTimer(ros::Duration(0.1), &App2::publish_blue_cmd, this);
     }
     
     void App2::baseCallback(const nav_msgs::Odometry& lmsg)
@@ -235,42 +196,32 @@ namespace micros_swarm_framework{
         float vy=lmsg.twist.twist.linear.y;
     
         micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
-        rtp_->setRobotBase(l);
+        setRobotBase(l);
     }
     
-    void App2::onInit()
+    void App2::start()
     {
-        node_handle_ = getNodeHandle();
-        rtp_=Singleton<RuntimePlatform>::getSingleton();
-        #ifdef ROS
-        communicator_=Singleton<ROSCommunication>::getSingleton();
-        #endif
-        #ifdef OPENSPLICE_DDS
-        communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
-        #endif
+        init();
     
-        sub_ = node_handle_.subscribe("base_pose_ground_truth", 1000, &App2::baseCallback, this, ros::TransportHints().udp());
-        pub_ = node_handle_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+        sub_ = nh_.subscribe("base_pose_ground_truth", 1000, &App2::baseCallback, this, ros::TransportHints().udp());
+        pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         
-        boost::function<bool()> bfred=boost::bind(&App2::red, this, rtp_->getRobotID());
-        boost::function<bool()> bfblue=boost::bind(&App2::blue, this, rtp_->getRobotID());
+        boost::function<bool()> bfred=boost::bind(&App2::red, this, getRobotID());
+        boost::function<bool()> bfblue=boost::bind(&App2::blue, this, getRobotID());
     
         micros_swarm_framework::Swarm red_swarm(RED_SWARM);
         red_swarm.selectSwarm(bfred);
         micros_swarm_framework::Swarm blue_swarm(BLUE_SWARM);
         blue_swarm.selectSwarm(bfblue);
-    
-        red_swarm.printSwarm();
-        blue_swarm.printSwarm();
         
         red_swarm.execute(boost::bind(&App2::motion_red, this));
         blue_swarm.execute(boost::bind(&App2::motion_blue, this));
         
-        //micros_swarm_framework::VirtualStigmergy<bool> barrier(1);
-        //std::string robot_id_string=boost::lexical_cast<std::string>(rtp_->getRobotID());
-        //barrier.virtualStigmergyPut(robot_id_string, 1);
+        /*
+        //test virtual stigmergy
+        micros_swarm_framework::VirtualStigmergy<bool> barrier(1);
+        std::string robot_id_string=boost::lexical_cast<std::string>(rtp_->getRobotID());
+        barrier.virtualStigmergyPut(robot_id_string, 1);
+        */
     }
 };
-
-// Register the nodelet
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App2, nodelet::Nodelet)

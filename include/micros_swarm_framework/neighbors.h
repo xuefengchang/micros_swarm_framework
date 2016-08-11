@@ -36,6 +36,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "ros/ros.h"
 
+#include "micros_swarm_framework/singleton.h"
 #include "micros_swarm_framework/runtime_platform.h"
 
 namespace micros_swarm_framework{
@@ -217,7 +218,6 @@ namespace micros_swarm_framework{
                 return result;
             }
     };
-    
     
     /*
      *  specialization for NeighborBase type

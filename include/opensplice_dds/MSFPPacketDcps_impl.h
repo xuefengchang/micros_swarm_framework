@@ -8,7 +8,6 @@
 #include "ccpp_DataReader_impl.h"
 #include "ccpp_DataReaderView_impl.h"
 
-
 namespace micros_swarm_framework {
 
     class  MSFPPacketTypeSupportFactory : public ::DDS::TypeSupportFactory_impl

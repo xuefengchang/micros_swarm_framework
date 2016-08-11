@@ -5,7 +5,6 @@
 #include "ccpp_DataReader_impl.h"
 #include "ccpp_DataReaderView_impl.h"
 
-
 extern c_bool
 __micros_swarm_framework_MSFPPacket__copyIn(
     c_base base,

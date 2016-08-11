@@ -34,7 +34,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "ros/ros.h"
 
 #include "micros_swarm_framework/data_type.h"
-#include "micros_swarm_framework/message.h"
 #include "micros_swarm_framework/runtime_platform.h"
 
 namespace micros_swarm_framework{
@@ -48,6 +47,7 @@ namespace micros_swarm_framework{
         neighbor_swarms_.clear();
         virtual_stigmergy_.clear();
         barrier_.clear();
+        callback_functions_.clear();
     }
     
     RuntimePlatform::RuntimePlatform(int robot_id)
@@ -59,13 +59,8 @@ namespace micros_swarm_framework{
         neighbor_swarms_.clear();
         virtual_stigmergy_.clear();
         barrier_.clear();
+        callback_functions_.clear();
     }
-
-    //RuntimePlatform& RuntimePlatform::Instance() 
-    //{
-    //    static RuntimePlatform single_instance;
-    //    return single_instance;
-    //}
     
     int RuntimePlatform::getRobotID()
     {
@@ -480,9 +475,9 @@ namespace micros_swarm_framework{
         return barrier_.size();
     }
     
-    void RuntimePlatform::insertOrUpdateCallbackFunctions(std::string key, NeighborCommunicationCallBack cb)
+    void RuntimePlatform::insertOrUpdateCallbackFunctions(std::string key, boost::function<void(const std::string&)> cb)
     {
-        std::map<std::string, NeighborCommunicationCallBack>::iterator nccb_it;
+        std::map<std::string, boost::function<void(const std::string&)> >::iterator nccb_it;
         nccb_it=callback_functions_.find(key);
     
         if(nccb_it!=callback_functions_.end())
@@ -491,18 +486,18 @@ namespace micros_swarm_framework{
         }
         else
         {
-            callback_functions_.insert(std::pair<std::string, NeighborCommunicationCallBack>(key ,cb));
+            callback_functions_.insert(std::pair<std::string, boost::function<void(const std::string&)> >(key ,cb));
         } 
     }
     
-    void RuntimePlatform::doNothing()
+    void RuntimePlatform::doNothing(const std::string& value_str)
     {
         
     }
     
-    NeighborCommunicationCallBack RuntimePlatform::getCallbackFunctions(std::string key)
+    boost::function<void(const std::string&)> RuntimePlatform::getCallbackFunctions(std::string key)
     {
-        std::map<std::string, NeighborCommunicationCallBack>::iterator nccb_it;
+        std::map<std::string, boost::function<void(const std::string&)> >::iterator nccb_it;
         nccb_it=callback_functions_.find(key);
     
         if(nccb_it!=callback_functions_.end())
@@ -511,7 +506,7 @@ namespace micros_swarm_framework{
         }
         
         std::cout<<"could not get the callback function which has the key "<<key<<"!"<<std::endl;
-        boost::function<void()> f=boost::bind(&RuntimePlatform::doNothing, this);
+        boost::function<void(const std::string&)> f=boost::bind(&RuntimePlatform::doNothing, this, _1);
         return f;
     }
     
@@ -519,5 +514,4 @@ namespace micros_swarm_framework{
     {
         callback_functions_.erase(key);
     }
-    
 };

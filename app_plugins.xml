@@ -1,0 +1,30 @@
+<!--This is the plugin for the micros_swarm_framework applications-->
+<library path="lib/libmicros_swarm_framework_App1Broker">
+    <class name="micros_swarm_framework/App1Broker" type="micros_swarm_framework::App1Broker" base_class_type="nodelet::Nodelet">
+        <description>micros_swarm_framework app1.</description>
+    </class>
+    
+</library>
+
+<library path="lib/libmicros_swarm_framework_App2Broker">
+    <class name="micros_swarm_framework/App2Broker" type="micros_swarm_framework::App2Broker" base_class_type="nodelet::Nodelet">
+        <description>micros_swarm_framework app2.</description>
+    </class>
+    
+</library>
+
+<library path="lib/libmicros_swarm_framework_App3Broker">
+    <class name="micros_swarm_framework/App3Broker" type="micros_swarm_framework::App3Broker" base_class_type="nodelet::Nodelet">
+        <description>micros_swarm_framework app3.</description>
+    </class>
+    
+</library>
+
+<library path="lib/libmicros_swarm_framework_TestNCBroker">
+    <class name="micros_swarm_framework/TestNCBroker" type="micros_swarm_framework::TestNCBroker" base_class_type="nodelet::Nodelet">
+        <description>micros_swarm_framework test neighbor communication.</description>
+    </class>
+    
+</library>
+
+

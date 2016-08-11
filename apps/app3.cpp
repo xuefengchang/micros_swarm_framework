@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      kernel.cpp 
+\file      app3.cpp 
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,19 +20,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "std_msgs/String.h"
-#include "nav_msgs/Odometry.h"
-#include "geometry_msgs/Twist.h"
-
-#include <string>
-#include <list>
-#include <vector>
-#include <iostream>
-#include <utility>
-#include <cmath>
-#include <ctime>
-
-#include "micros_swarm_framework/micros_swarm_framework.h"
+#include "apps/app3.h"
 
 #define PI 3.14159265358979323846
 #define EPSILON 0.1
@@ -171,38 +159,20 @@ pair<double,double> f_r()
 }
 
 namespace micros_swarm_framework{
-    
-    class App3 : public nodelet::Nodelet
-    {
-        public:
-            ros::NodeHandle node_handle_;
-            boost::shared_ptr<RuntimePlatform> rtp_;
-            boost::shared_ptr<CommunicationInterface> communicator_;
-            ros::Timer timer_;
-            ros::Publisher pub_;
-            ros::Subscriber sub_;
-            
-            int hz;
-            double interval;
-            
-            App3();
-            ~App3();
-            virtual void onInit();
-            
-            //app functions
-            void publish_cmd(const ros::TimerEvent&);
-            void baseCallback(const nav_msgs::Odometry& lmsg);  
-    };
 
-    App3::App3()
+    App3::App3(ros::NodeHandle nh):Application(nh)
     {
-        //set parameters
-        hz=10;
-        interval=1.0/hz;
     }
     
     App3::~App3()
     {
+    }
+    
+    void App3::init()
+    {
+        //set parameters
+        hz=10;
+        interval=1.0/hz;
     }
     
     void App3::publish_cmd(const ros::TimerEvent&)
@@ -217,7 +187,7 @@ namespace micros_swarm_framework{
             neighbor_list.push_back(nh);
         }
 
-        micros_swarm_framework::Base nl=rtp_->getRobotBase();
+        micros_swarm_framework::Base nl=getRobotBase();
 
         my_position=pair<double,double>(nl.getX(), nl.getY());
         my_velocity=pair<double,double>(nl.getVX(), nl.getVY());
@@ -248,27 +218,18 @@ namespace micros_swarm_framework{
         float vy=lmsg.twist.twist.linear.y;
     
         micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
-        rtp_->setRobotBase(l);
+        setRobotBase(l);
     }
     
-    void App3::onInit()
+    void App3::start()
     {
-        node_handle_ = getNodeHandle();
-        rtp_=Singleton<RuntimePlatform>::getSingleton();
-        #ifdef ROS
-        communicator_=Singleton<ROSCommunication>::getSingleton();
-        #endif
-        #ifdef OPENSPLICE_DDS
-        communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
-        #endif
-    
-        rtp_->setNeighborDistance(12);
-        sub_ = node_handle_.subscribe("base_pose_ground_truth", 1000, &App3::baseCallback, this, ros::TransportHints().udp());
-        pub_ = node_handle_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+        init();
         
-        timer_ = node_handle_.createTimer(ros::Duration(interval), &App3::publish_cmd, this);
+        setNeighborDistance(12);
+        sub_ = nh_.subscribe("base_pose_ground_truth", 1000, &App3::baseCallback, this, ros::TransportHints().udp());
+        pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+        
+        timer_ = nh_.createTimer(ros::Duration(interval), &App3::publish_cmd, this);
     }
 };
 
-// Register the nodelet
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App3, nodelet::Nodelet)

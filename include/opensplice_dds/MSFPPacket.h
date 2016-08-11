@@ -14,7 +14,6 @@
 #include "sacpp_mapping.h"
 #include "sacpp_DDS_DCPS.h"
 
-
 namespace micros_swarm_framework
 {
    struct MSFPPacket;
@@ -31,8 +30,5 @@ namespace micros_swarm_framework
    typedef DDS_DCPSStruct_var < MSFPPacket> MSFPPacket_var;
    typedef DDS_DCPSStruct_out < MSFPPacket> MSFPPacket_out;
 }
-
-
-
 
 #endif 

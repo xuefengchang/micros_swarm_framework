@@ -16,7 +16,6 @@
 #include "dds_dcps.h"
 #include "MSFPPacket.h"
 
-
 namespace micros_swarm_framework
 {
 

@@ -47,16 +47,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm_framework{
     
-    class NeighborCommunication{
+    template<class Type>
+    class Broadcaster{
         private:
             boost::shared_ptr<RuntimePlatform> rtp_;
             boost::shared_ptr<CommunicationInterface> communicator_;
-            std::string type_;
+            std::string key_;
         public:
-        
-            NeighborCommunication(std::string type)
+            Broadcaster(std::string key)
             {
-                type_=type;
+                key_=key;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
                 #ifdef ROS
                 communicator_=Singleton<ROSCommunication>::getSingleton();
@@ -66,16 +66,19 @@ namespace micros_swarm_framework{
                 #endif
             }
             
-            template<class Type>
-            void neighborBroadcast(std::string key, Type value)
+            void broadcast(Type value)
             {
-                std::string value_str=boost::lexical_cast<std::string>(value);
-                micros_swarm_framework::NeighborBroadcastKeyValue nbkv(type_, key, value_str);
-                
                 std::ostringstream archiveStream;
                 boost::archive::text_oarchive archive(archiveStream);
-                archive<<nbkv;
-                std::string nbkv_str=archiveStream.str();  
+                archive<<value;
+                std::string value_str=archiveStream.str();
+                
+                NeighborBroadcastKeyValue nbkv(key_, value_str);
+                
+                std::ostringstream archiveStream2;
+                boost::archive::text_oarchive archive2(archiveStream2);
+                archive2<<nbkv;
+                std::string nbkv_str=archiveStream2.str();  
                 
                 micros_swarm_framework::MSFPPacket p;
                 p.packet_source=rtp_->getRobotID();
@@ -91,17 +94,51 @@ namespace micros_swarm_framework{
                 
                 communicator_->broadcast(p);
             }
-            
-            template<class Type>
-            void neighborListen(std::string key, boost::function<void(Type)> f)
+    };
+    
+    class Listener{
+        private:
+            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<CommunicationInterface> communicator_;
+            std::string key_;
+        public:
+            Listener(std::string key)
             {
-                rtp_->insertOrUpdateCallbackFunctions(key, f);
+                key_=key;
+                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                #ifdef ROS
+                communicator_=Singleton<ROSCommunication>::getSingleton();
+                #endif
+                #ifdef OPENSPLICE_DDS
+                communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+                #endif
             }
             
-            void neighborIgnore(std::string key)
+            void listen(boost::function<void(const std::string&)> f)
             {
-                rtp_->deleteCallbackFunctions(key);
+                rtp_->insertOrUpdateCallbackFunctions(key_, f);
+            }
+            
+            //void listen(void (*f)(std::string value))
+            //{
+                
+            //}
+            
+            void ignore()
+            {
+                rtp_->deleteCallbackFunctions(key_);
             }
     };
+    
+    template<class Type>
+    Type convertToType(const std::string& value_str)
+    {
+        std::istringstream archiveStream(value_str);
+        boost::archive::text_iarchive archive(archiveStream); 
+        Type value;
+        archive>>value;
+                
+        return value;
+    }
 };
 #endif

@@ -20,7 +20,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-
 #include "opensplice_dds/MSFPPacket_listener.h"
 #include "opensplice_dds/check_status.h"
 #include <boost/archive/text_oarchive.hpp>

@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      check_neighbor.h
+\file      application.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,11 +20,10 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CHECK_NEIGHBOR_H_
-#define CHECK_NEIGHBOR_H_
+#ifndef APPLICATION_H_
+#define APPLICATION_H_
 
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <time.h>
 #include <stdlib.h>
@@ -34,52 +33,71 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <set>
 #include <queue>
 #include <algorithm>
+#include <functional>
 
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-#include <boost/variant.hpp>
-#include <boost/function.hpp>
-#include <boost/foreach.hpp>
+#include <ros/ros.h>
+#include <nodelet/nodelet.h>
+#include <pluginlib/class_list_macros.h>
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/string.hpp> 
-#include <boost/serialization/vector.hpp> 
-
-#include "ros/ros.h"
+#include "micros_swarm_framework/runtime_platform.h"
 
 namespace micros_swarm_framework{
     
-    class CheckNeighborInterface{
+    class Application
+    {
         public:
-            virtual bool isNeighbor(Base self, Base neighbor)=0;
-    };
-    
-    class CheckNeighbor : public CheckNeighborInterface{
-        private:
-            double neighbor_distance_;
-    
-        public:
-            CheckNeighbor(double neighbor_distance)
+            boost::shared_ptr<RuntimePlatform> rtp_;
+            ros::NodeHandle nh_;
+            
+            Application()
             {
-                neighbor_distance_ = neighbor_distance;
+            
             }
-        
+            
+            Application(ros::NodeHandle nh)
+            {
+                nh_=nh;
+                rtp_=Singleton<RuntimePlatform>::getSingleton();
+            }
+            
+            virtual ~Application()
+            {
+            
+            }
+            
+            //application api
+            int getRobotID()
+            {
+                return rtp_->getRobotID();
+            }
+            
+            void setRobotID(int robot_id)
+            {
+                rtp_->setRobotID(robot_id);
+            }
+            
+            Base getRobotBase()
+            {
+                return rtp_->getRobotBase();
+            }
+            
+            void setRobotBase(Base robot_base)
+            {
+                rtp_->setRobotBase(robot_base);
+            }
+            
             double getNeighborDistance()
             {
-                return neighbor_distance_;
+                return rtp_->getNeighborDistance();
             }
-        
-            bool isNeighbor(Base self, Base neighbor)
+            
+            void setNeighborDistance(double neighbor_distance)
             {
-                float distance=sqrt((self.getX()-neighbor.getX())*(self.getX()-neighbor.getX())+(self.getY()-neighbor.getY())*(self.getY()-neighbor.getY())+ \
-                    (self.getZ()-neighbor.getZ())*(self.getZ()-neighbor.getZ()));
-                    
-                if(distance<neighbor_distance_)
-                    return true;
-                    
-                return false;
+                rtp_->setNeighborDistance(neighbor_distance);
             }
+            
+            //entry function
+            virtual void start()=0;
     };
 };
 

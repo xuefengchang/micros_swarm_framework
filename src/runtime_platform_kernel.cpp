@@ -20,7 +20,40 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "micros_swarm_framework/micros_swarm_framework.h"
+#include <iostream>
+#include <string>
+#include <time.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <vector>
+#include <stack>
+#include <map>
+#include <set>
+#include <queue>
+#include <algorithm>
+#include <functional>
+#include <sstream>
+#include <fstream>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/string.hpp> 
+#include <boost/serialization/vector.hpp>
+
+#include <ros/ros.h>
+#include <nodelet/nodelet.h>
+#include <pluginlib/class_list_macros.h>
+
+#include "micros_swarm_framework/singleton.h"
+#include "micros_swarm_framework/message.h"
+#include "micros_swarm_framework/runtime_platform.h"
+#include "micros_swarm_framework/communication_interface.h"
+#ifdef ROS
+#include "micros_swarm_framework/ros_communication.h"
+#endif
+#ifdef OPENSPLICE_DDS
+#include "micros_swarm_framework/opensplice_dds_communication.h"
+#endif
+#include "micros_swarm_framework/packet_parser.h"
 
 //#define PUBLISH_ROBOT_ID_DURATION 0.1
 //#define PUBLISH_SWARM_LIST_DURATION 5
@@ -123,8 +156,6 @@ namespace micros_swarm_framework{
         p.package_check_sum=0;
 
         communicator_->broadcast(p);
-
-        std::vector<int>().swap(swarm_list);
     }
     
     void RuntimePlatformKernel::barrier_check(const ros::TimerEvent&)

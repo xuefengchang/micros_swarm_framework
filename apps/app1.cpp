@@ -20,11 +20,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "std_msgs/String.h"
-#include "nav_msgs/Odometry.h"
-#include "geometry_msgs/Twist.h"
-
-#include "micros_swarm_framework/micros_swarm_framework.h"
+#include "apps/app1.h"
 
 namespace micros_swarm_framework{
 
@@ -33,43 +29,20 @@ namespace micros_swarm_framework{
         float x;
         float y;
     };
-    
-    class App1 : public nodelet::Nodelet
-    {
-        public:
-            ros::NodeHandle node_handle_;
-            boost::shared_ptr<RuntimePlatform> rtp_;
-            boost::shared_ptr<CommunicationInterface> communicator_;
-            ros::Timer timer_;
-            ros::Publisher pub_;
-            ros::Subscriber sub_;
-            
-            //app parameters
-            int delta;
-            int epsilon;
-            
-            App1();
-            ~App1();
-            virtual void onInit();
-            
-            //app functions
-            float force_mag(float dist);
-            XY force_sum(micros_swarm_framework::NeighborBase n, XY &s);
-            XY direction();
-            void motion();
-            void publish_cmd(const ros::TimerEvent&);
-            void baseCallback(const nav_msgs::Odometry& lmsg);  
-    };
 
-    App1::App1()
+    App1::App1(ros::NodeHandle nh):Application(nh)
     {
-        //set parameters
-        delta = 4;
-        epsilon = 100;
     }
     
     App1::~App1()
     {
+    }
+    
+    void App1::init()
+    {
+        //set parameters
+        delta = 4;
+        epsilon = 100;
     }
     
     float App1::force_mag(float dist)
@@ -79,7 +52,7 @@ namespace micros_swarm_framework{
 
     XY App1::force_sum(micros_swarm_framework::NeighborBase n, XY &s)
     {
-        micros_swarm_framework::Base l=rtp_->getRobotBase();
+        micros_swarm_framework::Base l=getRobotBase();
         float xl=l.getX();
         float yl=l.getY();
     
@@ -121,12 +94,11 @@ namespace micros_swarm_framework{
         t.linear.y=v.y;
         
         pub_.publish(t);
-        
     }
 
     void App1::motion()
     {
-        timer_ = node_handle_.createTimer(ros::Duration(0.1), &App1::publish_cmd, this);
+        timer_ = nh_.createTimer(ros::Duration(0.1), &App1::publish_cmd, this);
     }
     
     void App1::baseCallback(const nav_msgs::Odometry& lmsg)
@@ -138,26 +110,17 @@ namespace micros_swarm_framework{
         float vy=lmsg.twist.twist.linear.y;
     
         micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
-        rtp_->setRobotBase(l);
+        setRobotBase(l);
     }
     
-    void App1::onInit()
+    void App1::start()
     {
-        node_handle_ = getNodeHandle();
-        rtp_=Singleton<RuntimePlatform>::getSingleton();
-        #ifdef ROS
-        communicator_=Singleton<ROSCommunication>::getSingleton();
-        #endif
-        #ifdef OPENSPLICE_DDS
-        communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
-        #endif
-    
-        sub_ = node_handle_.subscribe("base_pose_ground_truth", 1000, &App1::baseCallback, this, ros::TransportHints().udp());
-        pub_ = node_handle_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+        init();
+        
+        sub_ = nh_.subscribe("base_pose_ground_truth", 1000, &App1::baseCallback, this, ros::TransportHints().udp());
+        pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
     
         motion();
     }
 };
 
-// Register the nodelet
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App1, nodelet::Nodelet)

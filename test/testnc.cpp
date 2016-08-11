@@ -20,69 +20,38 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "std_msgs/String.h"
-#include "nav_msgs/Odometry.h"
-#include "geometry_msgs/Twist.h"
-
-#include "micros_swarm_framework/micros_swarm_framework.h"
+#include "apps/testnc.h"
 
 namespace micros_swarm_framework{
-    
-    class TestNC : public nodelet::Nodelet
-    {
-        public:
-            ros::NodeHandle node_handle_;
-            boost::shared_ptr<RuntimePlatform> rtp_;
-            boost::shared_ptr<CommunicationInterface> communicator_;
-            ros::Timer timer_;
-            ros::Publisher pub_;
-            ros::Subscriber sub_;
-            
-            TestNC();
-            ~TestNC();
-            void callback(double value);
-            virtual void onInit(); 
-    };
 
-    TestNC::TestNC()
+    TestNC::TestNC(ros::NodeHandle nh):Application(nh)
     {
-        
     }
     
     TestNC::~TestNC()
     {
     }
     
-    void TestNC::callback(double value)
+    void TestNC::callback(const std::string& value_str)
     {
+        float value=convertToType<float>(value_str);
+        
         std::cout<<"I received the value: "<<value<<std::endl;
     }
     
-    void TestNC::onInit()
+    void TestNC::start()
     {
-        node_handle_ = getNodeHandle();
-        rtp_=Singleton<RuntimePlatform>::getSingleton();
-        #ifdef ROS
-        communicator_=Singleton<ROSCommunication>::getSingleton();
-        #endif
-        #ifdef OPENSPLICE_DDS
-        communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
-        #endif
-    
-        NeighborCommunication nc=NeighborCommunication("double");
-        
-        boost::function<void(double)> cb=boost::bind(&TestNC::callback, this, _1);
-        nc.neighborListen("testkey", cb);
-        
-        //nc.neighborIgnore("testkey");
+        Broadcaster<float> bc("testkey");
+        Listener ls("testkey");
+        boost::function<void(const std::string&)> cb=boost::bind(&TestNC::callback, this, _1);
+        ls.listen(cb);
+        //ls.ignore();
         
         for(int i=0;i<10;i++)
         {
-            nc.neighborBroadcast("testkey", 3.14);
+            bc.broadcast(3.141);
             ros::Duration(1).sleep();
         }
     }
 };
 
-// Register the nodelet
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::TestNC, nodelet::Nodelet)

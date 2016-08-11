@@ -38,6 +38,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "micros_swarm_framework/data_type.h"
 #include "micros_swarm_framework/message.h"
+#include "micros_swarm_framework/singleton.h"
+#include "micros_swarm_framework/runtime_platform.h"
+#include "micros_swarm_framework/check_neighbor.h"
 
 #ifdef ROS
 #include "micros_swarm_framework/MSFPPacket.h"
@@ -210,7 +213,7 @@ namespace micros_swarm_framework{
                 int robot_id=srsl.getRobotID();
                 std::vector<int> swarm_list=srsl.getSwarmList();
                 rtp->insertOrRefreshNeighborSwarm(robot_id, swarm_list);
-                std::vector<int>().swap(swarm_list);
+                
                 break;
             }
             case VIRTUAL_STIGMERGY_QUERY:
@@ -254,6 +257,7 @@ namespace micros_swarm_framework{
                     p.package_check_sum=0;
                     
                     communicator->broadcast(p);
+                    ros::Duration(0.1).sleep();
                 }
                 else if(local.getVirtualStigmergyTimestamp()>time_now)  //local timestamp is larger
                 {
@@ -276,6 +280,7 @@ namespace micros_swarm_framework{
                     p.package_check_sum=0;
                     
                     communicator->broadcast(p);
+                    ros::Duration(0.1).sleep();
                 }
                 else if((local.getVirtualStigmergyTimestamp()==time_now)&& \
                         (local.getRobotID()!=robot_id))
@@ -331,6 +336,7 @@ namespace micros_swarm_framework{
                     p.package_check_sum=0;
                     
                     communicator->broadcast(p);
+                    ros::Duration(0.1).sleep();
                 }
                 else if((local.getVirtualStigmergyTimestamp()==time_now)&& \
                         (local.getRobotID()!=robot_id))
@@ -374,7 +380,6 @@ namespace micros_swarm_framework{
                 p.package_check_sum=0;
                     
                 communicator->broadcast(p);
-                
                 break;
             }
             case BARRIER_ACK:
@@ -393,64 +398,12 @@ namespace micros_swarm_framework{
                 //std::cout<<"NEIGHBOR_BROADCAST_KEY_VALUE"<<std::endl;
                 NeighborBroadcastKeyValue nbkv;
                 archive>>nbkv;
-
-                std::string type=nbkv.getType();
+                
                 std::string key=nbkv.getKey();
                 std::string value=nbkv.getValue();
-                
-                if(type=="int")
-                {
-                    int r=stringToNumber<int>(value);
                     
-                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);
-                    if(cb.which()==5)  //void(void), callback function not exist
-                        return;
-                    boost::function<void(int)> f=boost::get<boost::function<void(int)> >(cb);
-                    f(r);
-                }
-                else if(type=="float")
-                {
-                    float r=stringToNumber<float>(value);
-                    
-                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);
-                    if(cb.which()==5)  //void(void), callback function not exist
-                        return;
-                    boost::function<void(float)> f=boost::get<boost::function<void(float)> >(cb);
-                    f(r);
-                }
-                else if(type=="double")
-                {
-                    double r=stringToNumber<double>(value);
-                    
-                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);  
-                    if(cb.which()==5)  //void(void), callback function not exist
-                        return;
-                    boost::function<void(double)> f=boost::get<boost::function<void(double)> >(cb);
-                    f(r);
-                }
-                else if(type=="bool")
-                {
-                    bool r=stringToNumber<bool>(value);
-                    
-                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);  
-                    if(cb.which()==5)  //void(void), callback function not exist
-                        return;
-                    boost::function<void(bool)> f=boost::get<boost::function<void(bool)> >(cb);
-                    f(r);
-                }
-                else if(type=="string")
-                { 
-                    NeighborCommunicationCallBack cb=rtp->getCallbackFunctions(key);
-                    if(cb.which()==5)  //void(void), callback function not exist
-                        return;
-                    boost::function<void(std::string)> f=boost::get<boost::function<void(std::string)> >(cb);
-                    f(value);
-                }
-                else
-                {
-                    std::cout<<"wrong data type in neighbor communication!"<<std::endl;
-                    return;
-                }
+                boost::function<void(const std::string&)> cb=rtp->getCallbackFunctions(key);
+                cb(value);
                
                 break;
             }
@@ -464,7 +417,6 @@ namespace micros_swarm_framework{
             return;
         }
     }
-    
 };
 
 #endif

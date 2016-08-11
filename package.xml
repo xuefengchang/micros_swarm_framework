@@ -3,8 +3,7 @@
   <name>micros_swarm_framework</name>
   <version>0.0.12</version>
   <description>
-    A programming framework for robot swarms, including a communication kernel and  a synchronization protocol. This package also provides essential data structures for swarm robotics, 
-    such as Swarm, Neighbors, and Virtual Stigmergy.
+    This is a programming framework to facilitate application development involving robot swarms. It makes coding for swarms much easier by providing an adequate swarm-level abstraction, as well as tools for swarm management, various communication mechanisms and so on. It also provides essential data structures, such as Neighbor, Swarm, and Virtual Stigmergy, to the user. Most importantly, it is completely compatible with ROS Indigo and presented in the form of a C++ library, which means that all resources in the ROS ecosystem are still available to the user. It is currently  extensible to Opensplice DDS.
   </description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
@@ -12,18 +11,15 @@
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
   <maintainer email="changxuefengcn@163.com">Xuefeng Chang</maintainer>
 
-
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
   <license>BSD</license>
 
-
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
   <url type="website">http://wiki.ros.org/micros_swarm_framework</url>
-
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
   <!-- Authors do not have to be maintianers, but could be -->
@@ -32,7 +28,6 @@
   <author email="caizhongxuan@vip.qq.com">Zhongxuan Cai</author>
   <author email="yanzhenwang@hotmail.com">Yanzhen Wang</author>
   <author email="yixiaodong@nudt.edu.cn">Xiaodong Yi</author>
-
 
   <!-- The *_depend tags are used to specify dependencies -->
   <!-- Dependencies can be catkin packages or system dependencies -->
@@ -62,9 +57,10 @@
   <run_depend>geometry_msgs</run_depend>
   <run_depend>message_runtime</run_depend>
 
-
   <!-- The export tag contains other, unspecified, tags -->
   <export>
-    <nodelet plugin="${prefix}/nodelet_plugins.xml"/>
+    <nodelet plugin="${prefix}/rtp_plugins.xml"/>
+    <nodelet plugin="${prefix}/app_plugins.xml"/>
   </export>
+  
 </package>

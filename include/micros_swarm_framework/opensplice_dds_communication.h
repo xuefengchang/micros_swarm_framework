@@ -36,18 +36,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "ros/ros.h"
 
-#ifdef ROS
-#include "micros_swarm_framework/MSFPPacket.h"
-#endif
+#include "micros_swarm_framework/communication_interface.h"
 
-#ifdef OPENSPLICE_DDS
 #include "opensplice_dds/MSFPPacket.h"
 #include "opensplice_dds/check_status.h"
 #include "opensplice_dds/publisher.h"
 #include "opensplice_dds/subscriber.h"
-#endif
-
-#include "micros_swarm_framework/communication_interface.h"
 
 namespace micros_swarm_framework{
     
