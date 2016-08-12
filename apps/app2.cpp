@@ -120,6 +120,8 @@ namespace micros_swarm_framework{
         boost::function<XY(NeighborBase, XY &)> bf_nonkin=boost::bind(&App2::force_sum_nonkin, this, _1, _2);
         sum=n.neighborsKin(RED_SWARM).neighborsReduce(bf_kin, sum);
         sum=n.neighborsNonKin(RED_SWARM).neighborsReduce(bf_nonkin, sum);
+        //micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> tmp1=n.neighborsKin(RED_SWARM);
+        //micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> tmp2=n.neighborsNonKin(RED_SWARM);
     
         return sum;
     }
@@ -135,6 +137,8 @@ namespace micros_swarm_framework{
         boost::function<XY(NeighborBase, XY &)> bf_nonkin=boost::bind(&App2::force_sum_nonkin, this, _1, _2);
         sum=n.neighborsKin(BLUE_SWARM).neighborsReduce(bf_kin, sum);
         sum=n.neighborsNonKin(BLUE_SWARM).neighborsReduce(bf_nonkin, sum);
+        //micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> tmp1=n.neighborsKin(BLUE_SWARM);
+        //micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> tmp2=n.neighborsNonKin(BLUE_SWARM);
     
         return sum;
     }
@@ -216,6 +220,9 @@ namespace micros_swarm_framework{
         
         red_swarm.execute(boost::bind(&App2::motion_red, this));
         blue_swarm.execute(boost::bind(&App2::motion_blue, this));
+        
+        red_swarm.printSwarm();
+        blue_swarm.printSwarm();
         
         /*
         //test virtual stigmergy

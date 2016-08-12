@@ -146,7 +146,7 @@ namespace micros_swarm_framework{
         }
         
         void removeSwarmID(int swarm_id)
-        {     
+        {
             swarm_id_vector_.erase(std::remove(swarm_id_vector_.begin(), swarm_id_vector_.end(), swarm_id), swarm_id_vector_.end());
         }
     

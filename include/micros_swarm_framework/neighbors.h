@@ -177,20 +177,14 @@ namespace micros_swarm_framework{
                 Neighbors<Type> result;
             
                 typename std::map<int, Type>::iterator n_it;
-                
-                std::set<int> sm=rtp_->getSwarmMembers(swarm_id);
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    std::set<int>::iterator sm_it;
-                    sm_it=sm.find(n_it->first);
-                    if(sm_it!=sm.end())
+                    if(rtp_->inNeighborSwarm(n_it->first, swarm_id))
                     {
-                        result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
+                        result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
                     }
                 }
-
-                std::set<int>().swap(sm);
 
                 return result;
             }
@@ -200,20 +194,14 @@ namespace micros_swarm_framework{
                 Neighbors<Type> result;
             
                 typename std::map<int, Type>::iterator n_it;
-                
-                std::set<int> sm=rtp_->getSwarmMembers(swarm_id);
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    std::set<int>::iterator sm_it;
-                    sm_it=sm.find(n_it->first);
-                    if(sm_it==sm.end())
+                    if(!rtp_->inNeighborSwarm(n_it->first, swarm_id))
                     {
-                        result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
+                        result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
                     }
                 }
-
-                std::set<int>().swap(sm);
                 
                 return result;
             }
@@ -239,13 +227,14 @@ namespace micros_swarm_framework{
             {
                 if(get_data_now)
                 {
-                    rtp_=Singleton<RuntimePlatform>::getSingleton();
                     data_.clear();
+                    rtp_=Singleton<RuntimePlatform>::getSingleton();
                     data_=rtp_->getNeighbors();
                 }
                 else
                 {
                     data_.clear();
+                    rtp_=Singleton<RuntimePlatform>::getSingleton();
                 }
             }
             
@@ -380,14 +369,10 @@ namespace micros_swarm_framework{
                 Neighbors<NeighborBase> result;
             
                 typename std::map<int, NeighborBase>::iterator n_it;
-                
-                std::set<int> sm=rtp_->getSwarmMembers(swarm_id);
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    std::set<int>::iterator sm_it;
-                    sm_it=sm.find(n_it->first);
-                    if(sm_it!=sm.end())
+                    if(rtp_->inNeighborSwarm(n_it->first, swarm_id))
                     {
                         result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
@@ -401,14 +386,10 @@ namespace micros_swarm_framework{
                 Neighbors<NeighborBase> result;
             
                 typename std::map<int, NeighborBase>::iterator n_it;
-                
-                std::set<int> sm=rtp_->getSwarmMembers(swarm_id);
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    std::set<int>::iterator sm_it;
-                    sm_it=sm.find(n_it->first);
-                    if(sm_it==sm.end())
+                    if(!rtp_->inNeighborSwarm(n_it->first, swarm_id))
                     {
                         result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }

@@ -189,7 +189,6 @@ namespace micros_swarm_framework{
         }
     }
     
-    /*
     bool RuntimePlatform::inNeighborSwarm(int robot_id, int swarm_id)
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
@@ -211,7 +210,6 @@ namespace micros_swarm_framework{
             return false;
         }
     }
-    */
     
     void RuntimePlatform::joinNeighborSwarm(int robot_id, int swarm_id)
     {
@@ -295,9 +293,11 @@ namespace micros_swarm_framework{
         
         for(os_it=neighbor_swarms_.begin(); os_it!=neighbor_swarms_.end(); os_it++)
         {
-            std::vector<int> tmp=os_it->second.getSwarmIDVector();
+            //std::vector<int> tmp=os_it->second.getSwarmIDVector();
             
-            if (std::find(tmp.begin(), tmp.end(), swarm_id) != tmp.end())
+            //if (std::find(tmp.begin(), tmp.end(), swarm_id) != tmp.end())
+            //    result.insert(os_it->first);
+            if(os_it->second.swarmIDExist(swarm_id))
                 result.insert(os_it->first);
         }
         
