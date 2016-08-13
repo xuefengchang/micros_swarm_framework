@@ -150,7 +150,7 @@ namespace micros_swarm_framework{
             swarm_id_vector_.erase(std::remove(swarm_id_vector_.begin(), swarm_id_vector_.end(), swarm_id), swarm_id_vector_.end());
         }
     
-        std::vector<int> getSwarmIDVector()
+        std::vector<int>& getSwarmIDVector()
         {
             return swarm_id_vector_;
         }
@@ -189,9 +189,9 @@ namespace micros_swarm_framework{
             std::string vstig_value_;
             time_t vstig_timestamp_;
             //the id of the robot which last change the virtual stigmergy
-            unsigned int robot_id_;
+            int robot_id_;
         public:
-            VirtualStigmergyTuple( std::string value, time_t time, unsigned int id)\
+            VirtualStigmergyTuple( std::string value, time_t time, int id)\
               :vstig_value_(value), vstig_timestamp_(time), robot_id_(id){}
 
             std::string getVirtualStigmergyValue(){return vstig_value_;}
@@ -203,8 +203,8 @@ namespace micros_swarm_framework{
             time_t getVirtualStigmergyTimestamp(){return vstig_timestamp_;}
             void setVirtualStigmergyTimestamp(time_t time_now){vstig_timestamp_=time_now;}
     
-            unsigned int getRobotID(){return robot_id_;}
-            void setRobotID(unsigned int robot_id){robot_id_=robot_id;}
+            int getRobotID(){return robot_id_;}
+            void setRobotID(int robot_id){robot_id_=robot_id;}
             
             void print()
             {

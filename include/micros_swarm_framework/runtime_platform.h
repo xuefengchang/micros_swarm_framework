@@ -97,7 +97,7 @@ namespace micros_swarm_framework{
             void leaveNeighborSwarm(int robot_id, int swarm_id);
             void insertOrRefreshNeighborSwarm(int robot_id, std::vector<int> swarm_list);
             //get the member robot set of a swarm 
-            std::set<int> getSwarmMembers(int swarm_id);  //TODO, still have bug
+            std::set<int> getSwarmMembers(int swarm_id);
             void deleteNeighborSwarm(int robot_id);
             void printNeighborSwarm();
             

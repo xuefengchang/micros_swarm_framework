@@ -168,7 +168,7 @@ namespace micros_swarm_framework{
                 robot_id_(robot_id), swarm_list_(swarm_list){}
                 
             int getRobotID(){return robot_id_;}
-            std::vector<int> getSwarmList(){return swarm_list_;}
+            std::vector<int>& getSwarmList(){return swarm_list_;}
     };
     
     class VirtualStigmergyQuery

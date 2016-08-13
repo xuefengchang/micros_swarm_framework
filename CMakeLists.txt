@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(micros_swarm_framework)
 
+#use c++ 11
+set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
+
 # set communication mechanism
 option(USE_ROS "Using ROS" OFF)
 set(USE_ROS ON CACHE BOOL "Using ROS" FORCE)
@@ -297,8 +300,6 @@ endif()
 #    libddskernel.so
 #    libdcpsisocpp.so
 #)
-
-#set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

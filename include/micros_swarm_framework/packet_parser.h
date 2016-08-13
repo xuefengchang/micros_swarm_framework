@@ -211,7 +211,7 @@ namespace micros_swarm_framework{
                 archive>>srsl;
                 
                 int robot_id=srsl.getRobotID();
-                std::vector<int> swarm_list=srsl.getSwarmList();
+                std::vector<int>& swarm_list=srsl.getSwarmList();
                 rtp->insertOrRefreshNeighborSwarm(robot_id, swarm_list);
                 
                 break;

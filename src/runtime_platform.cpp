@@ -269,13 +269,8 @@ namespace micros_swarm_framework{
     
         if(os_it!=neighbor_swarms_.end())
         {
-            os_it->second.clearSwarmIDVector();
-            
-            for(int i=0;i<swarm_list.size();i++)
-            {
-                os_it->second.addSwarmID(swarm_list[i]);
-            }
-            os_it->second.setAge(0);
+            NeighborSwarmTuple new_neighbor_swarm(swarm_list, 0);
+            os_it->second=new_neighbor_swarm;
         }
         else
         {
@@ -293,10 +288,6 @@ namespace micros_swarm_framework{
         
         for(os_it=neighbor_swarms_.begin(); os_it!=neighbor_swarms_.end(); os_it++)
         {
-            //std::vector<int> tmp=os_it->second.getSwarmIDVector();
-            
-            //if (std::find(tmp.begin(), tmp.end(), swarm_id) != tmp.end())
-            //    result.insert(os_it->first);
             if(os_it->second.swarmIDExist(swarm_id))
                 result.insert(os_it->first);
         }
@@ -317,7 +308,7 @@ namespace micros_swarm_framework{
         {
             std::cout<<"neighbor swarm "<<os_it->first<<": ";
             
-            std::vector<int> temp=os_it->second.getSwarmIDVector();
+            std::vector<int>& temp=os_it->second.getSwarmIDVector();
             for(int i=0;i<temp.size();i++)
             {
                 std::cout<<temp[i]<<",";
