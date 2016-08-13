@@ -308,7 +308,7 @@ namespace micros_swarm_framework{
         {
             std::cout<<"neighbor swarm "<<os_it->first<<": ";
             
-            std::vector<int>& temp=os_it->second.getSwarmIDVector();
+            std::vector<int> temp=os_it->second.getSwarmIDVector();
             for(int i=0;i<temp.size();i++)
             {
                 std::cout<<temp[i]<<",";
