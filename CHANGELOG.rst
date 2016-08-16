@@ -2,6 +2,14 @@
 Changelog for package micros_swarm_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.12 (2016-08-16)
+-----------
+* improve neighbor communication mechanism, add Broadcaster and Listener class
+* add Application class, which is convenient for users to develop app
+* change cmake file
+* change README file
+* repair bugs in app2
+
 0.0.12 (2016-07-18)
 -----------
 * reconstructe the whole architecture using nodelet to improve performance
