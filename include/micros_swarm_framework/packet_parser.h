@@ -74,9 +74,9 @@ namespace micros_swarm_framework{
         #endif
         
         int shm_rid=rtp->getRobotID();
-        
+        int packet_source=packet.packet_source;
         //ignore the packet of the local robot
-        if(packet.packet_source==shm_rid)
+        if(packet_source==shm_rid)
         {
             return;
         }
@@ -131,6 +131,9 @@ namespace micros_swarm_framework{
                 break;
             }
             case SINGLE_ROBOT_JOIN_SWARM:{
+                if(!rtp->inNeighbors(packet_source))
+                    return;
+                
                 //std::cout<<"SINGLE_ROBOT_JOIN_SWARM"<<std::endl;
                 SingleRobotJoinSwarm srjs;
                 archive>>srjs;
@@ -169,6 +172,9 @@ namespace micros_swarm_framework{
             }
             case SINGLE_ROBOT_LEAVE_SWARM:
             {
+                if(!rtp->inNeighbors(packet_source))
+                    return;
+                
                 SingleRobotLeaveSwarm srls;
                 archive>>srls;
                 
@@ -206,6 +212,9 @@ namespace micros_swarm_framework{
             }
             case SINGLE_ROBOT_SWARM_LIST:
             {
+                if(!rtp->inNeighbors(packet_source))
+                    return;
+                
                 //std::cout<<"SINGLE_ROBOT_SWARM_LIST"<<std::endl;
                 SingleRobotSwarmList srsl;
                 archive>>srsl;
@@ -218,6 +227,9 @@ namespace micros_swarm_framework{
             }
             case VIRTUAL_STIGMERGY_QUERY:
             {
+                if(!rtp->inNeighbors(packet_source))
+                    return;
+                
                 //std::cout<<"VIRTUAL_STIGMERGY_PUT"<<std::endl;
                 VirtualStigmergyQuery vsq;
                 archive>>vsq;
@@ -296,6 +308,9 @@ namespace micros_swarm_framework{
             }
             case VIRTUAL_STIGMERGY_PUT:
             {
+                if(!rtp->inNeighbors(packet_source))
+                    return;
+                
                 //std::cout<<"VIRTUAL_STIGMERGY_PUT"<<std::endl;
                 VirtualStigmergyPut vsp;
                 archive>>vsp;
@@ -352,6 +367,9 @@ namespace micros_swarm_framework{
             }
             case BARRIER_SYN:
             {
+                if(!rtp->inNeighbors(packet_source))
+                    return;
+                
                 //std::cout<<"BARRIER_SYN"<<std::endl;            
                 Barrier_Syn bs;
                 archive>>bs;
@@ -384,6 +402,9 @@ namespace micros_swarm_framework{
             }
             case BARRIER_ACK:
             {
+                if(!rtp->inNeighbors(packet_source))
+                    return;
+                
                 //std::cout<<"BARRIER_ACK"<<std::endl;
                 Barrier_Ack ba;
                 archive>>ba;
@@ -395,6 +416,9 @@ namespace micros_swarm_framework{
             }
             case NEIGHBOR_BROADCAST_KEY_VALUE:
             {
+                if(!rtp->inNeighbors(packet_source))
+                    return;
+                
                 //std::cout<<"NEIGHBOR_BROADCAST_KEY_VALUE"<<std::endl;
                 NeighborBroadcastKeyValue nbkv;
                 archive>>nbkv;

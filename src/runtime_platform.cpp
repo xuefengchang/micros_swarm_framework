@@ -111,8 +111,20 @@ namespace micros_swarm_framework{
     }
     
     void RuntimePlatform::deleteNeighbor(int robot_id)
-    { 
+    {
         neighbors_.erase(robot_id);
+    }
+    
+    bool RuntimePlatform::inNeighbors(int robot_id)
+    {
+        std::map<int, NeighborBase>::iterator n_it=neighbors_.find(robot_id);
+    
+        if(n_it!=neighbors_.end())
+        {
+            return true;
+        }
+        
+        return false;
     }
     
     void RuntimePlatform::printNeighbor()

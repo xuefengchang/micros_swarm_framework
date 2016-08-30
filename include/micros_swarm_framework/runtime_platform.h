@@ -81,6 +81,7 @@ namespace micros_swarm_framework{
             void insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz);
             //delete an neighbor robot according to id
             void deleteNeighbor(int robot_id);
+            bool inNeighbors(int robot_id);
             void printNeighbor();
             
             void insertOrUpdateSwarm(int swarm_id, bool value);
