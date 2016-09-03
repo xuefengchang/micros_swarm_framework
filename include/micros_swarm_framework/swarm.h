@@ -202,8 +202,6 @@ namespace micros_swarm_framework{
                     result_swarm.joinSwarm();
                 }
         
-                //ros::Duration(0.1).sleep();
-        
                 return result_swarm;
             }
             
@@ -227,8 +225,6 @@ namespace micros_swarm_framework{
                 {
                     result_swarm.joinSwarm();
                 }
-        
-                //ros::Duration(0.1).sleep();
         
                 return result_swarm;
             }
@@ -254,8 +250,6 @@ namespace micros_swarm_framework{
                     result_swarm.joinSwarm();
                 }
         
-                //ros::Duration(0.1).sleep();
-        
                 return result_swarm;
             }
             
@@ -271,8 +265,6 @@ namespace micros_swarm_framework{
                 {
                     result_swarm.joinSwarm();
                 }
-        
-                //ros::Duration(0.1).sleep();
         
                 return result_swarm;
             }

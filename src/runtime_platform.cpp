@@ -31,6 +31,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <queue>
 #include <algorithm>
 
+#include <boost/thread.hpp> 
 #include "ros/ros.h"
 
 #include "micros_swarm_framework/data_type.h"
@@ -64,26 +65,55 @@ namespace micros_swarm_framework{
     
     int RuntimePlatform::getRobotID()
     {
+        boost::shared_lock<boost::shared_mutex> lock(mutex1_);
         return robot_id_;
     }
     
     void RuntimePlatform::setRobotID(int robot_id)
     {
+        boost::unique_lock<boost::shared_mutex> lock(mutex1_);
         robot_id_=robot_id;
+    }
+    
+    int RuntimePlatform::getRobotType()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex2_);
+        return robot_type_;
+    }
+    
+    void RuntimePlatform::setRobotType(int robot_type)
+    {
+        boost::unique_lock<boost::shared_mutex> lock(mutex2_);
+        robot_type_=robot_type;
+    }
+    
+    int RuntimePlatform::getRobotStatus()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex3_);
+        return robot_status_;
+    }
+    
+    void RuntimePlatform::setRobotStatus(int robot_status)
+    {
+        boost::unique_lock<boost::shared_mutex> lock(mutex3_);
+        robot_status_=robot_status;
     }
     
     Base RuntimePlatform::getRobotBase()
     {
+        boost::shared_lock<boost::shared_mutex> lock(mutex4_);
         return robot_base_;
     }
     
     void RuntimePlatform::setRobotBase(Base robot_base)
     {
+        boost::unique_lock<boost::shared_mutex> lock(mutex4_);
         robot_base_=robot_base;
     }
     
     void RuntimePlatform::printRobotBase()
     {
+        boost::shared_lock<boost::shared_mutex> lock(mutex4_);
         std::cout<<"robot base: "<<robot_base_.getX()<<", "<<robot_base_.getY()<<", "<<\
             robot_base_.getZ()<<", "<<robot_base_.getVX()<<", "<<robot_base_.getVY()<<", "<<\
             robot_base_.getVZ()<<std::endl;
@@ -91,32 +121,38 @@ namespace micros_swarm_framework{
      
     std::map<int, NeighborBase> RuntimePlatform::getNeighbors()
     {
+        boost::shared_lock<boost::shared_mutex> lock(mutex5_);
         return neighbors_;
     }
      
     void RuntimePlatform::insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz)
     {
+        boost::upgrade_lock<boost::shared_mutex> lock(mutex5_);
         std::map<int, NeighborBase>::iterator n_it=neighbors_.find(robot_id);
     
         if(n_it!=neighbors_.end())
         {
             NeighborBase new_neighbor_base(distance, azimuth, elevation, x, y, z,vx, vy, vz);
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
             n_it->second = new_neighbor_base;
         }
         else
         {
             NeighborBase new_neighbor_base(distance, azimuth, elevation, x, y, z, vx, vy, vz);
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
             neighbors_.insert(std::pair<int, NeighborBase>(robot_id ,new_neighbor_base));
         }
     }
     
     void RuntimePlatform::deleteNeighbor(int robot_id)
     {
+        boost::unique_lock<boost::shared_mutex> lock(mutex5_);
         neighbors_.erase(robot_id);
     }
     
     bool RuntimePlatform::inNeighbors(int robot_id)
     {
+        boost::shared_lock<boost::shared_mutex> lock(mutex5_);
         std::map<int, NeighborBase>::iterator n_it=neighbors_.find(robot_id);
     
         if(n_it!=neighbors_.end())
@@ -131,6 +167,7 @@ namespace micros_swarm_framework{
     {
         std::map<int, NeighborBase>::iterator n_it;
         
+        boost::shared_lock<boost::shared_mutex> lock(mutex5_);
         for (n_it=neighbors_.begin(); n_it!=neighbors_.end(); n_it++)
         {
             std::cout<<n_it->first<<": ";
@@ -144,20 +181,24 @@ namespace micros_swarm_framework{
      
     void RuntimePlatform::insertOrUpdateSwarm(int swarm_id, bool value)
     {
+        boost::upgrade_lock<boost::shared_mutex> lock(mutex6_);
         std::map<int, bool>::iterator s_it=swarms_.find(swarm_id);
     
         if(s_it!=swarms_.end())
         {
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
             s_it->second=value;
         }
         else
         {
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
             swarms_.insert(std::pair<int, bool>(swarm_id, value));
         }
     }
     
     bool RuntimePlatform::getSwarm(int swarm_id)
     {
+        boost::shared_lock<boost::shared_mutex> lock(mutex6_);
         std::map<int, bool>::iterator s_it=swarms_.find(swarm_id);
     
         if(s_it!=swarms_.end())
@@ -175,6 +216,7 @@ namespace micros_swarm_framework{
   
         std::map<int, bool>::iterator s_it;
         
+        boost::shared_lock<boost::shared_mutex> lock(mutex6_);
         for(s_it=swarms_.begin();s_it!=swarms_.end();s_it++)
         {
             if(s_it->second)
@@ -186,6 +228,7 @@ namespace micros_swarm_framework{
     
     void RuntimePlatform::deleteSwarm(int swarm_id)
     {
+        boost::unique_lock<boost::shared_mutex> lock(mutex6_);
         swarms_.erase(swarm_id);
     }
     
@@ -193,6 +236,7 @@ namespace micros_swarm_framework{
     {
         std::map<int, bool>::iterator s_it;
         
+        boost::shared_lock<boost::shared_mutex> lock(mutex6_);
         for(s_it=swarms_.begin();s_it!=swarms_.end();s_it++)
         {
             std::cout<<s_it->first<<": ";
@@ -204,6 +248,7 @@ namespace micros_swarm_framework{
     bool RuntimePlatform::inNeighborSwarm(int robot_id, int swarm_id)
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
+        boost::shared_lock<boost::shared_mutex> lock(mutex7_);
         os_it=neighbor_swarms_.find(robot_id);
     
         if(os_it!=neighbor_swarms_.end())
@@ -226,16 +271,19 @@ namespace micros_swarm_framework{
     void RuntimePlatform::joinNeighborSwarm(int robot_id, int swarm_id)
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
+        boost::upgrade_lock<boost::shared_mutex> lock(mutex7_);
         os_it=neighbor_swarms_.find(robot_id);
     
         if(os_it!=neighbor_swarms_.end())
         {
             if(os_it->second.swarmIDExist(swarm_id))
             {
+                boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
                 os_it->second.setAge(0);
             }
             else
             {           
+                boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
                 os_it->second.addSwarmID(swarm_id);
                 os_it->second.setAge(0);
             }
@@ -246,6 +294,7 @@ namespace micros_swarm_framework{
             swarm_list.push_back(swarm_id);
             NeighborSwarmTuple new_neighbor_swarm(swarm_list, 0);
             
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
             neighbor_swarms_.insert(std::pair<int, NeighborSwarmTuple>(robot_id, new_neighbor_swarm));
         }
     }
@@ -253,12 +302,14 @@ namespace micros_swarm_framework{
     void RuntimePlatform::leaveNeighborSwarm(int robot_id, int swarm_id)
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
+        boost::upgrade_lock<boost::shared_mutex> lock(mutex7_);
         os_it=neighbor_swarms_.find(robot_id);
     
         if(os_it!=neighbor_swarms_.end())
         {
             if(os_it->second.swarmIDExist(swarm_id))
             {
+                boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
                 os_it->second.removeSwarmID(swarm_id);
                 os_it->second.setAge(0);
             }
@@ -277,16 +328,19 @@ namespace micros_swarm_framework{
     void RuntimePlatform::insertOrRefreshNeighborSwarm(int robot_id, std::vector<int> swarm_list)
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
+        boost::upgrade_lock<boost::shared_mutex> lock(mutex7_);
         os_it=neighbor_swarms_.find(robot_id);
     
         if(os_it!=neighbor_swarms_.end())
         {
             NeighborSwarmTuple new_neighbor_swarm(swarm_list, 0);
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
             os_it->second=new_neighbor_swarm;
         }
         else
         {
-            NeighborSwarmTuple new_neighbor_swarm(swarm_list, 0);  
+            NeighborSwarmTuple new_neighbor_swarm(swarm_list, 0);
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
             neighbor_swarms_.insert(std::pair<int, NeighborSwarmTuple>(robot_id ,new_neighbor_swarm));   
         }
     }
@@ -298,6 +352,7 @@ namespace micros_swarm_framework{
         
         std::map<int, NeighborSwarmTuple>::iterator os_it;
         
+        boost::shared_lock<boost::shared_mutex> lock(mutex7_);
         for(os_it=neighbor_swarms_.begin(); os_it!=neighbor_swarms_.end(); os_it++)
         {
             if(os_it->second.swarmIDExist(swarm_id))
@@ -309,6 +364,7 @@ namespace micros_swarm_framework{
     
     void RuntimePlatform::deleteNeighborSwarm(int robot_id)
     {
+        boost::unique_lock<boost::shared_mutex> lock(mutex7_);
         neighbor_swarms_.erase(robot_id);
     }
     
@@ -316,6 +372,7 @@ namespace micros_swarm_framework{
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
         
+        boost::shared_lock<boost::shared_mutex> lock(mutex7_);
         for(os_it=neighbor_swarms_.begin(); os_it!=neighbor_swarms_.end(); os_it++)
         {
             std::cout<<"neighbor swarm "<<os_it->first<<": ";
@@ -333,6 +390,7 @@ namespace micros_swarm_framework{
     void RuntimePlatform::createVirtualStigmergy(int id)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
+        boost::upgrade_lock<boost::shared_mutex> lock(mutex8_);
         vst_it=virtual_stigmergy_.find(id);
     
         if(vst_it!=virtual_stigmergy_.end())
@@ -342,6 +400,7 @@ namespace micros_swarm_framework{
         else
         {
             std::map<std::string, VirtualStigmergyTuple> vst;
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
             virtual_stigmergy_.insert(std::pair<int, std::map<std::string, VirtualStigmergyTuple> >(id, vst)); 
         }
     }
@@ -349,6 +408,7 @@ namespace micros_swarm_framework{
     void RuntimePlatform::insertOrUpdateVirtualStigmergy(int id, std::string key, std::string value, time_t time_now, int robot_id)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
+        boost::upgrade_lock<boost::shared_mutex> lock(mutex8_);
         vst_it=virtual_stigmergy_.find(id);
     
         if(vst_it!=virtual_stigmergy_.end())
@@ -358,16 +418,18 @@ namespace micros_swarm_framework{
             if(svstt_it!=vst_it->second.end())
             {
                 VirtualStigmergyTuple new_tuple(value, time_now, robot_id);
+                boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
                 svstt_it->second = new_tuple;
             }
             else
             {
                 VirtualStigmergyTuple new_tuple(value, time_now, robot_id);
+                boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
                 vst_it->second.insert(std::pair<std::string, VirtualStigmergyTuple>(key ,new_tuple));
             }
         }
         else
-        {       
+        {
             std::cout<<"ID "<<id<<" VirtualStigmergy is not exist."<<std::endl;
             return;
         }
@@ -376,6 +438,8 @@ namespace micros_swarm_framework{
     VirtualStigmergyTuple RuntimePlatform::getVirtualStigmergyTuple(int id, std::string key)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
+        
+        boost::shared_lock<boost::shared_mutex> lock(mutex8_);
         vst_it=virtual_stigmergy_.find(id);
     
         if(vst_it!=virtual_stigmergy_.end())
@@ -399,6 +463,7 @@ namespace micros_swarm_framework{
     int RuntimePlatform::getVirtualStigmergySize(int id)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
+        boost::shared_lock<boost::shared_mutex> lock(mutex8_);
         vst_it=virtual_stigmergy_.find(id);
     
         if(vst_it!=virtual_stigmergy_.end())
@@ -411,12 +476,14 @@ namespace micros_swarm_framework{
     
     void RuntimePlatform::deleteVirtualStigmergy(int id)
     {
+        boost::unique_lock<boost::shared_mutex> lock(mutex8_);
         virtual_stigmergy_.erase(id);
     }
     
     void RuntimePlatform::deleteVirtualStigmergyValue(int id, std::string key)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
+        boost::upgrade_lock<boost::shared_mutex> lock(mutex8_);
         vst_it=virtual_stigmergy_.find(id);
     
         if(vst_it!=virtual_stigmergy_.end())
@@ -425,6 +492,7 @@ namespace micros_swarm_framework{
         
             if(svstt_it!=vst_it->second.end())
             {
+                boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
                 vst_it->second.erase(key);
             }
             else
@@ -443,6 +511,7 @@ namespace micros_swarm_framework{
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         std::map<std::string, VirtualStigmergyTuple>::iterator svstt_it;
         
+        boost::shared_lock<boost::shared_mutex> lock(mutex8_);
         for (vst_it=virtual_stigmergy_.begin(); vst_it!=virtual_stigmergy_.end(); vst_it++)
         {
             std::cout<<"["<<vst_it->first<<":"<<std::endl;
@@ -460,35 +529,42 @@ namespace micros_swarm_framework{
     
     double RuntimePlatform::getNeighborDistance()
     {
+        boost::shared_lock<boost::shared_mutex> lock(mutex9_);
         return neighbor_distance_;
     }
     
     void RuntimePlatform::setNeighborDistance(double neighbor_distance)
     {
+        boost::unique_lock<boost::shared_mutex> lock(mutex9_);
         neighbor_distance_=neighbor_distance;
     }
     
     void RuntimePlatform::insertBarrier(int robot_id)
     {
+        boost::unique_lock<boost::shared_mutex> lock(mutex10_);
         barrier_.insert(robot_id);
     }
     
     int RuntimePlatform::getBarrierSize()
     {
+        boost::shared_lock<boost::shared_mutex> lock(mutex10_);
         return barrier_.size();
     }
     
     void RuntimePlatform::insertOrUpdateCallbackFunctions(std::string key, boost::function<void(const std::string&)> cb)
     {
         std::map<std::string, boost::function<void(const std::string&)> >::iterator nccb_it;
+        boost::upgrade_lock<boost::shared_mutex> lock(mutex11_);
         nccb_it=callback_functions_.find(key);
     
         if(nccb_it!=callback_functions_.end())
         {
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
             nccb_it->second = cb;
         }
         else
         {
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
             callback_functions_.insert(std::pair<std::string, boost::function<void(const std::string&)> >(key ,cb));
         } 
     }
@@ -501,6 +577,7 @@ namespace micros_swarm_framework{
     boost::function<void(const std::string&)> RuntimePlatform::getCallbackFunctions(std::string key)
     {
         std::map<std::string, boost::function<void(const std::string&)> >::iterator nccb_it;
+        boost::shared_lock<boost::shared_mutex> lock(mutex11_);
         nccb_it=callback_functions_.find(key);
     
         if(nccb_it!=callback_functions_.end())
@@ -515,6 +592,7 @@ namespace micros_swarm_framework{
     
     void RuntimePlatform::deleteCallbackFunctions(std::string key)
     {
+        boost::unique_lock<boost::shared_mutex> lock(mutex11_);
         callback_functions_.erase(key);
     }
 };

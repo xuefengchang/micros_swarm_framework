@@ -106,8 +106,6 @@ namespace micros_swarm_framework{
                 p.package_check_sum=0;
                 
                 communicator_->broadcast(p);
-                
-                ros::Duration(0.1).sleep();   
             }
             
             Type virtualStigmergyGet(std::string key)
@@ -116,7 +114,8 @@ namespace micros_swarm_framework{
                 
                 if(vst.getVirtualStigmergyTimestamp()==0)
                 {
-                    std::cout<<"ID"<<vstig_id_<<" virtual stigmergy, "<<key<<"is not exist."<<std::endl;
+                    std::cout<<"ID "<<vstig_id_<<" virtual stigmergy, "<<key<<" is not exist."<<std::endl;
+                    exit(-1);
                 }
                 
                 std::string data_str=vst.getVirtualStigmergyValue();
@@ -151,8 +150,6 @@ namespace micros_swarm_framework{
                 p.package_check_sum=0;
                 
                 communicator_->broadcast(p);
-                
-                ros::Duration(0.1).sleep();
                 
                 return data;  
             }

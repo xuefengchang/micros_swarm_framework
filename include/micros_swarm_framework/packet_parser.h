@@ -269,7 +269,6 @@ namespace micros_swarm_framework{
                     p.package_check_sum=0;
                     
                     communicator->broadcast(p);
-                    ros::Duration(0.1).sleep();
                 }
                 else if(local.getVirtualStigmergyTimestamp()>time_now)  //local timestamp is larger
                 {
@@ -292,12 +291,11 @@ namespace micros_swarm_framework{
                     p.package_check_sum=0;
                     
                     communicator->broadcast(p);
-                    ros::Duration(0.1).sleep();
                 }
                 else if((local.getVirtualStigmergyTimestamp()==time_now)&& \
                         (local.getRobotID()!=robot_id))
                 {
-                    std::cout<<"query conflict"<<std::endl;
+                    //std::cout<<"query conflict"<<std::endl;
                 }
                 else
                 {
@@ -351,12 +349,11 @@ namespace micros_swarm_framework{
                     p.package_check_sum=0;
                     
                     communicator->broadcast(p);
-                    ros::Duration(0.1).sleep();
                 }
                 else if((local.getVirtualStigmergyTimestamp()==time_now)&& \
                         (local.getRobotID()!=robot_id))
                 {
-                    std::cout<<"put conflict"<<std::endl;
+                    //std::cout<<"put conflict"<<std::endl;
                 }
                 else
                 {

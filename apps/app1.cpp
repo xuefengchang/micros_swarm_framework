@@ -87,7 +87,6 @@ namespace micros_swarm_framework{
     
     void App1::publish_cmd(const ros::TimerEvent&)
     {
-        
         XY v=direction();
         geometry_msgs::Twist t;
         t.linear.x=v.x;
@@ -119,7 +118,7 @@ namespace micros_swarm_framework{
         
         sub_ = nh_.subscribe("base_pose_ground_truth", 1000, &App1::baseCallback, this, ros::TransportHints().udp());
         pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-    
+        
         motion();
     }
 };

@@ -56,8 +56,8 @@ namespace micros_swarm_framework{
     class  RuntimePlatform{
         private:
             int robot_id_;
-            int robot_type_;
-            int robot_status_;
+            int robot_type_;  //TODO
+            int robot_status_;  //TODO
             Base robot_base_;
             std::map<int, NeighborBase> neighbors_;
             std::map<int, bool> swarms_;
@@ -66,12 +66,21 @@ namespace micros_swarm_framework{
             double neighbor_distance_;
             std::set<int> barrier_;
             std::map<std::string, boost::function<void(const std::string&)> > callback_functions_;
+            boost::shared_mutex mutex1_, mutex2_, mutex3_, mutex4_, mutex5_,
+                                mutex6_, mutex7_, mutex8_, mutex9_, mutex10_,
+                                mutex11_;
         public:
             RuntimePlatform();
             RuntimePlatform(int robot_id);
             
             int getRobotID();
             void setRobotID(int robot_id);
+            
+            int getRobotType();
+            void setRobotType(int robot_type);
+            
+            int getRobotStatus();
+            void setRobotStatus(int robot_status);
             
             Base getRobotBase();
             void setRobotBase(Base robot_base);

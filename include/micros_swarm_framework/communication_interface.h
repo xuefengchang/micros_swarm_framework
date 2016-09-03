@@ -52,8 +52,6 @@ namespace micros_swarm_framework{
     class CommunicationInterface{
         public:   
             std::string name_;
-            std::queue<MSFPPacket> in_queue_;  //TODO
-            std::queue<MSFPPacket> out_queue_;  //TODO
             
             virtual void broadcast(micros_swarm_framework::MSFPPacket msfp_packet)=0;
             virtual void receive(void (*callback)(const MSFPPacket& packet))=0;
