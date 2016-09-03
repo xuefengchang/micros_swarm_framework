@@ -272,7 +272,8 @@ namespace micros_swarm_framework{
                 }
                 else if(local.getVirtualStigmergyTimestamp()>time_now)  //local timestamp is larger
                 {
-                    VirtualStigmergyPut vsp(id, key_std, local.getVirtualStigmergyValue(), local.getVirtualStigmergyTimestamp(), local.getRobotID());
+                    std::string vstig_value=local.getVirtualStigmergyValue();
+                    VirtualStigmergyPut vsp(id, key_std, vstig_value, local.getVirtualStigmergyTimestamp(), local.getRobotID());
                     std::ostringstream archiveStream;
                     boost::archive::text_oarchive archive(archiveStream);
                     archive<<vsp;

@@ -105,7 +105,7 @@ namespace micros_swarm_framework{
         return robot_base_;
     }
     
-    void RuntimePlatform::setRobotBase(Base robot_base)
+    void RuntimePlatform::setRobotBase(Base& robot_base)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex4_);
         robot_base_=robot_base;
@@ -325,7 +325,7 @@ namespace micros_swarm_framework{
         }
     }
             
-    void RuntimePlatform::insertOrRefreshNeighborSwarm(int robot_id, std::vector<int> swarm_list)
+    void RuntimePlatform::insertOrRefreshNeighborSwarm(int robot_id, std::vector<int>& swarm_list)
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
         boost::upgrade_lock<boost::shared_mutex> lock(mutex7_);
@@ -405,7 +405,7 @@ namespace micros_swarm_framework{
         }
     }
     
-    void RuntimePlatform::insertOrUpdateVirtualStigmergy(int id, std::string key, std::string value, time_t time_now, int robot_id)
+    void RuntimePlatform::insertOrUpdateVirtualStigmergy(int id, std::string& key, std::string& value, time_t time_now, int robot_id)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         boost::upgrade_lock<boost::shared_mutex> lock(mutex8_);
@@ -435,7 +435,7 @@ namespace micros_swarm_framework{
         }
     }
     
-    VirtualStigmergyTuple RuntimePlatform::getVirtualStigmergyTuple(int id, std::string key)
+    VirtualStigmergyTuple RuntimePlatform::getVirtualStigmergyTuple(int id, std::string& key)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         
@@ -480,7 +480,7 @@ namespace micros_swarm_framework{
         virtual_stigmergy_.erase(id);
     }
     
-    void RuntimePlatform::deleteVirtualStigmergyValue(int id, std::string key)
+    void RuntimePlatform::deleteVirtualStigmergyValue(int id, std::string& key)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         boost::upgrade_lock<boost::shared_mutex> lock(mutex8_);
@@ -551,7 +551,7 @@ namespace micros_swarm_framework{
         return barrier_.size();
     }
     
-    void RuntimePlatform::insertOrUpdateCallbackFunctions(std::string key, boost::function<void(const std::string&)> cb)
+    void RuntimePlatform::insertOrUpdateCallbackFunctions(std::string key, boost::function<void(const std::string&)>& cb)
     {
         std::map<std::string, boost::function<void(const std::string&)> >::iterator nccb_it;
         boost::upgrade_lock<boost::shared_mutex> lock(mutex11_);
@@ -574,7 +574,7 @@ namespace micros_swarm_framework{
         
     }
     
-    boost::function<void(const std::string&)> RuntimePlatform::getCallbackFunctions(std::string key)
+    boost::function<void(const std::string&)> RuntimePlatform::getCallbackFunctions(std::string& key)
     {
         std::map<std::string, boost::function<void(const std::string&)> >::iterator nccb_it;
         boost::shared_lock<boost::shared_mutex> lock(mutex11_);
@@ -590,7 +590,7 @@ namespace micros_swarm_framework{
         return f;
     }
     
-    void RuntimePlatform::deleteCallbackFunctions(std::string key)
+    void RuntimePlatform::deleteCallbackFunctions(std::string& key)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex11_);
         callback_functions_.erase(key);

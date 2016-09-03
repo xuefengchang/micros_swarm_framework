@@ -83,7 +83,7 @@ namespace micros_swarm_framework{
             void setRobotStatus(int robot_status);
             
             Base getRobotBase();
-            void setRobotBase(Base robot_base);
+            void setRobotBase(Base& robot_base);
             void printRobotBase();
             
             std::map<int, NeighborBase> getNeighbors();
@@ -105,18 +105,18 @@ namespace micros_swarm_framework{
             bool inNeighborSwarm(int robot_id, int swarm_id);
             void joinNeighborSwarm(int robot_id, int swarm_id);
             void leaveNeighborSwarm(int robot_id, int swarm_id);
-            void insertOrRefreshNeighborSwarm(int robot_id, std::vector<int> swarm_list);
+            void insertOrRefreshNeighborSwarm(int robot_id, std::vector<int>& swarm_list);
             //get the member robot set of a swarm 
             std::set<int> getSwarmMembers(int swarm_id);
             void deleteNeighborSwarm(int robot_id);
             void printNeighborSwarm();
             
             void createVirtualStigmergy(int id);
-            void insertOrUpdateVirtualStigmergy(int id, std::string key, std::string value, time_t time_now, int robot_id);
-            VirtualStigmergyTuple getVirtualStigmergyTuple(int id, std::string key);
+            void insertOrUpdateVirtualStigmergy(int id, std::string& key, std::string& value, time_t time_now, int robot_id);
+            VirtualStigmergyTuple getVirtualStigmergyTuple(int id, std::string& key);
             int getVirtualStigmergySize(int id);
             void deleteVirtualStigmergy(int id);
-            void deleteVirtualStigmergyValue(int id, std::string key);
+            void deleteVirtualStigmergyValue(int id, std::string& key);
             void printVirtualStigmergy();
             
             double getNeighborDistance();
@@ -125,10 +125,10 @@ namespace micros_swarm_framework{
             void insertBarrier(int robot_id);
             int getBarrierSize();
             
-            void insertOrUpdateCallbackFunctions(std::string key, boost::function<void(const std::string&)> cb);
+            void insertOrUpdateCallbackFunctions(std::string key, boost::function<void(const std::string&)>& cb);
             void doNothing(const std::string& value_str);
-            boost::function<void(const std::string&)> getCallbackFunctions(std::string key);
-            void deleteCallbackFunctions(std::string key);
+            boost::function<void(const std::string&)> getCallbackFunctions(std::string& key);
+            void deleteCallbackFunctions(std::string& key);
     };
 };
 

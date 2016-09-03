@@ -106,7 +106,8 @@ namespace micros_swarm_framework{
         //barrier
         int robot_id=rtp_->getRobotID();
     
-        micros_swarm_framework::Barrier_Syn bs("SYN");
+        std::string syn="SYN";
+        micros_swarm_framework::Barrier_Syn bs(syn);
                 
         std::ostringstream archiveStream;
         boost::archive::text_oarchive archive(archiveStream);
