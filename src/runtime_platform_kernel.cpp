@@ -170,7 +170,7 @@ namespace micros_swarm_framework{
         
         std::vector<int> swarm_list;
         swarm_list.clear();
-        swarm_list=rtp_->getSwarmList();
+        rtp_->getSwarmList(swarm_list);
         
         SingleRobotSwarmList srsl(robot_id, swarm_list);
         

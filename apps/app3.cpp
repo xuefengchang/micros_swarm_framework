@@ -181,7 +181,7 @@ namespace micros_swarm_framework{
         micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
 
         typename std::map<int, micros_swarm_framework::NeighborBase>::iterator it; 
-        for(it=n.data_.begin();it!=n.data_.end();it++)
+        for(it=n.getData().begin();it!=n.getData().end();it++)
         {
             NeighborHandle* nh=new NeighborHandle(it->first, it->second.getX(), it->second.getY(), it->second.getVX(), it->second.getVY());
             neighbor_list.push_back(nh);

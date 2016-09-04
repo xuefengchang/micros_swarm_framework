@@ -54,7 +54,7 @@ namespace micros_swarm_framework{
             boost::shared_ptr<CommunicationInterface> communicator_;
             std::string key_;
         public:
-            Broadcaster(std::string key)
+            Broadcaster(const std::string& key)
             {
                 key_=key;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
@@ -66,7 +66,7 @@ namespace micros_swarm_framework{
                 #endif
             }
             
-            void broadcast(Type value)
+            void broadcast(const Type& value)
             {
                 std::ostringstream archiveStream;
                 boost::archive::text_oarchive archive(archiveStream);
@@ -102,7 +102,7 @@ namespace micros_swarm_framework{
             boost::shared_ptr<CommunicationInterface> communicator_;
             std::string key_;
         public:
-            Listener(std::string key)
+            Listener(const std::string& key)
             {
                 key_=key;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
@@ -114,7 +114,7 @@ namespace micros_swarm_framework{
                 #endif
             }
             
-            void listen(boost::function<void(const std::string&)> f)
+            void listen(const boost::function<void(const std::string&)>& f)
             {
                 rtp_->insertOrUpdateCallbackFunctions(key_, f);
             }
@@ -131,7 +131,7 @@ namespace micros_swarm_framework{
     };
     
     template<class Type>
-    Type convertToType(const std::string& value_str)  //TODO, 
+    Type convertToType(const std::string& value_str)  //TODO
     {
         std::istringstream archiveStream(value_str);
         boost::archive::text_iarchive archive(archiveStream); 

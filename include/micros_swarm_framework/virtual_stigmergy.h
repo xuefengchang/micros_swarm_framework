@@ -71,21 +71,50 @@ namespace micros_swarm_framework{
                 rtp_->createVirtualStigmergy(vstig_id_);
             }
             
-            void virtualStigmergyPut(std::string key, Type data)
+            VirtualStigmergy(const VirtualStigmergy& vs)
+            {
+                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                #ifdef ROS
+                communicator_=Singleton<ROSCommunication>::getSingleton();
+                #endif
+                #ifdef OPENSPLICE_DDS
+                communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+                #endif
+                vstig_id_=vs.vstig_id_;
+            }
+            
+            VirtualStigmergy& operator=(const VirtualStigmergy& vs)
+            {
+                if(this==&vs)
+                    return *this;
+                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                #ifdef ROS
+                communicator_=Singleton<ROSCommunication>::getSingleton();
+                #endif
+                #ifdef OPENSPLICE_DDS
+                communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+                #endif
+                vstig_id_=vs.vstig_id_;
+                return *this;
+            }
+            
+            void virtualStigmergyPut(const std::string& key, const Type& data)
             {
                 std::ostringstream archiveStream;
                 boost::archive::text_oarchive archive(archiveStream);
                 archive<<data;
                 std::string s=archiveStream.str();
                 
-                int id=vstig_id_;
-                std::string key_str=key;
-                std::string value_str=s;
+                //int id=vstig_id_;
+                //std::string key_str=key;
+                //std::string value_str=s;
                 time_t time_now=time(0);
                 int robot_id=rtp_->getRobotID();
-                rtp_->insertOrUpdateVirtualStigmergy(id, key_str, value_str, time_now, robot_id);
+                //rtp_->insertOrUpdateVirtualStigmergy(id, key_str, value_str, time_now, robot_id);
+                rtp_->insertOrUpdateVirtualStigmergy(vstig_id_, key, s, time_now, robot_id);
                 
-                VirtualStigmergyPut vsp(id, key_str, value_str, time_now, robot_id);
+                //VirtualStigmergyPut vsp(id, key_str, value_str, time_now, robot_id);
+                VirtualStigmergyPut vsp(vstig_id_, key, s, time_now, robot_id);
                 
                 std::ostringstream archiveStream2;
                 boost::archive::text_oarchive archive2(archiveStream2);
@@ -108,9 +137,11 @@ namespace micros_swarm_framework{
                 communicator_->broadcast(p);
             }
             
-            Type virtualStigmergyGet(std::string key)
+            Type virtualStigmergyGet(const std::string& key)
             {
-                VirtualStigmergyTuple vst=rtp_->getVirtualStigmergyTuple(vstig_id_, key);
+                //VirtualStigmergyTuple vst=rtp_->getVirtualStigmergyTuple(vstig_id_, key);
+                VirtualStigmergyTuple vst;
+                rtp_->getVirtualStigmergyTuple(vstig_id_, key, vst);
                 
                 if(vst.getVirtualStigmergyTimestamp()==0)
                 {
@@ -124,12 +155,13 @@ namespace micros_swarm_framework{
                 boost::archive::text_iarchive archive(archiveStream);
                 archive>>data;
                 
-                int id=vstig_id_;
-                std::string key_std=key;
-                std::string value_std=vst.getVirtualStigmergyValue();
-                time_t time_now=vst.getVirtualStigmergyTimestamp();
-                int robot_id=vst.getRobotID();
-                VirtualStigmergyQuery vsq(id, key_std, value_std, time_now, robot_id);
+                //int id=vstig_id_;
+                //std::string key_std=key;
+                //std::string value_str=vst.getVirtualStigmergyValue();
+                //time_t time_now=vst.getVirtualStigmergyTimestamp();
+                //int robot_id=vst.getRobotID();
+                //VirtualStigmergyQuery vsq(id, key, value_str, time_now, robot_id);
+                VirtualStigmergyQuery vsq(vstig_id_, key, vst.getVirtualStigmergyValue(), vst.getVirtualStigmergyTimestamp(), vst.getRobotID());
                 
                 std::ostringstream archiveStream2;
                 boost::archive::text_oarchive archive2(archiveStream2);
