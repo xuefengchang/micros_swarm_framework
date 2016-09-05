@@ -52,25 +52,25 @@ namespace micros_swarm_framework{
     
     class CheckNeighborInterface{
         public:
-            virtual bool isNeighbor(Base self, Base neighbor)=0;
+            virtual bool isNeighbor(Base& self, Base& neighbor)=0;
     };
     
     class CheckNeighbor : public CheckNeighborInterface{
         private:
-            double neighbor_distance_;
+            float neighbor_distance_;
     
         public:
-            CheckNeighbor(double neighbor_distance)
+            CheckNeighbor(float neighbor_distance)
             {
                 neighbor_distance_ = neighbor_distance;
             }
         
-            double getNeighborDistance()
+            float getNeighborDistance()
             {
                 return neighbor_distance_;
             }
         
-            bool isNeighbor(Base self, Base neighbor)
+            bool isNeighbor(Base& self, Base& neighbor)  //TODO
             {
                 float distance=sqrt((self.getX()-neighbor.getX())*(self.getX()-neighbor.getX())+(self.getY()-neighbor.getY())*(self.getY()-neighbor.getY())+ \
                     (self.getZ()-neighbor.getZ())*(self.getZ()-neighbor.getZ()));

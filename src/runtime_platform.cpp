@@ -501,13 +501,13 @@ namespace micros_swarm_framework{
         }
     }
     
-    double RuntimePlatform::getNeighborDistance()
+    float RuntimePlatform::getNeighborDistance()
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex9_);
         return neighbor_distance_;
     }
     
-    void RuntimePlatform::setNeighborDistance(double neighbor_distance)
+    void RuntimePlatform::setNeighborDistance(float neighbor_distance)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex9_);
         neighbor_distance_=neighbor_distance;

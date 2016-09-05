@@ -60,7 +60,7 @@ namespace micros_swarm_framework{
     
     void TestVstig::start()
     {
-        setNeighborDistance(60);
+        setNeighborDistance(1.5);
         sub_ = nh_.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
         
         //test virtual stigmergy

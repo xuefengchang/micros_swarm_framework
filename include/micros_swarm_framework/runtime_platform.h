@@ -63,7 +63,7 @@ namespace micros_swarm_framework{
             std::map<int, bool> swarms_;
             std::map<int, NeighborSwarmTuple> neighbor_swarms_;
             std::map<int, std::map<std::string, VirtualStigmergyTuple> > virtual_stigmergy_;
-            double neighbor_distance_;
+            float neighbor_distance_;
             std::set<int> barrier_;
             std::map<std::string, boost::function<void(const std::string&)> > callback_functions_;
             boost::shared_mutex mutex1_, mutex2_, mutex3_, mutex4_, mutex5_,
@@ -119,8 +119,8 @@ namespace micros_swarm_framework{
             void deleteVirtualStigmergyValue(int id, const std::string& key);
             void printVirtualStigmergy();
             
-            double getNeighborDistance();
-            void setNeighborDistance(double neighbor_distance);
+            float getNeighborDistance();
+            void setNeighborDistance(float neighbor_distance);
             
             void insertBarrier(int robot_id);
             int getBarrierSize();
