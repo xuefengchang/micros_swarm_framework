@@ -247,7 +247,7 @@ namespace micros_swarm_framework{
                 {
                     data_.clear();
                     rtp_=Singleton<RuntimePlatform>::getSingleton();
-                    data_=rtp_->getNeighbors();
+                    rtp_->getNeighbors(data_);
                 }
                 else
                 {

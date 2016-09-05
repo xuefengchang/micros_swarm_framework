@@ -1,0 +1,90 @@
+<launch>
+    <group ns="robot_0">
+        <node pkg="nodelet" type="nodelet" name="testvstig_0" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager0" output="screen">
+        </node>
+    </group>
+    <group ns="robot_1">
+        <node pkg="nodelet" type="nodelet" name="testvstig_1" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager1" output="screen">
+        </node>
+    </group>
+    <group ns="robot_2">
+        <node pkg="nodelet" type="nodelet" name="testvstig_2" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager2" output="screen">
+        </node>
+    </group>
+    <group ns="robot_3">
+        <node pkg="nodelet" type="nodelet" name="testvstig_3" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager3" output="screen">
+        </node>
+    </group>
+    <group ns="robot_4">
+        <node pkg="nodelet" type="nodelet" name="testvstig_4" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager4" output="screen">
+        </node>
+    </group>
+    
+    
+    <group ns="robot_5">
+        <node pkg="nodelet" type="nodelet" name="testvstig_5" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager5" output="screen">
+        </node>
+    </group>
+    <group ns="robot_6">
+        <node pkg="nodelet" type="nodelet" name="testvstig_6" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager6" output="screen">
+        </node>
+    </group>
+    <group ns="robot_7">
+        <node pkg="nodelet" type="nodelet" name="testvstig_7" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager7" output="screen">
+        </node>
+    </group>
+    <group ns="robot_8">
+        <node pkg="nodelet" type="nodelet" name="testvstig_8" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager8" output="screen">
+        </node>
+    </group>
+    <group ns="robot_9">
+        <node pkg="nodelet" type="nodelet" name="testvstig_9" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager9" output="screen">
+        </node>
+    </group>
+    
+    
+    <group ns="robot_10">
+        <node pkg="nodelet" type="nodelet" name="testvstig_10" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager10" output="screen">
+        </node>
+    </group>
+    <group ns="robot_11">
+        <node pkg="nodelet" type="nodelet" name="testvstig_11" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager11" output="screen">
+        </node>
+    </group>
+    <group ns="robot_12">
+        <node pkg="nodelet" type="nodelet" name="testvstig_12" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager12" output="screen">
+        </node>
+    </group>
+    <group ns="robot_13">
+        <node pkg="nodelet" type="nodelet" name="testvstig_13" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager13" output="screen">
+        </node>
+    </group>
+    <group ns="robot_14">
+        <node pkg="nodelet" type="nodelet" name="testvstig_14" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager14" output="screen">
+        </node>
+    </group>
+    
+    
+    <group ns="robot_15">
+        <node pkg="nodelet" type="nodelet" name="testvstig_15" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager15" output="screen">
+        </node>
+    </group>
+    <group ns="robot_16">
+        <node pkg="nodelet" type="nodelet" name="testvstig_16" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager16" output="screen">
+        </node>
+    </group>
+    <group ns="robot_17">
+        <node pkg="nodelet" type="nodelet" name="testvstig_17" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager17" output="screen">
+        </node>
+    </group>
+    <group ns="robot_18">
+        <node pkg="nodelet" type="nodelet" name="testvstig_18" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager18" output="screen">
+        </node>
+    </group>
+    <group ns="robot_19">
+        <node pkg="nodelet" type="nodelet" name="testvstig_19" args="load micros_swarm_framework/TestVstigBroker micros_swarm_framework_manager19" output="screen">
+        </node>
+    </group>
+
+</launch>
+

@@ -52,7 +52,7 @@ namespace micros_swarm_framework{
     */
     enum MSFPPacketType
     {
-        SINGLE_ROBOT_BROADCAST_ID,  //broadcast id
+        SINGLE_ROBOT_BROADCAST_BASE,  //broadcast id
         
         SINGLE_ROBOT_JOIN_SWARM,  //robot join in a swarm
         SINGLE_ROBOT_LEAVE_SWARM,  //robot leave a swarm
@@ -69,7 +69,7 @@ namespace micros_swarm_framework{
         MSFP_PACKET_TYPE_COUNT  //MSFPPacket type count
     };
 
-    class SingleRobotBroadcastID{
+    class SingleRobotBroadcastBase{
         private:   
             int robot_id_;
             
@@ -95,8 +95,8 @@ namespace micros_swarm_framework{
                 ar & robot_vz_;
             }
         public:
-            SingleRobotBroadcastID(){}
-            SingleRobotBroadcastID(int robot_id, float robot_x ,float robot_y, float robot_z, float robot_vx ,float robot_vy, float robot_vz):\
+            SingleRobotBroadcastBase(){}
+            SingleRobotBroadcastBase(int robot_id, float robot_x ,float robot_y, float robot_z, float robot_vx ,float robot_vy, float robot_vz):\
                 robot_id_(robot_id), robot_x_(robot_x), robot_y_(robot_y), robot_z_(robot_z),  robot_vx_(robot_vx), robot_vy_(robot_vy), robot_vz_(robot_vz){}
                  
             int getRobotID(){return robot_id_;}

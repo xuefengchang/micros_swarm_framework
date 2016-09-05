@@ -105,15 +105,10 @@ namespace micros_swarm_framework{
                 archive<<data;
                 std::string s=archiveStream.str();
                 
-                //int id=vstig_id_;
-                //std::string key_str=key;
-                //std::string value_str=s;
                 time_t time_now=time(0);
                 int robot_id=rtp_->getRobotID();
-                //rtp_->insertOrUpdateVirtualStigmergy(id, key_str, value_str, time_now, robot_id);
                 rtp_->insertOrUpdateVirtualStigmergy(vstig_id_, key, s, time_now, robot_id);
                 
-                //VirtualStigmergyPut vsp(id, key_str, value_str, time_now, robot_id);
                 VirtualStigmergyPut vsp(vstig_id_, key, s, time_now, robot_id);
                 
                 std::ostringstream archiveStream2;
@@ -139,7 +134,6 @@ namespace micros_swarm_framework{
             
             Type virtualStigmergyGet(const std::string& key)
             {
-                //VirtualStigmergyTuple vst=rtp_->getVirtualStigmergyTuple(vstig_id_, key);
                 VirtualStigmergyTuple vst;
                 rtp_->getVirtualStigmergyTuple(vstig_id_, key, vst);
                 
@@ -155,12 +149,6 @@ namespace micros_swarm_framework{
                 boost::archive::text_iarchive archive(archiveStream);
                 archive>>data;
                 
-                //int id=vstig_id_;
-                //std::string key_std=key;
-                //std::string value_str=vst.getVirtualStigmergyValue();
-                //time_t time_now=vst.getVirtualStigmergyTimestamp();
-                //int robot_id=vst.getRobotID();
-                //VirtualStigmergyQuery vsq(id, key, value_str, time_now, robot_id);
                 VirtualStigmergyQuery vsq(vstig_id_, key, vst.getVirtualStigmergyValue(), vst.getVirtualStigmergyTimestamp(), vst.getRobotID());
                 
                 std::ostringstream archiveStream2;

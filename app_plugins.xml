@@ -27,4 +27,11 @@
     
 </library>
 
+<library path="lib/libmicros_swarm_framework_TestVstigBroker">
+    <class name="micros_swarm_framework/TestVstigBroker" type="micros_swarm_framework::TestVstigBroker" base_class_type="nodelet::Nodelet">
+        <description>micros_swarm_framework test virtual stigmergy.</description>
+    </class>
+    
+</library>
+
 

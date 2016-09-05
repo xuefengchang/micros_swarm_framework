@@ -86,7 +86,7 @@ namespace micros_swarm_framework{
             void setRobotBase(const Base& robot_base);
             void printRobotBase();
             
-            const std::map<int, NeighborBase>& getNeighbors();
+            void getNeighbors(std::map<int, NeighborBase>& neighbors);
             void insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz);
             //delete an neighbor robot according to id
             void deleteNeighbor(int robot_id);
@@ -95,9 +95,9 @@ namespace micros_swarm_framework{
             
             void insertOrUpdateSwarm(int swarm_id, bool value);
             //check if the local robot is in a swarm 
-            bool getSwarm(int swarm_id);
+            bool getSwarmFlag(int swarm_id);
             //get the swarm list of the local robot
-            void getSwarmList(std::vector<int>& v);
+            void getSwarmList(std::vector<int>& swarm_list);
             void deleteSwarm(int swarm_id);
             void printSwarm();
             
@@ -107,14 +107,13 @@ namespace micros_swarm_framework{
             void leaveNeighborSwarm(int robot_id, int swarm_id);
             void insertOrRefreshNeighborSwarm(int robot_id, const std::vector<int>& swarm_list);
             //get the member robot set of a swarm 
-            void getSwarmMembers(int swarm_id, std::set<int>& s);
+            void getSwarmMembers(int swarm_id, std::set<int>& swarm_members);
             void deleteNeighborSwarm(int robot_id);
             void printNeighborSwarm();
             
             void createVirtualStigmergy(int id);
             void insertOrUpdateVirtualStigmergy(int id, const std::string& key, const std::string& value, time_t time_now, int robot_id);
-            VirtualStigmergyTuple getVirtualStigmergyTuple(int id, const std::string& key);
-            void getVirtualStigmergyTuple(int id, const std::string& key, VirtualStigmergyTuple& vst);
+            void getVirtualStigmergyTuple(int id, const std::string& key, VirtualStigmergyTuple& vstig_tuple);
             int getVirtualStigmergySize(int id);
             void deleteVirtualStigmergy(int id);
             void deleteVirtualStigmergyValue(int id, const std::string& key);

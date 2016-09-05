@@ -142,22 +142,22 @@ namespace micros_swarm_framework{
         l.setVZ(0);
         l=rtp_->getRobotBase();
         
-        SingleRobotBroadcastID srbi(robot_id, l.getX(), l.getY(), l.getZ(), l.getVX(), l.getVY(), l.getVZ());
+        SingleRobotBroadcastBase srbb(robot_id, l.getX(), l.getY(), l.getZ(), l.getVX(), l.getVY(), l.getVZ());
         
         std::ostringstream archiveStream;
         boost::archive::text_oarchive archive(archiveStream);
-        archive<<srbi;
-        std::string srbi_str=archiveStream.str();
+        archive<<srbb;
+        std::string srbb_str=archiveStream.str();
                       
         micros_swarm_framework::MSFPPacket p;
         p.packet_source=robot_id;
         p.packet_version=1;
-        p.packet_type=SINGLE_ROBOT_BROADCAST_ID;
+        p.packet_type=SINGLE_ROBOT_BROADCAST_BASE;
         #ifdef ROS
-        p.packet_data=srbi_str;
+        p.packet_data=srbb_str;
         #endif
         #ifdef OPENSPLICE_DDS
-        p.packet_data=srbi_str.data();
+        p.packet_data=srbb_str.data();
         #endif
         p.package_check_sum=0;
 

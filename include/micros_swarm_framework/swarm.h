@@ -187,7 +187,7 @@ namespace micros_swarm_framework{
             
             bool inSwarm() const
             {
-                if(rtp_->getSwarm(swarm_id_))
+                if(rtp_->getSwarmFlag(swarm_id_))
                     return true;
                 return false;
             }

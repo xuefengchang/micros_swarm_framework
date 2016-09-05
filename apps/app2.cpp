@@ -215,12 +215,5 @@ namespace micros_swarm_framework{
         
         red_swarm.printSwarm();
         blue_swarm.printSwarm();
-        
-        /*
-        //test virtual stigmergy
-        micros_swarm_framework::VirtualStigmergy<bool> barrier(1);
-        std::string robot_id_string=boost::lexical_cast<std::string>(rtp_->getRobotID());
-        barrier.virtualStigmergyPut(robot_id_string, 1);
-        */
     }
 };

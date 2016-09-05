@@ -38,22 +38,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm_framework/runtime_platform.h"
 
 namespace micros_swarm_framework{
-
-    /*
-    RuntimePlatform::RuntimePlatform()
-    {
-        robot_id_=-1;
-        
-        neighbors_.clear();
-        swarms_.clear();
-        neighbor_swarms_.clear();
-        virtual_stigmergy_.clear();
-        barrier_.clear();
-        callback_functions_.clear();
-        boost::function<void(const std::string&)> f=boost::bind(&RuntimePlatform::doNothing, this, _1);
-        callback_functions_.insert(std::pair<std::string, boost::function<void(const std::string&)> >("" ,f));
-    }
-    */
     
     RuntimePlatform::RuntimePlatform(int robot_id)
     {
@@ -124,11 +108,11 @@ namespace micros_swarm_framework{
             robot_base_.getZ()<<", "<<robot_base_.getVX()<<", "<<robot_base_.getVY()<<", "<<\
             robot_base_.getVZ()<<std::endl;
     }
-     
-    const std::map<int, NeighborBase>& RuntimePlatform::getNeighbors()
+        
+    void RuntimePlatform::getNeighbors(std::map<int, NeighborBase>& neighbors)
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex5_);
-        return neighbors_;
+        neighbors=neighbors_;
     }
      
     void RuntimePlatform::insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz)
@@ -202,7 +186,7 @@ namespace micros_swarm_framework{
         }
     }
     
-    bool RuntimePlatform::getSwarm(int swarm_id)
+    bool RuntimePlatform::getSwarmFlag(int swarm_id)
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex6_);
         std::map<int, bool>::iterator s_it=swarms_.find(swarm_id);
@@ -215,9 +199,9 @@ namespace micros_swarm_framework{
         return false;
     }
     
-    void RuntimePlatform::getSwarmList(std::vector<int>& v)
+    void RuntimePlatform::getSwarmList(std::vector<int>& swarm_list)
     {
-        v.clear();
+        swarm_list.clear();
   
         std::map<int, bool>::iterator s_it;
         
@@ -225,7 +209,7 @@ namespace micros_swarm_framework{
         for(s_it=swarms_.begin();s_it!=swarms_.end();s_it++)
         {
             if(s_it->second)
-                v.push_back(s_it->first);
+                swarm_list.push_back(s_it->first);
         }
     }
     
@@ -348,16 +332,16 @@ namespace micros_swarm_framework{
         }
     }
     
-    void RuntimePlatform::getSwarmMembers(int swarm_id, std::set<int>& s)
+    void RuntimePlatform::getSwarmMembers(int swarm_id, std::set<int>& swarm_members)
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
-        s.clear();
+        swarm_members.clear();
         
         boost::shared_lock<boost::shared_mutex> lock(mutex7_);
         for(os_it=neighbor_swarms_.begin(); os_it!=neighbor_swarms_.end(); os_it++)
         {
             if(os_it->second.swarmIDExist(swarm_id))
-                s.insert(os_it->first);
+                swarm_members.insert(os_it->first);
         }
     }
     
@@ -434,32 +418,7 @@ namespace micros_swarm_framework{
         }
     }
     
-    VirtualStigmergyTuple RuntimePlatform::getVirtualStigmergyTuple(int id, const std::string& key)
-    {
-        std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
-        
-        boost::shared_lock<boost::shared_mutex> lock(mutex8_);
-        vst_it=virtual_stigmergy_.find(id);
-    
-        if(vst_it!=virtual_stigmergy_.end())
-        {
-            std::map<std::string, VirtualStigmergyTuple>::iterator svstt_it=vst_it->second.find(key);
-        
-            if(svstt_it!=vst_it->second.end())
-            {     
-                return svstt_it->second;
-            }
-        }
-        
-        std::string value="";
-        time_t time_now=0;
-        unsigned int robot_id=0;
-        VirtualStigmergyTuple vst_tuple(value, time_now, robot_id);
-            
-        return vst_tuple;
-    }
-    
-    void RuntimePlatform::getVirtualStigmergyTuple(int id, const std::string& key, VirtualStigmergyTuple& vst)
+    void RuntimePlatform::getVirtualStigmergyTuple(int id, const std::string& key, VirtualStigmergyTuple& vstig_tuple)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         boost::shared_lock<boost::shared_mutex> lock(mutex8_);
@@ -470,20 +429,8 @@ namespace micros_swarm_framework{
         
             if(svstt_it!=vst_it->second.end())
             {
-                vst=svstt_it->second;
+                vstig_tuple=svstt_it->second;
             }
-            else
-            {
-                vst.setVirtualStigmergyValue("");
-                vst.setVirtualStigmergyTimestamp(0);
-                vst.setRobotID(-1);
-            }
-        }
-        else
-        {
-            vst.setVirtualStigmergyValue("");
-            vst.setVirtualStigmergyTimestamp(0);
-            vst.setRobotID(-1);
         }
     }
     
@@ -613,11 +560,8 @@ namespace micros_swarm_framework{
         }
         
         std::cout<<"could not get the callback function which has the key "<<key<<"!"<<std::endl;
-        //boost::function<void(const std::string&)> f=boost::bind(&RuntimePlatform::doNothing, this, _1);
-        //return f;
         nccb_it=callback_functions_.find("");
         return nccb_it->second;
-        
     }
     
     void RuntimePlatform::deleteCallbackFunctions(const std::string& key)

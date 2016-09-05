@@ -191,6 +191,9 @@ namespace micros_swarm_framework{
             //the id of the robot which last change the virtual stigmergy
             int robot_id_;
         public:
+            VirtualStigmergyTuple()\
+              :vstig_value_(""), vstig_timestamp_(0), robot_id_(-1){}
+            
             VirtualStigmergyTuple(const std::string& value, time_t time, int id)\
               :vstig_value_(value), vstig_timestamp_(time), robot_id_(id){}
 
