@@ -48,7 +48,7 @@ namespace micros_swarm_framework{
     void App2Broker::onInit()
     {
         nh_ = getNodeHandle();
-        app_=Singleton<App2>::getSingleton(nh_);
+        app_.reset(new App2(nh_));
         app_->start();
     }
 };

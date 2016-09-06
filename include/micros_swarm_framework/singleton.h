@@ -94,6 +94,8 @@ namespace micros_swarm_framework{
             {
                 return object.use_count();
             }
+            
+            ~Singleton(){}
         private:
             Singleton(){}
         private:

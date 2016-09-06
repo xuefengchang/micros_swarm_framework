@@ -98,6 +98,8 @@ namespace micros_swarm_framework{
                 return *this;
             }
             
+            ~VirtualStigmergy(){}
+            
             void virtualStigmergyPut(const std::string& key, const Type& data)
             {
                 std::ostringstream archiveStream;

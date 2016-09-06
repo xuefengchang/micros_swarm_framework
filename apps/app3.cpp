@@ -227,6 +227,7 @@ namespace micros_swarm_framework{
         
         setNeighborDistance(12);
         sub_ = nh_.subscribe("base_pose_ground_truth", 1000, &App3::baseCallback, this, ros::TransportHints().udp());
+        ros::Duration(5).sleep();
         pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         
         timer_ = nh_.createTimer(ros::Duration(interval), &App3::publish_cmd, this);

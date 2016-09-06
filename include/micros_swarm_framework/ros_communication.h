@@ -67,7 +67,8 @@ namespace micros_swarm_framework{
                     ros::Duration(1).sleep();
                     if(!packet_publisher_)
                     {
-                        ROS_INFO("packet_publisher could not initialize");
+                        ROS_INFO("ROS communicator could not initialize!");
+                        exit(-1);
                     }
                     flag=true;
                 }

@@ -102,6 +102,11 @@ namespace micros_swarm_framework{
                 return *this;
             }
             
+            ~Swarm()
+            {
+            
+            }
+            
             void getSwarmMembers(std::set<int>& s)  const
             {
                 rtp_->getSwarmMembers(swarm_id_, s);

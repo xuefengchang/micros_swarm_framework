@@ -48,7 +48,7 @@ namespace micros_swarm_framework{
     void TestNCBroker::onInit()
     {
         nh_ = getNodeHandle();
-        app_=Singleton<TestNC>::getSingleton(nh_);
+        app_.reset(new TestNC(nh_));
         app_->start();
     }
 };

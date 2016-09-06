@@ -75,6 +75,7 @@ namespace micros_swarm_framework{
         
         int shm_rid=rtp->getRobotID();
         int packet_source=packet.packet_source;
+        
         //ignore the packet of the local robot
         if(packet_source==shm_rid)
         {
@@ -111,6 +112,9 @@ namespace micros_swarm_framework{
                 float vx=srbb.getRobotVX();
                 float vy=srbb.getRobotVY();
                 float vz=srbb.getRobotVZ();
+                
+                if((x+y+z+vx+vy+vz)==0)  //ignore the default Base value  TODO...
+                    return;
                 
                 Base self=rtp->getRobotBase();
                 Base neighbor(x, y, z, vx, vy, vz);
@@ -312,6 +316,13 @@ namespace micros_swarm_framework{
                 VirtualStigmergyTuple local;
                 rtp->getVirtualStigmergyTuple(vsp.getVirtualStigmergyID(), vsp.getVirtualStigmergyKey(), local);
                 
+                //if(rtp->getRobotID()==1)
+                //{
+                //    std::cout<<"收到机器人"<<vsp.getRobotID()<<"的更新消息，来自邻居"<<packet_source<<std::endl;
+                //    rtp->printNeighbor();
+                //    std::cout<<"虚拟信息素大小为"<<rtp->getVirtualStigmergySize(vsp.getVirtualStigmergyID())<<std::endl;
+                //}
+                
                 //local tuple is not exist or local timestamp is smaller
                 if((local.getVirtualStigmergyTimestamp()==0)||
                    (local.getVirtualStigmergyTimestamp()<vsp.getVirtualStigmergyTimestamp()))
@@ -357,9 +368,6 @@ namespace micros_swarm_framework{
             }
             case BARRIER_SYN:
             {
-                if(!rtp->inNeighbors(packet_source))
-                    return;
-                
                 //std::cout<<"BARRIER_SYN"<<std::endl;            
                 Barrier_Syn bs;
                 archive>>bs;
@@ -392,9 +400,6 @@ namespace micros_swarm_framework{
             }
             case BARRIER_ACK:
             {
-                if(!rtp->inNeighbors(packet_source))
-                    return;
-                
                 //std::cout<<"BARRIER_ACK"<<std::endl;
                 Barrier_Ack ba;
                 archive>>ba;

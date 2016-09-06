@@ -67,11 +67,11 @@ namespace micros_swarm_framework{
             boost::shared_ptr<RuntimePlatform> rtp_;
             boost::shared_ptr<CommunicationInterface> communicator_;
             
-            ros::Timer publish_robot_id_timer_;
+            ros::Timer publish_robot_base_timer_;
             ros::Timer publish_swarm_list_timer_;
             ros::Timer barrier_timer_;
             
-            float publish_robot_id_duration_;
+            float publish_robot_base_duration_;
             float publish_swarm_list_duration_;
             float default_neighbor_distance_;
             int total_robot_numbers_;
@@ -81,7 +81,7 @@ namespace micros_swarm_framework{
             ~RuntimePlatformKernel();
             virtual void onInit();
             void setParameters();
-            void publish_robot_id(const ros::TimerEvent&);
+            void publish_robot_base(const ros::TimerEvent&);
             void publish_swarm_list(const ros::TimerEvent&);
             void barrier_check(const ros::TimerEvent&);
     };
@@ -129,18 +129,11 @@ namespace micros_swarm_framework{
         communicator_->broadcast(p);
     }
     
-    void RuntimePlatformKernel::publish_robot_id(const ros::TimerEvent&)
+    void RuntimePlatformKernel::publish_robot_base(const ros::TimerEvent&)
     {
         int robot_id=rtp_->getRobotID();
         
-        micros_swarm_framework::Base l;
-        l.setX(-1);
-        l.setY(-1);
-        l.setZ(-1);
-        l.setVX(0);
-        l.setVY(0);
-        l.setVZ(0);
-        l=rtp_->getRobotBase();
+        Base l=rtp_->getRobotBase();  //TODO
         
         SingleRobotBroadcastBase srbb(robot_id, l.getX(), l.getY(), l.getZ(), l.getVX(), l.getVY(), l.getVZ());
         
@@ -196,13 +189,13 @@ namespace micros_swarm_framework{
     
     void RuntimePlatformKernel::setParameters()
     {
-        bool param_ok =node_handle_.getParam("/publish_robot_id_duration", publish_robot_id_duration_);
+        bool param_ok =node_handle_.getParam("/publish_robot_id_duration", publish_robot_base_duration_);
         if(!param_ok)
         {
             std::cout<<"could not get parameter publish_robot_id_duration! use the default value."<<std::endl;
-            publish_robot_id_duration_=0.1;
+            publish_robot_base_duration_=0.1;
         }else{
-            std::cout<<"publish_robot_id_duration = "<<publish_robot_id_duration_<<std::endl;
+            std::cout<<"publish_robot_id_duration = "<<publish_robot_base_duration_<<std::endl;
         }
         
         param_ok =node_handle_.getParam("/publish_swarm_list_duration", publish_swarm_list_duration_);
@@ -258,7 +251,7 @@ namespace micros_swarm_framework{
         communicator_->receive(packetParser);
         
         rtp_->setNeighborDistance(default_neighbor_distance_);
-        publish_robot_id_timer_ = node_handle_.createTimer(ros::Duration(publish_robot_id_duration_), &RuntimePlatformKernel::publish_robot_id, this);
+        publish_robot_base_timer_ = node_handle_.createTimer(ros::Duration(publish_robot_base_duration_), &RuntimePlatformKernel::publish_robot_base, this);
         publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(publish_swarm_list_duration_), &RuntimePlatformKernel::publish_swarm_list, this);
         barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimePlatformKernel::barrier_check, this);
     }

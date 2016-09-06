@@ -68,6 +68,11 @@ namespace micros_swarm_framework{
                 return *this;
             }
             
+            ~Neighbors()
+            {
+            
+            }
+            
             std::map<int, Type>& getData()
             {
                 return data_;

@@ -42,7 +42,7 @@ namespace micros_swarm_framework{
     RuntimePlatform::RuntimePlatform(int robot_id)
     {
         robot_id_=robot_id;
-        
+        robot_base_=Base(0,0,0,0,0,0);
         neighbors_.clear();
         swarms_.clear();
         neighbor_swarms_.clear();

@@ -61,7 +61,7 @@ namespace micros_swarm_framework{
             float vy_;
             float vz_;
         public:
-            Base() : x_(-1),y_(-1),z_(-1),vx_(-1),vy_(-1),vz_(-1){}
+            Base() : x_(0),y_(0),z_(0),vx_(0),vy_(0),vz_(0){}
             Base(float x,float y,float z,float vx,float vy,float vz) : x_(x),y_(y),z_(z),vx_(vx),vy_(vy),vz_(vz){}
             float getX(){return x_;}
             void setX(float x){x_=x;}

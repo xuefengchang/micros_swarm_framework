@@ -48,7 +48,7 @@ namespace micros_swarm_framework{
     void TestVstigBroker::onInit()
     {
         nh_ = getNodeHandle();
-        app_=Singleton<TestVstig>::getSingleton(nh_);
+        app_.reset(new TestVstig(nh_));
         app_->start();
     }
 };
