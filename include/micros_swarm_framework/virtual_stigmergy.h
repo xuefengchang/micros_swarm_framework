@@ -139,19 +139,19 @@ namespace micros_swarm_framework{
                 VirtualStigmergyTuple vst;
                 rtp_->getVirtualStigmergyTuple(vstig_id_, key, vst);
                 
-                if(vst.getVirtualStigmergyTimestamp()==0)
+                if(vst.vstig_timestamp==0)
                 {
                     std::cout<<"ID "<<vstig_id_<<" virtual stigmergy, "<<key<<" is not exist."<<std::endl;
                     exit(-1);
                 }
                 
-                std::string data_str=vst.getVirtualStigmergyValue();
+                std::string data_str=vst.vstig_value;
                 Type data;
                 std::istringstream archiveStream(data_str);
                 boost::archive::text_iarchive archive(archiveStream);
                 archive>>data;
                 
-                VirtualStigmergyQuery vsq(vstig_id_, key, vst.getVirtualStigmergyValue(), vst.getVirtualStigmergyTimestamp(), vst.getRobotID());
+                VirtualStigmergyQuery vsq(vstig_id_, key, vst.vstig_value, vst.vstig_timestamp, vst.robot_id);
                 
                 std::ostringstream archiveStream2;
                 boost::archive::text_oarchive archive2(archiveStream2);

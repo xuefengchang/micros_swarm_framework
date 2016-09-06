@@ -99,14 +99,14 @@ namespace micros_swarm_framework{
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex4_);
         robot_base_=robot_base;
-    }
+    }    
     
     void RuntimePlatform::printRobotBase()
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex4_);
-        std::cout<<"robot base: "<<robot_base_.getX()<<", "<<robot_base_.getY()<<", "<<\
-            robot_base_.getZ()<<", "<<robot_base_.getVX()<<", "<<robot_base_.getVY()<<", "<<\
-            robot_base_.getVZ()<<std::endl;
+        std::cout<<"robot base: "<<robot_base_.x<<", "<<robot_base_.y<<", "<<\
+            robot_base_.z<<", "<<robot_base_.vx<<", "<<robot_base_.vy<<", "<<\
+            robot_base_.vz<<std::endl;
     }
         
     void RuntimePlatform::getNeighbors(std::map<int, NeighborBase>& neighbors)
@@ -162,9 +162,9 @@ namespace micros_swarm_framework{
         {
             std::cout<<n_it->first<<": ";
             
-            std::cout<<n_it->second.getDistance()<<","<<n_it->second.getAzimuth()<<","<<n_it->second.getElevation()<<","<<\
-                n_it->second.getX()<<","<<n_it->second.getY()<<","<<n_it->second.getZ()<<", "<<
-                n_it->second.getVX()<<","<<n_it->second.getVY()<<","<<n_it->second.getVZ();
+            std::cout<<n_it->second.distance<<","<<n_it->second.azimuth<<","<<n_it->second.elevation<<","<<\
+                n_it->second.x<<","<<n_it->second.y<<","<<n_it->second.z<<", "<<
+                n_it->second.vx<<","<<n_it->second.vy<<","<<n_it->second.vz;
             std::cout<<std::endl;
         }
     }
@@ -266,13 +266,13 @@ namespace micros_swarm_framework{
             if(os_it->second.swarmIDExist(swarm_id))
             {
                 boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
-                os_it->second.setAge(0);
+                os_it->second.age=0;
             }
             else
             {           
                 boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
                 os_it->second.addSwarmID(swarm_id);
-                os_it->second.setAge(0);
+                os_it->second.age=0;
             }
         }
         else
@@ -298,7 +298,7 @@ namespace micros_swarm_framework{
             {
                 boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
                 os_it->second.removeSwarmID(swarm_id);
-                os_it->second.setAge(0);
+                os_it->second.age=0;
             }
             else
             {
@@ -360,12 +360,12 @@ namespace micros_swarm_framework{
         {
             std::cout<<"neighbor swarm "<<os_it->first<<": ";
             
-            std::vector<int> temp=os_it->second.getSwarmIDVector();
+            std::vector<int> temp=os_it->second.swarm_id_vector;
             for(int i=0;i<temp.size();i++)
             {
                 std::cout<<temp[i]<<",";
             }
-            std::cout<<"age: "<<os_it->second.getAge();
+            std::cout<<"age: "<<os_it->second.age;
             std::cout<<std::endl;
         }
     }
@@ -493,8 +493,8 @@ namespace micros_swarm_framework{
             for (svstt_it=svstt_pointer->begin(); svstt_it!=svstt_pointer->end(); svstt_it++)
             {
                 std::cout<<"("<<svstt_it->first<<","<< \
-                    svstt_it->second.getVirtualStigmergyValue()<<","<<svstt_it->second.getVirtualStigmergyTimestamp()<<","<<\
-                    svstt_it->second.getRobotID()<<")"<<std::endl;
+                    svstt_it->second.vstig_value<<","<<svstt_it->second.vstig_timestamp<<","<<\
+                    svstt_it->second.robot_id<<")"<<std::endl;
             }
             std::cout<<"]"<<std::endl;
             std::cout<<std::endl;

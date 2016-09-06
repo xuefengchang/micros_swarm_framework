@@ -52,7 +52,7 @@ namespace micros_swarm_framework{
     
     class CheckNeighborInterface{
         public:
-            virtual bool isNeighbor(Base self, Base neighbor)=0;
+            virtual bool isNeighbor(const Base& self, const Base& neighbor)=0;
     };
     
     class CheckNeighbor : public CheckNeighborInterface{
@@ -70,10 +70,10 @@ namespace micros_swarm_framework{
                 return neighbor_distance_;
             }
         
-            bool isNeighbor(Base self, Base neighbor)  //TODO
+            bool isNeighbor(const Base& self, const Base& neighbor)
             {
-                float distance=sqrt((self.getX()-neighbor.getX())*(self.getX()-neighbor.getX())+(self.getY()-neighbor.getY())*(self.getY()-neighbor.getY())+ \
-                    (self.getZ()-neighbor.getZ())*(self.getZ()-neighbor.getZ()));
+                float distance=sqrt((self.x-neighbor.x)*(self.x-neighbor.x)+(self.y-neighbor.y)*(self.y-neighbor.y)+ \
+                    (self.z-neighbor.z)*(self.z-neighbor.z));
                     
                 if(distance<neighbor_distance_)
                     return true;

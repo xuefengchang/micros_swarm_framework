@@ -102,21 +102,21 @@ namespace micros_swarm_framework{
                 
                 archive>>srbb;
                 
-                int robot_id=srbb.getRobotID();
+                int robot_id=srbb.robot_id;
                 float distance=0;
                 float azimuth=0;
                 float elevation=0;
-                float x=srbb.getRobotX();
-                float y=srbb.getRobotY();
-                float z=srbb.getRobotZ();
-                float vx=srbb.getRobotVX();
-                float vy=srbb.getRobotVY();
-                float vz=srbb.getRobotVZ();
+                float x=srbb.robot_x;
+                float y=srbb.robot_y;
+                float z=srbb.robot_z;
+                float vx=srbb.robot_vx;
+                float vy=srbb.robot_vy;
+                float vz=srbb.robot_vz;
                 
                 if((x+y+z+vx+vy+vz)==0)  //ignore the default Base value  TODO...
                     return;
                 
-                Base self=rtp->getRobotBase();
+                const Base& self=rtp->getRobotBase();
                 Base neighbor(x, y, z, vx, vy, vz);
                 
                 double neighbor_distance=rtp->getNeighborDistance();
@@ -141,10 +141,8 @@ namespace micros_swarm_framework{
                 //std::cout<<"SINGLE_ROBOT_JOIN_SWARM"<<std::endl;
                 SingleRobotJoinSwarm srjs;
                 archive>>srjs;
-             
-                int robot_id=srjs.getRobotID();
-                int swarm_id=srjs.getSwarmID();
-                rtp->joinNeighborSwarm(robot_id, swarm_id);
+                
+                rtp->joinNeighborSwarm(srjs.robot_id, srjs.swarm_id);
                 
                 /*
                 if(!rtp->inNeighborSwarm(robot_id, swarm_id))
@@ -182,9 +180,7 @@ namespace micros_swarm_framework{
                 SingleRobotLeaveSwarm srls;
                 archive>>srls;
                 
-                int robot_id=srls.getRobotID();
-                int swarm_id=srls.getSwarmID();
-                rtp->leaveNeighborSwarm(robot_id, swarm_id);
+                rtp->leaveNeighborSwarm(srls.robot_id, srls.swarm_id);
                 
                 /*
                 if(rtp->inNeighborSwarm(robot_id, swarm_id))
@@ -223,7 +219,7 @@ namespace micros_swarm_framework{
                 SingleRobotSwarmList srsl;
                 archive>>srsl;
                 
-                rtp->insertOrRefreshNeighborSwarm(srsl.getRobotID(), srsl.getSwarmList());
+                rtp->insertOrRefreshNeighborSwarm(srsl.robot_id, srsl.swarm_list);
                 
                 break;
             }
@@ -237,18 +233,17 @@ namespace micros_swarm_framework{
                 archive>>vsq;
                 
                 VirtualStigmergyTuple local;
-                rtp->getVirtualStigmergyTuple(vsq.getVirtualStigmergyID(), vsq.getVirtualStigmergyKey(), local);
+                rtp->getVirtualStigmergyTuple(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, local);
                 
                 //local tuple is not exist or the local timestamp is smaller
-                if((local.getVirtualStigmergyTimestamp()==0)|| 
-                   (local.getVirtualStigmergyTimestamp()<vsq.getVirtualStigmergyTimestamp()))
+                if((local.vstig_timestamp==0)||(local.vstig_timestamp<vsq.virtual_stigmergy_timestamp))
                 {
-                    rtp->createVirtualStigmergy(vsq.getVirtualStigmergyID());
-                    rtp->insertOrUpdateVirtualStigmergy(vsq.getVirtualStigmergyID(), vsq.getVirtualStigmergyKey(), vsq.getVirtualStigmergyValue(),
-                                                        vsq.getVirtualStigmergyTimestamp(), vsq.getRobotID());
+                    rtp->createVirtualStigmergy(vsq.virtual_stigmergy_id);
+                    rtp->insertOrUpdateVirtualStigmergy(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, vsq.virtual_stigmergy_value,
+                                                        vsq.virtual_stigmergy_timestamp, vsq.robot_id);
                     
-                    VirtualStigmergyPut vsp_new(vsq.getVirtualStigmergyID(), vsq.getVirtualStigmergyKey(), vsq.getVirtualStigmergyValue(), 
-                                            vsq.getVirtualStigmergyTimestamp(), vsq.getRobotID());
+                    VirtualStigmergyPut vsp_new(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, vsq.virtual_stigmergy_value, 
+                                            vsq.virtual_stigmergy_timestamp, vsq.robot_id);
                     
                     std::ostringstream archiveStream2;
                     boost::archive::text_oarchive archive2(archiveStream2);
@@ -269,10 +264,10 @@ namespace micros_swarm_framework{
                     
                     communicator->broadcast(p);
                 }
-                else if(local.getVirtualStigmergyTimestamp()>vsq.getVirtualStigmergyTimestamp())  //local timestamp is larger
+                else if(local.vstig_timestamp>vsq.virtual_stigmergy_timestamp)  //local timestamp is larger
                 {
-                    VirtualStigmergyPut vsp(vsq.getVirtualStigmergyID(), vsq.getVirtualStigmergyKey(), local.getVirtualStigmergyValue(),
-                                            local.getVirtualStigmergyTimestamp(), local.getRobotID());
+                    VirtualStigmergyPut vsp(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, local.vstig_value,
+                                            local.vstig_timestamp, local.robot_id);
                     std::ostringstream archiveStream2;
                     boost::archive::text_oarchive archive2(archiveStream2);
                     archive2<<vsp;
@@ -292,8 +287,7 @@ namespace micros_swarm_framework{
                     
                     communicator->broadcast(p);
                 }
-                else if((local.getVirtualStigmergyTimestamp()==vsq.getVirtualStigmergyTimestamp())&&
-                        (local.getRobotID()!=vsq.getRobotID()))
+                else if((local.vstig_timestamp==vsq.virtual_stigmergy_timestamp)&&(local.robot_id!=vsq.robot_id))
                 {
                     //std::cout<<"query conflict"<<std::endl;
                 }
@@ -314,26 +308,18 @@ namespace micros_swarm_framework{
                 archive>>vsp;
                 
                 VirtualStigmergyTuple local;
-                rtp->getVirtualStigmergyTuple(vsp.getVirtualStigmergyID(), vsp.getVirtualStigmergyKey(), local);
-                
-                //if(rtp->getRobotID()==1)
-                //{
-                //    std::cout<<"收到机器人"<<vsp.getRobotID()<<"的更新消息，来自邻居"<<packet_source<<std::endl;
-                //    rtp->printNeighbor();
-                //    std::cout<<"虚拟信息素大小为"<<rtp->getVirtualStigmergySize(vsp.getVirtualStigmergyID())<<std::endl;
-                //}
+                rtp->getVirtualStigmergyTuple(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, local);
                 
                 //local tuple is not exist or local timestamp is smaller
-                if((local.getVirtualStigmergyTimestamp()==0)||
-                   (local.getVirtualStigmergyTimestamp()<vsp.getVirtualStigmergyTimestamp()))
+                if((local.vstig_timestamp==0)||(local.vstig_timestamp<vsp.virtual_stigmergy_timestamp))
                 {
-                    rtp->createVirtualStigmergy(vsp.getVirtualStigmergyID());
+                    rtp->createVirtualStigmergy(vsp.virtual_stigmergy_id);
                 
-                    rtp->insertOrUpdateVirtualStigmergy(vsp.getVirtualStigmergyID(), vsp.getVirtualStigmergyKey(), vsp.getVirtualStigmergyValue(), 
-                                                        vsp.getVirtualStigmergyTimestamp(), vsp.getRobotID());
+                    rtp->insertOrUpdateVirtualStigmergy(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, vsp.virtual_stigmergy_value, 
+                                                        vsp.virtual_stigmergy_timestamp, vsp.robot_id);
                     
-                    VirtualStigmergyPut vsp_new(vsp.getVirtualStigmergyID(), vsp.getVirtualStigmergyKey(), vsp.getVirtualStigmergyValue(), 
-                                            vsp.getVirtualStigmergyTimestamp(), vsp.getRobotID());
+                    VirtualStigmergyPut vsp_new(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, vsp.virtual_stigmergy_value, 
+                                            vsp.virtual_stigmergy_timestamp, vsp.robot_id);
                     std::ostringstream archiveStream2;
                     boost::archive::text_oarchive archive2(archiveStream2);
                     archive2<<vsp_new;
@@ -354,8 +340,7 @@ namespace micros_swarm_framework{
                     
                     communicator->broadcast(p);
                 }
-                else if((local.getVirtualStigmergyTimestamp()==vsp.getVirtualStigmergyTimestamp())&&
-                        (local.getRobotID()!=vsp.getRobotID()))
+                else if((local.vstig_timestamp==vsp.virtual_stigmergy_timestamp)&&(local.robot_id!=vsp.robot_id))
                 {
                     //std::cout<<"put conflict"<<std::endl;
                 }
@@ -371,7 +356,7 @@ namespace micros_swarm_framework{
                 //std::cout<<"BARRIER_SYN"<<std::endl;            
                 Barrier_Syn bs;
                 archive>>bs;
-                if(bs.getString()!="SYN")
+                if(bs.s!="SYN")
                 {
                     return;
                 }
@@ -404,7 +389,7 @@ namespace micros_swarm_framework{
                 Barrier_Ack ba;
                 archive>>ba;
                 
-                if(shm_rid==ba.getRobotID())
+                if(shm_rid==ba.robot_id)
                     rtp->insertBarrier(packet.packet_source);
                     
                 break;
@@ -418,17 +403,14 @@ namespace micros_swarm_framework{
                 NeighborBroadcastKeyValue nbkv;
                 archive>>nbkv;
                 
-                std::string key=nbkv.getKey();
-                std::string value=nbkv.getValue();
-                
-                (rtp->getCallbackFunctions(key))(value);
+                (rtp->getCallbackFunctions(nbkv.key))(nbkv.value);
                
                 break;
             }
             
             default:
             {
-                //std::cout<<"UNDEFINED PACKET TYPE!"<<std::endl;
+                std::cout<<"UNDEFINED PACKET TYPE!"<<std::endl;
             }
         }
         }catch(const boost::archive::archive_exception&){

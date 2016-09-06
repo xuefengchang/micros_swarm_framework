@@ -69,226 +69,174 @@ namespace micros_swarm_framework{
         MSFP_PACKET_TYPE_COUNT  //MSFPPacket type count
     };
 
-    class SingleRobotBroadcastBase{
-        private:   
-            int robot_id_;
+    struct SingleRobotBroadcastBase{
+        int robot_id;
             
-            float robot_x_;
-            float robot_y_;
-            float robot_z_;
+        float robot_x;
+        float robot_y;
+        float robot_z;
             
-            float robot_vx_;
-            float robot_vy_;
-            float robot_vz_;
+        float robot_vx;
+        float robot_vy;
+        float robot_vz;
             
-            //using boost to serialize
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & robot_id_;
-                ar & robot_x_;
-                ar & robot_y_;
-                ar & robot_z_;
-                ar & robot_vx_;
-                ar & robot_vy_;
-                ar & robot_vz_;
-            }
-        public:
-            SingleRobotBroadcastBase(){}
-            SingleRobotBroadcastBase(int robot_id, float robot_x ,float robot_y, float robot_z, float robot_vx ,float robot_vy, float robot_vz):\
-                robot_id_(robot_id), robot_x_(robot_x), robot_y_(robot_y), robot_z_(robot_z),  robot_vx_(robot_vx), robot_vy_(robot_vy), robot_vz_(robot_vz){}
-                 
-            int getRobotID(){return robot_id_;}
-            float getRobotX(){return robot_x_;}
-            float getRobotY(){return robot_y_;}
-            float getRobotZ(){return robot_z_;}
-            float getRobotVX(){return robot_vx_;}
-            float getRobotVY(){return robot_vy_;}
-            float getRobotVZ(){return robot_vz_;}
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & robot_id;
+            ar & robot_x;
+            ar & robot_y;
+            ar & robot_z;
+            ar & robot_vx;
+            ar & robot_vy;
+            ar & robot_vz;
+        }
+            
+        SingleRobotBroadcastBase():\
+            robot_id(-1), robot_x(0), robot_y(0), robot_z(0),  robot_vx(0), robot_vy(0), robot_vz(0){}
+        SingleRobotBroadcastBase(int robot_id_, float robot_x_ ,float robot_y_, float robot_z_, float robot_vx_, float robot_vy_, float robot_vz_):\
+            robot_id(robot_id_), robot_x(robot_x_), robot_y(robot_y_), robot_z(robot_z_),  robot_vx(robot_vx_), robot_vy(robot_vy_), robot_vz(robot_vz_){}
     };
     
-    class SingleRobotJoinSwarm{
-        private:
-            int robot_id_;
-            int swarm_id_;
+    struct SingleRobotJoinSwarm{
+        int robot_id;
+        int swarm_id;
             
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & robot_id_;
-                ar & swarm_id_;
-            }
-        public:
-            SingleRobotJoinSwarm(){}
-            SingleRobotJoinSwarm(int robot_id, int swarm_id):\
-                robot_id_(robot_id), swarm_id_(swarm_id){}
-                
-            int getRobotID(){return robot_id_;}
-            int getSwarmID(){return swarm_id_;}
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & robot_id;
+            ar & swarm_id;
+        }
+            
+        SingleRobotJoinSwarm(){}
+        SingleRobotJoinSwarm(int robot_id_, int swarm_id_):\
+            robot_id(robot_id_), swarm_id(swarm_id_){}
     };
     
-    class SingleRobotLeaveSwarm{
-        private:
-            int robot_id_;
-            int swarm_id_;
+    struct SingleRobotLeaveSwarm{
+        int robot_id;
+        int swarm_id;
             
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & robot_id_;
-                ar & swarm_id_;
-            }
-        public:
-            SingleRobotLeaveSwarm(){}
-            SingleRobotLeaveSwarm(int robot_id, int swarm_id):\
-                robot_id_(robot_id), swarm_id_(swarm_id){}
-                
-            int getRobotID(){return robot_id_;}
-            int getSwarmID(){return swarm_id_;}
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & robot_id;
+            ar & swarm_id;
+        }
+            
+        SingleRobotLeaveSwarm(){}
+        SingleRobotLeaveSwarm(int robot_id_, int swarm_id_):\
+            robot_id(robot_id_), swarm_id(swarm_id_){}
     };
     
-    class SingleRobotSwarmList{
-        private:
-            int robot_id_;
-            std::vector<int> swarm_list_;
+    struct SingleRobotSwarmList{
+        int robot_id;
+        std::vector<int> swarm_list;
             
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & robot_id_;
-                ar & swarm_list_;
-            }
-        public:
-            SingleRobotSwarmList(){}
-            SingleRobotSwarmList(int robot_id, const std::vector<int>& swarm_list):\
-                robot_id_(robot_id), swarm_list_(swarm_list){}
-                
-            int getRobotID(){return robot_id_;}
-            const std::vector<int>& getSwarmList(){return swarm_list_;}
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & robot_id;
+            ar & swarm_list;
+        }
+            
+        SingleRobotSwarmList(){}
+        SingleRobotSwarmList(int robot_id_, const std::vector<int>& swarm_list_):\
+            robot_id(robot_id_), swarm_list(swarm_list_){}
     };
     
-    class VirtualStigmergyQuery
+    struct VirtualStigmergyQuery
     {
-        private:
-            int virtual_stigmergy_id_;
-            std::string virtual_stigmergy_key_;
-            std::string virtual_stigmergy_value_;
-            time_t virtual_stigmergy_timestamp_;
-            int robot_id_;
+        int virtual_stigmergy_id;
+        std::string virtual_stigmergy_key;
+        std::string virtual_stigmergy_value;
+        time_t virtual_stigmergy_timestamp;
+        int robot_id;
             
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & virtual_stigmergy_id_;
-                ar & virtual_stigmergy_key_;
-                ar & virtual_stigmergy_value_;
-                ar & virtual_stigmergy_timestamp_;
-                ar & robot_id_;
-            }
-        public:
-            VirtualStigmergyQuery(){}
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & virtual_stigmergy_id;
+            ar & virtual_stigmergy_key;
+            ar & virtual_stigmergy_value;
+            ar & virtual_stigmergy_timestamp;
+            ar & robot_id;
+        }
+            
+        VirtualStigmergyQuery(){}
 
-            VirtualStigmergyQuery(int id, const std::string& key, const std::string& value, time_t time_now, int robot_id):\
-                virtual_stigmergy_id_(id), virtual_stigmergy_key_(key), virtual_stigmergy_value_(value),\
-                virtual_stigmergy_timestamp_(time_now), robot_id_(robot_id){}
-                
-            int getVirtualStigmergyID(){return virtual_stigmergy_id_;}
-            const std::string& getVirtualStigmergyKey(){return virtual_stigmergy_key_;}
-            const std::string& getVirtualStigmergyValue(){return virtual_stigmergy_value_;}
-            time_t getVirtualStigmergyTimestamp(){return virtual_stigmergy_timestamp_;}
-            int getRobotID(){return robot_id_;}
+        VirtualStigmergyQuery(int id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):\
+            virtual_stigmergy_id(id_), virtual_stigmergy_key(key_), virtual_stigmergy_value(value_),\
+            virtual_stigmergy_timestamp(time_now_), robot_id(robot_id_){}
     };
 
-    class VirtualStigmergyPut
+    struct VirtualStigmergyPut
     {
-        private:
-            int virtual_stigmergy_id_;
-            std::string virtual_stigmergy_key_;
-            std::string virtual_stigmergy_value_;
-            time_t virtual_stigmergy_timestamp_;
-            int robot_id_;
+        int virtual_stigmergy_id;
+        std::string virtual_stigmergy_key;
+        std::string virtual_stigmergy_value;
+        time_t virtual_stigmergy_timestamp;
+        int robot_id;
             
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & virtual_stigmergy_id_;
-                ar & virtual_stigmergy_key_;
-                ar & virtual_stigmergy_value_;
-                ar & virtual_stigmergy_timestamp_;
-                ar & robot_id_;
-            }
-        public:
-            VirtualStigmergyPut(){};
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & virtual_stigmergy_id;
+            ar & virtual_stigmergy_key;
+            ar & virtual_stigmergy_value;
+            ar & virtual_stigmergy_timestamp;
+            ar & robot_id;
+        }
             
-             VirtualStigmergyPut(int id, const std::string& key, const std::string& value, time_t time_now, int robot_id):\
-                virtual_stigmergy_id_(id), virtual_stigmergy_key_(key), virtual_stigmergy_value_(value),\
-                virtual_stigmergy_timestamp_(time_now), robot_id_(robot_id){}
-                
-            int getVirtualStigmergyID(){return virtual_stigmergy_id_;}
-            const std::string& getVirtualStigmergyKey(){return virtual_stigmergy_key_;}
-            const std::string& getVirtualStigmergyValue(){return virtual_stigmergy_value_;}
-            time_t getVirtualStigmergyTimestamp(){return virtual_stigmergy_timestamp_;}
-            int getRobotID(){return robot_id_;}
+        VirtualStigmergyPut(){};
+            
+        VirtualStigmergyPut(int id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):\
+            virtual_stigmergy_id(id_), virtual_stigmergy_key(key_), virtual_stigmergy_value(value_),\
+            virtual_stigmergy_timestamp(time_now_), robot_id(robot_id_){}
     };
     
-    class NeighborBroadcastKeyValue{
-        private:
-            std::string key_;
-            std::string value_;
+    struct NeighborBroadcastKeyValue{
+        std::string key;
+        std::string value;
             
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & key_;
-                ar & value_;
-            }
-        public:
-            NeighborBroadcastKeyValue(){}
-            NeighborBroadcastKeyValue(const std::string& key, const std::string& value): key_(key), value_(value){}
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & key;
+            ar & value;
+        }
             
-            const std::string& getKey(){return key_;}
-            const std::string& getValue(){return value_;}
+        NeighborBroadcastKeyValue(){}
+        NeighborBroadcastKeyValue(const std::string& key_, const std::string& value_): key(key_), value(value_){}
     };
     
-    class Barrier_Syn
+    struct Barrier_Syn
     {
-        private:
-            std::string s_;
+        std::string s;
             
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & s_;
-            }
-        public:
-            Barrier_Syn(){};
-            Barrier_Syn(const std::string& s):s_(s){}
-            const std::string& getString(){return s_;}
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & s;
+        }
+            
+        Barrier_Syn(){};
+        Barrier_Syn(const std::string& s_):s(s_){}
     };
     
-    class Barrier_Ack
+    struct Barrier_Ack
     {
-        private:
-            int robot_id_;
+        int robot_id;
             
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version)
-            {
-                ar & robot_id_;
-            }
-        public:
-            Barrier_Ack(){};
-            Barrier_Ack(unsigned int robot_id):robot_id_(robot_id){}
-            int getRobotID(){return robot_id_;}
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & robot_id;
+        }
+       
+        Barrier_Ack(){};
+        Barrier_Ack(unsigned int robot_id_):robot_id(robot_id_){}
     };
 };
 #endif

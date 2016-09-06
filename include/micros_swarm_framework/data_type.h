@@ -50,206 +50,122 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm_framework{
     //Robot position in the world coordinate system
-    class Base{
-        private:
-            float x_;
-            float y_;
-            float z_;
+    struct Base{
+        float x;
+        float y;
+        float z;
             
-            //linear velocity
-            float vx_;
-            float vy_;
-            float vz_;
-        public:
-            Base() : x_(0),y_(0),z_(0),vx_(0),vy_(0),vz_(0){}
-            Base(float x,float y,float z,float vx,float vy,float vz) : x_(x),y_(y),z_(z),vx_(vx),vy_(vy),vz_(vz){}
-            float getX(){return x_;}
-            void setX(float x){x_=x;}
+        //linear velocity
+        float vx;
+        float vy;
+        float vz;
             
-            float getY(){return y_;}
-            void setY(float y){y_=y;}
-            
-            float getZ(){return z_;}
-            void setZ(float z){z_=z;}
-            
-            float getVX(){return vx_;}
-            void setVX(float vx){vx_=vx;}
-            
-            float getVY(){return vy_;}
-            void setVY(float vy){vy_=vy;}
-            
-            float getVZ(){return vz_;}
-            void setVZ(float vz){vz_=vz;}
+        Base() : x(0),y(0),z(0),vx(0),vy(0),vz(0){}
+        Base(float x_,float y_,float z_,float vx_,float vy_,float vz_) : x(x_),y(y_),z(z_),vx(vx_),vy(vy_),vz(vz_){}
     };
     
-    class NeighborBase{
-        private:
-            //Polar coordinates of the neighbor robot with respect to the local robot
-            float distance_;
-            float azimuth_;
-            float elevation_;
+    struct NeighborBase{
+        //Polar coordinates of the neighbor robot with respect to the local robot
+        float distance;
+        float azimuth;
+        float elevation;
         
-            //Cartesian coordinates of the neighbor robot with respect to the local robot
-            float x_;
-            float y_;
-            float z_;
+        //Cartesian coordinates of the neighbor robot with respect to the local robot
+        float x;
+        float y;
+        float z;
             
-            //linear velocity
-            float vx_;
-            float vy_;
-            float vz_;
-        public:
-            NeighborBase( float distance,float azimuth,float elevation,float x,float y,float z,float vx,float vy,float vz) \
-              :distance_(distance),azimuth_(azimuth),elevation_(elevation),x_(x),y_(y),z_(z),vx_(vx),vy_(vy),vz_(vz){}
-              
-            float getDistance(){return distance_;}
-            void setDistance(float distance){distance_=distance;}
+        //linear velocity
+        float vx;
+        float vy;
+        float vz;
             
-            float getAzimuth(){return azimuth_;}
-            void setAzimuth(float azimuth){azimuth_=azimuth;}
-            
-            float getElevation(){return elevation_;}
-            void setElevation(float elevation){elevation_=elevation;}
-            
-            float getX(){return x_;}
-            void setX(float x){x_=x;}
-            
-            float getY(){return y_;}
-            void setY(float y){y_=y;}
-            
-            float getZ(){return z_;}
-            void setZ(float z){z_=z;}
-            
-            float getVX(){return vx_;}
-            void setVX(float vx){vx_=vx;}
-            
-            float getVY(){return vy_;}
-            void setVY(float vy){vy_=vy;}
-            
-            float getVZ(){return vz_;}
-            void setVZ(float vz){vz_=vz;}
+        NeighborBase():distance(0),azimuth(0),elevation(0),x(0),y(0),z(0),vx(0),vy(0),vz(0){}
+        NeighborBase( float distance_,float azimuth_,float elevation_,float x_,float y_,float z_,float vx_,float vy_,float vz_) \
+          :distance(distance_),azimuth(azimuth_),elevation(elevation_),x(x_),y(y_),z(z_),vx(vx_),vy(vy_),vz(vz_){}
     };
     
     //This data structure contains all other robots's swarm information
-    class NeighborSwarmTuple{
-        private:
-            std::vector<int> swarm_id_vector_;
-            //when age_ is larger than the threshold, remove the tuple of the map 
-            int age_;
-        public:
-            NeighborSwarmTuple(const std::vector<int>& swarm_id_vector, int age):swarm_id_vector_(swarm_id_vector), age_(age){}
-            ~NeighborSwarmTuple(){}
+    struct NeighborSwarmTuple{
+        std::vector<int> swarm_id_vector;
+        //when age_ is larger than the threshold, remove the tuple of the map 
+        int age;
+            
+        NeighborSwarmTuple(const std::vector<int>& swarm_id_vector_, int age_):swarm_id_vector(swarm_id_vector_), age(age_){}
+        ~NeighborSwarmTuple(){}
     
+        
         void addSwarmID(int swarm_id)
         {
-            swarm_id_vector_.push_back(swarm_id);
+            swarm_id_vector.push_back(swarm_id);
         }
         
         void removeSwarmID(int swarm_id)
         {
-            swarm_id_vector_.erase(std::remove(swarm_id_vector_.begin(), swarm_id_vector_.end(), swarm_id), swarm_id_vector_.end());
-        }
-    
-        const std::vector<int>& getSwarmIDVector()
-        {
-            return swarm_id_vector_;
-        }
-    
-        void clearSwarmIDVector()
-        {
-            swarm_id_vector_.clear();
-        }
-    
-        void setAge(int age)
-        {
-            age_=age;
-        }
-    
-        int getAge()
-        {
-            return age_;
+            swarm_id_vector.erase(std::remove(swarm_id_vector.begin(), swarm_id_vector.end(), swarm_id), swarm_id_vector.end());
         }
         
         bool swarmIDExist(int swarm_id)
         {
             std::vector<int>::iterator it;
-            it=std::find(swarm_id_vector_.begin(), swarm_id_vector_.end(), swarm_id);
+            it=std::find(swarm_id_vector.begin(), swarm_id_vector.end(), swarm_id);
     
-            if(it!=swarm_id_vector_.end())
-            {
+            if(it!=swarm_id_vector.end())
                 return true;
-            }
             
             return false; 
         }
     };
     
-    class VirtualStigmergyTuple{
-        private:
-            std::string vstig_value_;
-            time_t vstig_timestamp_;
-            //the id of the robot which last change the virtual stigmergy
-            int robot_id_;
-        public:
-            VirtualStigmergyTuple()\
-              :vstig_value_(""), vstig_timestamp_(0), robot_id_(-1){}
+    struct VirtualStigmergyTuple{
+        std::string vstig_value;
+        time_t vstig_timestamp;
+        //the id of the robot which last change the virtual stigmergy
+        int robot_id;
             
-            VirtualStigmergyTuple(const std::string& value, time_t time, int id)\
-              :vstig_value_(value), vstig_timestamp_(time), robot_id_(id){}
-
-            const std::string& getVirtualStigmergyValue(){return vstig_value_;}
-            void setVirtualStigmergyValue(const std::string& value)
-            {
-                vstig_value_=value;
-            }
-    
-            time_t getVirtualStigmergyTimestamp(){return vstig_timestamp_;}
-            void setVirtualStigmergyTimestamp(time_t time_now){vstig_timestamp_=time_now;}
-    
-            int getRobotID(){return robot_id_;}
-            void setRobotID(int robot_id){robot_id_=robot_id;}
+        VirtualStigmergyTuple():vstig_value(""), vstig_timestamp(0), robot_id(-1){}
             
-            void print()
-            {
-                std::cout<<vstig_value_<<", "<<vstig_timestamp_<<", "<<robot_id_<<std::endl;
-            }
+        VirtualStigmergyTuple(const std::string& value_, time_t time_, int id_)\
+          :vstig_value(value_), vstig_timestamp(time_), robot_id(id_){}
+            
+        void print()
+        {
+            std::cout<<vstig_value<<", "<<vstig_timestamp<<", "<<robot_id<<std::endl;
+        }
     };
     
     //this macro definition is used to serialize the user-defined data type
-    #define BOOST_SERIALIZE  friend class boost::serialization::access;\
-                       template<class Archive>\
+    #define BOOST_SERIALIZE  template<class Archive>\
                        void serialize(Archive & ar, const unsigned int version)
                        
     #define MEMBER ar&
     
-    class TestVstigDataType{
-        private:
-            int a_;
-            float b_;
-            std::string c_;
+    struct TestVstigDataType{
+        int a;
+        float b;
+        std::string c;
             
-            BOOST_SERIALIZE
-            {
-                MEMBER a_;
-                MEMBER b_;
-                MEMBER c_;
-            }
+        BOOST_SERIALIZE
+        {
+            MEMBER a;
+            MEMBER b;
+            MEMBER c;
+        }
             
-        public:
-            TestVstigDataType(){}
-            TestVstigDataType(int a, float b, std::string c)
-            {
-                a_=a;
-                b_=b;
-                c_=c;
-            }
+        TestVstigDataType(){}
+        TestVstigDataType(int a_, float b_, std::string c_)
+        {
+            a=a_;
+            b=b_;
+            c=c_;
+        }
             
-            void printTestVstigDataType()
-            {
-                std::cout<<"a_ = "<<a_<<std::endl;
-                std::cout<<"b_ = "<<b_<<std::endl;
-                std::cout<<"c_ = "<<c_<<std::endl;
-            }
+        void printTestVstigDataType()
+        {
+            std::cout<<"a = "<<a<<std::endl;
+            std::cout<<"b = "<<b<<std::endl;
+            std::cout<<"c = "<<c<<std::endl;
+        }
     };
 };
 

@@ -287,10 +287,10 @@ namespace micros_swarm_framework{
                 
                 for(it=data_.begin();it!=data_.end();it++)
                 {
-                    std::cout<<"---"<<it->first<<":  "<<it->second.getDistance()<<","<< \
-                        it->second.getAzimuth()<<","<<it->second.getElevation()<<","<< \
-                        it->second.getX()<<","<<it->second.getY()<<","<<it->second.getZ()<< \
-                        it->second.getVX()<<","<<it->second.getVY()<<","<<it->second.getVZ()<< \
+                    std::cout<<"---"<<it->first<<":  "<<it->second.distance<<","<< \
+                        it->second.azimuth<<","<<it->second.elevation<<","<< \
+                        it->second.x<<","<<it->second.y<<","<<it->second.z<< \
+                        it->second.vx<<","<<it->second.vy<<","<<it->second.vz<< \
                         "---"<<std::endl;
                 }
             }

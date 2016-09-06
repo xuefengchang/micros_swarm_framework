@@ -53,11 +53,11 @@ namespace micros_swarm_framework{
     XY App1::force_sum(micros_swarm_framework::NeighborBase n, XY &s)
     {
         micros_swarm_framework::Base l=getRobotBase();
-        float xl=l.getX();
-        float yl=l.getY();
+        float xl=l.x;
+        float yl=l.y;
     
-        float xn=n.getX();
-        float yn=n.getY();
+        float xn=n.x;
+        float yn=n.y;
     
         float dist=sqrt(pow((xl-xn),2)+pow((yl-yn),2));
      
