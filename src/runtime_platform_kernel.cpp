@@ -66,6 +66,7 @@ namespace micros_swarm_framework{
             ros::NodeHandle node_handle_;
             boost::shared_ptr<RuntimePlatform> rtp_;
             boost::shared_ptr<CommunicationInterface> communicator_;
+            boost::shared_ptr<PacketParser> parser_;
             
             ros::Timer publish_robot_base_timer_;
             ros::Timer publish_swarm_list_timer_;
@@ -241,16 +242,22 @@ namespace micros_swarm_framework{
         
         setParameters();
     
+        //construct runtime platform
         rtp_=Singleton<RuntimePlatform>::getSingleton(robot_id_);
+        rtp_->setNeighborDistance(default_neighbor_distance_);
+        //construct communicator
         #ifdef ROS
         communicator_=Singleton<ROSCommunication>::getSingleton(node_handle_);
         #endif
         #ifdef OPENSPLICE_DDS
         communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
         #endif
-        communicator_->receive(packetParser);
+        //construct packet parser
+        parser_.reset(new PacketParser());
+        boost::function<void(const MSFPPacket& packet)> parser_func=boost::bind(&PacketParser::parser, parser_, _1);
+        //transfer the parser function to the communicator 
+        communicator_->receive(parser_func);
         
-        rtp_->setNeighborDistance(default_neighbor_distance_);
         publish_robot_base_timer_ = node_handle_.createTimer(ros::Duration(publish_robot_base_duration_), &RuntimePlatformKernel::publish_robot_base, this);
         publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(publish_swarm_list_duration_), &RuntimePlatformKernel::publish_swarm_list, this);
         barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimePlatformKernel::barrier_check, this);

@@ -34,7 +34,7 @@ using namespace DDS;
 
 namespace micros_swarm_framework{
     
-    Publisher::Publisher(std::string topic_name)
+    Publisher::Publisher(const std::string& topic_name)
     {
         domain = 0;
         topic_name_ = topic_name.data();

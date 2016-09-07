@@ -95,9 +95,9 @@ namespace micros_swarm_framework{
             ar & valid;
         }
             
-        SingleRobotBroadcastBase():\
+        SingleRobotBroadcastBase():
             robot_id(-1), robot_x(0), robot_y(0), robot_z(0),  robot_vx(0), robot_vy(0), robot_vz(0), valid(-1){}
-        SingleRobotBroadcastBase(int robot_id_, float robot_x_ ,float robot_y_, float robot_z_, float robot_vx_, float robot_vy_, float robot_vz_, int valid_):\
+        SingleRobotBroadcastBase(int robot_id_, float robot_x_ ,float robot_y_, float robot_z_, float robot_vx_, float robot_vy_, float robot_vz_, int valid_):
             robot_id(robot_id_), robot_x(robot_x_), robot_y(robot_y_), robot_z(robot_z_),  robot_vx(robot_vx_), robot_vy(robot_vy_), robot_vz(robot_vz_), valid(valid_){}
     };
     
@@ -113,7 +113,7 @@ namespace micros_swarm_framework{
         }
             
         SingleRobotJoinSwarm(){}
-        SingleRobotJoinSwarm(int robot_id_, int swarm_id_):\
+        SingleRobotJoinSwarm(int robot_id_, int swarm_id_):
             robot_id(robot_id_), swarm_id(swarm_id_){}
     };
     
@@ -129,7 +129,7 @@ namespace micros_swarm_framework{
         }
             
         SingleRobotLeaveSwarm(){}
-        SingleRobotLeaveSwarm(int robot_id_, int swarm_id_):\
+        SingleRobotLeaveSwarm(int robot_id_, int swarm_id_):
             robot_id(robot_id_), swarm_id(swarm_id_){}
     };
     
@@ -145,7 +145,7 @@ namespace micros_swarm_framework{
         }
             
         SingleRobotSwarmList(){}
-        SingleRobotSwarmList(int robot_id_, const std::vector<int>& swarm_list_):\
+        SingleRobotSwarmList(int robot_id_, const std::vector<int>& swarm_list_):
             robot_id(robot_id_), swarm_list(swarm_list_){}
     };
     
@@ -169,8 +169,8 @@ namespace micros_swarm_framework{
             
         VirtualStigmergyQuery(){}
 
-        VirtualStigmergyQuery(int id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):\
-            virtual_stigmergy_id(id_), virtual_stigmergy_key(key_), virtual_stigmergy_value(value_),\
+        VirtualStigmergyQuery(int id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):
+            virtual_stigmergy_id(id_), virtual_stigmergy_key(key_), virtual_stigmergy_value(value_),
             virtual_stigmergy_timestamp(time_now_), robot_id(robot_id_){}
     };
 
@@ -194,8 +194,8 @@ namespace micros_swarm_framework{
             
         VirtualStigmergyPut(){};
             
-        VirtualStigmergyPut(int id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):\
-            virtual_stigmergy_id(id_), virtual_stigmergy_key(key_), virtual_stigmergy_value(value_),\
+        VirtualStigmergyPut(int id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):
+            virtual_stigmergy_id(id_), virtual_stigmergy_key(key_), virtual_stigmergy_value(value_),
             virtual_stigmergy_timestamp(time_now_), robot_id(robot_id_){}
     };
     

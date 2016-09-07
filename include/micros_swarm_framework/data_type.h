@@ -38,7 +38,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 #include <boost/variant.hpp>
-#include <boost/function.hpp>
 #include <boost/foreach.hpp>
 
 #include <boost/archive/text_oarchive.hpp>
@@ -84,8 +83,8 @@ namespace micros_swarm_framework{
         float vz;
             
         NeighborBase():distance(0),azimuth(0),elevation(0),x(0),y(0),z(0),vx(0),vy(0),vz(0){}
-        NeighborBase( float distance_,float azimuth_,float elevation_,float x_,float y_,float z_,float vx_,float vy_,float vz_) \
-          :distance(distance_),azimuth(azimuth_),elevation(elevation_),x(x_),y(y_),z(z_),vx(vx_),vy(vy_),vz(vz_){}
+        NeighborBase( float distance_,float azimuth_,float elevation_,float x_,float y_,float z_,float vx_,float vy_,float vz_)
+            :distance(distance_),azimuth(azimuth_),elevation(elevation_),x(x_),y(y_),z(z_),vx(vx_),vy(vy_),vz(vz_){}
     };
     
     //This data structure contains all other robots's swarm information
@@ -128,8 +127,8 @@ namespace micros_swarm_framework{
             
         VirtualStigmergyTuple():vstig_value(""), vstig_timestamp(0), robot_id(-1){}
             
-        VirtualStigmergyTuple(const std::string& value_, time_t time_, int id_)\
-          :vstig_value(value_), vstig_timestamp(time_), robot_id(id_){}
+        VirtualStigmergyTuple(const std::string& value_, time_t time_, int id_)
+            :vstig_value(value_), vstig_timestamp(time_), robot_id(id_){}
             
         void print()
         {
@@ -139,7 +138,7 @@ namespace micros_swarm_framework{
     
     //this macro definition is used to serialize the user-defined data type
     #define BOOST_SERIALIZE  template<class Archive>\
-                       void serialize(Archive & ar, const unsigned int version)
+                             void serialize(Archive & ar, const unsigned int version)
                        
     #define MEMBER ar&
     

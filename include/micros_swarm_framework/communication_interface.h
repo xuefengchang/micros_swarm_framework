@@ -52,9 +52,10 @@ namespace micros_swarm_framework{
     class CommunicationInterface{
         public:   
             std::string name_;
+            boost::function<void(const MSFPPacket& packet)> parser_;
             
-            virtual void broadcast(micros_swarm_framework::MSFPPacket msfp_packet)=0;
-            virtual void receive(void (*callback)(const MSFPPacket& packet))=0;
+            virtual void broadcast(const MSFPPacket& msfp_packet)=0;
+            virtual void receive(boost::function<void(const MSFPPacket& packet)> callback)=0;
     };
 };
 #endif

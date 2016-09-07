@@ -25,6 +25,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <iostream>
 #include <string.h>
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
 #include "ccpp_dds_dcps.h"
 #include "check_status.h"
 #include "ccpp_MSFPPacket.h"
@@ -37,8 +39,9 @@ namespace micros_swarm_framework{
     class Subscriber
     {
         public:
-            Subscriber(std::string topic_name);
+            Subscriber(const std::string& topic_name);
             void subscribe(void (*callBack)(const MSFPPacket& packet));
+            void subscribe(boost::function<void(const MSFPPacket&)> callBack);
             ~Subscriber();
         private:
             DomainId_t  domain;

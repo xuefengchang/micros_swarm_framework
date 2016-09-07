@@ -48,7 +48,7 @@ namespace micros_swarm_framework{
         for (CORBA::ULong i = 0; i < packetSeq.length(); i++)
         {
             try{
-                (*callBack_)(packetSeq[i]);
+                callBack_(packetSeq[i]);
             }catch(const std::bad_alloc&){
                 return;
             }

@@ -228,7 +228,7 @@ namespace micros_swarm_framework{
         setNeighborDistance(12);
         pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         sub_ = nh_.subscribe("base_pose_ground_truth", 1000, &App3::baseCallback, this, ros::TransportHints().udp());
-        ros::Duration(5).sleep();
+        ros::Duration(5).sleep();  //this is necessary, in order that the runtime platform kernel of the robot has enough time to publish it's base information.
         
         timer_ = nh_.createTimer(ros::Duration(interval), &App3::publish_cmd, this);
     }

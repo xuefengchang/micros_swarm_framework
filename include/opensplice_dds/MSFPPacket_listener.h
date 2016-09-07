@@ -26,6 +26,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
 #include "ccpp_dds_dcps.h" 
 #include "opensplice_dds/check_status.h"
 #include "ccpp_MSFPPacket.h"
@@ -37,7 +39,7 @@ namespace micros_swarm_framework{
         public:
             MSFPPacketDataReader_var MSFPPacketDR_;
             
-            void (*callBack_)(const MSFPPacket& packet);
+            boost::function<void(const MSFPPacket&)> callBack_;
 
 	        MSFPPacketListener () 
 	        {

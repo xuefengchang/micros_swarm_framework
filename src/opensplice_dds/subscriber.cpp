@@ -34,7 +34,7 @@ using namespace DDS;
 
 namespace micros_swarm_framework{
     
-    Subscriber::Subscriber(std::string topic_name)
+    Subscriber::Subscriber(const std::string& topic_name)
     {
         domain = 0;
         topic_name_ = topic_name.data();
@@ -113,6 +113,19 @@ namespace micros_swarm_framework{
     {
         MSFPPacketListener *myListener = new MSFPPacketListener();
         myListener->callBack_ = callBack;  //set callBack function
+        //myListener->callBack_ = boost::bind(callBack, _1);  //set callBack function
+        myListener->MSFPPacketDR_ = MSFPPacketDataReader::_narrow(MSFPPacketDR.in());
+        checkHandle(myListener->MSFPPacketDR_.in(), "MSFPPacketDataReader::_narrow");
+
+        //DDS::StatusMask mask = DDS::DATA_AVAILABLE_STATUS | DDS::REQUESTED_DEADLINE_MISSED_STATUS;
+        DDS::StatusMask mask = DDS::DATA_AVAILABLE_STATUS;
+        myListener->MSFPPacketDR_->set_listener(myListener, mask);
+    }
+    
+    void Subscriber::subscribe(boost::function<void(const MSFPPacket&)> callBack)
+    {
+        MSFPPacketListener *myListener = new MSFPPacketListener();
+        myListener->callBack_ = callBack;  //set callBack function
         myListener->MSFPPacketDR_ = MSFPPacketDataReader::_narrow(MSFPPacketDR.in());
         checkHandle(myListener->MSFPPacketDR_.in(), "MSFPPacketDataReader::_narrow");
 
@@ -123,7 +136,6 @@ namespace micros_swarm_framework{
     
     Subscriber::~Subscriber()
     {
-        
         //Remove the DataReade
         status = subscriber_->delete_datareader(MSFPPacketDR.in());
         checkStatus(status, "DDS::Subscriber::delete_datareader");

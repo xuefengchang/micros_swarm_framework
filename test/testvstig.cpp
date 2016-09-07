@@ -60,10 +60,10 @@ namespace micros_swarm_framework{
     
     void TestVstig::start()
     {
-        setNeighborDistance(1.1);
+        setNeighborDistance(1.2);
         sub_ = nh_.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
         
-        ros::Duration(5).sleep();  //must use. TODO
+        ros::Duration(5).sleep();  //TODO. this is necessary, in order that the runtime platform kernel of the robot has enough time to publish it's base information.
         
         //test virtual stigmergy
         vs=micros_swarm_framework::VirtualStigmergy<float>(1);

@@ -37,7 +37,7 @@ namespace micros_swarm_framework{
     class Publisher
     {
         public:
-            Publisher(std::string topic_name);
+            Publisher(const std::string& topic_name);
             void publish(const MSFPPacket& packet);
             ~Publisher();
         private:
