@@ -59,9 +59,12 @@ namespace micros_swarm_framework{
         float vx;
         float vy;
         float vz;
+        
+        int valid;  //check if the data is valid. 0(unvalid), 1(valid), -1(unknown)
             
-        Base() : x(0),y(0),z(0),vx(0),vy(0),vz(0){}
-        Base(float x_,float y_,float z_,float vx_,float vy_,float vz_) : x(x_),y(y_),z(z_),vx(vx_),vy(vy_),vz(vz_){}
+        Base() : x(0),y(0),z(0),vx(0),vy(0),vz(0),valid(-1){}
+        Base(float x_,float y_,float z_,float vx_,float vy_,float vz_) : x(x_),y(y_),z(z_),vx(vx_),vy(vy_),vz(vz_),valid(-1){}
+        Base(float x_,float y_,float z_,float vx_,float vy_,float vz_,int valid_) : x(x_),y(y_),z(z_),vx(vx_),vy(vy_),vz(vz_),valid(valid_){}
     };
     
     struct NeighborBase{

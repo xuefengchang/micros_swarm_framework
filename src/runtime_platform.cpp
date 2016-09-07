@@ -99,6 +99,9 @@ namespace micros_swarm_framework{
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex4_);
         robot_base_=robot_base;
+        
+        if(robot_base.valid==-1)
+            robot_base_.valid=1;
     }    
     
     void RuntimePlatform::printRobotBase()
@@ -388,7 +391,7 @@ namespace micros_swarm_framework{
         }
     }
     
-    void RuntimePlatform::insertOrUpdateVirtualStigmergy(int id, const std::string& key, const std::string& value, time_t time_now, int robot_id)
+    void RuntimePlatform::insertOrUpdateVirtualStigmergy(int id, const std::string& key, const std::string& value, const time_t& time_now, int robot_id)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         boost::upgrade_lock<boost::shared_mutex> lock(mutex8_);

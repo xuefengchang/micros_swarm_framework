@@ -78,9 +78,7 @@ namespace micros_swarm_framework{
         
         //ignore the packet of the local robot
         if(packet_source==shm_rid)
-        {
             return;
-        }
         
         try{
         const int packet_type=packet.packet_type;
@@ -99,38 +97,21 @@ namespace micros_swarm_framework{
             case SINGLE_ROBOT_BROADCAST_BASE:{
                 //std::cout<<"SINGLE_ROBOT_BROADCAST_ID"<<std::endl;
                 micros_swarm_framework::SingleRobotBroadcastBase srbb;
-                
                 archive>>srbb;
                 
-                int robot_id=srbb.robot_id;
-                float distance=0;
-                float azimuth=0;
-                float elevation=0;
-                float x=srbb.robot_x;
-                float y=srbb.robot_y;
-                float z=srbb.robot_z;
-                float vx=srbb.robot_vx;
-                float vy=srbb.robot_vy;
-                float vz=srbb.robot_vz;
-                
-                if((x+y+z+vx+vy+vz)==0)  //ignore the default Base value  TODO...
+                if(srbb.valid!=1)  //ignore the default Base value.
                     return;
                 
                 const Base& self=rtp->getRobotBase();
-                Base neighbor(x, y, z, vx, vy, vz);
+                Base neighbor(srbb.robot_x, srbb.robot_y, srbb.robot_z, srbb.robot_vx, srbb.robot_vy, srbb.robot_vz);
                 
-                double neighbor_distance=rtp->getNeighborDistance();
-                CheckNeighbor cn(neighbor_distance);
-                micros_swarm_framework::CheckNeighborInterface *cn_p=&cn;
+                float neighbor_distance=rtp->getNeighborDistance();
+                boost::shared_ptr<CheckNeighborInterface> cni(new CheckNeighbor(neighbor_distance));
                 
-                if(cn_p->isNeighbor(self, neighbor))
-                {
-                    rtp->insertOrUpdateNeighbor(robot_id, distance, azimuth, elevation, x, y, z, vx, vy, vz);
-                }
+                if(cni->isNeighbor(self, neighbor))
+                    rtp->insertOrUpdateNeighbor(srbb.robot_id, 0, 0, 0, srbb.robot_x, srbb.robot_y, srbb.robot_z, srbb.robot_vx, srbb.robot_vy, srbb.robot_vz);
                 else
-                {
-                    rtp->deleteNeighbor(robot_id);
-                }
+                    rtp->deleteNeighbor(srbb.robot_id);
                 
                 break;
             }

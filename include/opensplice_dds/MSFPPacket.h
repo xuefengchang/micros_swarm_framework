@@ -20,11 +20,11 @@ namespace micros_swarm_framework
 
    struct MSFPPacket
    {
-         DDS::Long packet_source;
-         DDS::UShort packet_version;
-         DDS::UShort packet_type;
-         DDS::String_mgr packet_data;
-         DDS::LongLong package_check_sum;
+       DDS::Long packet_source;
+       DDS::UShort packet_version;
+       DDS::UShort packet_type;
+       DDS::String_mgr packet_data;
+       DDS::LongLong package_check_sum;
    };
 
    typedef DDS_DCPSStruct_var < MSFPPacket> MSFPPacket_var;

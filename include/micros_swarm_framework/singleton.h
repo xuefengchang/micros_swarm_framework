@@ -33,8 +33,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm_framework{
     
-    //boost::mutex micros_swarm_framework_mut;  
-    
     template<class T>
     class Singleton
     {

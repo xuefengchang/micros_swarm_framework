@@ -135,7 +135,7 @@ namespace micros_swarm_framework{
         
         const Base& l=rtp_->getRobotBase();
         
-        SingleRobotBroadcastBase srbb(robot_id, l.x, l.y, l.z, l.vx, l.vy, l.vz);
+        SingleRobotBroadcastBase srbb(robot_id, l.x, l.y, l.z, l.vx, l.vy, l.vz, l.valid);
         
         std::ostringstream archiveStream;
         boost::archive::text_oarchive archive(archiveStream);

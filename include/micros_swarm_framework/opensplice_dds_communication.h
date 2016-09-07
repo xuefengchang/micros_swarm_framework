@@ -46,9 +46,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 namespace micros_swarm_framework{
     
     class OpenSpliceDDSCommunication : public CommunicationInterface{
-        private:
-            boost::shared_ptr<micros_swarm_framework::Publisher> packet_publisher_;
-            boost::shared_ptr<micros_swarm_framework::Subscriber> packet_subscriber_;
         public:
             OpenSpliceDDSCommunication()
             {
@@ -66,6 +63,9 @@ namespace micros_swarm_framework{
                 packet_subscriber_.reset(new micros_swarm_framework::Subscriber("micros_swarm_framework_topic"));
                 packet_subscriber_->subscribe(callback);
             }
+        private:
+            boost::shared_ptr<micros_swarm_framework::Publisher> packet_publisher_;
+            boost::shared_ptr<micros_swarm_framework::Subscriber> packet_subscriber_;
     };
 };
 #endif

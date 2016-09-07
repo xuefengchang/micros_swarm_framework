@@ -51,10 +51,6 @@ namespace micros_swarm_framework{
     
     template<class Type>
     class VirtualStigmergy{
-        private:
-            int vstig_id_;
-            boost::shared_ptr<RuntimePlatform> rtp_;
-            boost::shared_ptr<CommunicationInterface> communicator_;
         public:
             VirtualStigmergy(){vstig_id_=-1;}
             
@@ -107,11 +103,9 @@ namespace micros_swarm_framework{
                 archive<<data;
                 std::string s=archiveStream.str();
                 
-                time_t time_now=time(0);
-                int robot_id=rtp_->getRobotID();
-                rtp_->insertOrUpdateVirtualStigmergy(vstig_id_, key, s, time_now, robot_id);
+                rtp_->insertOrUpdateVirtualStigmergy(vstig_id_, key, s, time(0), rtp_->getRobotID());
                 
-                VirtualStigmergyPut vsp(vstig_id_, key, s, time_now, robot_id);
+                VirtualStigmergyPut vsp(vstig_id_, key, s, time(0), rtp_->getRobotID());
                 
                 std::ostringstream archiveStream2;
                 boost::archive::text_oarchive archive2(archiveStream2);
@@ -119,7 +113,7 @@ namespace micros_swarm_framework{
                 std::string vsp_str=archiveStream2.str();   
                       
                 micros_swarm_framework::MSFPPacket p;
-                p.packet_source=robot_id;
+                p.packet_source=rtp_->getRobotID();
                 p.packet_version=1;
                 p.packet_type=VIRTUAL_STIGMERGY_PUT;
                 #ifdef ROS
@@ -180,6 +174,10 @@ namespace micros_swarm_framework{
             {
                 return rtp_->getVirtualStigmergySize(vstig_id_);
             }
+        private:
+            int vstig_id_;
+            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<CommunicationInterface> communicator_;
     };
 }
 #endif

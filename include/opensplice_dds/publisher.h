@@ -36,11 +36,13 @@ using namespace DDS;
 namespace micros_swarm_framework{
     class Publisher
     {
+        public:
+            Publisher(std::string topic_name);
+            void publish(const MSFPPacket& packet);
+            ~Publisher();
         private:
             DomainId_t  domain;
-            
             const char *topic_name_;
-            
             char  *MSFPPacketTypeName;
             
             DomainParticipantFactory_var  dpf;
@@ -56,11 +58,6 @@ namespace micros_swarm_framework{
 
             MSFPPacketTypeSupport_var  MSFPPacketTS;
             MSFPPacketDataWriter_var  MSFPPacketDW;
-
-        public:
-            Publisher(std::string topic_name);
-            void publish(const MSFPPacket& packet);
-            ~Publisher();
     };
 };
 

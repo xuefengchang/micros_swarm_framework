@@ -36,12 +36,14 @@ using namespace DDS;
 namespace micros_swarm_framework{
     class Subscriber
     {
+        public:
+            Subscriber(std::string topic_name);
+            void subscribe(void (*callBack)(const MSFPPacket& packet));
+            ~Subscriber();
         private:
             DomainId_t  domain;
             ReturnCode_t  status;
-            
             const char *topic_name_;
-            
             char  *MSFPPacketTypeName;
             
             //Generic DDS entities
@@ -58,10 +60,6 @@ namespace micros_swarm_framework{
             TopicQos  topic_qos;
             SubscriberQos  sub_qos;
             DataReaderQos  dr_qos;
-        public:
-            Subscriber(std::string topic_name);
-            void subscribe(void (*callBack)(const MSFPPacket& packet));
-            ~Subscriber();
     };
 };
 

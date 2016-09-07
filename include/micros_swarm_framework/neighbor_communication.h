@@ -49,10 +49,6 @@ namespace micros_swarm_framework{
     
     template<class Type>
     class Broadcaster{
-        private:
-            boost::shared_ptr<RuntimePlatform> rtp_;
-            boost::shared_ptr<CommunicationInterface> communicator_;
-            std::string key_;
         public:
             Broadcaster(const std::string& key)
             {
@@ -94,13 +90,13 @@ namespace micros_swarm_framework{
                 
                 communicator_->broadcast(p);
             }
-    };
-    
-    class Listener{
         private:
             boost::shared_ptr<RuntimePlatform> rtp_;
             boost::shared_ptr<CommunicationInterface> communicator_;
             std::string key_;
+    };
+    
+    class Listener{
         public:
             Listener(const std::string& key)
             {
@@ -128,6 +124,10 @@ namespace micros_swarm_framework{
             {
                 rtp_->deleteCallbackFunctions(key_);
             }
+        private:
+            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<CommunicationInterface> communicator_;
+            std::string key_;
     };
     
     template<class Type>

@@ -51,10 +51,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 namespace micros_swarm_framework{
     
     class Swarm{
-        private:
-            int swarm_id_; 
-            boost::shared_ptr<RuntimePlatform> rtp_;
-            boost::shared_ptr<CommunicationInterface> communicator_;
         public:
             Swarm()
             {
@@ -322,6 +318,10 @@ namespace micros_swarm_framework{
                 }
                 std::cout<<std::endl;
             }
+        private:
+            int swarm_id_; 
+            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<CommunicationInterface> communicator_;
     };
 };
 #endif

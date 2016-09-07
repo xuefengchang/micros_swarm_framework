@@ -42,10 +42,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 namespace micros_swarm_framework{
     
     class ROSCommunication : public CommunicationInterface{
-        private:
-            ros::NodeHandle node_handle_;
-            ros::Publisher packet_publisher_;
-            ros::Subscriber packet_subscriber_;
         public:
             ROSCommunication()
             {
@@ -83,6 +79,10 @@ namespace micros_swarm_framework{
             {
                 packet_subscriber_ = node_handle_.subscribe("/micros_swarm_framework_topic", 1000, callback, ros::TransportHints().udp());
             }
+        private:
+            ros::NodeHandle node_handle_;
+            ros::Publisher packet_publisher_;
+            ros::Subscriber packet_subscriber_;
     };
 };
 #endif

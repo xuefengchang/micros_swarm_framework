@@ -56,9 +56,6 @@ namespace micros_swarm_framework{
     };
     
     class CheckNeighbor : public CheckNeighborInterface{
-        private:
-            float neighbor_distance_;
-    
         public:
             CheckNeighbor(float neighbor_distance)
             {
@@ -80,6 +77,8 @@ namespace micros_swarm_framework{
                     
                 return false;
             }
+        private:
+            float neighbor_distance_;
     };
 };
 

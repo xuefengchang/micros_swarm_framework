@@ -54,21 +54,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 namespace micros_swarm_framework{
 
     class  RuntimePlatform{
-        private:
-            int robot_id_;
-            int robot_type_;  //TODO
-            int robot_status_;  //TODO
-            Base robot_base_;
-            std::map<int, NeighborBase> neighbors_;
-            std::map<int, bool> swarms_;
-            std::map<int, NeighborSwarmTuple> neighbor_swarms_;
-            std::map<int, std::map<std::string, VirtualStigmergyTuple> > virtual_stigmergy_;
-            float neighbor_distance_;
-            std::set<int> barrier_;
-            std::map<std::string, boost::function<void(const std::string&)> > callback_functions_;
-            boost::shared_mutex mutex1_, mutex2_, mutex3_, mutex4_, mutex5_,
-                                mutex6_, mutex7_, mutex8_, mutex9_, mutex10_,
-                                mutex11_;
         public:
             RuntimePlatform();
             RuntimePlatform(int robot_id);
@@ -112,7 +97,7 @@ namespace micros_swarm_framework{
             void printNeighborSwarm();
             
             void createVirtualStigmergy(int id);
-            void insertOrUpdateVirtualStigmergy(int id, const std::string& key, const std::string& value, time_t time_now, int robot_id);
+            void insertOrUpdateVirtualStigmergy(int id, const std::string& key, const std::string& value, const time_t& time_now, int robot_id);
             void getVirtualStigmergyTuple(int id, const std::string& key, VirtualStigmergyTuple& vstig_tuple);
             int getVirtualStigmergySize(int id);
             void deleteVirtualStigmergy(int id);
@@ -129,6 +114,21 @@ namespace micros_swarm_framework{
             void doNothing(const std::string& value_str);
             const boost::function<void(const std::string&)>& getCallbackFunctions(const std::string& key);
             void deleteCallbackFunctions(const std::string& key);
+        private:
+            int robot_id_;
+            int robot_type_;  //TODO
+            int robot_status_;  //TODO
+            Base robot_base_;
+            std::map<int, NeighborBase> neighbors_;
+            std::map<int, bool> swarms_;
+            std::map<int, NeighborSwarmTuple> neighbor_swarms_;
+            std::map<int, std::map<std::string, VirtualStigmergyTuple> > virtual_stigmergy_;
+            float neighbor_distance_;
+            std::set<int> barrier_;
+            std::map<std::string, boost::function<void(const std::string&)> > callback_functions_;
+            boost::shared_mutex mutex1_, mutex2_, mutex3_, mutex4_, mutex5_,
+                                mutex6_, mutex7_, mutex8_, mutex9_, mutex10_,
+                                mutex11_;
     };
 };
 

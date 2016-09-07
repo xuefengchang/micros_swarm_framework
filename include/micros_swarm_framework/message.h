@@ -79,6 +79,8 @@ namespace micros_swarm_framework{
         float robot_vx;
         float robot_vy;
         float robot_vz;
+        
+        int valid;
             
         template<class Archive>
         void serialize(Archive & ar, const unsigned int version)
@@ -90,12 +92,13 @@ namespace micros_swarm_framework{
             ar & robot_vx;
             ar & robot_vy;
             ar & robot_vz;
+            ar & valid;
         }
             
         SingleRobotBroadcastBase():\
-            robot_id(-1), robot_x(0), robot_y(0), robot_z(0),  robot_vx(0), robot_vy(0), robot_vz(0){}
-        SingleRobotBroadcastBase(int robot_id_, float robot_x_ ,float robot_y_, float robot_z_, float robot_vx_, float robot_vy_, float robot_vz_):\
-            robot_id(robot_id_), robot_x(robot_x_), robot_y(robot_y_), robot_z(robot_z_),  robot_vx(robot_vx_), robot_vy(robot_vy_), robot_vz(robot_vz_){}
+            robot_id(-1), robot_x(0), robot_y(0), robot_z(0),  robot_vx(0), robot_vy(0), robot_vz(0), valid(-1){}
+        SingleRobotBroadcastBase(int robot_id_, float robot_x_ ,float robot_y_, float robot_z_, float robot_vx_, float robot_vy_, float robot_vz_, int valid_):\
+            robot_id(robot_id_), robot_x(robot_x_), robot_y(robot_y_), robot_z(robot_z_),  robot_vx(robot_vx_), robot_vy(robot_vy_), robot_vz(robot_vz_), valid(valid_){}
     };
     
     struct SingleRobotJoinSwarm{

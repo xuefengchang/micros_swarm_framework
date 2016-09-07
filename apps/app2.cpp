@@ -199,9 +199,9 @@ namespace micros_swarm_framework{
     {
         init();
     
+        pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         sub_ = nh_.subscribe("base_pose_ground_truth", 1000, &App2::baseCallback, this, ros::TransportHints().udp());
         ros::Duration(5).sleep(); 
-        pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         
         boost::function<bool()> bfred=boost::bind(&App2::red, this, getRobotID());
         boost::function<bool()> bfblue=boost::bind(&App2::blue, this, getRobotID());

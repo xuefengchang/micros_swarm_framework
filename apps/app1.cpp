@@ -116,9 +116,9 @@ namespace micros_swarm_framework{
     {
         init();
         
+        pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         sub_ = nh_.subscribe("base_pose_ground_truth", 1000, &App1::baseCallback, this, ros::TransportHints().udp());
         ros::Duration(5).sleep();
-        pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         
         motion();
     }

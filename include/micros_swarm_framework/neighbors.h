@@ -43,9 +43,6 @@ namespace micros_swarm_framework{
     
     template<class Type>
     class Neighbors{
-        private:
-            boost::shared_ptr<RuntimePlatform> rtp_;
-            std::map<int, Type> data_;
         public:
             Neighbors()
             {
@@ -229,6 +226,9 @@ namespace micros_swarm_framework{
                 
                 return result;
             }
+        private:
+            boost::shared_ptr<RuntimePlatform> rtp_;
+            std::map<int, Type> data_;
     };
     
     /*
@@ -236,9 +236,6 @@ namespace micros_swarm_framework{
      */
     template<>
     class Neighbors<NeighborBase>{
-        private:
-            boost::shared_ptr<RuntimePlatform> rtp_;
-            std::map<int, NeighborBase> data_;
         public:
             Neighbors()
             {
@@ -440,6 +437,9 @@ namespace micros_swarm_framework{
                 
                 return result;
             }
+        private:
+            boost::shared_ptr<RuntimePlatform> rtp_;
+            std::map<int, NeighborBase> data_;
     };
 };
 #endif
