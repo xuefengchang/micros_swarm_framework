@@ -96,7 +96,7 @@ namespace micros_swarm_framework{
             
             ~VirtualStigmergy(){}
             
-            void virtualStigmergyPut(const std::string& key, const Type& data)
+            void put(const std::string& key, const Type& data)
             {
                 std::ostringstream archiveStream;
                 boost::archive::text_oarchive archive(archiveStream);
@@ -128,7 +128,7 @@ namespace micros_swarm_framework{
                 communicator_->broadcast(p);
             }
             
-            Type virtualStigmergyGet(const std::string& key)
+            Type get(const std::string& key)
             {
                 VirtualStigmergyTuple vst;
                 rtp_->getVirtualStigmergyTuple(vstig_id_, key, vst);
@@ -170,7 +170,7 @@ namespace micros_swarm_framework{
                 return data;  
             }
             
-            int virtualStigmergySize()
+            int size()
             {
                 return rtp_->getVirtualStigmergySize(vstig_id_);
             }

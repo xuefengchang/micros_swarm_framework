@@ -80,7 +80,7 @@ namespace micros_swarm_framework{
     
         micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
         boost::function<XY(NeighborBase, XY &)> bf=boost::bind(&App1::force_sum, this, _1, _2);
-        sum=n.neighborsReduce(bf, sum);
+        sum=n.reduce(bf, sum);
     
         return sum;
     }

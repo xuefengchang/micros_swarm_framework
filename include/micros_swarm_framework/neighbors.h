@@ -70,12 +70,12 @@ namespace micros_swarm_framework{
             
             }
             
-            std::map<int, Type>& getData()
+            std::map<int, Type>& data()
             {
                 return data_;
             }
             
-            void printData()
+            void print()
             {
                 typename std::map<int, Type>::iterator it;
                 
@@ -85,35 +85,35 @@ namespace micros_swarm_framework{
                 }
             }
             
-            void neighborsForeach(void(*foreach)(Type))
+            void foreach(void(*f)(Type))
             {
                 typename std::map<int, Type>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    (*foreach)(n_it->second);
+                    (*f)(n_it->second);
                 }
             }
             
-            void neighborsForeach(const boost::function<void(Type)>& foreach)  //for class member functions
+            void foreach(const boost::function<void(Type)>& f)  //for class member functions
             {
                 typename std::map<int, Type>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    foreach(n_it->second);
+                    f(n_it->second);
                 }
             }
             
             template<class T2>
-            Neighbors<T2> neighborsMap( T2(*map)(Type))
+            Neighbors<T2> map( T2(*f)(Type))
             {
                 Neighbors<T2> n2;
                 typename std::map<int, Type>::iterator n_it1;
     
                 for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
                 {
-                    T2 temp=(*map)(n_it1->second);
+                    T2 temp=(*f)(n_it1->second);
             
                     n2.data_.insert(std::pair<int, T2>(n_it1->first,temp));
                 }        
@@ -121,14 +121,14 @@ namespace micros_swarm_framework{
             }
             
             template<class T2>
-            Neighbors<T2> neighborsMap(const boost::function<T2(Type)>& map)  //for class member functions
+            Neighbors<T2> map(const boost::function<T2(Type)>& f)  //for class member functions
             {
                 Neighbors<T2> n2;
                 typename std::map<int, Type>::iterator n_it1;
     
                 for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
                 {
-                    T2 temp=map(n_it1->second);
+                    T2 temp=f(n_it1->second);
             
                     n2.data_.insert(std::pair<int, T2>(n_it1->first,temp));
                 }        
@@ -136,32 +136,32 @@ namespace micros_swarm_framework{
             }
             
             template<class T2>
-            T2 neighborsReduce(T2(*reduce)(Type, T2 &), T2& t2)
+            T2 reduce(T2(*f)(Type, T2 &), T2& t2)
             {
                 typename std::map<int, Type>::iterator n_it1;
     
                 for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
                 {
-                    t2=(*reduce)(n_it1->second, t2);
+                    t2=(*f)(n_it1->second, t2);
                 }
             
                 return t2;
             }
             
             template<class T2>
-            T2 neighborsReduce(const boost::function<T2(Type, T2&)>& reduce, T2& t2)  //for class member functions
+            T2 reduce(const boost::function<T2(Type, T2&)>& f, T2& t2)  //for class member functions
             {
                 typename std::map<int, Type>::iterator n_it1;
     
                 for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
                 {
-                    t2=reduce(n_it1->second, t2);
+                    t2=f(n_it1->second, t2);
                 }
             
                 return t2;
             }
             
-            Neighbors<Type> neighborsFilter(bool(*filter)(int, Type))
+            Neighbors<Type> filter(bool(*f)(int, Type))
             {
                 Neighbors<Type> result;
             
@@ -169,7 +169,7 @@ namespace micros_swarm_framework{
                 
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    if((*filter)(n_it->first, n_it->second))
+                    if((*f)(n_it->first, n_it->second))
                     {
                         result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
                     }
@@ -177,7 +177,7 @@ namespace micros_swarm_framework{
                 return result;
             }
             
-            Neighbors<Type> neighborsFilter(const boost::function<bool(int, Type)>& filter)  //for class member functions
+            Neighbors<Type> filter(const boost::function<bool(int, Type)>& f)  //for class member functions
             {
                 Neighbors<Type> result;
             
@@ -185,7 +185,7 @@ namespace micros_swarm_framework{
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    if(filter(n_it->first, n_it->second))
+                    if(f(n_it->first, n_it->second))
                     {
                         result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
                     }
@@ -193,7 +193,7 @@ namespace micros_swarm_framework{
                 return result;
             }
             
-            Neighbors<Type> neighborsKin(int swarm_id)
+            Neighbors<Type> kin(int swarm_id)
             {
                 Neighbors<Type> result;
             
@@ -210,7 +210,7 @@ namespace micros_swarm_framework{
                 return result;
             }
             
-            Neighbors<Type> neighborsNonKin(int swarm_id)
+            Neighbors<Type> nonkin(int swarm_id)
             {
                 Neighbors<Type> result;
             
@@ -273,12 +273,12 @@ namespace micros_swarm_framework{
                 return *this;
             }
             
-            std::map<int, NeighborBase>& getData()
+            std::map<int, NeighborBase>& data()
             {
                 return data_;
             }
             
-            void printData()
+            void print()
             {
                 typename std::map<int, NeighborBase>::iterator it;
                 
@@ -292,35 +292,35 @@ namespace micros_swarm_framework{
                 }
             }
             
-            void neighborsForeach(void(*foreach)(NeighborBase))
+            void foreach(void(*f)(NeighborBase))
             {
                 typename std::map<int, NeighborBase>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    (*foreach)(n_it->second);
+                    (*f)(n_it->second);
                 }
             }
             
-            void neighborsForeach(const boost::function<void(NeighborBase)>& foreach)  //for class member functions
+            void foreach(const boost::function<void(NeighborBase)>& f)  //for class member functions
             {
                 typename std::map<int, NeighborBase>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    foreach(n_it->second);
+                    f(n_it->second);
                 }
             }
             
             template<class T>
-            Neighbors<T> neighborsMap(T(*map)(NeighborBase))
+            Neighbors<T> map(T(*f)(NeighborBase))
             {
                 Neighbors<T> n;
                 typename std::map<int, NeighborBase>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    T temp=(*map)(n_it->second);
+                    T temp=(*f)(n_it->second);
             
                     n.data_.insert(std::pair<int, T>(n_it->first,temp));
                 }
@@ -329,14 +329,14 @@ namespace micros_swarm_framework{
             }
             
             template<class T>
-            Neighbors<T> neighborsMap(const boost::function<T(NeighborBase)>& map)  //for class member functions
+            Neighbors<T> map(const boost::function<T(NeighborBase)>& f)  //for class member functions
             {
                 Neighbors<T> n;
                 typename std::map<int, NeighborBase>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    T temp=map(n_it->second);
+                    T temp=f(n_it->second);
             
                     n.data_.insert(std::pair<int, T>(n_it->first,temp));
                 }
@@ -345,32 +345,32 @@ namespace micros_swarm_framework{
             }
             
             template<class T>
-            T neighborsReduce(T(*reduce)(NeighborBase, T &), T& t)
+            T reduce(T(*f)(NeighborBase, T &), T& t)
             {
                 typename std::map<int, NeighborBase>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    t=(*reduce)(n_it->second, t);
+                    t=(*f)(n_it->second, t);
                 }
             
                 return t;
             }
             
             template<class T>
-            T neighborsReduce(const boost::function<T(NeighborBase, T &)>& reduce, T& t)  //for class member functions
+            T reduce(const boost::function<T(NeighborBase, T &)>& f, T& t)  //for class member functions
             {
                 typename std::map<int, NeighborBase>::iterator n_it;
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    t=reduce(n_it->second, t);
+                    t=f(n_it->second, t);
                 }
             
                 return t;
             }
             
-            Neighbors<NeighborBase> neighborsFilter(bool(*filter)(int, NeighborBase))
+            Neighbors<NeighborBase> filter(bool(*f)(int, NeighborBase))
             {
                 Neighbors<NeighborBase> result;
             
@@ -378,7 +378,7 @@ namespace micros_swarm_framework{
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    if((*filter)(n_it->first, n_it->second))
+                    if((*f)(n_it->first, n_it->second))
                     {
                         result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
@@ -387,7 +387,7 @@ namespace micros_swarm_framework{
                 return result;
             }
             
-            Neighbors<NeighborBase> neighborsFilter(const boost::function<bool(int, NeighborBase)>& filter)  //for class member functions
+            Neighbors<NeighborBase> filter(const boost::function<bool(int, NeighborBase)>& f)  //for class member functions
             {
                 Neighbors<NeighborBase> result;
             
@@ -395,7 +395,7 @@ namespace micros_swarm_framework{
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    if(filter(n_it->first, n_it->second))
+                    if(f(n_it->first, n_it->second))
                     {
                         result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
@@ -404,7 +404,7 @@ namespace micros_swarm_framework{
                 return result;
             }
             
-            Neighbors<NeighborBase> neighborsKin(int swarm_id)
+            Neighbors<NeighborBase> kin(int swarm_id)
             {
                 Neighbors<NeighborBase> result;
             
@@ -421,7 +421,7 @@ namespace micros_swarm_framework{
                 return result;
             }
             
-            Neighbors<NeighborBase> neighborsNonKin(int swarm_id)
+            Neighbors<NeighborBase> nonkin(int swarm_id)
             {
                 Neighbors<NeighborBase> result;
             

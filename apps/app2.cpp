@@ -118,8 +118,8 @@ namespace micros_swarm_framework{
         micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
         boost::function<XY(NeighborBase, XY &)> bf_kin=boost::bind(&App2::force_sum_kin, this, _1, _2);
         boost::function<XY(NeighborBase, XY &)> bf_nonkin=boost::bind(&App2::force_sum_nonkin, this, _1, _2);
-        sum=n.neighborsKin(RED_SWARM).neighborsReduce(bf_kin, sum);
-        sum=n.neighborsNonKin(RED_SWARM).neighborsReduce(bf_nonkin, sum);
+        sum=n.kin(RED_SWARM).reduce(bf_kin, sum);
+        sum=n.nonkin(RED_SWARM).reduce(bf_nonkin, sum);
     
         return sum;
     }
@@ -133,8 +133,8 @@ namespace micros_swarm_framework{
         micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
         boost::function<XY(NeighborBase, XY &)> bf_kin=boost::bind(&App2::force_sum_kin, this, _1, _2);
         boost::function<XY(NeighborBase, XY &)> bf_nonkin=boost::bind(&App2::force_sum_nonkin, this, _1, _2);
-        sum=n.neighborsKin(BLUE_SWARM).neighborsReduce(bf_kin, sum);
-        sum=n.neighborsNonKin(BLUE_SWARM).neighborsReduce(bf_nonkin, sum);
+        sum=n.kin(BLUE_SWARM).reduce(bf_kin, sum);
+        sum=n.nonkin(BLUE_SWARM).reduce(bf_nonkin, sum);
     
         return sum;
     }
@@ -207,14 +207,14 @@ namespace micros_swarm_framework{
         boost::function<bool()> bfblue=boost::bind(&App2::blue, this, getRobotID());
     
         micros_swarm_framework::Swarm red_swarm(RED_SWARM);
-        red_swarm.selectSwarm(bfred);
+        red_swarm.select(bfred);
         micros_swarm_framework::Swarm blue_swarm(BLUE_SWARM);
-        blue_swarm.selectSwarm(bfblue);
+        blue_swarm.select(bfblue);
         
         red_swarm.execute(boost::bind(&App2::motion_red, this));
         blue_swarm.execute(boost::bind(&App2::motion_blue, this));
         
-        red_swarm.printSwarm();
-        blue_swarm.printSwarm();
+        red_swarm.print();
+        blue_swarm.print();
     }
 };

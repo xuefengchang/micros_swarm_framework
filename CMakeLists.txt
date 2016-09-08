@@ -291,14 +291,13 @@ if (${USE_OPENSPLICE_DDS})
   )
 endif()
 
-#add_executable(testrtp test/testrtp.cpp)
+#add_executable(testrtp test/testrtp.cpp src/runtime_platform.cpp)
 #add_dependencies(testrtp ${micros_swarm_framework_EXPORTED_TARGETS})
 #target_link_libraries(testrtp
 #   ${Boost_THREAD_LIBRARY}
 #   ${Boost_REGEX_LIBRARY}
 #   ${Boost_SERIALIZATION_LIBRARY}
 #   ${catkin_LIBRARIES}
-#   micros_swarm_framework_rtp_kernel
 #)
 
 #add_executable(pub src/opensplice_dds/pub.cpp)

@@ -36,14 +36,14 @@ namespace micros_swarm_framework{
     {
         float tmp=0;
         //std::string robot_id_string=boost::lexical_cast<std::string>(getRobotID());
-        //tmp=vs.virtualStigmergyGet(robot_id_string);
-        if(vs.virtualStigmergySize()<20)
+        //tmp=vs.get(robot_id_string);
+        if(vs.size()<20)
         {
-            std::cout<<"robot "<<getRobotID()<<", vs :"<<tmp<<", size: "<<vs.virtualStigmergySize()<<std::endl;
+            std::cout<<"robot "<<getRobotID()<<", vs :"<<tmp<<", size: "<<vs.size()<<std::endl;
             micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
-            n.printData();
+            n.print();
         }
-        //vs.virtualStigmergyPut(robot_id_string, tmp+0.01);
+        //vs.put(robot_id_string, tmp+0.01);
     }
     
     void TestVstig::baseCallback(const nav_msgs::Odometry& lmsg)
@@ -68,7 +68,7 @@ namespace micros_swarm_framework{
         //test virtual stigmergy
         vs=micros_swarm_framework::VirtualStigmergy<float>(1);
         std::string robot_id_string=boost::lexical_cast<std::string>(getRobotID());
-        vs.virtualStigmergyPut(robot_id_string, 3.14);
+        vs.put(robot_id_string, 3.14);
         
         timer_ = nh_.createTimer(ros::Duration(0.1), &TestVstig::loop, this);
     }

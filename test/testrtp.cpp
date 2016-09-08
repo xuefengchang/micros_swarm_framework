@@ -21,7 +21,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 */
 
 #include "ros/ros.h"
-#include "micros_swarm_framework/runtime_platform.h"
+#include "micros_swarm_framework/micros_swarm_framework.h"
 
 using namespace micros_swarm_framework;
 
@@ -57,31 +57,31 @@ int main(int argc, char** argv)
     rtp.deleteSwarm(1);
     rtp.deleteSwarm(16);
     rtp.printSwarm();
-    std::cout<<rtp.getSwarm(1)<<std::endl;
-    std::cout<<rtp.getSwarm(2)<<std::endl;
+    std::cout<<rtp.getSwarmFlag(1)<<std::endl;
+    std::cout<<rtp.getSwarmFlag(2)<<std::endl;
     std::cout<<std::endl;
     
     std::vector<int> s1, s2;
     s1.push_back(1); s1.push_back(2); s1.push_back(3);
     s2.push_back(4); s2.push_back(5); s2.push_back(6);
-    rtp.insertOrRefreshOthersSwarm(2, s1);
-    rtp.insertOrRefreshOthersSwarm(3, s2);
-    rtp.printOthersSwarm();
-    std::cout<<rtp.inOthersSwarm(2, 2)<<std::endl;
-    std::cout<<rtp.inOthersSwarm(2, 4)<<std::endl;
-    std::cout<<rtp.inOthersSwarm(3, 5)<<std::endl;
-    std::cout<<rtp.inOthersSwarm(3, 1)<<std::endl;
+    rtp.insertOrRefreshNeighborSwarm(2, s1);
+    rtp.insertOrRefreshNeighborSwarm(3, s2);
+    rtp.printNeighborSwarm();
+    std::cout<<rtp.inNeighborSwarm(2, 2)<<std::endl;
+    std::cout<<rtp.inNeighborSwarm(2, 4)<<std::endl;
+    std::cout<<rtp.inNeighborSwarm(3, 5)<<std::endl;
+    std::cout<<rtp.inNeighborSwarm(3, 1)<<std::endl;
     std::cout<<"------"<<std::endl;
-    rtp.joinOthersSwarm(2, 4);
-    rtp.joinOthersSwarm(2, 5);
-    rtp.leaveOthersSwarm(2, 2);
-    rtp.leaveOthersSwarm(2, 3);
-    rtp.leaveOthersSwarm(2, 17);
-    rtp.printOthersSwarm();
+    rtp.joinNeighborSwarm(2, 4);
+    rtp.joinNeighborSwarm(2, 5);
+    rtp.leaveNeighborSwarm(2, 2);
+    rtp.leaveNeighborSwarm(2, 3);
+    rtp.leaveNeighborSwarm(2, 17);
+    rtp.printNeighborSwarm();
     std::cout<<"------"<<std::endl;
-    rtp.deleteOthersSwarm(2);
-    rtp.deleteOthersSwarm(9);
-    rtp.printOthersSwarm();
+    rtp.deleteNeighborSwarm(2);
+    rtp.deleteNeighborSwarm(9);
+    rtp.printNeighborSwarm();
     std::cout<<std::endl;
     
     rtp.createVirtualStigmergy(1);
@@ -95,8 +95,12 @@ int main(int argc, char** argv)
     rtp.insertOrUpdateVirtualStigmergy(2, "key2", "value2", time(0), 2);
     rtp.insertOrUpdateVirtualStigmergy(2, "key3", "value3", time(0), 2);
     rtp.printVirtualStigmergy();
-    rtp.getVirtualStigmergyTuple(1, "key2").print();
-    rtp.getVirtualStigmergyTuple(2, "key3").print();
+    VirtualStigmergyTuple vst1;
+    rtp.getVirtualStigmergyTuple(1, "key2", vst1);
+    vst1.print();
+    VirtualStigmergyTuple vst2;
+    rtp.getVirtualStigmergyTuple(2, "key3", vst2);
+    vst2.print();
     std::cout<<rtp.getVirtualStigmergySize(1)<<std::endl;;
     std::cout<<rtp.getVirtualStigmergySize(2)<<std::endl;
     rtp.deleteVirtualStigmergyValue(1, "key2");
@@ -104,8 +108,12 @@ int main(int argc, char** argv)
     rtp.deleteVirtualStigmergyValue(2, "key3");
     rtp.deleteVirtualStigmergyValue(5, "key7");
     rtp.printVirtualStigmergy();
-    rtp.getVirtualStigmergyTuple(2, "key7").print();
-    rtp.getVirtualStigmergyTuple(7, "key11").print();
+    VirtualStigmergyTuple vst3;
+    rtp.getVirtualStigmergyTuple(2, "key7", vst3);
+    vst3.print();
+    VirtualStigmergyTuple vst4;
+    rtp.getVirtualStigmergyTuple(7, "key11", vst4);
+    vst4.print();
     rtp.deleteVirtualStigmergy(2);
     rtp.deleteVirtualStigmergy(5);
     rtp.printVirtualStigmergy();
