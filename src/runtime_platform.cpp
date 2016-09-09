@@ -48,9 +48,8 @@ namespace micros_swarm_framework{
         neighbor_swarms_.clear();
         virtual_stigmergy_.clear();
         barrier_.clear();
-        callback_functions_.clear();
-        boost::function<void(const std::string&)> f=boost::bind(&RuntimePlatform::doNothing, this, _1);
-        callback_functions_.insert(std::pair<std::string, boost::function<void(const std::string&)> >("" ,f));
+        listener_helpers_.clear();
+        listener_helpers_.insert(std::pair<std::string, boost::shared_ptr<ListenerHelper> >("" , NULL));
     }
     
     int RuntimePlatform::getRobotID()
@@ -516,60 +515,54 @@ namespace micros_swarm_framework{
         neighbor_distance_=neighbor_distance;
     }
     
-    void RuntimePlatform::insertBarrier(int robot_id)
+    void RuntimePlatform::insertOrUpdateListenerHelper(const std::string& key, const boost::shared_ptr<ListenerHelper> helper)
+    {
+        std::map<std::string, boost::shared_ptr<ListenerHelper> >::iterator lh_it;
+        boost::upgrade_lock<boost::shared_mutex> lock(mutex10_);
+        lh_it=listener_helpers_.find(key);
+    
+        if(lh_it!=listener_helpers_.end())
+        {
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+            lh_it->second = helper;
+        }
+        else
+        {
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+            listener_helpers_.insert(std::pair<std::string, boost::shared_ptr<ListenerHelper> >(key ,helper));
+        } 
+    }
+    
+    const boost::shared_ptr<ListenerHelper> RuntimePlatform::getListenerHelper(const std::string& key)
+    {
+        std::map<std::string, boost::shared_ptr<ListenerHelper> >::iterator lh_it;
+        boost::shared_lock<boost::shared_mutex> lock(mutex10_);
+        lh_it=listener_helpers_.find(key);
+    
+        if(lh_it!=listener_helpers_.end())
+        {
+            return lh_it->second;
+        }
+        
+        std::cout<<"could not get the callback function which has the key "<<key<<"!"<<std::endl;
+        return NULL;
+    }
+    
+    void RuntimePlatform::deleteListenerHelper(const std::string& key)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex10_);
+        listener_helpers_.erase(key);
+    }
+    
+     void RuntimePlatform::insertBarrier(int robot_id)
+    {
+        boost::unique_lock<boost::shared_mutex> lock(mutex11_);
         barrier_.insert(robot_id);
     }
     
     int RuntimePlatform::getBarrierSize()
     {
-        boost::shared_lock<boost::shared_mutex> lock(mutex10_);
-        return barrier_.size();
-    }
-    
-    void RuntimePlatform::insertOrUpdateCallbackFunctions(std::string key, const boost::function<void(const std::string&)>& cb)
-    {
-        std::map<std::string, boost::function<void(const std::string&)> >::iterator nccb_it;
-        boost::upgrade_lock<boost::shared_mutex> lock(mutex11_);
-        nccb_it=callback_functions_.find(key);
-    
-        if(nccb_it!=callback_functions_.end())
-        {
-            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
-            nccb_it->second = cb;
-        }
-        else
-        {
-            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
-            callback_functions_.insert(std::pair<std::string, boost::function<void(const std::string&)> >(key ,cb));
-        } 
-    }
-    
-    void RuntimePlatform::doNothing(const std::string& value_str)
-    {
-        
-    }
-    
-    const boost::function<void(const std::string&)>& RuntimePlatform::getCallbackFunctions(const std::string& key)
-    {
-        std::map<std::string, boost::function<void(const std::string&)> >::iterator nccb_it;
         boost::shared_lock<boost::shared_mutex> lock(mutex11_);
-        nccb_it=callback_functions_.find(key);
-    
-        if(nccb_it!=callback_functions_.end())
-        {
-            return nccb_it->second;
-        }
-        
-        std::cout<<"could not get the callback function which has the key "<<key<<"!"<<std::endl;
-        nccb_it=callback_functions_.find("");
-        return nccb_it->second;
-    }
-    
-    void RuntimePlatform::deleteCallbackFunctions(const std::string& key)
-    {
-        boost::unique_lock<boost::shared_mutex> lock(mutex11_);
-        callback_functions_.erase(key);
+        return barrier_.size();
     }
 };

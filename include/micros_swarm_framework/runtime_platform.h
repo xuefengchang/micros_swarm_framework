@@ -50,6 +50,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #endif
 
 #include "micros_swarm_framework/data_type.h"
+#include "micros_swarm_framework/listener_helper.h"
 
 namespace micros_swarm_framework{
 
@@ -107,13 +108,12 @@ namespace micros_swarm_framework{
             float getNeighborDistance();
             void setNeighborDistance(float neighbor_distance);
             
+            void insertOrUpdateListenerHelper(const std::string& key, const boost::shared_ptr<ListenerHelper> helper);
+            const boost::shared_ptr<ListenerHelper> getListenerHelper(const std::string& key);
+            void deleteListenerHelper(const std::string& key);
+            
             void insertBarrier(int robot_id);
             int getBarrierSize();
-            
-            void insertOrUpdateCallbackFunctions(std::string key, const boost::function<void(const std::string&)>& cb);
-            void doNothing(const std::string& value_str);
-            const boost::function<void(const std::string&)>& getCallbackFunctions(const std::string& key);
-            void deleteCallbackFunctions(const std::string& key);
         private:
             int robot_id_;
             int robot_type_;  //TODO
@@ -124,8 +124,9 @@ namespace micros_swarm_framework{
             std::map<int, NeighborSwarmTuple> neighbor_swarms_;
             std::map<int, std::map<std::string, VirtualStigmergyTuple> > virtual_stigmergy_;
             float neighbor_distance_;
+            std::map<std::string, boost::shared_ptr<ListenerHelper> > listener_helpers_;
             std::set<int> barrier_;
-            std::map<std::string, boost::function<void(const std::string&)> > callback_functions_;
+            
             boost::shared_mutex mutex1_, mutex2_, mutex3_, mutex4_, mutex5_,
                                 mutex6_, mutex7_, mutex8_, mutex9_, mutex10_,
                                 mutex11_;

@@ -83,7 +83,7 @@ namespace micros_swarm_framework{
         
                 //ignore the packet of the local robot
                 if(packet_source==shm_rid)
-                    return;
+                    //return;
         
                 try{
                 const int packet_type=packet.packet_type;
@@ -337,6 +337,22 @@ namespace micros_swarm_framework{
                         //std::cout<<"virtual stigmergy size: "<<rtp_->getVirtualStigmergySize(id)<<std::endl;
                         break;
                     }
+                    case NEIGHBOR_BROADCAST_KEY_VALUE:
+                    {
+                        if(!rtp_->inNeighbors(packet_source))
+                            return;
+                
+                        //std::cout<<"NEIGHBOR_BROADCAST_KEY_VALUE"<<std::endl;
+                        NeighborBroadcastKeyValue nbkv;
+                        archive>>nbkv;
+                        
+                        boost::shared_ptr<ListenerHelper> helper=rtp_->getListenerHelper(nbkv.key);
+                        if(helper==NULL)
+                            return;
+                        helper->call(nbkv.value);
+               
+                        break;
+                    }
                     case BARRIER_SYN:
                     {
                         //std::cout<<"BARRIER_SYN"<<std::endl;            
@@ -376,19 +392,6 @@ namespace micros_swarm_framework{
                         if(shm_rid==ba.robot_id)
                             rtp_->insertBarrier(packet.packet_source);
                     
-                        break;
-                    }
-                    case NEIGHBOR_BROADCAST_KEY_VALUE:
-                    {
-                        if(!rtp_->inNeighbors(packet_source))
-                            return;
-                
-                        //std::cout<<"NEIGHBOR_BROADCAST_KEY_VALUE"<<std::endl;
-                        NeighborBroadcastKeyValue nbkv;
-                        archive>>nbkv;
-                
-                        (rtp_->getCallbackFunctions(nbkv.key))(nbkv.value);
-               
                         break;
                     }
             

@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      testnc.cpp 
+\file      listener_helper.h 
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,36 +20,57 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "apps/testnc.h"
+#ifndef LISTENER_HELPER_H_
+#define LISTENER_HELPER_H_
+
+#include <iostream>
+#include <string>
+#include <time.h>
+#include <stdlib.h>
+#include <vector>
+#include <stack>
+#include <map>
+#include <set>
+#include <queue>
+#include <algorithm>
+#include <typeinfo>
+
+#include "ros/ros.h"
 
 namespace micros_swarm_framework{
-
-    TestNC::TestNC(ros::NodeHandle nh):Application(nh)
-    {
-    }
     
-    TestNC::~TestNC()
-    {
-    }
+    class ListenerHelper{
+        public:
+            virtual void call(const std::string& value_str)=0;
+    };
     
-    void TestNC::callback(const float& value)
-    {
-        std::cout<<"I received the value: "<<value<<std::endl;
-    }
+    template<typename Type>
+    class ListenerHelperT : public ListenerHelper{
+        public:
+            ListenerHelperT(const std::string& key, const boost::function<void(const Type&)>& callback)
+            {
+                key_=key;
+                callback_=callback;
+            }
     
-    void TestNC::start()
-    {
-        Broadcaster<float> bc("testkey");
-        boost::function<void(const float&)> cb=boost::bind(&TestNC::callback, this, _1);
-        Listener<float> ls("testkey", cb);
+            virtual void call(const std::string& value_str)
+            {
+                callback_(convertType(value_str));
+            }
         
-        //ls.ignore();
+            Type convertType(const std::string& value_str)
+            {
+                std::istringstream archiveStream(value_str);
+                boost::archive::text_iarchive archive(archiveStream); 
+                Type value;
+                archive>>value;
+                
+                return value;
+            }
         
-        for(int i=0;i<10;i++)
-        {
-            bc.broadcast(3.141);
-            ros::Duration(1).sleep();
-        }
-    }
+        private:
+            boost::function<void(const Type&)> callback_;
+            std::string key_;
+    };
 };
-
+#endif

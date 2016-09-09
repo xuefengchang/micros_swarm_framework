@@ -40,7 +40,7 @@ namespace micros_swarm_framework{
             
             TestNC(ros::NodeHandle nh);
             ~TestNC();
-            void callback(const std::string& value_str);
+            void callback(const float& value);
             virtual void start(); 
     };
 };
