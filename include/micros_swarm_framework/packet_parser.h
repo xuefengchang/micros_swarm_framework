@@ -334,7 +334,7 @@ namespace micros_swarm_framework{
                         {
                             //do nothing
                         }
-                        //std::cout<<"virtual stigmergy size: "<<rtp_->getVirtualStigmergySize(id)<<std::endl;
+                        
                         break;
                     }
                     case NEIGHBOR_BROADCAST_KEY_VALUE:
