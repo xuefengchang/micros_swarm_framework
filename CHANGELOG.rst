@@ -2,6 +2,16 @@
 Changelog for package micros_swarm_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.14 (2016-09-09)
+-----------
+* complete neighbor communication
+* simplify the user interface functions
+* improve the security of multi-threading
+* limit communication range
+* add PacketParser class
+* performance optimization
+* optimize the RuntimePlatformKernel
+
 0.0.13 (2016-08-16)
 -----------
 * improve neighbor communication mechanism, add Broadcaster and Listener class
