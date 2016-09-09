@@ -36,7 +36,7 @@ namespace micros_swarm_framework{
         float y;
     };
 
-    App2::App2(ros::NodeHandle nh):Application(nh)
+    App2::App2(ros::NodeHandle node_handle):Application(node_handle)
     {
         
     }
@@ -67,7 +67,7 @@ namespace micros_swarm_framework{
 
     XY App2::force_sum_kin(micros_swarm_framework::NeighborBase n, XY &s)
     {
-        micros_swarm_framework::Base l=getRobotBase();
+        micros_swarm_framework::Base l=base();
         float xl=l.x;
         float yl=l.y;
     
@@ -89,7 +89,7 @@ namespace micros_swarm_framework{
 
     XY App2::force_sum_nonkin(micros_swarm_framework::NeighborBase n, XY &s)
     {
-        micros_swarm_framework::Base l=getRobotBase();
+        micros_swarm_framework::Base l=base();
         float xl=l.x;
         float yl=l.y;
     
@@ -160,7 +160,7 @@ namespace micros_swarm_framework{
         t.linear.x=v.x;
         t.linear.y=v.y;
         
-        pub_.publish(t);
+        pub.publish(t);
     }
     
     void App2::publish_blue_cmd(const ros::TimerEvent&)
@@ -170,17 +170,17 @@ namespace micros_swarm_framework{
         t.linear.x=v.x;
         t.linear.y=v.y;
         
-        pub_.publish(t);
+        pub.publish(t);
     }
 
     void App2::motion_red()
     {
-        red_timer_ = nh_.createTimer(ros::Duration(0.1), &App2::publish_red_cmd, this);
+        red_timer = nh.createTimer(ros::Duration(0.1), &App2::publish_red_cmd, this);
     }
 
     void App2::motion_blue()
     {
-        blue_timer_ = nh_.createTimer(ros::Duration(0.1), &App2::publish_blue_cmd, this);
+        blue_timer = nh.createTimer(ros::Duration(0.1), &App2::publish_blue_cmd, this);
     }
     
     void App2::baseCallback(const nav_msgs::Odometry& lmsg)
@@ -192,19 +192,19 @@ namespace micros_swarm_framework{
         float vy=lmsg.twist.twist.linear.y;
     
         micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
-        setRobotBase(l);
+        set_base(l);
     }
     
     void App2::start()
     {
         init();
     
-        pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-        sub_ = nh_.subscribe("base_pose_ground_truth", 1000, &App2::baseCallback, this, ros::TransportHints().udp());
+        pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+        sub = nh.subscribe("base_pose_ground_truth", 1000, &App2::baseCallback, this, ros::TransportHints().udp());
         ros::Duration(5).sleep();  //this is necessary, in order that the runtime platform kernel of the robot has enough time to publish it's base information.
         
-        boost::function<bool()> bfred=boost::bind(&App2::red, this, getRobotID());
-        boost::function<bool()> bfblue=boost::bind(&App2::blue, this, getRobotID());
+        boost::function<bool()> bfred=boost::bind(&App2::red, this, robot_id());
+        boost::function<bool()> bfblue=boost::bind(&App2::blue, this, robot_id());
     
         micros_swarm_framework::Swarm red_swarm(RED_SWARM);
         red_swarm.select(bfred);

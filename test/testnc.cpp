@@ -24,7 +24,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm_framework{
 
-    TestNC::TestNC(ros::NodeHandle nh):Application(nh)
+    TestNC::TestNC(ros::NodeHandle node_handle):Application(node_handle)
     {
     }
     

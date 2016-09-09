@@ -83,7 +83,7 @@ namespace micros_swarm_framework{
         
                 //ignore the packet of the local robot
                 if(packet_source==shm_rid)
-                    //return;
+                    return;
         
                 try{
                 const int packet_type=packet.packet_type;

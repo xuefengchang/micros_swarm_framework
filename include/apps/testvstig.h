@@ -34,15 +34,15 @@ namespace micros_swarm_framework{
     class TestVstig : public Application
     {
         public:
-            ros::Timer timer_;
-            ros::Publisher pub_;
-            ros::Subscriber sub_;
+            ros::Timer timer;
+            ros::Publisher pub;
+            ros::Subscriber sub;
             
             micros_swarm_framework::VirtualStigmergy<float> vs;
             void loop(const ros::TimerEvent&);
             void baseCallback(const nav_msgs::Odometry& lmsg);
             
-            TestVstig(ros::NodeHandle nh);
+            TestVstig(ros::NodeHandle node_handle);
             ~TestVstig();
             virtual void start(); 
     };

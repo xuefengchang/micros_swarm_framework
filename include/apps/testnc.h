@@ -34,11 +34,11 @@ namespace micros_swarm_framework{
     class TestNC : public Application
     {
         public:
-            ros::Timer timer_;
-            ros::Publisher pub_;
-            ros::Subscriber sub_;
+            ros::Timer timer;
+            ros::Publisher pub;
+            ros::Subscriber sub;
             
-            TestNC(ros::NodeHandle nh);
+            TestNC(ros::NodeHandle node_handle);
             ~TestNC();
             void callback(const float& value);
             virtual void start(); 

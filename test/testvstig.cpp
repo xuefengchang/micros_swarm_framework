@@ -24,7 +24,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm_framework{
 
-    TestVstig::TestVstig(ros::NodeHandle nh):Application(nh)
+    TestVstig::TestVstig(ros::NodeHandle node_handle):Application(node_handle)
     {
     }
     
@@ -39,7 +39,7 @@ namespace micros_swarm_framework{
         //tmp=vs.get(robot_id_string);
         if(vs.size()<20)
         {
-            std::cout<<"robot "<<getRobotID()<<", vs :"<<tmp<<", size: "<<vs.size()<<std::endl;
+            std::cout<<"robot "<<robot_id()<<", vs :"<<tmp<<", size: "<<vs.size()<<std::endl;
             micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
             n.print();
         }
@@ -55,22 +55,22 @@ namespace micros_swarm_framework{
         float vy=lmsg.twist.twist.linear.y;
     
         micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
-        setRobotBase(l);
+        set_base(l);
     }
     
     void TestVstig::start()
     {
-        setNeighborDistance(1.2);
-        sub_ = nh_.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
+        set_neighbor_distance(1.2);
+        sub = nh.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
         
         ros::Duration(5).sleep();  //TODO. this is necessary, in order that the runtime platform kernel of the robot has enough time to publish it's base information.
         
         //test virtual stigmergy
         vs=micros_swarm_framework::VirtualStigmergy<float>(1);
-        std::string robot_id_string=boost::lexical_cast<std::string>(getRobotID());
+        std::string robot_id_string=boost::lexical_cast<std::string>(robot_id());
         vs.put(robot_id_string, 3.14);
         
-        timer_ = nh_.createTimer(ros::Duration(0.1), &TestVstig::loop, this);
+        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop, this);
     }
 };
 

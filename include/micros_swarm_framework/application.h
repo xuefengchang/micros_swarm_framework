@@ -46,58 +46,46 @@ namespace micros_swarm_framework{
     class Application
     {
         public:
-            boost::shared_ptr<RuntimePlatform> rtp_;
-            ros::NodeHandle nh_;
+            ros::NodeHandle nh;  //ROS NodeHandle
             
-            Application()
+            Application(ros::NodeHandle node_handle)
             {
-            
+                nh=node_handle;
+                rtp=Singleton<RuntimePlatform>::getSingleton();
             }
             
-            Application(ros::NodeHandle nh)
-            {
-                nh_=nh;
-                rtp_=Singleton<RuntimePlatform>::getSingleton();
-            }
-            
-            virtual ~Application()
-            {
-            
-            }
+            virtual ~Application(){}
             
             //application api
-            int getRobotID()
+            const int robot_id()
             {
-                return rtp_->getRobotID();
+                return rtp->getRobotID();
             }
             
-            void setRobotID(int robot_id)
+            const Base& base()
             {
-                rtp_->setRobotID(robot_id);
+                return rtp->getRobotBase();
             }
             
-            const Base& getRobotBase()
+            void set_base(const Base& robot_base)
             {
-                return rtp_->getRobotBase();
+                rtp->setRobotBase(robot_base);
             }
             
-            void setRobotBase(const Base& robot_base)
+            float neighbor_distance()
             {
-                rtp_->setRobotBase(robot_base);
+                return rtp->getNeighborDistance();
             }
             
-            float getNeighborDistance()
+            void set_neighbor_distance(float neighbor_distance)
             {
-                return rtp_->getNeighborDistance();
-            }
-            
-            void setNeighborDistance(float neighbor_distance)
-            {
-                rtp_->setNeighborDistance(neighbor_distance);
+                rtp->setNeighborDistance(neighbor_distance);
             }
             
             //entry function
             virtual void start()=0;
+        private:
+            boost::shared_ptr<RuntimePlatform> rtp;
     };
 };
 

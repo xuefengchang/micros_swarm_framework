@@ -36,10 +36,10 @@ namespace micros_swarm_framework{
     class App2 : public Application
     {
         public:
-            ros::Timer red_timer_;
-            ros::Timer blue_timer_;
-            ros::Publisher pub_;
-            ros::Subscriber sub_;
+            ros::Timer red_timer;
+            ros::Timer blue_timer;
+            ros::Publisher pub;
+            ros::Subscriber sub;
             
             //app parameters
             int delta_kin;
@@ -47,7 +47,7 @@ namespace micros_swarm_framework{
             int delta_nonkin;
             int epsilon_nonkin;
             
-            App2(ros::NodeHandle nh);
+            App2(ros::NodeHandle node_handle);
             ~App2();
             virtual void start();
             

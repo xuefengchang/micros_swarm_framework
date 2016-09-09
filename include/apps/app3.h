@@ -42,14 +42,14 @@ namespace micros_swarm_framework{
     class App3 : public Application
     {
         public:
-            ros::Timer timer_;
-            ros::Publisher pub_;
-            ros::Subscriber sub_;
+            ros::Timer timer;
+            ros::Publisher pub;
+            ros::Subscriber sub;
             
             int hz;
             double interval;
             
-            App3(ros::NodeHandle nh);
+            App3(ros::NodeHandle node_handle);
             ~App3();
             virtual void start();
             

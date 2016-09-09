@@ -36,15 +36,15 @@ namespace micros_swarm_framework{
     class App1 : public Application
     {
         public:
-            ros::Timer timer_;
-            ros::Publisher pub_;
-            ros::Subscriber sub_;
+            ros::Timer timer;
+            ros::Publisher pub;
+            ros::Subscriber sub;
             
             //app parameters
             int delta;
             int epsilon;
             
-            App1(ros::NodeHandle nh);
+            App1(ros::NodeHandle node_handle);
             ~App1();
             virtual void start();
             
