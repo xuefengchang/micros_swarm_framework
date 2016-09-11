@@ -125,7 +125,8 @@ namespace micros_swarm_framework{
                 #endif
                 p.package_check_sum=0;
                 
-                communicator_->broadcast(p);
+                //communicator_->broadcast(p);
+                rtp_->pushVstigMsgQueue(p);
             }
             
             Type get(const std::string& key)
@@ -165,7 +166,8 @@ namespace micros_swarm_framework{
                 #endif
                 p.package_check_sum=0;
                 
-                communicator_->broadcast(p);
+                //communicator_->broadcast(p);
+                rtp_->pushVstigMsgQueue(p);
                 
                 return data;  
             }

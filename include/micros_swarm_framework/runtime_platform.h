@@ -51,6 +51,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "micros_swarm_framework/data_type.h"
 #include "micros_swarm_framework/listener_helper.h"
+#include "micros_swarm_framework/circular_queue.h"
 
 namespace micros_swarm_framework{
 
@@ -112,6 +113,33 @@ namespace micros_swarm_framework{
             const boost::shared_ptr<ListenerHelper> getListenerHelper(const std::string& key);
             void deleteListenerHelper(const std::string& key);
             
+            bool baseMsgQueueFull();
+            bool baseMsgQueueEmpty();
+            MSFPPacket baseMsgQueueFront();
+            int baseMsgQueueSize();
+            void popBaseMsgQueue();
+            void pushBaseMsgQueue(const MSFPPacket& p);
+            bool swarmMsgQueueFull();
+            bool swarmMsgQueueEmpty();
+            MSFPPacket swarmMsgQueueFront();
+            int swarmMsgQueueSize();
+            void popSwarmMsgQueue();
+            void pushSwarmMsgQueue(const MSFPPacket& p);
+            bool vstigMsgQueueFull();
+            bool vstigMsgQueueEmpty();
+            MSFPPacket vstigMsgQueueFront();
+            int vstigMsgQueueSize();
+            void popVstigMsgQueue();
+            void pushVstigMsgQueue(const MSFPPacket& p);
+            bool ncMsgQueueFull();
+            bool ncMsgQueueEmpty();
+            MSFPPacket ncMsgQueueFront();
+            int ncMsgQueueSize();
+            void popNcMsgQueue();
+            void pushNcMsgQueue(const MSFPPacket& p);
+            boost::mutex msg_queue_mutex_;
+            boost::condition_variable_any msg_queue_condition_;
+            
             void insertBarrier(int robot_id);
             int getBarrierSize();
         private:
@@ -127,9 +155,15 @@ namespace micros_swarm_framework{
             std::map<std::string, boost::shared_ptr<ListenerHelper> > listener_helpers_;
             std::set<int> barrier_;
             
+            boost::shared_ptr<cqueue<MSFPPacket> > base_msg_queue_;
+            boost::shared_ptr<cqueue<MSFPPacket> > swarm_msg_queue_;
+            boost::shared_ptr<cqueue<MSFPPacket> > vstig_msg_queue_;
+            boost::shared_ptr<cqueue<MSFPPacket> > nc_msg_queue_;
+            std::vector<boost::shared_ptr<cqueue<MSFPPacket> > > all_msg_queue_;
+            
             boost::shared_mutex mutex1_, mutex2_, mutex3_, mutex4_, mutex5_,
                                 mutex6_, mutex7_, mutex8_, mutex9_, mutex10_,
-                                mutex11_;
+                                mutex11_, mutex12_, mutex13_, mutex14_, mutex15_;
     };
 };
 

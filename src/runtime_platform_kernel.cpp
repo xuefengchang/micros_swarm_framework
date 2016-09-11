@@ -71,6 +71,7 @@ namespace micros_swarm_framework{
             ros::Timer publish_robot_base_timer_;
             ros::Timer publish_swarm_list_timer_;
             ros::Timer barrier_timer_;
+            ros::Timer spin_timer_;
             
             float publish_robot_base_duration_;
             float publish_swarm_list_duration_;
@@ -82,6 +83,7 @@ namespace micros_swarm_framework{
             ~RuntimePlatformKernel();
             virtual void onInit();
             void setParameters();
+            void spin_msg_queue();
             void publish_robot_base(const ros::TimerEvent&);
             void publish_swarm_list(const ros::TimerEvent&);
             void barrier_check(const ros::TimerEvent&);
@@ -93,6 +95,41 @@ namespace micros_swarm_framework{
     
     RuntimePlatformKernel::~RuntimePlatformKernel()
     {
+    }
+    
+    void RuntimePlatformKernel::spin_msg_queue()
+    {
+        for(;;)
+        {
+            boost::unique_lock<boost::mutex> lock(rtp_->msg_queue_mutex_);
+    
+            if(!rtp_->baseMsgQueueEmpty())
+            {
+                communicator_->broadcast(rtp_->baseMsgQueueFront());
+                rtp_->popBaseMsgQueue();
+            }
+            if(!rtp_->ncMsgQueueEmpty())
+            {
+                communicator_->broadcast(rtp_->ncMsgQueueFront());
+                rtp_->popNcMsgQueue();
+            }
+            if(!rtp_->swarmMsgQueueEmpty())
+            {
+                communicator_->broadcast(rtp_->swarmMsgQueueFront());
+                rtp_->popSwarmMsgQueue();
+            }
+            if(!rtp_->vstigMsgQueueEmpty())
+            {
+                communicator_->broadcast(rtp_->vstigMsgQueueFront());
+                rtp_->popVstigMsgQueue();
+            }
+            
+            while(rtp_->baseMsgQueueEmpty()&&rtp_->swarmMsgQueueEmpty()&&
+                  rtp_->vstigMsgQueueEmpty()&&rtp_->ncMsgQueueEmpty())
+            {
+                rtp_->msg_queue_condition_.wait(lock);
+            }
+        }
     }
     
     void RuntimePlatformKernel::barrier_check(const ros::TimerEvent&)
@@ -155,7 +192,8 @@ namespace micros_swarm_framework{
         #endif
         p.package_check_sum=0;
 
-        communicator_->broadcast(p);
+        //communicator_->broadcast(p);
+        rtp_->pushBaseMsgQueue(p);
     }
     
     void RuntimePlatformKernel::publish_swarm_list(const ros::TimerEvent&)
@@ -185,7 +223,8 @@ namespace micros_swarm_framework{
         #endif
         p.package_check_sum=0;
 
-        communicator_->broadcast(p);
+        //communicator_->broadcast(p);
+        rtp_->pushSwarmMsgQueue(p);
     }
     
     void RuntimePlatformKernel::setParameters()
@@ -258,6 +297,7 @@ namespace micros_swarm_framework{
         //transfer the parser function to the communicator 
         communicator_->receive(parser_func);
         
+        boost::thread spin_thread(&RuntimePlatformKernel::spin_msg_queue, this);
         publish_robot_base_timer_ = node_handle_.createTimer(ros::Duration(publish_robot_base_duration_), &RuntimePlatformKernel::publish_robot_base, this);
         publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(publish_swarm_list_duration_), &RuntimePlatformKernel::publish_swarm_list, this);
         barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimePlatformKernel::barrier_check, this);

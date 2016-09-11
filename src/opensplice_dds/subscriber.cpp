@@ -49,7 +49,7 @@ namespace micros_swarm_framework{
             NULL,
             STATUS_MASK_NONE);
         checkHandle(participant, "DDS::DomainParticipantFactory::create_participant");
-
+        
         //Register the required datatype for MSFPPacket
         MSFPPacketTS = new MSFPPacketTypeSupport();
         checkHandle(MSFPPacketTS.in(), "new MSFPPacketTypeSupport");
@@ -63,9 +63,10 @@ namespace micros_swarm_framework{
         status = participant->get_default_topic_qos(topic_qos);
         checkStatus(status, "DDS::DomainParticipant::get_default_topic_qos");
         
-        //topic_qos.reliability.kind = DDS::BEST_EFFORT_RELIABILITY_QOS;
-        topic_qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
+        topic_qos.reliability.kind = DDS::BEST_EFFORT_RELIABILITY_QOS;
+        //topic_qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
         topic_qos.durability_service.history_kind=KEEP_LAST_HISTORY_QOS;
+        //topic_qos.durability_service.history_depth=4000;
 
         //Make the tailored QoS the new default
         status = participant->set_default_topic_qos(topic_qos);

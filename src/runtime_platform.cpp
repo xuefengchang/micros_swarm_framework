@@ -47,9 +47,17 @@ namespace micros_swarm_framework{
         swarms_.clear();
         neighbor_swarms_.clear();
         virtual_stigmergy_.clear();
-        barrier_.clear();
         listener_helpers_.clear();
         listener_helpers_.insert(std::pair<std::string, boost::shared_ptr<ListenerHelper> >("" , NULL));
+        base_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
+        swarm_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
+        vstig_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
+        nc_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
+        all_msg_queue_.push_back(base_msg_queue_);
+        all_msg_queue_.push_back(swarm_msg_queue_);
+        all_msg_queue_.push_back(vstig_msg_queue_);
+        all_msg_queue_.push_back(nc_msg_queue_);
+        barrier_.clear();
     }
     
     int RuntimePlatform::getRobotID()
@@ -554,15 +562,163 @@ namespace micros_swarm_framework{
         listener_helpers_.erase(key);
     }
     
-     void RuntimePlatform::insertBarrier(int robot_id)
+    bool RuntimePlatform::baseMsgQueueFull()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex11_);
+        return base_msg_queue_->full();
+    }
+    
+    bool RuntimePlatform::baseMsgQueueEmpty()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex11_);
+        return base_msg_queue_->empty();
+    }
+    
+    MSFPPacket RuntimePlatform::baseMsgQueueFront()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex11_);
+        return base_msg_queue_->front();
+    }
+    
+    int RuntimePlatform::baseMsgQueueSize()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex11_);
+        return base_msg_queue_->size();
+    }
+    
+    void RuntimePlatform::popBaseMsgQueue()
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex11_);
+        base_msg_queue_->pop();
+    }
+    
+    void RuntimePlatform::pushBaseMsgQueue(const MSFPPacket& p)
+    {
+        boost::unique_lock<boost::shared_mutex> lock(mutex11_);
+        base_msg_queue_->push(p);
+        msg_queue_condition_.notify_one();
+    }
+    
+    bool RuntimePlatform::swarmMsgQueueFull()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex12_);
+        return swarm_msg_queue_->full();
+    }
+    
+    bool RuntimePlatform::swarmMsgQueueEmpty()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex12_);
+        return swarm_msg_queue_->empty();
+    }
+    
+    MSFPPacket RuntimePlatform::swarmMsgQueueFront()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex12_);
+        return swarm_msg_queue_->front();
+    }
+    
+    int RuntimePlatform::swarmMsgQueueSize()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex12_);
+        return swarm_msg_queue_->size();
+    }
+    
+    void RuntimePlatform::popSwarmMsgQueue()
+    {
+        boost::unique_lock<boost::shared_mutex> lock(mutex12_);
+        swarm_msg_queue_->pop();
+    }
+    
+    void RuntimePlatform::pushSwarmMsgQueue(const MSFPPacket& p)
+    {
+        boost::unique_lock<boost::shared_mutex> lock(mutex12_);
+        swarm_msg_queue_->push(p);
+        msg_queue_condition_.notify_one();
+    }
+    
+    bool RuntimePlatform::vstigMsgQueueFull()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex13_);
+        return vstig_msg_queue_->full();
+    }
+    
+    bool RuntimePlatform::vstigMsgQueueEmpty()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex13_);
+        return vstig_msg_queue_->empty();
+    }
+    
+    MSFPPacket RuntimePlatform::vstigMsgQueueFront()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex13_);
+        return vstig_msg_queue_->front();
+    }
+    
+    int RuntimePlatform::vstigMsgQueueSize()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex13_);
+        return vstig_msg_queue_->size();
+    }
+    
+    void RuntimePlatform::popVstigMsgQueue()
+    {
+        boost::unique_lock<boost::shared_mutex> lock(mutex13_);
+        vstig_msg_queue_->pop();
+    }
+    
+    void RuntimePlatform::pushVstigMsgQueue(const MSFPPacket& p)
+    {
+        boost::unique_lock<boost::shared_mutex> lock(mutex13_);
+        vstig_msg_queue_->push(p);
+        msg_queue_condition_.notify_one();
+    }
+    
+    bool RuntimePlatform::ncMsgQueueFull()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex14_);
+        return nc_msg_queue_->full();
+    }
+    
+    bool RuntimePlatform::ncMsgQueueEmpty()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex14_);
+        return nc_msg_queue_->empty();
+    }
+    
+    MSFPPacket RuntimePlatform::ncMsgQueueFront()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex14_);
+        return nc_msg_queue_->front();
+    }
+    
+    int RuntimePlatform::ncMsgQueueSize()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex14_);
+        return nc_msg_queue_->size();
+    }
+    
+    void RuntimePlatform::popNcMsgQueue()
+    {
+        boost::unique_lock<boost::shared_mutex> lock(mutex14_);
+        nc_msg_queue_->pop();
+    }
+    
+    void RuntimePlatform::pushNcMsgQueue(const MSFPPacket& p)
+    {
+        boost::unique_lock<boost::shared_mutex> lock(mutex14_);
+        nc_msg_queue_->push(p);
+        msg_queue_condition_.notify_one();
+    }
+    
+    void RuntimePlatform::insertBarrier(int robot_id)
+    {
+        boost::unique_lock<boost::shared_mutex> lock(mutex15_);
         barrier_.insert(robot_id);
     }
     
     int RuntimePlatform::getBarrierSize()
     {
-        boost::shared_lock<boost::shared_mutex> lock(mutex11_);
+        boost::shared_lock<boost::shared_mutex> lock(mutex15_);
         return barrier_.size();
     }
 };

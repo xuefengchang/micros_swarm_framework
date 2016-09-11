@@ -52,7 +52,7 @@ namespace micros_swarm_framework{
             {
                 name_="ROS";
                 node_handle_=node_handle;
-                packet_publisher_ = node_handle_.advertise<micros_swarm_framework::MSFPPacket>("/micros_swarm_framework_topic", 1000, true);
+                packet_publisher_ = node_handle_.advertise<micros_swarm_framework::MSFPPacket>("/micros_swarm_framework_topic", 2000, true);
             }
             
             void broadcast(const MSFPPacket& msfp_packet)
@@ -83,7 +83,7 @@ namespace micros_swarm_framework{
             void receive(boost::function<void(const MSFPPacket&)> parser)
             {
                 parser_=parser;
-                packet_subscriber_ = node_handle_.subscribe("/micros_swarm_framework_topic", 1000, &ROSCommunication::callback, this, ros::TransportHints().udp());
+                packet_subscriber_ = node_handle_.subscribe("/micros_swarm_framework_topic", 2000, &ROSCommunication::callback, this, ros::TransportHints().udp());
             }
             
         private:
