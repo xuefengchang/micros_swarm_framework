@@ -152,7 +152,7 @@ namespace micros_swarm_framework{
                             #endif
                             p.package_check_sum=0;
                 
-                            communicator_->broadcast(p);
+                            rtp_->getOutMsgQueue()->pushSwarmMsgQueue(p);
                         }
                         */
                 
@@ -190,7 +190,7 @@ namespace micros_swarm_framework{
                             #endif
                             p.package_check_sum=0;
                 
-                            communicator_->broadcast(p);
+                            rtp_->getOutMsgQueue()->pushSwarmMsgQueue(p);
                         }
                         */
                 
@@ -248,8 +248,7 @@ namespace micros_swarm_framework{
                             #endif
                             p.package_check_sum=0;
                     
-                            //communicator_->broadcast(p);
-                            rtp_->pushVstigMsgQueue(p);
+                            rtp_->getOutMsgQueue()->pushVstigMsgQueue(p);
                         }
                         else if(local.vstig_timestamp>vsq.virtual_stigmergy_timestamp)  //local timestamp is larger
                         {
@@ -272,8 +271,7 @@ namespace micros_swarm_framework{
                             #endif
                             p.package_check_sum=0;
                     
-                            //communicator_->broadcast(p);
-                            rtp_->pushVstigMsgQueue(p);
+                            rtp_->getOutMsgQueue()->pushVstigMsgQueue(p);
                         }
                         else if((local.vstig_timestamp==vsq.virtual_stigmergy_timestamp)&&(local.robot_id!=vsq.robot_id))
                         {
@@ -326,8 +324,7 @@ namespace micros_swarm_framework{
                             #endif
                             p.package_check_sum=0;
                     
-                            //communicator_->broadcast(p);
-                            rtp_->pushVstigMsgQueue(p);
+                            rtp_->getOutMsgQueue()->pushVstigMsgQueue(p);
                         }
                         else if((local.vstig_timestamp==vsp.virtual_stigmergy_timestamp)&&(local.robot_id!=vsp.robot_id))
                         {

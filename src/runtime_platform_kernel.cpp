@@ -101,33 +101,33 @@ namespace micros_swarm_framework{
     {
         for(;;)
         {
-            boost::unique_lock<boost::mutex> lock(rtp_->msg_queue_mutex_);
+            boost::unique_lock<boost::mutex> lock(rtp_->getOutMsgQueue()->msg_queue_mutex);
     
-            if(!rtp_->baseMsgQueueEmpty())
+            if(!rtp_->getOutMsgQueue()->baseMsgQueueEmpty())
             {
-                communicator_->broadcast(rtp_->baseMsgQueueFront());
-                rtp_->popBaseMsgQueue();
+                communicator_->broadcast(rtp_->getOutMsgQueue()->baseMsgQueueFront());
+                rtp_->getOutMsgQueue()->popBaseMsgQueue();
             }
-            if(!rtp_->ncMsgQueueEmpty())
+            if(!rtp_->getOutMsgQueue()->ncMsgQueueEmpty())
             {
-                communicator_->broadcast(rtp_->ncMsgQueueFront());
-                rtp_->popNcMsgQueue();
+                communicator_->broadcast(rtp_->getOutMsgQueue()->ncMsgQueueFront());
+                rtp_->getOutMsgQueue()->popNcMsgQueue();
             }
-            if(!rtp_->swarmMsgQueueEmpty())
+            if(!rtp_->getOutMsgQueue()->swarmMsgQueueEmpty())
             {
-                communicator_->broadcast(rtp_->swarmMsgQueueFront());
-                rtp_->popSwarmMsgQueue();
+                communicator_->broadcast(rtp_->getOutMsgQueue()->swarmMsgQueueFront());
+                rtp_->getOutMsgQueue()->popSwarmMsgQueue();
             }
-            if(!rtp_->vstigMsgQueueEmpty())
+            if(!rtp_->getOutMsgQueue()->vstigMsgQueueEmpty())
             {
-                communicator_->broadcast(rtp_->vstigMsgQueueFront());
-                rtp_->popVstigMsgQueue();
+                communicator_->broadcast(rtp_->getOutMsgQueue()->vstigMsgQueueFront());
+                rtp_->getOutMsgQueue()->popVstigMsgQueue();
             }
             
-            while(rtp_->baseMsgQueueEmpty()&&rtp_->swarmMsgQueueEmpty()&&
-                  rtp_->vstigMsgQueueEmpty()&&rtp_->ncMsgQueueEmpty())
+            while(rtp_->getOutMsgQueue()->baseMsgQueueEmpty()&&rtp_->getOutMsgQueue()->swarmMsgQueueEmpty()&&
+                  rtp_->getOutMsgQueue()->vstigMsgQueueEmpty()&&rtp_->getOutMsgQueue()->ncMsgQueueEmpty())
             {
-                rtp_->msg_queue_condition_.wait(lock);
+                rtp_->getOutMsgQueue()->msg_queue_condition.wait(lock);
             }
         }
     }
@@ -191,9 +191,8 @@ namespace micros_swarm_framework{
         p.packet_data=srbb_str.data();
         #endif
         p.package_check_sum=0;
-
-        //communicator_->broadcast(p);
-        rtp_->pushBaseMsgQueue(p);
+        
+        rtp_->getOutMsgQueue()->pushBaseMsgQueue(p);
     }
     
     void RuntimePlatformKernel::publish_swarm_list(const ros::TimerEvent&)
@@ -223,8 +222,7 @@ namespace micros_swarm_framework{
         #endif
         p.package_check_sum=0;
 
-        //communicator_->broadcast(p);
-        rtp_->pushSwarmMsgQueue(p);
+        rtp_->getOutMsgQueue()->pushSwarmMsgQueue(p);
     }
     
     void RuntimePlatformKernel::setParameters()

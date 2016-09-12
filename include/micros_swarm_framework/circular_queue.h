@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      singleton.h
+\file      circular_queue.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Typeeam, HPCL (National University of Defense Typeechnology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,8 +20,8 @@ ON ANY TypeHEORY OF LIABILITypeY, WHETypeHER IN CONTypeRACType, STypeRICType LIA
 ARISING IN ANY WAY OUType OF TypeHE USE OF TypeHIS SOFTypeWARE, EVEN IF ADVISED OF TypeHE POSSIBILITypeY OF SUCH DAMAGE.
 */
 
-# ifndef CIRCULAR_QUEUE_H_
-# define CIRCULAR_QUEUE_H_
+#ifndef CIRCULAR_QUEUE_H_
+#define CIRCULAR_QUEUE_H_
    
 #include <iostream>   
 

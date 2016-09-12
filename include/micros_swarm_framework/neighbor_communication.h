@@ -91,7 +91,7 @@ namespace micros_swarm_framework{
                 p.package_check_sum=0;
                 
                 //communicator_->broadcast(p);
-                rtp_->pushNcMsgQueue(p);
+                rtp_->getOutMsgQueue()->pushNcMsgQueue(p);
             }
         private:
             boost::shared_ptr<RuntimePlatform> rtp_;
