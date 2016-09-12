@@ -59,7 +59,7 @@ namespace micros_swarm_framework{
                 return base_msg_queue_->empty();
             }
     
-            MSFPPacket baseMsgQueueFront()
+            const MSFPPacket& baseMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(base_msg_mutex_);
                 return base_msg_queue_->front();
@@ -96,7 +96,7 @@ namespace micros_swarm_framework{
                 return swarm_msg_queue_->empty();
             }
     
-            MSFPPacket swarmMsgQueueFront()
+            const MSFPPacket& swarmMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(swarm_msg_mutex_);
                 return swarm_msg_queue_->front();
@@ -133,7 +133,7 @@ namespace micros_swarm_framework{
                 return vstig_msg_queue_->empty();
             }
     
-            MSFPPacket vstigMsgQueueFront()
+            const MSFPPacket& vstigMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(vstig_msg_mutex_);
                 return vstig_msg_queue_->front();
@@ -170,7 +170,7 @@ namespace micros_swarm_framework{
                 return nc_msg_queue_->empty();
             }
     
-            MSFPPacket ncMsgQueueFront()
+            const MSFPPacket& ncMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(nc_msg_mutex_);
                 return nc_msg_queue_->front();
