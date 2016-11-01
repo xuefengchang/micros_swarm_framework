@@ -37,8 +37,6 @@ namespace micros_swarm_framework{
     class MSFPPacketListener: public virtual DDS::DataReaderListener
     {
         public:
-            MSFPPacketDataReader_var MSFPPacketDR_;
-            
             boost::function<void(const MSFPPacket&)> callBack_;
 
 	        MSFPPacketListener () 

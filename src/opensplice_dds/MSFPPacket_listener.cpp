@@ -36,10 +36,11 @@ namespace micros_swarm_framework{
     void MSFPPacketListener::on_data_available(DDS::DataReader_ptr reader)
       THROW_ORB_EXCEPTIONS
     {
-        
         DDS::ReturnCode_t status;
         MSFPPacketSeq packetSeq;
         SampleInfoSeq infoSeq;
+        
+        MSFPPacketDataReader_var MSFPPacketDR_ = MSFPPacketDataReader::_narrow(reader);
 
         status = MSFPPacketDR_->take(packetSeq, infoSeq, LENGTH_UNLIMITED,
         ANY_SAMPLE_STATE, ANY_VIEW_STATE, ANY_INSTANCE_STATE);

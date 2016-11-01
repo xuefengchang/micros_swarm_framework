@@ -58,10 +58,10 @@ namespace micros_swarm_framework{
         //Set the ReliabilityQosPolicy to BEST_EFFORT_RELIABILITY
         status = participant->get_default_topic_qos(topic_qos);
         checkStatus(status, "DDS::DomainParticipant::get_default_topic_qos");
-        topic_qos.reliability.kind = DDS::BEST_EFFORT_RELIABILITY_QOS;
+        topic_qos.reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
         //topic_qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
-        topic_qos.durability_service.history_kind=KEEP_LAST_HISTORY_QOS;
-        //topic_qos.durability_service.history_depth=4000;
+        topic_qos.durability_service.history_kind = KEEP_LAST_HISTORY_QOS;
+        //topic_qos.durability_service.history_depth = 4000;
 
         //Make the tailored QoS the new default
         status = participant->set_default_topic_qos(topic_qos);
@@ -89,7 +89,9 @@ namespace micros_swarm_framework{
         status = publisher_->get_default_datawriter_qos(dw_qos);
         dw_qos.destination_order.kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
         dw_qos.history.kind = KEEP_ALL_HISTORY_QOS;
-        dw_qos.durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        //dw_qos.history.kind = KEEP_LAST_HISTORY_QOS;
+        //dw_qos.durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        dw_qos.durability.kind = VOLATILE_DURABILITY_QOS;
 
         //Create a DataWriter for the MSFPPacket Topic (using the appropriate QoS)
         parentWriter = publisher_->create_datawriter(
