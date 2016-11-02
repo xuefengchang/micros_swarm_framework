@@ -73,9 +73,9 @@ namespace micros_swarm_framework{
             ros::Timer barrier_timer_;
             ros::Timer spin_timer_;
             
-            float publish_robot_base_duration_;
-            float publish_swarm_list_duration_;
-            float default_neighbor_distance_;
+            double publish_robot_base_duration_;
+            double publish_swarm_list_duration_;
+            double default_neighbor_distance_;
             int total_robot_numbers_;
             int robot_id_;
             
