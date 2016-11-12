@@ -2,6 +2,15 @@
 Changelog for package micros_swarm_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.15 (2016-11-12)
+-----------
+* release to kinetic rosdistro
+* repair bugs in getParam
+* repair bugs in opensplice dds publisher and subscriber
+* repair bugs in MsgQueueManager
+* complete MsgQueueManager class
+* complete msg queue cache
+
 0.0.14 (2016-09-09)
 -----------
 * complete neighbor communication
