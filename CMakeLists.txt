@@ -110,11 +110,12 @@ add_message_files(
 )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  DIRECTORY srv
+  FILES
+  AppLoad.srv
+  AppUnload.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -201,90 +202,107 @@ if (${USE_OPENSPLICE_DDS})
 endif()
 
 ## Declare a C++ library
-add_library(micros_swarm_framework_rtp_kernel
+add_library(micros_swarm_framework_rtp_core
   src/runtime_platform.cpp
-  src/runtime_platform_kernel.cpp
+  src/runtime_platform_core.cpp
 )
-add_dependencies(micros_swarm_framework_rtp_kernel ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(micros_swarm_framework_rtp_core ${micros_swarm_framework_EXPORTED_TARGETS})
 
-target_link_libraries(micros_swarm_framework_rtp_kernel
+target_link_libraries(micros_swarm_framework_rtp_core
   ${Boost_THREAD_LIBRARY}
   ${Boost_REGEX_LIBRARY}
   ${Boost_SERIALIZATION_LIBRARY}
   ${catkin_LIBRARIES}
 )
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_rtp_kernel
+  target_link_libraries(micros_swarm_framework_rtp_core
     opensplice_dds_pub_sub
     libddskernel.so
     libdcpsisocpp.so
   )
 endif()
 
-add_library(micros_swarm_framework_App1Broker
+add_library(micros_swarm_framework_rtp_manager
+  src/runtime_platform_manager.cpp
+)
+add_dependencies(micros_swarm_framework_rtp_manager ${micros_swarm_framework_EXPORTED_TARGETS})
+target_link_libraries(micros_swarm_framework_rtp_manager micros_swarm_framework_rtp_core)
+
+add_executable(micros_swarm_framework_rtp_node
+  src/rtp_manager_node.cpp
+)
+target_link_libraries(micros_swarm_framework_rtp_node micros_swarm_framework_rtp_manager)
+
+add_library(app_loader
+  src/app_loader.cpp
+)
+add_dependencies(app_loader ${micros_swarm_framework_EXPORTED_TARGETS})
+
+add_executable(micros_swarm_framework_app_loader
+  src/app_loader_node.cpp
+)
+target_link_libraries(micros_swarm_framework_app_loader app_loader)
+target_link_libraries(micros_swarm_framework_app_loader ${catkin_LIBRARIES})
+
+add_library(micros_swarm_framework_App1
   apps/app1.cpp
-  apps/brokers/app1_broker.cpp
 )
-add_dependencies(micros_swarm_framework_App1Broker ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(micros_swarm_framework_App1 ${micros_swarm_framework_EXPORTED_TARGETS})
 
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_App1Broker
+  target_link_libraries(micros_swarm_framework_App1
     opensplice_dds_pub_sub
     libddskernel.so
     libdcpsisocpp.so
   )
 endif()
 
-add_library(micros_swarm_framework_App2Broker
+add_library(micros_swarm_framework_App2
   apps/app2.cpp
-  apps/brokers/app2_broker.cpp
 )
-add_dependencies(micros_swarm_framework_App2Broker ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(micros_swarm_framework_App2 ${micros_swarm_framework_EXPORTED_TARGETS})
 
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_App2Broker
+  target_link_libraries(micros_swarm_framework_App2
     opensplice_dds_pub_sub
     libddskernel.so
     libdcpsisocpp.so
   )
 endif()
 
-add_library(micros_swarm_framework_App3Broker
+add_library(micros_swarm_framework_App3
   apps/app3.cpp
-  apps/brokers/app3_broker.cpp
 )
-add_dependencies(micros_swarm_framework_App3Broker ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(micros_swarm_framework_App3 ${micros_swarm_framework_EXPORTED_TARGETS})
 
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_App3Broker
+  target_link_libraries(micros_swarm_framework_App3
     opensplice_dds_pub_sub
     libddskernel.so
     libdcpsisocpp.so
   )
 endif()
 
-add_library(micros_swarm_framework_TestNCBroker
+add_library(micros_swarm_framework_TestNC
   test/testnc.cpp
-  test/brokers/testnc_broker.cpp
 )
-add_dependencies(micros_swarm_framework_TestNCBroker ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(micros_swarm_framework_TestNC ${micros_swarm_framework_EXPORTED_TARGETS})
 
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_TestNCBroker
+  target_link_libraries(micros_swarm_framework_TestNC
     opensplice_dds_pub_sub
     libddskernel.so
     libdcpsisocpp.so
   )
 endif()
 
-add_library(micros_swarm_framework_TestVstigBroker
+add_library(micros_swarm_framework_TestVstig
   test/testvstig.cpp
-  test/brokers/testvstig_broker.cpp
 )
-add_dependencies(micros_swarm_framework_TestVstigBroker ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(micros_swarm_framework_TestVstig ${micros_swarm_framework_EXPORTED_TARGETS})
 
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_TestVstigBroker
+  target_link_libraries(micros_swarm_framework_TestVstig
     opensplice_dds_pub_sub
     libddskernel.so
     libdcpsisocpp.so
@@ -313,6 +331,15 @@ endif()
 #    libddskernel.so
 #    libdcpsisocpp.so
 #)
+
+add_executable(testpso test/testpso.cpp)
+add_dependencies(testpso ${micros_swarm_framework_EXPORTED_TARGETS})
+target_link_libraries(testpso
+   ${Boost_THREAD_LIBRARY}
+   ${Boost_REGEX_LIBRARY}
+   ${Boost_SERIALIZATION_LIBRARY}
+   ${catkin_LIBRARIES}
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -347,7 +374,9 @@ endif()
 # )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS micros_swarm_framework_rtp_kernel micros_swarm_framework_App1Broker micros_swarm_framework_App2Broker micros_swarm_framework_App3Broker
+install(TARGETS
+  micros_swarm_framework_rtp_manager micros_swarm_framework_rtp_node  micros_swarm_framework_app_loader
+  micros_swarm_framework_App1 micros_swarm_framework_App2 micros_swarm_framework_App3
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

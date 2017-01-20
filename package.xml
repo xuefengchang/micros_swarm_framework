@@ -59,8 +59,7 @@
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
-    <nodelet plugin="${prefix}/rtp_plugins.xml"/>
-    <nodelet plugin="${prefix}/app_plugins.xml"/>
+    <micros_swarm_framework plugin="${prefix}/app_plugins.xml"/>
   </export>
   
 </package>

@@ -40,6 +40,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm_framework/message.h"
 #include "micros_swarm_framework/singleton.h"
 #include "micros_swarm_framework/runtime_platform.h"
+#include "micros_swarm_framework/pso.h"
 #include "micros_swarm_framework/communication_interface.h"
 #ifdef ROS
 #include "micros_swarm_framework/ros_communication.h"
@@ -47,6 +48,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #ifdef OPENSPLICE_DDS
 #include "micros_swarm_framework/opensplice_dds_communication.h"
 #endif
+
 
 namespace micros_swarm_framework{
     
@@ -311,6 +313,11 @@ namespace micros_swarm_framework{
                 }
         
                 return result_swarm;
+            }
+            
+            void pso()  
+            {
+            
             }
             
             void print() const

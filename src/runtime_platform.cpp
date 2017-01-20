@@ -38,6 +38,21 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm_framework/runtime_platform.h"
 
 namespace micros_swarm_framework{
+
+    RuntimePlatform::RuntimePlatform()
+    {
+        robot_id_=0;
+        robot_base_=Base(0,0,0,0,0,0);
+        neighbors_.clear();
+        swarms_.clear();
+        neighbor_swarms_.clear();
+        virtual_stigmergy_.clear();
+        listener_helpers_.clear();
+        listener_helpers_.insert(std::pair<std::string, boost::shared_ptr<ListenerHelper> >("" , NULL));
+        in_msg_queue_.reset(new MsgQueueManager());
+        out_msg_queue_.reset(new MsgQueueManager());
+        barrier_.clear();
+    }
     
     RuntimePlatform::RuntimePlatform(int robot_id)
     {

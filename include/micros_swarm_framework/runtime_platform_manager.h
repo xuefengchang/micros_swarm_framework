@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      testnc.h
+\file      runtime_platform_manager.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,24 +20,50 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef TESTNC_H_
-#define TESTNC_H_
+#ifndef RTP_FACTORY_H_
+#define RTP_FACTORY_H_
 
-#include "std_msgs/String.h"
-#include "nav_msgs/Odometry.h"
-#include "geometry_msgs/Twist.h"
+#include <iostream>
+#include <string>
+#include <time.h>
+#include <stdlib.h>
+#include <vector>
+#include <stack>
+#include <map>
+#include <set>
+#include <queue>
+#include <algorithm>
+#include <functional>
 
-#include "micros_swarm_framework/micros_swarm_framework.h"
+#include <ros/ros.h>
+#include <pluginlib/class_list_macros.h>
+
+#include "micros_swarm_framework/AppLoad.h"
+#include "micros_swarm_framework/AppUnload.h"
+#include "micros_swarm_framework/application.h"
+#include "micros_swarm_framework/runtime_platform_core.h"
 
 namespace micros_swarm_framework{
-    
-    class TestNC : public Application
+    struct AppInstance{
+        std::string app_name_;
+        boost::shared_ptr<Application> app_ptr_;
+        bool running_;
+    };
+
+    class RTPManager
     {
         public:
-            TestNC();
-            ~TestNC();
-            void callback(const float& value);
-            virtual void start(); 
+            RTPManager();
+            ~RTPManager();
+        private:
+            void startApp(const ros::TimerEvent&);
+            bool loadService(micros_swarm_framework::AppLoad::Request &req, micros_swarm_framework::AppLoad::Response &resp);
+            bool unloadService(micros_swarm_framework::AppUnload::Request &req, micros_swarm_framework::AppUnload::Response &resp);
+            boost::shared_ptr<micros_swarm_framework::RuntimePlatformCore> rtp_core_;
+            std::vector<AppInstance> apps_;
+            pluginlib::ClassLoader<micros_swarm_framework::Application> app_loader_;
+            ros::ServiceServer app_load_srv_, app_unload_srv_;
+            ros::Timer start_app_timer_;
     };
 };
 

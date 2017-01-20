@@ -158,9 +158,12 @@ pair<double,double> f_r()
     return re;
 }
 
+// Register the application
+PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App3, micros_swarm_framework::Application)
+
 namespace micros_swarm_framework{
 
-    App3::App3(ros::NodeHandle node_handle):Application(node_handle)
+    App3::App3()
     {
     }
     
@@ -224,7 +227,8 @@ namespace micros_swarm_framework{
     void App3::start()
     {
         init();
-        
+
+        ros::NodeHandle nh;
         set_neighbor_distance(12);
         pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         sub = nh.subscribe("base_pose_ground_truth", 1000, &App3::baseCallback, this, ros::TransportHints().udp());

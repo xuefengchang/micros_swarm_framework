@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      app1_broker.cpp 
+\file      rtp_manager_node.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,38 +20,20 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "apps/app1.h"
+#include <iostream>
+#include <ros/ros.h>
 
-namespace micros_swarm_framework{
-    
-    class App1Broker : public nodelet::Nodelet
-    {
-        public:
-            ros::NodeHandle nh_;
-            boost::shared_ptr<Application> app_;
-                     
-            App1Broker();
-            ~App1Broker();
-            virtual void onInit();
-    };
+#include "micros_swarm_framework/runtime_platform_manager.h"
 
-    App1Broker::App1Broker()
-    {
-    
-    }
-    
-    App1Broker::~App1Broker()
-    {
-        
-    }
-    
-    void App1Broker::onInit()
-    {
-        nh_ = getNodeHandle();
-        app_.reset(new App1(nh_));
-        app_->start();
-    }
-};
+int main(int argc, char** argv){
+    ros::init(argc, argv, "micros_swarm_framework_rtp_node");
 
-// Register the nodelet
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App1Broker, nodelet::Nodelet)
+    boost::shared_ptr<micros_swarm_framework::RTPManager> rtp_manager;
+    rtp_manager.reset(new micros_swarm_framework::RTPManager());
+
+    boost::thread t = boost::thread(boost::bind(&ros::spin));
+    t.join();
+    //ros::spin();
+    return 0;
+}
+

@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      testnc.h
+\file      app_loader.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,25 +20,29 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef TESTNC_H_
-#define TESTNC_H_
+#include <iostream>
+#include <string>
+#include <time.h>
+#include <stdlib.h>
+#include <vector>
+#include <stack>
+#include <map>
+#include <set>
+#include <queue>
+#include <algorithm>
+#include <functional>
 
-#include "std_msgs/String.h"
-#include "nav_msgs/Odometry.h"
-#include "geometry_msgs/Twist.h"
+#include <ros/ros.h>
+#include "micros_swarm_framework/app_loader.h"
 
-#include "micros_swarm_framework/micros_swarm_framework.h"
+int main(int argc, char** argv)
+{
+    ros::init(argc, argv, "micros_swarm_framework_app_loader");
 
-namespace micros_swarm_framework{
-    
-    class TestNC : public Application
-    {
-        public:
-            TestNC();
-            ~TestNC();
-            void callback(const float& value);
-            virtual void start(); 
-    };
-};
+    micros_swarm_framework::AppLoader app_loader;
 
-#endif
+    ros::spin();
+    return 0;
+}
+
+

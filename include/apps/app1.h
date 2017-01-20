@@ -44,7 +44,7 @@ namespace micros_swarm_framework{
             int delta;
             int epsilon;
             
-            App1(ros::NodeHandle node_handle);
+            App1();
             ~App1();
             virtual void start();
             

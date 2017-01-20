@@ -1,6 +1,7 @@
 <launch>
-    <node pkg="nodelet" type="nodelet" name="micros_swarm_framework_TestNCBroker" args="load micros_swarm_framework/TestNCBroker micros_swarm_framework_manager0" output="screen">
+    <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader0" output="screen">
+        <param name="app_name" type="string" value="test_nc"/>
+        <param name="app_type" type="string" value="micros_swarm_framework/TestNC"/>
     </node>
-
 </launch>
 

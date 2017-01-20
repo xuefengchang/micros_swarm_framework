@@ -1,7 +1,0 @@
-<!--This is the plugin for the micros_swarm_framework runtime platform kernl-->
-<library path="lib/libmicros_swarm_framework_rtp_kernel">
-    <class name="micros_swarm_framework/RuntimePlatformKernel" type="micros_swarm_framework::RuntimePlatformKernel" base_class_type="nodelet::Nodelet">
-        <description>micros_swarm_framework runtime platform kernel.</description>
-    </class>
-    
-</library>

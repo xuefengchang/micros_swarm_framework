@@ -47,7 +47,7 @@ namespace micros_swarm_framework{
             int delta_nonkin;
             int epsilon_nonkin;
             
-            App2(ros::NodeHandle node_handle);
+            App2();
             ~App2();
             virtual void start();
             

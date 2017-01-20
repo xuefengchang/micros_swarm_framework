@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      application.h
+\file      runtime_platform_kernel.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,8 +20,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef APPLICATION_H_
-#define APPLICATION_H_
+#ifndef RUNTIME_PLATFORM_KERNEL_H_
+#define RUNTIME_PLATFORM_KERNEL_H_
 
 #include <iostream>
 #include <string>
@@ -36,53 +36,51 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <functional>
 
 #include <ros/ros.h>
+#include <pluginlib/class_loader.h>
 #include <pluginlib/class_list_macros.h>
 
+#include <micros_swarm_framework/runtime_platform.h>
 #include "micros_swarm_framework/singleton.h"
+#include "micros_swarm_framework/message.h"
 #include "micros_swarm_framework/runtime_platform.h"
+#include "micros_swarm_framework/communication_interface.h"
+#ifdef ROS
+#include "micros_swarm_framework/ros_communication.h"
+#endif
+#ifdef OPENSPLICE_DDS
+#include "micros_swarm_framework/opensplice_dds_communication.h"
+#endif
+#include "micros_swarm_framework/packet_parser.h"
 
 namespace micros_swarm_framework{
 
-    class Application
+    class RuntimePlatformCore
     {
     public:
-        Application()
-        {
-            rtp = Singleton<RuntimePlatform>::getSingleton();
-        }
+        ros::NodeHandle node_handle_;
+        boost::shared_ptr<RuntimePlatform> rtp_;
+        boost::shared_ptr<CommunicationInterface> communicator_;
+        boost::shared_ptr<PacketParser> parser_;
 
-        virtual ~Application(){}
+        ros::Timer publish_robot_base_timer_;
+        ros::Timer publish_swarm_list_timer_;
+        ros::Timer barrier_timer_;
+        ros::Timer spin_timer_;
 
-        //application api
-        const int robot_id()
-        {
-            return rtp->getRobotID();
-        }
+        double publish_robot_base_duration_;
+        double publish_swarm_list_duration_;
+        double default_neighbor_distance_;
+        int total_robot_numbers_;
+        int robot_id_;
 
-        const Base& base()
-        {
-            return rtp->getRobotBase();
-        }
-
-        void set_base(const Base& robot_base)
-        {
-            rtp->setRobotBase(robot_base);
-        }
-
-        float neighbor_distance()
-        {
-            return rtp->getNeighborDistance();
-        }
-
-        void set_neighbor_distance(float neighbor_distance)
-        {
-            rtp->setNeighborDistance(neighbor_distance);
-        }
-
-        //entry function
-        virtual void start()=0;
-    private:
-        boost::shared_ptr<RuntimePlatform> rtp;
+        RuntimePlatformCore();
+        ~RuntimePlatformCore();
+        void initialize();
+        void setParameters();
+        void spin_msg_queue();
+        void publish_robot_base(const ros::TimerEvent&);
+        void publish_swarm_list(const ros::TimerEvent&);
+        void barrier_check(const ros::TimerEvent&);
     };
 };
 

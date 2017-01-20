@@ -42,7 +42,7 @@ namespace micros_swarm_framework{
             void loop(const ros::TimerEvent&);
             void baseCallback(const nav_msgs::Odometry& lmsg);
             
-            TestVstig(ros::NodeHandle node_handle);
+            TestVstig();
             ~TestVstig();
             virtual void start(); 
     };

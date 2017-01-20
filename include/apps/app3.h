@@ -49,7 +49,7 @@ namespace micros_swarm_framework{
             int hz;
             double interval;
             
-            App3(ros::NodeHandle node_handle);
+            App3();
             ~App3();
             virtual void start();
             

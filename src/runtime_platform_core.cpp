@@ -54,50 +54,21 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm_framework/opensplice_dds_communication.h"
 #endif
 #include "micros_swarm_framework/packet_parser.h"
+#include "micros_swarm_framework/runtime_platform_core.h"
 
 //#define PUBLISH_ROBOT_ID_DURATION 0.1
 //#define PUBLISH_SWARM_LIST_DURATION 5
 
 namespace micros_swarm_framework{
-    
-    class RuntimePlatformKernel : public nodelet::Nodelet
+    RuntimePlatformCore::RuntimePlatformCore()
     {
-        public:
-            ros::NodeHandle node_handle_;
-            boost::shared_ptr<RuntimePlatform> rtp_;
-            boost::shared_ptr<CommunicationInterface> communicator_;
-            boost::shared_ptr<PacketParser> parser_;
-            
-            ros::Timer publish_robot_base_timer_;
-            ros::Timer publish_swarm_list_timer_;
-            ros::Timer barrier_timer_;
-            ros::Timer spin_timer_;
-            
-            double publish_robot_base_duration_;
-            double publish_swarm_list_duration_;
-            double default_neighbor_distance_;
-            int total_robot_numbers_;
-            int robot_id_;
-            
-            RuntimePlatformKernel();
-            ~RuntimePlatformKernel();
-            virtual void onInit();
-            void setParameters();
-            void spin_msg_queue();
-            void publish_robot_base(const ros::TimerEvent&);
-            void publish_swarm_list(const ros::TimerEvent&);
-            void barrier_check(const ros::TimerEvent&);
-    };
+    }
 
-    RuntimePlatformKernel::RuntimePlatformKernel()
+    RuntimePlatformCore::~RuntimePlatformCore()
     {
     }
     
-    RuntimePlatformKernel::~RuntimePlatformKernel()
-    {
-    }
-    
-    void RuntimePlatformKernel::spin_msg_queue()
+    void RuntimePlatformCore::spin_msg_queue()
     {
         for(;;)
         {
@@ -132,7 +103,7 @@ namespace micros_swarm_framework{
         }
     }
     
-    void RuntimePlatformKernel::barrier_check(const ros::TimerEvent&)
+    void RuntimePlatformCore::barrier_check(const ros::TimerEvent&)
     {
         int barrier_size=rtp_->getBarrierSize();
         if(barrier_size>=total_robot_numbers_-1)
@@ -167,7 +138,7 @@ namespace micros_swarm_framework{
         communicator_->broadcast(p);
     }
     
-    void RuntimePlatformKernel::publish_robot_base(const ros::TimerEvent&)
+    void RuntimePlatformCore::publish_robot_base(const ros::TimerEvent&)
     {
         int robot_id=rtp_->getRobotID();
         
@@ -195,7 +166,7 @@ namespace micros_swarm_framework{
         rtp_->getOutMsgQueue()->pushBaseMsgQueue(p);
     }
     
-    void RuntimePlatformKernel::publish_swarm_list(const ros::TimerEvent&)
+    void RuntimePlatformCore::publish_swarm_list(const ros::TimerEvent&)
     {
         int robot_id=rtp_->getRobotID();
         
@@ -225,7 +196,7 @@ namespace micros_swarm_framework{
         rtp_->getOutMsgQueue()->pushSwarmMsgQueue(p);
     }
     
-    void RuntimePlatformKernel::setParameters()
+    void RuntimePlatformCore::setParameters()
     {
         bool param_ok =node_handle_.getParam("/publish_robot_id_duration", publish_robot_base_duration_);
         if(!param_ok)
@@ -263,20 +234,21 @@ namespace micros_swarm_framework{
             std::cout<<"total_robot_numbers = "<<total_robot_numbers_<<std::endl;
         }
     
-        param_ok =node_handle_.getParam("unique_robot_id", robot_id_);
+        /*param_ok =node_handle_.getParam("unique_robot_id", robot_id_);
         if(!param_ok)
         {
             std::cout<<"could not get parameter unique_robot_id! use the default value."<<std::endl;
             robot_id_=0;
         }else{
             std::cout<<"unique_robot_id = "<<robot_id_<<std::endl;
-        }
+        }*/
+        ros::NodeHandle private_nh("~");
+        private_nh.param("unique_robot_id", robot_id_, 0);
+        std::cout<<"unique_robot_id = "<<robot_id_<<std::endl;
     }
     
-    void RuntimePlatformKernel::onInit()
+    void RuntimePlatformCore::initialize()
     {
-        RuntimePlatformKernel::node_handle_ = getPrivateNodeHandle();
-        
         setParameters();
     
         //construct runtime platform
@@ -290,18 +262,17 @@ namespace micros_swarm_framework{
         communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
         #endif
         //construct packet parser
-        parser_.reset(new PacketParser());
+        //parser_.reset(new PacketParser());
+        parser_ = Singleton<PacketParser>::getSingleton();
         boost::function<void(const MSFPPacket& packet)> parser_func=boost::bind(&PacketParser::parser, parser_, _1);
         //transfer the parser function to the communicator 
         communicator_->receive(parser_func);
         
-        boost::thread spin_thread(&RuntimePlatformKernel::spin_msg_queue, this);
-        publish_robot_base_timer_ = node_handle_.createTimer(ros::Duration(publish_robot_base_duration_), &RuntimePlatformKernel::publish_robot_base, this);
-        publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(publish_swarm_list_duration_), &RuntimePlatformKernel::publish_swarm_list, this);
-        barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimePlatformKernel::barrier_check, this);
+        boost::thread spin_thread(&RuntimePlatformCore::spin_msg_queue, this);
+        publish_robot_base_timer_ = node_handle_.createTimer(ros::Duration(publish_robot_base_duration_), &RuntimePlatformCore::publish_robot_base, this);
+        publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(publish_swarm_list_duration_), &RuntimePlatformCore::publish_swarm_list, this);
+        barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimePlatformCore::barrier_check, this);
     }
 };
 
-// Register the nodelet
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::RuntimePlatformKernel, nodelet::Nodelet)
 

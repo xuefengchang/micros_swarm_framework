@@ -28,6 +28,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define RED_SWARM 1
 #define BLUE_SWARM 2
 
+// Register the application
+PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App2, micros_swarm_framework::Application)
+
 namespace micros_swarm_framework{
 
     struct XY
@@ -36,7 +39,7 @@ namespace micros_swarm_framework{
         float y;
     };
 
-    App2::App2(ros::NodeHandle node_handle):Application(node_handle)
+    App2::App2()
     {
         
     }
@@ -175,11 +178,13 @@ namespace micros_swarm_framework{
 
     void App2::motion_red()
     {
+        ros::NodeHandle nh;
         red_timer = nh.createTimer(ros::Duration(0.1), &App2::publish_red_cmd, this);
     }
 
     void App2::motion_blue()
     {
+        ros::NodeHandle nh;
         blue_timer = nh.createTimer(ros::Duration(0.1), &App2::publish_blue_cmd, this);
     }
     
@@ -198,10 +203,10 @@ namespace micros_swarm_framework{
     void App2::start()
     {
         init();
-    
+
+        ros::NodeHandle nh;
         pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         sub = nh.subscribe("base_pose_ground_truth", 1000, &App2::baseCallback, this, ros::TransportHints().udp());
-        ros::Duration(5).sleep();  //this is necessary, in order that the runtime platform kernel of the robot has enough time to publish it's base information.
         
         boost::function<bool()> bfred=boost::bind(&App2::red, this, robot_id());
         boost::function<bool()> bfblue=boost::bind(&App2::blue, this, robot_id());
@@ -210,11 +215,19 @@ namespace micros_swarm_framework{
         red_swarm.select(bfred);
         micros_swarm_framework::Swarm blue_swarm(BLUE_SWARM);
         blue_swarm.select(bfblue);
+
+        red_swarm.print();
+        blue_swarm.print();
         
         red_swarm.execute(boost::bind(&App2::motion_red, this));
         blue_swarm.execute(boost::bind(&App2::motion_blue, this));
-        
-        red_swarm.print();
-        blue_swarm.print();
+
+        ros::Rate loop_rate(10);
+        while(ros::ok()) {
+            red_swarm.print();
+            blue_swarm.print();
+            ros::spinOnce();
+            loop_rate.sleep();
+        }
     }
 };

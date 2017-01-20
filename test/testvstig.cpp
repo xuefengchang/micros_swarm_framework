@@ -22,9 +22,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "apps/testvstig.h"
 
+// Register the application
+PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::TestVstig, micros_swarm_framework::Application)
+
 namespace micros_swarm_framework{
 
-    TestVstig::TestVstig(ros::NodeHandle node_handle):Application(node_handle)
+    TestVstig::TestVstig()
     {
     }
     
@@ -60,6 +63,7 @@ namespace micros_swarm_framework{
     
     void TestVstig::start()
     {
+        ros::NodeHandle nh;
         set_neighbor_distance(1.2);
         sub = nh.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
         

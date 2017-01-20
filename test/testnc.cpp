@@ -22,9 +22,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "apps/testnc.h"
 
+// Register the application
+PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::TestNC, micros_swarm_framework::Application)
+
 namespace micros_swarm_framework{
 
-    TestNC::TestNC(ros::NodeHandle node_handle):Application(node_handle)
+    TestNC::TestNC()
     {
     }
     
@@ -34,15 +37,15 @@ namespace micros_swarm_framework{
     
     void TestNC::callback(const float& value)
     {
-        std::cout<<"I received the value: "<<value<<std::endl;
+        ROS_INFO("I received the value: %f.", value);
     }
     
     void TestNC::start()
     {
+        std::cout<<"TestNC step into start..."<<std::endl;
         Broadcaster<float> bc("testkey");
         boost::function<void(const float&)> cb=boost::bind(&TestNC::callback, this, _1);
         Listener<float> ls("testkey", cb);
-        
         //ls.ignore();
         
         for(int i=0;i<10;i++)

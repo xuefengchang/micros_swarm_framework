@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      app2_broker.cpp 
+\file      app_loader.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,38 +20,37 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "apps/app2.h"
+#ifndef APP_LOADER_H_
+#define APP_LOADER_H_
+
+#include <iostream>
+#include <string>
+#include <time.h>
+#include <stdlib.h>
+#include <vector>
+#include <stack>
+#include <map>
+#include <set>
+#include <queue>
+#include <algorithm>
+#include <functional>
+
+#include <ros/ros.h>
+
+#include "micros_swarm_framework/AppLoad.h"
+#include "micros_swarm_framework/AppUnload.h"
 
 namespace micros_swarm_framework{
-    
-    class App2Broker : public nodelet::Nodelet
+
+    class AppLoader
     {
         public:
-            ros::NodeHandle nh_;
-            boost::shared_ptr<Application> app_;
-                     
-            App2Broker();
-            ~App2Broker();
-            virtual void onInit();
+            AppLoader();
+            ~AppLoader();
+        private:
+            std::string app_name_;
+            std::string app_type_;
     };
-
-    App2Broker::App2Broker()
-    {
-    
-    }
-    
-    App2Broker::~App2Broker()
-    {
-        
-    }
-    
-    void App2Broker::onInit()
-    {
-        nh_ = getNodeHandle();
-        app_.reset(new App2(nh_));
-        app_->start();
-    }
 };
 
-// Register the nodelet
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App2Broker, nodelet::Nodelet)
+#endif

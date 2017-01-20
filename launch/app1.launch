@@ -1,90 +1,126 @@
 <launch>
     <group ns="robot_0">
-        <node pkg="nodelet" type="nodelet" name="app1_0" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager0" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader0" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_1">
-        <node pkg="nodelet" type="nodelet" name="app1_1" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager1" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader1" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_2">
-        <node pkg="nodelet" type="nodelet" name="app1_2" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager2" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader2" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_3">
-        <node pkg="nodelet" type="nodelet" name="app1_3" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager3" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader3" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_4">
-        <node pkg="nodelet" type="nodelet" name="app1_4" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager4" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader4" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     
-    
     <group ns="robot_5">
-        <node pkg="nodelet" type="nodelet" name="app1_5" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager5" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader5" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_6">
-        <node pkg="nodelet" type="nodelet" name="app1_6" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager6" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader6" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_7">
-        <node pkg="nodelet" type="nodelet" name="app1_7" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager7" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader7" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_8">
-        <node pkg="nodelet" type="nodelet" name="app1_8" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager8" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader8" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_9">
-        <node pkg="nodelet" type="nodelet" name="app1_9" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager9" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader9" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     
-    
     <group ns="robot_10">
-        <node pkg="nodelet" type="nodelet" name="app1_10" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager10" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader10" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_11">
-        <node pkg="nodelet" type="nodelet" name="app1_11" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager11" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader11" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_12">
-        <node pkg="nodelet" type="nodelet" name="app1_12" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager12" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader12" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_13">
-        <node pkg="nodelet" type="nodelet" name="app1_13" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager13" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader13" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_14">
-        <node pkg="nodelet" type="nodelet" name="app1_14" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager14" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader14" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     
-    
     <group ns="robot_15">
-        <node pkg="nodelet" type="nodelet" name="app1_15" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager15" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader15" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_16">
-        <node pkg="nodelet" type="nodelet" name="app1_16" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager16" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader16" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_17">
-        <node pkg="nodelet" type="nodelet" name="app1_17" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager17" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader17" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_18">
-        <node pkg="nodelet" type="nodelet" name="app1_18" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager18" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader18" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
     <group ns="robot_19">
-        <node pkg="nodelet" type="nodelet" name="app1_19" args="load micros_swarm_framework/App1Broker micros_swarm_framework_manager19" output="screen">
+        <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader19" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="micros_swarm_framework/App1"/>
         </node>
     </group>
-
 </launch>
 

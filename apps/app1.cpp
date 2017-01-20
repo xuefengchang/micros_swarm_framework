@@ -22,6 +22,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "apps/app1.h"
 
+// Register the application
+PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App1, micros_swarm_framework::Application)
+
 namespace micros_swarm_framework{
 
     struct XY
@@ -30,7 +33,7 @@ namespace micros_swarm_framework{
         float y;
     };
 
-    App1::App1(ros::NodeHandle node_handle):Application(node_handle)
+    App1::App1()
     {
     }
     
@@ -91,12 +94,13 @@ namespace micros_swarm_framework{
         geometry_msgs::Twist t;
         t.linear.x=v.x;
         t.linear.y=v.y;
-        
+
         pub.publish(t);
     }
 
     void App1::motion()
     {
+        ros::NodeHandle nh;
         timer = nh.createTimer(ros::Duration(0.1), &App1::publish_cmd, this);
     }
     
@@ -115,10 +119,10 @@ namespace micros_swarm_framework{
     void App1::start()
     {
         init();
-        
+
+        ros::NodeHandle nh;
         pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         sub = nh.subscribe("base_pose_ground_truth", 1000, &App1::baseCallback, this, ros::TransportHints().udp());
-        ros::Duration(5).sleep();  //this is necessary, in order that the runtime platform kernel of the robot has enough time to publish it's base information.
         
         motion();
     }
