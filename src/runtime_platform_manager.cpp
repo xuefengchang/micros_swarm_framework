@@ -104,7 +104,7 @@ namespace micros_swarm_framework{
             }
             catch(pluginlib::PluginlibException& ex)
             {
-                ROS_ERROR("App %s failed to load for some reason. Error: %s", app_name, ex.what());
+                ROS_ERROR("App %s failed to load for some reason. Error: %s", app_name.c_str(), ex.what());
             }
 
             AppInstance app_instance;

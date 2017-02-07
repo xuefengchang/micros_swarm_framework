@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      app_loader.cpp
+\file      app_loader_node.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -21,16 +21,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 */
 
 #include <iostream>
-#include <string>
-#include <time.h>
-#include <stdlib.h>
-#include <vector>
-#include <stack>
-#include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
-#include <functional>
 
 #include <ros/ros.h>
 #include "micros_swarm_framework/app_loader.h"

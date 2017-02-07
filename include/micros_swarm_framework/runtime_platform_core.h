@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      runtime_platform_kernel.h
+\file      runtime_platform_core.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,8 +20,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef RUNTIME_PLATFORM_KERNEL_H_
-#define RUNTIME_PLATFORM_KERNEL_H_
+#ifndef RUNTIME_PLATFORM_CORE_H_
+#define RUNTIME_PLATFORM_CORE_H_
 
 #include <iostream>
 #include <string>
@@ -39,7 +39,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <pluginlib/class_loader.h>
 #include <pluginlib/class_list_macros.h>
 
-#include <micros_swarm_framework/runtime_platform.h>
 #include "micros_swarm_framework/singleton.h"
 #include "micros_swarm_framework/message.h"
 #include "micros_swarm_framework/runtime_platform.h"

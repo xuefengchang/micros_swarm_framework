@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      runtime_platform_kernel.cpp 
+\file      runtime_platform_core.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
