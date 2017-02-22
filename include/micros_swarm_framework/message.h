@@ -60,6 +60,10 @@ namespace micros_swarm_framework{
         
         VIRTUAL_STIGMERGY_QUERY,  //query a value of virtual stigmergy
         VIRTUAL_STIGMERGY_PUT,  //put a value in virtual stigmergy
+
+        BLACKBOARD_QUERY,  //query a value of blackboard
+        BLACKBOARD_QUERY_ACK,  //query ack
+        BLACKBOARD_PUT,  //put a value into blackboard
         
         NEIGHBOR_BROADCAST_KEY_VALUE,  //broadcast <key, value> tuple
         
@@ -197,6 +201,84 @@ namespace micros_swarm_framework{
         VirtualStigmergyPut(int id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):
             virtual_stigmergy_id(id_), virtual_stigmergy_key(key_), virtual_stigmergy_value(value_),
             virtual_stigmergy_timestamp(time_now_), robot_id(robot_id_){}
+    };
+
+    struct BlackBoardQuery
+    {
+        int bb_id;
+        int on_robot_id;
+        std::string bb_key;
+        time_t bb_timestamp;
+        int robot_id;
+
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & bb_id;
+            ar & on_robot_id;
+            ar & bb_key;
+            ar & bb_timestamp;
+            ar & robot_id;
+        }
+
+        BlackBoardQuery(){}
+
+        BlackBoardQuery(int id_, int on_robot_id_, const std::string& key_, time_t time_now_, int robot_id_):
+                bb_id(id_), on_robot_id(on_robot_id_), bb_key(key_), bb_timestamp(time_now_), robot_id(robot_id_){}
+    };
+
+    struct BlackBoardQueryAck
+    {
+        int bb_id;
+        int on_robot_id;
+        std::string bb_key;
+        std::string bb_value;
+        time_t bb_timestamp;
+        int robot_id;
+
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & bb_id;
+            ar & on_robot_id;
+            ar & bb_key;
+            ar & bb_value;
+            ar & bb_timestamp;
+            ar & robot_id;
+        }
+
+        BlackBoardQueryAck(){};
+
+        BlackBoardQueryAck(int id_, int on_robot_id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):
+                bb_id(id_), on_robot_id(on_robot_id_), bb_key(key_), bb_value(value_),
+                bb_timestamp(time_now_), robot_id(robot_id_){}
+    };
+
+    struct BlackBoardPut
+    {
+        int bb_id;
+        int on_robot_id;
+        std::string bb_key;
+        std::string bb_value;
+        time_t bb_timestamp;
+        int robot_id;
+
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & bb_id;
+            ar & on_robot_id;
+            ar & bb_key;
+            ar & bb_value;
+            ar & bb_timestamp;
+            ar & robot_id;
+        }
+
+        BlackBoardPut(){};
+
+        BlackBoardPut(int id_, int on_robot_id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):
+                bb_id(id_), on_robot_id(on_robot_id_), bb_key(key_), bb_value(value_),
+                bb_timestamp(time_now_), robot_id(robot_id_){}
     };
     
     struct NeighborBroadcastKeyValue{

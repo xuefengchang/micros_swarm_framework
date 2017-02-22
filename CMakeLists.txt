@@ -310,6 +310,19 @@ if (${USE_OPENSPLICE_DDS})
   )
 endif()
 
+add_library(micros_swarm_framework_TestBb
+   test/testbb.cpp
+)
+add_dependencies(micros_swarm_framework_TestBb ${micros_swarm_framework_EXPORTED_TARGETS})
+
+if (${USE_OPENSPLICE_DDS})
+  target_link_libraries(micros_swarm_framework_TestBb
+    opensplice_dds_pub_sub
+    libddskernel.so
+    libdcpsisocpp.so
+  )
+endif()
+
 #add_executable(testrtp test/testrtp.cpp src/runtime_platform.cpp)
 #add_dependencies(testrtp ${micros_swarm_framework_EXPORTED_TARGETS})
 #target_link_libraries(testrtp

@@ -97,9 +97,15 @@ namespace micros_swarm_framework{
                 communicator_->broadcast(rtp_->getOutMsgQueue()->vstigMsgQueueFront());
                 rtp_->getOutMsgQueue()->popVstigMsgQueue();
             }
+            if(!rtp_->getOutMsgQueue()->bbMsgQueueEmpty())
+            {
+                communicator_->broadcast(rtp_->getOutMsgQueue()->bbMsgQueueFront());
+                rtp_->getOutMsgQueue()->popBbMsgQueue();
+            }
             
             while(rtp_->getOutMsgQueue()->baseMsgQueueEmpty()&&rtp_->getOutMsgQueue()->swarmMsgQueueEmpty()&&
-                  rtp_->getOutMsgQueue()->vstigMsgQueueEmpty()&&rtp_->getOutMsgQueue()->ncMsgQueueEmpty())
+                  rtp_->getOutMsgQueue()->vstigMsgQueueEmpty()&&rtp_->getOutMsgQueue()->bbMsgQueueEmpty()&&
+                  rtp_->getOutMsgQueue()->ncMsgQueueEmpty())
             {
                 rtp_->getOutMsgQueue()->msg_queue_condition.wait(lock);
             }

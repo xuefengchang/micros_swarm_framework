@@ -29,4 +29,10 @@
     </class>
 </library>
 
+<library path="lib/libmicros_swarm_framework_TestBb">
+    <class name="micros_swarm_framework/TestBb" type="micros_swarm_framework::TestBb" base_class_type="micros_swarm_framework::Application">
+        <description>micros_swarm_framework test blackboard.</description>
+    </class>
+</library>
+
 

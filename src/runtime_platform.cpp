@@ -47,6 +47,7 @@ namespace micros_swarm_framework{
         swarms_.clear();
         neighbor_swarms_.clear();
         virtual_stigmergy_.clear();
+        blackboard_.clear();
         listener_helpers_.clear();
         listener_helpers_.insert(std::pair<std::string, boost::shared_ptr<ListenerHelper> >("" , NULL));
         in_msg_queue_.reset(new MsgQueueManager());
@@ -62,6 +63,7 @@ namespace micros_swarm_framework{
         swarms_.clear();
         neighbor_swarms_.clear();
         virtual_stigmergy_.clear();
+        blackboard_.clear();
         listener_helpers_.clear();
         listener_helpers_.insert(std::pair<std::string, boost::shared_ptr<ListenerHelper> >("" , NULL));
         in_msg_queue_.reset(new MsgQueueManager());
@@ -514,6 +516,137 @@ namespace micros_swarm_framework{
                 std::cout<<"("<<svstt_it->first<<","<< \
                     svstt_it->second.vstig_value<<","<<svstt_it->second.vstig_timestamp<<","<<\
                     svstt_it->second.robot_id<<")"<<std::endl;
+            }
+            std::cout<<"]"<<std::endl;
+            std::cout<<std::endl;
+        }
+    }
+
+    void RuntimePlatform::createBlackBoard(int id)
+    {
+        std::map<int, std::map<std::string, BlackBoardTuple> >::iterator bb_it;
+        boost::upgrade_lock<boost::shared_mutex> lock(bb_mutex_);
+        bb_it=blackboard_.find(id);
+
+        if(bb_it!=blackboard_.end())
+        {
+            return;
+        }
+        else
+        {
+            std::map<std::string, BlackBoardTuple> bb;
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+            blackboard_.insert(std::pair<int, std::map<std::string, BlackBoardTuple> >(id, bb));
+        }
+    }
+
+    void RuntimePlatform::insertOrUpdateBlackBoard(int id, const std::string& key, const std::string& value, const time_t& time_now, int robot_id)
+    {
+        std::map<int, std::map<std::string, BlackBoardTuple> >::iterator bb_it;
+        boost::upgrade_lock<boost::shared_mutex> lock(bb_mutex_);
+        bb_it=blackboard_.find(id);
+
+        if(bb_it!=blackboard_.end())
+        {
+            std::map<std::string, BlackBoardTuple>::iterator sbbt_it=bb_it->second.find(key);
+
+            if(sbbt_it!=bb_it->second.end())
+            {
+                BlackBoardTuple new_tuple(value, time_now, robot_id);
+                boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+                sbbt_it->second = new_tuple;
+            }
+            else
+            {
+                BlackBoardTuple new_tuple(value, time_now, robot_id);
+                boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+                bb_it->second.insert(std::pair<std::string, BlackBoardTuple>(key ,new_tuple));
+            }
+        }
+        else
+        {
+            std::cout<<"ID "<<id<<" BlackBoard is not exist."<<std::endl;
+            return;
+        }
+    }
+
+    void RuntimePlatform::getBlackBoardTuple(int id, const std::string& key, BlackBoardTuple& bb_tuple)
+    {
+        std::map<int, std::map<std::string, BlackBoardTuple> >::iterator bb_it;
+        boost::shared_lock<boost::shared_mutex> lock(bb_mutex_);
+        bb_it=blackboard_.find(id);
+        if(bb_it!=blackboard_.end())
+        {
+            std::map<std::string, BlackBoardTuple>::iterator sbbt_it=bb_it->second.find(key);
+
+            if(sbbt_it!=bb_it->second.end())
+            {
+                bb_tuple=sbbt_it->second;
+            }
+        }
+    }
+
+    int RuntimePlatform::getBlackBoardSize(int id)
+    {
+        std::map<int, std::map<std::string, BlackBoardTuple> >::iterator bb_it;
+        boost::shared_lock<boost::shared_mutex> lock(bb_mutex_);
+        bb_it=blackboard_.find(id);
+
+        if(bb_it!=blackboard_.end())
+        {
+            return bb_it->second.size();
+        }
+
+        return 0;
+    }
+
+    void RuntimePlatform::deleteBlackBoard(int id)
+    {
+        boost::unique_lock<boost::shared_mutex> lock(bb_mutex_);
+        blackboard_.erase(id);
+    }
+
+    void RuntimePlatform::deleteBlackBoardValue(int id, const std::string& key)
+    {
+        std::map<int, std::map<std::string, BlackBoardTuple> >::iterator bb_it;
+        boost::upgrade_lock<boost::shared_mutex> lock(bb_mutex_);
+        bb_it=blackboard_.find(id);
+
+        if(bb_it!=blackboard_.end())
+        {
+            std::map<std::string, BlackBoardTuple>::iterator sbbt_it=bb_it->second.find(key);
+
+            if(sbbt_it!=bb_it->second.end())
+            {
+                boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+                bb_it->second.erase(key);
+            }
+            else
+            {
+                return;
+            }
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    void RuntimePlatform::printBlackBoard()
+    {
+        std::map<int, std::map<std::string, BlackBoardTuple> >::iterator bb_it;
+        std::map<std::string, BlackBoardTuple>::iterator sbbt_it;
+
+        boost::shared_lock<boost::shared_mutex> lock(bb_mutex_);
+        for (bb_it=blackboard_.begin(); bb_it!=blackboard_.end(); bb_it++)
+        {
+            std::cout<<"["<<bb_it->first<<":"<<std::endl;
+            std::map<std::string, BlackBoardTuple>* sbbt_pointer=&(bb_it->second);
+            for (sbbt_it=sbbt_pointer->begin(); sbbt_it!=sbbt_pointer->end(); sbbt_it++)
+            {
+                std::cout<<"("<<sbbt_it->first<<","<< \
+                    sbbt_it->second.bb_value<<","<<sbbt_it->second.bb_timestamp<<","<<\
+                    sbbt_it->second.robot_id<<")"<<std::endl;
             }
             std::cout<<"]"<<std::endl;
             std::cout<<std::endl;

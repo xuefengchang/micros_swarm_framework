@@ -337,6 +337,80 @@ namespace micros_swarm_framework{
                         
                         break;
                     }
+                    case BLACKBOARD_PUT:
+                    {
+                        BlackBoardPut bbp;
+                        archive>>bbp;
+                        int robot_id=rtp_->getRobotID();
+                        std::string bb_key=bbp.bb_key;
+                        if(bbp.on_robot_id==robot_id)
+                        {
+                            rtp_->createBlackBoard(bbp.bb_id);
+                            BlackBoardTuple bbt(bbp.bb_value, bbp.bb_timestamp, bbp.robot_id);
+                            BlackBoardTuple local;
+                            rtp_->getBlackBoardTuple(bbp.bb_id, bbp.bb_key, local);
+
+                            //local tuple is not exist or the local timestamp is smaller
+                            if((local.bb_timestamp==0)||(local.bb_timestamp<bbp.bb_timestamp))
+                            {
+                                rtp_->insertOrUpdateBlackBoard(bbp.bb_id, bbp.bb_key, bbp.bb_value, bbp.bb_timestamp, bbp.robot_id);
+                            }
+                        }
+                        else{}
+
+                        break;
+                    }
+                    case BLACKBOARD_QUERY:
+                    {
+                        BlackBoardQuery bbq;
+                        archive>>bbq;
+                        int robot_id=rtp_->getRobotID();
+                        std::string bb_key=bbq.bb_key;
+
+                        if(bbq.on_robot_id==robot_id)
+                        {
+                            BlackBoardTuple local;
+                            rtp_->getBlackBoardTuple(bbq.bb_id, bbq.bb_key, local);
+
+                            BlackBoardQueryAck bbqa(bbq.bb_id, bbq.on_robot_id, bbq.bb_key, local.bb_value, time(0), bbq.robot_id);
+                            std::ostringstream archiveStream2;
+                            boost::archive::text_oarchive archive2(archiveStream2);
+                            archive2<<bbqa;
+                            std::string bbqa_string=archiveStream2.str();
+
+                            micros_swarm_framework::MSFPPacket p;
+                            p.packet_source=shm_rid;
+                            p.packet_version=1;
+                            p.packet_type=BLACKBOARD_QUERY_ACK;
+                            #ifdef ROS
+                            p.packet_data=bbqa_string;
+                            #endif
+                            #ifdef OPENSPLICE_DDS
+                            p.packet_data=bbqa_string.data();
+                            #endif
+                            p.package_check_sum=0;
+                            rtp_->getOutMsgQueue()->pushBbMsgQueue(p);
+                        }
+                        else{}
+
+                        break;
+                    }
+                    case BLACKBOARD_QUERY_ACK:
+                    {
+                        BlackBoardQueryAck bbqa;
+                        archive>>bbqa;
+                        int robot_id=rtp_->getRobotID();
+                        std::string bb_key=bbqa.bb_key;
+
+                        if(bbqa.on_robot_id==robot_id){}
+                        else
+                        {
+                            rtp_->createBlackBoard(bbqa.bb_id);
+                            rtp_->insertOrUpdateBlackBoard(bbqa.bb_id, bbqa.bb_key, bbqa.bb_value, bbqa.bb_timestamp, bbqa.robot_id);
+                        }
+
+                        break;
+                    }
                     case NEIGHBOR_BROADCAST_KEY_VALUE:
                     {
                         //if(!rtp_->inNeighbors(packet_source))

@@ -135,6 +135,23 @@ namespace micros_swarm_framework{
             std::cout<<vstig_value<<", "<<vstig_timestamp<<", "<<robot_id<<std::endl;
         }
     };
+
+    struct BlackBoardTuple{
+        std::string bb_value;
+        time_t bb_timestamp;
+        //the id of the robot which last change the blackboard
+        int robot_id;
+
+        BlackBoardTuple():bb_value(""), bb_timestamp(0), robot_id(-1){}
+
+        BlackBoardTuple(const std::string& value_, time_t time_, int id_)
+                :bb_value(value_), bb_timestamp(time_), robot_id(id_){}
+
+        void print()
+        {
+            std::cout<<bb_value<<", "<<bb_timestamp<<", "<<robot_id<<std::endl;
+        }
+    };
     
     //this macro definition is used to serialize the user-defined data type
     #define BOOST_SERIALIZE  template<class Archive>\

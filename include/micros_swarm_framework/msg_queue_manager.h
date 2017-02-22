@@ -36,15 +36,17 @@ namespace micros_swarm_framework{
                 base_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
                 swarm_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
                 vstig_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
+                bb_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
                 nc_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
             }
             
-            explicit MsgQueueManager(int num1, int num2, int num3, int num4)
+            explicit MsgQueueManager(int num1, int num2, int num3, int num4, int num5)
             {
                 base_msg_queue_.reset(new cqueue<MSFPPacket>(num1));
                 swarm_msg_queue_.reset(new cqueue<MSFPPacket>(num2));
                 vstig_msg_queue_.reset(new cqueue<MSFPPacket>(num3));
-                nc_msg_queue_.reset(new cqueue<MSFPPacket>(num4));
+                bb_msg_queue_.reset(new cqueue<MSFPPacket>(num4));
+                nc_msg_queue_.reset(new cqueue<MSFPPacket>(num5));
             }
         
             bool baseMsgQueueFull()
@@ -157,6 +159,43 @@ namespace micros_swarm_framework{
                 vstig_msg_queue_->push(p);
                 msg_queue_condition.notify_one();
             }
+
+            bool bbMsgQueueFull()
+            {
+                boost::shared_lock<boost::shared_mutex> lock(bb_msg_mutex_);
+                return bb_msg_queue_->full();
+            }
+
+            bool bbMsgQueueEmpty()
+            {
+                boost::shared_lock<boost::shared_mutex> lock(bb_msg_mutex_);
+                return bb_msg_queue_->empty();
+            }
+
+            const MSFPPacket& bbMsgQueueFront()
+            {
+                boost::shared_lock<boost::shared_mutex> lock(bb_msg_mutex_);
+                return bb_msg_queue_->front();
+            }
+
+            int bbMsgQueueSize()
+            {
+                boost::shared_lock<boost::shared_mutex> lock(bb_msg_mutex_);
+                return bb_msg_queue_->size();
+            }
+
+            void popBbMsgQueue()
+            {
+                boost::unique_lock<boost::shared_mutex> lock(bb_msg_mutex_);
+                bb_msg_queue_->pop();
+            }
+
+            void pushBbMsgQueue(const MSFPPacket& p)
+            {
+                boost::unique_lock<boost::shared_mutex> lock(bb_msg_mutex_);
+                bb_msg_queue_->push(p);
+                msg_queue_condition.notify_one();
+            }
     
             bool ncMsgQueueFull()
             {
@@ -201,10 +240,12 @@ namespace micros_swarm_framework{
             boost::shared_ptr<cqueue<MSFPPacket> > base_msg_queue_;
             boost::shared_ptr<cqueue<MSFPPacket> > swarm_msg_queue_;
             boost::shared_ptr<cqueue<MSFPPacket> > vstig_msg_queue_;
+            boost::shared_ptr<cqueue<MSFPPacket> > bb_msg_queue_;
             boost::shared_ptr<cqueue<MSFPPacket> > nc_msg_queue_;
             
             boost::shared_mutex base_msg_mutex_, swarm_msg_mutex_,
-                                vstig_msg_mutex_, nc_msg_mutex_;
+                                vstig_msg_mutex_, bb_msg_mutex_,
+                                nc_msg_mutex_;
     };
 };
 

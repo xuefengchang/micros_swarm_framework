@@ -105,6 +105,14 @@ namespace micros_swarm_framework{
             void deleteVirtualStigmergy(int id);
             void deleteVirtualStigmergyValue(int id, const std::string& key);
             void printVirtualStigmergy();
+
+            void createBlackBoard(int id);
+            void insertOrUpdateBlackBoard(int id, const std::string& key, const std::string& value, const time_t& time_now, int robot_id);
+            void getBlackBoardTuple(int id, const std::string& key, BlackBoardTuple& bb_tuple);
+            int getBlackBoardSize(int id);
+            void deleteBlackBoard(int id);
+            void deleteBlackBoardValue(int id, const std::string& key);
+            void printBlackBoard();
             
             float getNeighborDistance();
             void setNeighborDistance(float neighbor_distance);
@@ -127,6 +135,7 @@ namespace micros_swarm_framework{
             std::map<int, bool> swarms_;
             std::map<int, NeighborSwarmTuple> neighbor_swarms_;
             std::map<int, std::map<std::string, VirtualStigmergyTuple> > virtual_stigmergy_;
+            std::map<int, std::map<std::string, BlackBoardTuple> > blackboard_;
             float neighbor_distance_;
             std::map<std::string, boost::shared_ptr<ListenerHelper> > listener_helpers_;
             std::set<int> barrier_;
@@ -136,7 +145,7 @@ namespace micros_swarm_framework{
             
             boost::shared_mutex mutex1_, mutex2_, mutex3_, mutex4_, mutex5_,
                                 mutex6_, mutex7_, mutex8_, mutex9_, mutex10_,
-                                mutex11_;
+                                mutex11_, bb_mutex_;
     };
 };
 

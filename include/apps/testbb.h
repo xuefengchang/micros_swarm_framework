@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      micros_swarm_framework.h
+\file      testbb.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,38 +20,33 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef MICROS_SWARM_FRAMEWORK_H_
-#define MICROS_SWARM_FRAMEWORK_H_
+#ifndef TESTBB_H_
+#define TESTBB_H_
 
-#include <iostream>
-#include <string>
-#include <time.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <vector>
-#include <stack>
-#include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
-#include <functional>
-#include <sstream>
-#include <fstream>
-#include <typeinfo>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/string.hpp> 
-#include <boost/serialization/vector.hpp>
+#include "std_msgs/String.h"
+#include "nav_msgs/Odometry.h"
+#include "geometry_msgs/Twist.h"
 
-#include <ros/ros.h>
-#include <nodelet/nodelet.h>
-#include <pluginlib/class_list_macros.h>
+#include "micros_swarm_framework/micros_swarm_framework.h"
 
-#include "micros_swarm_framework/swarm.h"
-#include "micros_swarm_framework/neighbors.h"
-#include "micros_swarm_framework/virtual_stigmergy.h"
-#include "micros_swarm_framework/blackboard.h"
-#include "micros_swarm_framework/neighbor_communication.h"
-#include "micros_swarm_framework/application.h"
+namespace micros_swarm_framework{
+    
+    class TestBb : public Application
+    {
+        public:
+            ros::Timer timer;
+            ros::Publisher pub;
+            ros::Subscriber sub;
+
+            micros_swarm_framework::BlackBoard<int> bb;
+
+            void loop(const ros::TimerEvent&);
+            void baseCallback(const nav_msgs::Odometry& lmsg);
+            
+            TestBb();
+            ~TestBb();
+            virtual void start(); 
+    };
+};
 
 #endif
