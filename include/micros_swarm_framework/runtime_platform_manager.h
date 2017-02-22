@@ -38,14 +38,17 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <ros/ros.h>
 #include <pluginlib/class_list_macros.h>
 
+#include "micros_swarm_framework/singleton.h"
 #include "micros_swarm_framework/AppLoad.h"
 #include "micros_swarm_framework/AppUnload.h"
+#include "micros_swarm_framework/RTPDestroy.h"
 #include "micros_swarm_framework/application.h"
 #include "micros_swarm_framework/runtime_platform_core.h"
 
 namespace micros_swarm_framework{
     struct AppInstance{
         std::string app_name_;
+        std::string app_type_;
         boost::shared_ptr<Application> app_ptr_;
         bool running_;
     };
@@ -55,6 +58,7 @@ namespace micros_swarm_framework{
         public:
             RTPManager();
             ~RTPManager();
+            void shutdown();
         private:
             void startApp(const ros::TimerEvent&);
             bool loadService(micros_swarm_framework::AppLoad::Request &req, micros_swarm_framework::AppLoad::Response &resp);
@@ -64,6 +68,8 @@ namespace micros_swarm_framework{
             pluginlib::ClassLoader<micros_swarm_framework::Application> app_loader_;
             ros::ServiceServer app_load_srv_, app_unload_srv_;
             ros::Timer start_app_timer_;
+            //ros::Publisher rtp_manager_destroy_pub_;
+            ros::ServiceClient client_;
     };
 };
 

@@ -34,6 +34,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <ros/ros.h>
 #include <pluginlib/class_list_macros.h>
+#include <std_msgs/Int8.h>
 
 #include "micros_swarm_framework/runtime_platform_manager.h"
 
@@ -52,10 +53,43 @@ namespace micros_swarm_framework{
         app_unload_srv_ = nh.advertiseService("micros_swarm_framework_unload_app", &RTPManager::unloadService, this);
         apps_.clear();
         start_app_timer_=nh.createTimer(ros::Duration(1), &RTPManager::startApp, this);
+
+        //rtp_manager_destroy_pub_ = nh.advertise<std_msgs::Int8>("micros_swarm_framework_rtp_manager_destroy", 1000);
+    }
+
+    void RTPManager::shutdown()
+    {
+        ros::NodeHandle nh;
+        std::vector<AppInstance>::iterator app_it;
+        for(app_it=apps_.begin(); app_it!=apps_.end(); app_it++)
+        {
+            std::string topic_name = "micros_swarm_framework_rtp_manager_destroy_" + app_it->app_name_;
+            //ros::ServiceClient client = nh.serviceClient<micros_swarm_framework::RTPDestroy>("micros_swarm_framework_rtp_manager_destroy");
+            ros::ServiceClient client = nh.serviceClient<micros_swarm_framework::RTPDestroy>(topic_name);
+            micros_swarm_framework::RTPDestroy srv;
+            srv.request.code = 1;
+
+            if (client.call(srv))
+            {
+                //ROS_INFO("[RTPManager]: App %s unloaded successfully.", app_it->app_name_.c_str());
+            }
+            else
+            {
+                //ROS_ERROR("[RTPManager]: Failed to unload App %s.", app_it->app_name_.c_str());
+            }
+        }
     }
 
     RTPManager::~RTPManager()
     {
+        std::vector<AppInstance>::iterator app_it;
+        for(app_it=apps_.begin(); app_it!=apps_.end(); app_it++)
+        {
+            std::string app_type = app_it->app_type_;
+            app_it->app_ptr_.reset();
+            app_loader_.unloadLibraryForClass(app_type);
+        }
+        std::cout<<"[RTPManager]: all Apps were unloaded successfully."<<std::endl;
     }
 
     void RTPManager::startApp(const ros::TimerEvent &)
@@ -92,7 +126,7 @@ namespace micros_swarm_framework{
 
         if(app_exist)
         {
-            ROS_WARN("App %s was already existed.", app_name.c_str());
+            ROS_WARN("[RTPManager]: App %s was already existed.", app_name.c_str());
             resp.success = false;
             return false;
         }
@@ -104,15 +138,16 @@ namespace micros_swarm_framework{
             }
             catch(pluginlib::PluginlibException& ex)
             {
-                ROS_ERROR("App %s failed to load for some reason. Error: %s", app_name.c_str(), ex.what());
+                ROS_ERROR("[RTPManager]: App %s failed to load for some reason. Error: %s", app_name.c_str(), ex.what());
             }
 
             AppInstance app_instance;
             app_instance.app_name_=app_name;
+            app_instance.app_type_=app_type;
             app_instance.app_ptr_=app;
             app_instance.running_= false;
             apps_.push_back(app_instance);
-            ROS_INFO("App %s was loaded successfully.", app_name.c_str());
+            ROS_INFO("[RTPManager]: App %s was loaded successfully.", app_name.c_str());
             resp.success = true;
             return true;
         }
@@ -173,7 +208,7 @@ namespace micros_swarm_framework{
                 app_it->app_ptr_.reset();
                 app_loader_.unloadLibraryForClass(app_type);
                 app_it = apps_.erase(app_it);
-                ROS_INFO("App %s was unloaded successfully.", app_name.c_str());
+                ROS_INFO("[RTPManager]: App %s was unloaded successfully.", app_name.c_str());
                 resp.success = true;
                 return true;
             }
@@ -183,7 +218,7 @@ namespace micros_swarm_framework{
             }
         }
 
-        ROS_WARN("App %s does not exist.", app_name.c_str());
+        ROS_WARN("[RTPManager]: App %s does not exist.", app_name.c_str());
         resp.success = false;
         return false;
     }

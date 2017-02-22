@@ -72,6 +72,8 @@ namespace micros_swarm_framework{
         int total_robot_numbers_;
         int robot_id_;
 
+        boost::thread* spin_thread_;
+
         RuntimePlatformCore();
         ~RuntimePlatformCore();
         void initialize();

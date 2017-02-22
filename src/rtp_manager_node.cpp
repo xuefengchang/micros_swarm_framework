@@ -22,18 +22,36 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <iostream>
 #include <ros/ros.h>
+#include <signal.h>
+#include <std_msgs/Int8.h>
 
+#include "micros_swarm_framework/singleton.h"
 #include "micros_swarm_framework/runtime_platform_manager.h"
+
+boost::shared_ptr<micros_swarm_framework::RTPManager> rtp_manager;
+
+void rtpManagerDestroySigintHandler(int sig)
+{
+    // Do some custom action.
+    // For example, publish a stop message to some other nodes.
+    // All the default sigint handler does is call shutdown()
+    rtp_manager->shutdown();
+    ros::shutdown();
+}
 
 int main(int argc, char** argv){
     ros::init(argc, argv, "micros_swarm_framework_rtp_node");
 
-    boost::shared_ptr<micros_swarm_framework::RTPManager> rtp_manager;
+    //boost::shared_ptr<micros_swarm_framework::RTPManager> rtp_manager;
     rtp_manager.reset(new micros_swarm_framework::RTPManager());
+
+    // Override the default ros sigint handler.
+    // This must be set after the first NodeHandle is created.
+    signal(SIGINT, rtpManagerDestroySigintHandler);
 
     boost::thread t = boost::thread(boost::bind(&ros::spin));
     t.join();
-    //ros::spin();
+    rtp_manager.reset();
     return 0;
 }
 

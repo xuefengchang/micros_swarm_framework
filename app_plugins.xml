@@ -17,6 +17,12 @@
     </class>
 </library>
 
+<library path="lib/libmicros_swarm_framework_OS">
+    <class name="micros_swarm_framework/OS" type="micros_swarm_framework::OS" base_class_type="micros_swarm_framework::Application">
+        <description>micros_swarm_framework os action plugin.</description>
+    </class>
+</library>
+
 <library path="lib/libmicros_swarm_framework_TestNC">
     <class name="micros_swarm_framework/TestNC" type="micros_swarm_framework::TestNC" base_class_type="micros_swarm_framework::Application">
         <description>micros_swarm_framework test neighbor communication.</description>

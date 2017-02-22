@@ -44,6 +44,8 @@ namespace micros_swarm_framework{
         ros::NodeHandle private_nh("~");
         ros::NodeHandle nh;
 
+        rtp_manager_destroy_ = false;
+
         //get app name and type
         private_nh.param("app_name", app_name_, std::string("app_demo"));
         private_nh.param("app_type", app_type_, std::string("micros_swarm_framework/AppDemo"));
@@ -54,31 +56,54 @@ namespace micros_swarm_framework{
         srv.request.type = app_type_;
         if (client.call(srv))
         {
-            ROS_INFO("App %s loaded successfully.", app_name_.c_str());
+            ROS_INFO("[AppLoader]: App %s loaded successfully.", app_name_.c_str());
         }
         else
         {
-            ROS_ERROR("Failed to load App %s.", app_name_.c_str());
+            ROS_ERROR("[AppLoader]: Failed to load App %s.", app_name_.c_str());
         }
+
+        //when the rtp manager was destroyed, automatically unload the apps
+        std::string topic_name = "micros_swarm_framework_rtp_manager_destroy_" + app_name_;
+        rtp_manager_destroy_srv_ = nh.advertiseService(topic_name, &AppLoader::rtpManagerDestroyCB, this);
     }
 
     AppLoader::~AppLoader()
     {
-        ros::NodeHandle nh;
+        rtp_manager_destroy_srv_.shutdown();
+        if(!rtp_manager_destroy_) {
+            ros::NodeHandle nh;
+            ros::ServiceClient client = nh.serviceClient<micros_swarm_framework::AppUnload>("micros_swarm_framework_unload_app");
+            micros_swarm_framework::AppUnload srv;
+            srv.request.name = app_name_;
+            srv.request.type = app_type_;
 
-        ros::ServiceClient client = nh.serviceClient<micros_swarm_framework::AppUnload>("micros_swarm_framework_unload_app");
-        micros_swarm_framework::AppUnload srv;
-        srv.request.name = app_name_;
-        srv.request.type = app_type_;
+            if (client.call(srv)) {
+                ROS_INFO("[AppLoader]: App %s was unloaded successfully.", app_name_.c_str());
+            } else {
+                ROS_ERROR("[AppLoader]: Failed to unload App %s.", app_name_.c_str());
+            }
+        }
+        else{
+            ROS_INFO("RTPManager was destroyed before the AppLoader.");
+        }
+    }
 
-        if (client.call(srv))
-        {
-            ROS_INFO("App %s was unloaded successfully.", app_name_.c_str());
+    bool AppLoader::rtpManagerDestroyCB(micros_swarm_framework::RTPDestroy::Request &req, micros_swarm_framework::RTPDestroy::Response &resp)
+    {
+        resp.success = false;
+        if(req.code == 1) {
+            rtp_manager_destroy_ = true;
+            resp.success = true;
         }
-        else
-        {
-            ROS_ERROR("Failed to unload App %s.", app_name_.c_str());
-        }
+
+        ros::shutdown();
+        return true;
+    }
+
+    bool AppLoader::ok()
+    {
+        return !rtp_manager_destroy_;
     }
 };
 

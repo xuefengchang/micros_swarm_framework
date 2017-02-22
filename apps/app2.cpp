@@ -224,8 +224,8 @@ namespace micros_swarm_framework{
 
         ros::Rate loop_rate(10);
         while(ros::ok()) {
-            red_swarm.print();
-            blue_swarm.print();
+            //red_swarm.print();
+            //blue_swarm.print();
             ros::spinOnce();
             loop_rate.sleep();
         }

@@ -66,6 +66,9 @@ namespace micros_swarm_framework{
 
     RuntimePlatformCore::~RuntimePlatformCore()
     {
+        spin_thread_->interrupt();
+        spin_thread_->join();
+        delete spin_thread_;
     }
     
     void RuntimePlatformCore::spin_msg_queue()
@@ -262,13 +265,13 @@ namespace micros_swarm_framework{
         communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
         #endif
         //construct packet parser
-        //parser_.reset(new PacketParser());
         parser_ = Singleton<PacketParser>::getSingleton();
         boost::function<void(const MSFPPacket& packet)> parser_func=boost::bind(&PacketParser::parser, parser_, _1);
         //transfer the parser function to the communicator 
         communicator_->receive(parser_func);
         
-        boost::thread spin_thread(&RuntimePlatformCore::spin_msg_queue, this);
+        //boost::thread spin_thread(&RuntimePlatformCore::spin_msg_queue, this);
+        spin_thread_ = new boost::thread(&RuntimePlatformCore::spin_msg_queue, this);
         publish_robot_base_timer_ = node_handle_.createTimer(ros::Duration(publish_robot_base_duration_), &RuntimePlatformCore::publish_robot_base, this);
         publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(publish_swarm_list_duration_), &RuntimePlatformCore::publish_swarm_list, this);
         barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimePlatformCore::barrier_check, this);

@@ -115,6 +115,7 @@ add_service_files(
   FILES
   AppLoad.srv
   AppUnload.srv
+  RTPDestroy.srv
 )
 
 ## Generate actions in the 'action' folder

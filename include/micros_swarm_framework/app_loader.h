@@ -36,9 +36,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <functional>
 
 #include <ros/ros.h>
+#include <std_msgs/Int8.h>
 
 #include "micros_swarm_framework/AppLoad.h"
 #include "micros_swarm_framework/AppUnload.h"
+#include "micros_swarm_framework/RTPDestroy.h"
 
 namespace micros_swarm_framework{
 
@@ -47,9 +49,13 @@ namespace micros_swarm_framework{
         public:
             AppLoader();
             ~AppLoader();
+            bool ok();
         private:
             std::string app_name_;
             std::string app_type_;
+            bool rtp_manager_destroy_;
+            ros::ServiceServer rtp_manager_destroy_srv_;
+            bool rtpManagerDestroyCB(micros_swarm_framework::RTPDestroy::Request &req, micros_swarm_framework::RTPDestroy::Response &resp);
     };
 };
 
