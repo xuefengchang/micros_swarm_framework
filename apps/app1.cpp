@@ -44,8 +44,8 @@ namespace micros_swarm_framework{
     void App1::init()
     {
         //set parameters
-        delta = 4;
-        epsilon = 100;
+        delta = 7;
+        epsilon = 150;
     }
     
     float App1::force_mag(float dist)
