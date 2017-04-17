@@ -304,11 +304,12 @@ namespace micros_swarm_framework{
                             rtp_->insertOrUpdateVirtualStigmergy(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, vsp.virtual_stigmergy_value, 
                                                                  vsp.virtual_stigmergy_timestamp, vsp.robot_id);
                     
-                            VirtualStigmergyPut vsp_new(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, vsp.virtual_stigmergy_value, 
-                                                        vsp.virtual_stigmergy_timestamp, vsp.robot_id);
+                            //VirtualStigmergyPut vsp_new(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, vsp.virtual_stigmergy_value,
+                            //                            vsp.virtual_stigmergy_timestamp, vsp.robot_id);
                             std::ostringstream archiveStream2;
                             boost::archive::text_oarchive archive2(archiveStream2);
-                            archive2<<vsp_new;
+                            //archive2<<vsp_new;
+                            archive2<<vsp;
                             std::string vsp_new_string=archiveStream2.str();
                     
                             micros_swarm_framework::MSFPPacket p;
