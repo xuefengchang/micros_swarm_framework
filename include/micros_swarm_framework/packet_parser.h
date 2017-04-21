@@ -41,6 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm_framework/singleton.h"
 #include "micros_swarm_framework/runtime_platform.h"
 #include "micros_swarm_framework/check_neighbor.h"
+#include "micros_swarm_framework/random.h"
 
 #ifdef ROS
 #include "micros_swarm_framework/MSFPPacket.h"
@@ -100,7 +101,6 @@ namespace micros_swarm_framework{
                 switch(packet_type)
                 {
                     case SINGLE_ROBOT_BROADCAST_BASE:{
-                        //std::cout<<"SINGLE_ROBOT_BROADCAST_ID"<<std::endl;
                         micros_swarm_framework::SingleRobotBroadcastBase srbb;
                         archive>>srbb;
                 
@@ -121,10 +121,6 @@ namespace micros_swarm_framework{
                         break;
                     }
                     case SINGLE_ROBOT_JOIN_SWARM:{
-                        //if(!rtp_->inNeighbors(packet_source))
-                        //    return;
-                
-                        //std::cout<<"SINGLE_ROBOT_JOIN_SWARM"<<std::endl;
                         SingleRobotJoinSwarm srjs;
                         archive>>srjs;
                 
@@ -160,9 +156,6 @@ namespace micros_swarm_framework{
                     }
                     case SINGLE_ROBOT_LEAVE_SWARM:
                     {
-                        //if(!rtp_->inNeighbors(packet_source))
-                        //    return;
-                
                         SingleRobotLeaveSwarm srls;
                         archive>>srls;
                 
@@ -198,10 +191,6 @@ namespace micros_swarm_framework{
                     }
                     case SINGLE_ROBOT_SWARM_LIST:
                     {
-                        //if(!rtp_->inNeighbors(packet_source))
-                        //    return;
-                
-                        //std::cout<<"SINGLE_ROBOT_SWARM_LIST"<<std::endl;
                         SingleRobotSwarmList srsl;
                         archive>>srsl;
                 
@@ -211,12 +200,12 @@ namespace micros_swarm_framework{
                     }
                     case VIRTUAL_STIGMERGY_QUERY:
                     {
-                        //if(!rtp_->inNeighbors(packet_source))
-                        //    return;
-                
-                        //std::cout<<"VIRTUAL_STIGMERGY_PUT"<<std::endl;
                         VirtualStigmergyQuery vsq;
                         archive>>vsq;
+
+                        float probability = random_float(0.0, 1.0, time(NULL));
+                        if((vsq.certain_receiving_id != shm_rid) && (probability>vsq.receiving_probability))
+                            return;
                 
                         VirtualStigmergyTuple local;
                         rtp_->getVirtualStigmergyTuple(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, local);
@@ -227,9 +216,23 @@ namespace micros_swarm_framework{
                             rtp_->createVirtualStigmergy(vsq.virtual_stigmergy_id);
                             rtp_->insertOrUpdateVirtualStigmergy(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, vsq.virtual_stigmergy_value,
                                                                  vsq.virtual_stigmergy_timestamp, vsq.robot_id);
-                    
+
+                            std::map<int, NeighborBase> neighbors;
+                            rtp_->getNeighbors(neighbors);
+                            if(neighbors.size()==0)
+                                return;
+                            int random_neighbor_index=random_unint(0,neighbors.size()-1, time(NULL));
+                            std::map<int, NeighborBase>::iterator it=neighbors.begin();
+                            int loop_index=0;
+                            for(loop_index=0;loop_index<=random_neighbor_index;loop_index++)
+                                it++;
+                            int certain_receiving_id=it->first;
+                            int flooding_factor=rtp_->getFloodingFactor();
+                            int flooding_radix=(neighbors.size()-1)>=flooding_factor?(neighbors.size()-1):flooding_factor;
+                            float receiving_probability=(float)flooding_factor/flooding_radix;
+
                             VirtualStigmergyPut vsp_new(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, vsq.virtual_stigmergy_value, 
-                                                        vsq.virtual_stigmergy_timestamp, vsq.robot_id);
+                                                        vsq.virtual_stigmergy_timestamp, vsq.robot_id, certain_receiving_id, receiving_probability);
                     
                             std::ostringstream archiveStream2;
                             boost::archive::text_oarchive archive2(archiveStream2);
@@ -252,8 +255,24 @@ namespace micros_swarm_framework{
                         }
                         else if(local.vstig_timestamp>vsq.virtual_stigmergy_timestamp)  //local timestamp is larger
                         {
+                            std::map<int, NeighborBase> neighbors;
+                            rtp_->getNeighbors(neighbors);
+                            if(neighbors.size()==0)
+                                return;
+                            int random_neighbor_index=random_unint(0,neighbors.size()-1, time(NULL));
+                            std::map<int, NeighborBase>::iterator it=neighbors.begin();
+                            int loop_index=0;
+                            for(loop_index=0;loop_index<=random_neighbor_index;loop_index++)
+                            {
+                                it++;
+                            }
+                            int certain_receiving_id=it->first;
+                            int flooding_factor=rtp_->getFloodingFactor();
+                            int flooding_radix=(neighbors.size()-1)>=flooding_factor?(neighbors.size()-1):flooding_factor;
+                            float receiving_probability=(float)flooding_factor/flooding_radix;
+
                             VirtualStigmergyPut vsp(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, local.vstig_value,
-                                                    local.vstig_timestamp, local.robot_id);
+                                                    local.vstig_timestamp, local.robot_id, certain_receiving_id, receiving_probability);
                             std::ostringstream archiveStream2;
                             boost::archive::text_oarchive archive2(archiveStream2);
                             archive2<<vsp;
@@ -286,12 +305,12 @@ namespace micros_swarm_framework{
                     }
                     case VIRTUAL_STIGMERGY_PUT:
                     {
-                        //if(!rtp_->inNeighbors(packet_source))
-                        //    return;
-                
-                        //std::cout<<"VIRTUAL_STIGMERGY_PUT"<<std::endl;
                         VirtualStigmergyPut vsp;
                         archive>>vsp;
+
+                        float probability = random_float(0.0, 1.0, time(NULL));
+                        if((vsp.certain_receiving_id != shm_rid) && (probability>vsp.receiving_probability))
+                            return;
                 
                         VirtualStigmergyTuple local;
                         rtp_->getVirtualStigmergyTuple(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, local);
@@ -303,13 +322,27 @@ namespace micros_swarm_framework{
                 
                             rtp_->insertOrUpdateVirtualStigmergy(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, vsp.virtual_stigmergy_value, 
                                                                  vsp.virtual_stigmergy_timestamp, vsp.robot_id);
-                    
-                            //VirtualStigmergyPut vsp_new(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, vsp.virtual_stigmergy_value,
-                            //                            vsp.virtual_stigmergy_timestamp, vsp.robot_id);
+
+                            std::map<int, NeighborBase> neighbors;
+                            rtp_->getNeighbors(neighbors);
+                            if(neighbors.size()==0)
+                                return;
+                            int random_neighbor_index=random_unint(0,neighbors.size()-1, time(NULL));
+                            std::map<int, NeighborBase>::iterator it=neighbors.begin();
+                            int loop_index=0;
+                            for(loop_index=0;loop_index<=random_neighbor_index;loop_index++)
+                            {
+                                it++;
+                            }
+                            int certain_receiving_id=it->first;
+                            int flooding_factor=rtp_->getFloodingFactor();
+                            int flooding_radix=(neighbors.size()-1)>=flooding_factor?(neighbors.size()-1):flooding_factor;
+                            float receiving_probability=(float)flooding_factor/flooding_radix;
+                            VirtualStigmergyPut vsp_new(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, vsp.virtual_stigmergy_value,
+                                                        vsp.virtual_stigmergy_timestamp, vsp.robot_id, certain_receiving_id, receiving_probability);
                             std::ostringstream archiveStream2;
                             boost::archive::text_oarchive archive2(archiveStream2);
-                            //archive2<<vsp_new;
-                            archive2<<vsp;
+                            archive2<<vsp_new;
                             std::string vsp_new_string=archiveStream2.str();
                     
                             micros_swarm_framework::MSFPPacket p;
@@ -414,10 +447,6 @@ namespace micros_swarm_framework{
                     }
                     case NEIGHBOR_BROADCAST_KEY_VALUE:
                     {
-                        //if(!rtp_->inNeighbors(packet_source))
-                        //    return;
-                
-                        //std::cout<<"NEIGHBOR_BROADCAST_KEY_VALUE"<<std::endl;
                         NeighborBroadcastKeyValue nbkv;
                         archive>>nbkv;
                         
@@ -430,7 +459,6 @@ namespace micros_swarm_framework{
                     }
                     case BARRIER_SYN:
                     {
-                        //std::cout<<"BARRIER_SYN"<<std::endl;            
                         Barrier_Syn bs;
                         archive>>bs;
                         if(bs.s!="SYN")
@@ -461,7 +489,6 @@ namespace micros_swarm_framework{
                     }
                     case BARRIER_ACK:
                     {
-                        //std::cout<<"BARRIER_ACK"<<std::endl;
                         Barrier_Ack ba;
                         archive>>ba;
                 

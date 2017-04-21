@@ -272,6 +272,7 @@ namespace micros_swarm_framework{
         #endif
         //construct packet parser
         parser_ = Singleton<PacketParser>::getSingleton();
+        //parser_.reset(new PacketParser());
         boost::function<void(const MSFPPacket& packet)> parser_func=boost::bind(&PacketParser::parser, parser_, _1);
         //transfer the parser function to the communicator 
         communicator_->receive(parser_func);

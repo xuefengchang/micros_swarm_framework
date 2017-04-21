@@ -72,8 +72,12 @@ namespace micros_swarm_framework{
             const Base& getRobotBase();
             void setRobotBase(const Base& robot_base);
             void printRobotBase();
+
+            int getFloodingFactor();
+            void setFloodingFactor(int flooding_factor);
             
             void getNeighbors(std::map<int, NeighborBase>& neighbors);
+            std::map<int, NeighborBase> getNeighbors();
             void insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz);
             //delete an neighbor robot according to id
             void deleteNeighbor(int robot_id);
@@ -131,6 +135,7 @@ namespace micros_swarm_framework{
             int robot_type_;  //TODO
             int robot_status_;  //TODO
             Base robot_base_;
+            int flooding_factor_;
             std::map<int, NeighborBase> neighbors_;
             std::map<int, bool> swarms_;
             std::map<int, NeighborSwarmTuple> neighbor_swarms_;

@@ -36,6 +36,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "ros/ros.h"
 
+#include "micros_swarm_framework/random.h"
 #include "micros_swarm_framework/message.h"
 #include "micros_swarm_framework/singleton.h"
 #include "micros_swarm_framework/runtime_platform.h"
@@ -104,8 +105,24 @@ namespace micros_swarm_framework{
                 std::string s=archiveStream.str();
                 
                 rtp_->insertOrUpdateVirtualStigmergy(vstig_id_, key, s, time(0), rtp_->getRobotID());
+
+                std::map<int, NeighborBase> neighbors;
+                rtp_->getNeighbors(neighbors);
+                if(neighbors.size()==0)
+                    return;
+                int random_neighbor_index=random_unint(0,neighbors.size()-1, time(NULL));
+                std::map<int, NeighborBase>::iterator it=neighbors.begin();
+                int loop_index=0;
+                for(loop_index=0;loop_index<=random_neighbor_index;loop_index++)
+                {
+                    it++;
+                }
+                int certain_receiving_id=it->first;
+                int flooding_factor=rtp_->getFloodingFactor();
+                int flooding_radix=(neighbors.size()-1)>=flooding_factor?(neighbors.size()-1):flooding_factor;
+                float receiving_probability=(float)flooding_factor/flooding_radix;
                 
-                VirtualStigmergyPut vsp(vstig_id_, key, s, time(0), rtp_->getRobotID());
+                VirtualStigmergyPut vsp(vstig_id_, key, s, time(0), rtp_->getRobotID(), certain_receiving_id, receiving_probability);
                 
                 std::ostringstream archiveStream2;
                 boost::archive::text_oarchive archive2(archiveStream2);
@@ -144,8 +161,24 @@ namespace micros_swarm_framework{
                 std::istringstream archiveStream(data_str);
                 boost::archive::text_iarchive archive(archiveStream);
                 archive>>data;
+
+                std::map<int, NeighborBase> neighbors;
+                rtp_->getNeighbors(neighbors);
+                if(neighbors.size()==0)
+                    return;
+                int random_neighbor_index=random_unint(0,neighbors.size()-1, time(NULL));
+                std::map<int, NeighborBase>::iterator it=neighbors.begin();
+                int loop_index=0;
+                for(loop_index=0;loop_index<=random_neighbor_index;loop_index++)
+                {
+                    it++;
+                }
+                int certain_receiving_id=it->first;
+                int flooding_factor=rtp_->getFloodingFactor();
+                int flooding_radix=(neighbors.size()-1)>=flooding_factor?(neighbors.size()-1):flooding_factor;
+                float receiving_probability=(float)flooding_factor/flooding_radix;
                 
-                VirtualStigmergyQuery vsq(vstig_id_, key, vst.vstig_value, vst.vstig_timestamp, vst.robot_id);
+                VirtualStigmergyQuery vsq(vstig_id_, key, vst.vstig_value, vst.vstig_timestamp, vst.robot_id, certain_receiving_id, receiving_probability);
                 
                 std::ostringstream archiveStream2;
                 boost::archive::text_oarchive archive2(archiveStream2);

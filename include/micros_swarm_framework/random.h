@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      testvstig.h
+\file      random.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,32 +20,45 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef TESTVSTIG_H_
-#define TESTVSTIG_H_
+#ifndef MICROS_RANDOM_H_
+#define MICROS_RANDOM_H_
 
-#include "std_msgs/String.h"
-#include "nav_msgs/Odometry.h"
-#include "geometry_msgs/Twist.h"
-
-#include "micros_swarm_framework/micros_swarm_framework.h"
+#include <random>
+#include <iostream>
+#include <ctime>
+#include <stdlib.h>
+#include <time.h>
 
 namespace micros_swarm_framework{
-    
-    class TestVstig : public Application
-    {
-        public:
-            ros::Timer timer;
-            ros::Publisher pub;
-            ros::Subscriber sub;
-            
-            micros_swarm_framework::VirtualStigmergy<int> vs;
-            void loop(const ros::TimerEvent&);
-            void baseCallback(const nav_msgs::Odometry& lmsg);
 
-        TestVstig();
-            ~TestVstig();
-            virtual void start(); 
-    };
+    int random_int(int min, int max)
+    {
+        srand((unsigned)time(NULL));
+        return (rand() % (max-min+1))+ min;
+    }
+
+    int random_unint(int min, int max, int seed = 0)
+    {
+        static std::default_random_engine e(seed);
+        static std::uniform_real_distribution<double> u(min, max);
+        return u(e);
+    }
+
+    float random_float(float min, float max, unsigned int seed = 0)
+    {
+        static std::default_random_engine e(seed);
+        static std::uniform_real_distribution<double> u(min, max);
+        return u(e);
+    }
+
+    int test(void)
+    {
+        for (int i = 0; i < 15; ++i) {
+            std::cout << random_unint(0, 15, time(NULL)) << " ";
+        }
+        std::cout << std::endl;
+        return 0;
+    }
 };
 
 #endif

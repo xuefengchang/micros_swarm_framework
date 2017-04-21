@@ -43,6 +43,7 @@ namespace micros_swarm_framework{
     {
         robot_id_=0;
         robot_base_=Base(0,0,0,0,0,0);
+        flooding_factor_ = 2;
         neighbors_.clear();
         swarms_.clear();
         neighbor_swarms_.clear();
@@ -59,6 +60,7 @@ namespace micros_swarm_framework{
     {
         robot_id_=robot_id;
         robot_base_=Base(0,0,0,0,0,0);
+        flooding_factor_ = 2;
         neighbors_.clear();
         swarms_.clear();
         neighbor_swarms_.clear();
@@ -129,12 +131,28 @@ namespace micros_swarm_framework{
             robot_base_.z<<", "<<robot_base_.vx<<", "<<robot_base_.vy<<", "<<\
             robot_base_.vz<<std::endl;
     }
+
+    int RuntimePlatform::getFloodingFactor()
+    {
+        return flooding_factor_;
+    }
+
+    void RuntimePlatform::setFloodingFactor(int flooding_factor)
+    {
+        flooding_factor_=flooding_factor;
+    }
         
     void RuntimePlatform::getNeighbors(std::map<int, NeighborBase>& neighbors)
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex5_);
         neighbors=neighbors_;
     }
+
+    std::map<int, NeighborBase> RuntimePlatform::getNeighbors()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex5_);
+        return neighbors_;
+    };
      
     void RuntimePlatform::insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz)
     {
