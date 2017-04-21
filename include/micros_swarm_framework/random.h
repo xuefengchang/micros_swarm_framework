@@ -37,7 +37,7 @@ namespace micros_swarm_framework{
         return (rand() % (max-min+1))+ min;
     }
 
-    int random_unint(int min, int max, int seed = 0)
+    int random_int(int min, int max, int seed = 0)
     {
         static std::default_random_engine e(seed);
         static std::uniform_real_distribution<double> u(min, max);
@@ -54,7 +54,7 @@ namespace micros_swarm_framework{
     int test(void)
     {
         for (int i = 0; i < 15; ++i) {
-            std::cout << random_unint(0, 15, time(NULL)) << " ";
+            std::cout << random_int(0, 15, time(NULL)) << " ";
         }
         std::cout << std::endl;
         return 0;

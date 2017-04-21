@@ -110,7 +110,7 @@ namespace micros_swarm_framework{
                 rtp_->getNeighbors(neighbors);
                 if(neighbors.size()==0)
                     return;
-                int random_neighbor_index=random_unint(0,neighbors.size()-1, time(NULL));
+                int random_neighbor_index=random_int(0,neighbors.size()-1, time(NULL));
                 std::map<int, NeighborBase>::iterator it=neighbors.begin();
                 int loop_index=0;
                 for(loop_index=0;loop_index<=random_neighbor_index;loop_index++)
@@ -166,7 +166,7 @@ namespace micros_swarm_framework{
                 rtp_->getNeighbors(neighbors);
                 if(neighbors.size()==0)
                     return;
-                int random_neighbor_index=random_unint(0,neighbors.size()-1, time(NULL));
+                int random_neighbor_index=random_int(0,neighbors.size()-1, time(NULL));
                 std::map<int, NeighborBase>::iterator it=neighbors.begin();
                 int loop_index=0;
                 for(loop_index=0;loop_index<=random_neighbor_index;loop_index++)
