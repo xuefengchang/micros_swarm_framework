@@ -355,6 +355,9 @@ target_link_libraries(testpso
    ${catkin_LIBRARIES}
 )
 
+add_executable(pub micbee/pub.cpp)
+add_executable(recv micbee/recv.cpp)
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
