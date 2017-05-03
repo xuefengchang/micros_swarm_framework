@@ -24,18 +24,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define NEIGHBOR_COMMUNICATION_H_
 
 #include <iostream>
-#include <string>
-#include <time.h>
-#include <stdlib.h>
-#include <vector>
-#include <stack>
-#include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
-#include <typeinfo>
-
-#include "ros/ros.h"
 
 #include "micros_swarm_framework/runtime_platform.h"
 #include "micros_swarm_framework/listener_helper.h"

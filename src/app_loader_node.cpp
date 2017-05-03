@@ -20,9 +20,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <iostream>
-
-#include <ros/ros.h>
 #include "micros_swarm_framework/app_loader.h"
 
 int main(int argc, char** argv)

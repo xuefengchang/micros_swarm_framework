@@ -24,17 +24,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define PACKET_PARSER_H_
 
 #include <iostream>
-#include <string>
 #include <time.h>
-#include <stdlib.h>
 #include <vector>
-#include <stack>
 #include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
-
-#include "ros/ros.h"
 
 #include "micros_swarm_framework/data_type.h"
 #include "micros_swarm_framework/message.h"
@@ -42,17 +34,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm_framework/runtime_platform.h"
 #include "micros_swarm_framework/check_neighbor.h"
 #include "micros_swarm_framework/random.h"
-
-#ifdef ROS
-#include "micros_swarm_framework/MSFPPacket.h"
-#endif
-
-#ifdef OPENSPLICE_DDS
-#include "opensplice_dds/MSFPPacket.h"
-#include "opensplice_dds/check_status.h"
-#include "opensplice_dds/publisher.h"
-#include "opensplice_dds/subscriber.h"
-#endif
 
 #include "micros_swarm_framework/communication_interface.h"
 #ifdef ROS

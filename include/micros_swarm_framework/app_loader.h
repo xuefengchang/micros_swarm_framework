@@ -24,19 +24,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define APP_LOADER_H_
 
 #include <iostream>
-#include <string>
-#include <time.h>
-#include <stdlib.h>
-#include <vector>
-#include <stack>
-#include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
-#include <functional>
-
 #include <ros/ros.h>
-#include <std_msgs/Int8.h>
 
 #include "micros_swarm_framework/AppLoad.h"
 #include "micros_swarm_framework/AppUnload.h"

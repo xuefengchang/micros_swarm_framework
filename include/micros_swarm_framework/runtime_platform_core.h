@@ -24,20 +24,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define RUNTIME_PLATFORM_CORE_H_
 
 #include <iostream>
-#include <string>
-#include <time.h>
-#include <stdlib.h>
-#include <vector>
-#include <stack>
-#include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
-#include <functional>
-
 #include <ros/ros.h>
-#include <pluginlib/class_loader.h>
-#include <pluginlib/class_list_macros.h>
 
 #include "micros_swarm_framework/singleton.h"
 #include "micros_swarm_framework/message.h"

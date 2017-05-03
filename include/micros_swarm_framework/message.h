@@ -24,24 +24,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define MESSAGE_H_
 
 #include <iostream>
-#include <string>
 #include <time.h>
-#include <stdlib.h>
-#include <vector>
-#include <stack>
-#include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
-
 #include <fstream>
 #include <sstream>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/string.hpp> 
 #include <boost/serialization/vector.hpp>
-
-#include "ros/ros.h"
 
 #include "micros_swarm_framework/data_type.h"
 

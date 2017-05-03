@@ -19,7 +19,7 @@ OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTE
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */ 
-#include <stdio.h> //因为要用到sprintf函数。  
+#include <stdio.h>
 #include <time.h>  
 #include <string>  
 #include <math.h>  
@@ -27,7 +27,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <iostream> 
 
 #include "ros/ros.h"
-#include "micros_swarm_framework/pso.h"
+#include "lib/pso.h"
 
 using namespace std;
 using namespace micros_swarm_framework;

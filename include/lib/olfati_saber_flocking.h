@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      testnc_broker.cpp 
+\file      olfati_saber_flocking.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,38 +20,44 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "apps/testnc.h"
+#ifndef OLFATI_SABER_FLOCKING_H_
+#define OLFATI_SABER_FLOCKING_H_
+
+#include <string>
+#include <list>
+#include <vector>
+#include <iostream>
+#include <utility>
+#include <cmath>
+#include <ctime>
+
+#include <std_msgs/String.h>
+#include <nav_msgs/Odometry.h>
+#include <geometry_msgs/Twist.h>
+
+#include "micros_swarm_framework/micros_swarm_framework.h"
 
 namespace micros_swarm_framework{
-    
-    class TestNCBroker : public nodelet::Nodelet
-    {
-        public:
-            ros::NodeHandle nh_;
-            boost::shared_ptr<Application> app_;
-                     
-            TestNCBroker();
-            ~TestNCBroker();
-            virtual void onInit();
-    };
 
-    TestNCBroker::TestNCBroker()
+    class OlfatiSaberFlocking : public Application
     {
-    
-    }
-    
-    TestNCBroker::~TestNCBroker()
-    {
-        
-    }
-    
-    void TestNCBroker::onInit()
-    {
-        nh_ = getNodeHandle();
-        app_.reset(new TestNC(nh_));
-        app_->start();
-    }
+    public:
+        ros::Timer timer;
+        ros::Publisher pub;
+        ros::Subscriber sub;
+
+        int hz;
+        double interval;
+
+        OlfatiSaberFlocking();
+        ~OlfatiSaberFlocking();
+        virtual void start();
+
+        //app functions
+        void init();
+        void publish_cmd(const ros::TimerEvent&);
+        void baseCallback(const nav_msgs::Odometry& lmsg);
+    };
 };
 
-// Register the nodelet
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::TestNCBroker, nodelet::Nodelet)
+#endif

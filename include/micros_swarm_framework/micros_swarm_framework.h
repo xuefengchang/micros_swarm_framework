@@ -23,30 +23,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #ifndef MICROS_SWARM_FRAMEWORK_H_
 #define MICROS_SWARM_FRAMEWORK_H_
 
-#include <iostream>
-#include <string>
-#include <time.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <vector>
-#include <stack>
-#include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
-#include <functional>
-#include <sstream>
-#include <fstream>
-#include <typeinfo>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/string.hpp> 
-#include <boost/serialization/vector.hpp>
-
-#include <ros/ros.h>
-#include <nodelet/nodelet.h>
-#include <pluginlib/class_list_macros.h>
-
 #include "micros_swarm_framework/swarm.h"
 #include "micros_swarm_framework/neighbors.h"
 #include "micros_swarm_framework/virtual_stigmergy.h"

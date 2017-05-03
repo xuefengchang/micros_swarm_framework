@@ -20,12 +20,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <iostream>
-#include <ros/ros.h>
 #include <signal.h>
-#include <std_msgs/Int8.h>
-
-#include "micros_swarm_framework/singleton.h"
 #include "micros_swarm_framework/runtime_platform_manager.h"
 
 boost::shared_ptr<micros_swarm_framework::RTPManager> rtp_manager;

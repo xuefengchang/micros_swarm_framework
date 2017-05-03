@@ -24,30 +24,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define RUNTIME_PLATFORM_H_
 
 #include <iostream>
-#include <string>
-#include <time.h>
-#include <stdlib.h>
 #include <vector>
-#include <stack>
 #include <map>
-#include <set>
-#include <queue>
-#include <algorithm>
-
-#include <boost/shared_ptr.hpp> 
-
-#include "ros/ros.h"
-
-#ifdef ROS
-#include "micros_swarm_framework/MSFPPacket.h"
-#endif
-
-#ifdef OPENSPLICE_DDS
-#include "opensplice_dds/MSFPPacket.h"
-#include "opensplice_dds/check_status.h"
-#include "opensplice_dds/publisher.h"
-#include "opensplice_dds/subscriber.h"
-#endif
+#include <boost/shared_ptr.hpp>
 
 #include "micros_swarm_framework/data_type.h"
 #include "micros_swarm_framework/listener_helper.h"
