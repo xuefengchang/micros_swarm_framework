@@ -48,6 +48,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  nav_msgs
+  geometry_msgs
   message_generation
 )
 
@@ -85,13 +87,15 @@ add_service_files(
 generate_messages(
   DEPENDENCIES
     std_msgs
+    nav_msgs
+    geometry_msgs
 )
 
 ## catkin specific configuration ##
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES micros_swarm_framework
-  CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
+  CATKIN_DEPENDS roscpp rospy std_msgs nav_msgs geometry_msgs message_runtime
 )
 
 link_directories(
@@ -299,6 +303,6 @@ install(DIRECTORY include
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-install(DIRECTORY apps doc launch maps idl test
+install(DIRECTORY lib apps doc launch maps idl test
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
