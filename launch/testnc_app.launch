@@ -1,5 +1,5 @@
 <launch>
-    <node pkg="micros_swarm_framework" type="micros_swarm_framework_app_loader" name="micros_swarm_framework_app_loader0" output="screen">
+    <node pkg="micros_swarm_framework" type="app_loader_node" name="app_loader_node0" output="screen">
         <param name="app_name" type="string" value="test_nc"/>
         <param name="app_type" type="string" value="micros_swarm_framework/TestNC"/>
     </node>

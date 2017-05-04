@@ -127,98 +127,98 @@ link_directories(
 )
 
 ## Declare a C++ library
-add_library(micros_swarm_framework_rtp_core
+add_library(rtp_core
   src/runtime_platform.cpp
   src/runtime_platform_core.cpp
 )
-add_dependencies(micros_swarm_framework_rtp_core ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(rtp_core ${micros_swarm_framework_EXPORTED_TARGETS})
 
-target_link_libraries(micros_swarm_framework_rtp_core
+target_link_libraries(rtp_core
   ${Boost_THREAD_LIBRARY}
   ${Boost_REGEX_LIBRARY}
   ${Boost_SERIALIZATION_LIBRARY}
   ${catkin_LIBRARIES}
 )
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_rtp_core opensplice_dds_pub_sub)
+  target_link_libraries(rtp_core opensplice_dds_pub_sub)
 endif()
 
-add_library(micros_swarm_framework_rtp_manager
+add_library(rtp_manager
   src/runtime_platform_manager.cpp
 )
-add_dependencies(micros_swarm_framework_rtp_manager ${micros_swarm_framework_EXPORTED_TARGETS})
-target_link_libraries(micros_swarm_framework_rtp_manager micros_swarm_framework_rtp_core)
+add_dependencies(rtp_manager ${micros_swarm_framework_EXPORTED_TARGETS})
+target_link_libraries(rtp_manager rtp_core)
 
-add_executable(micros_swarm_framework_rtp_node
+add_executable(rtp_manager_node
   src/rtp_manager_node.cpp
 )
-target_link_libraries(micros_swarm_framework_rtp_node micros_swarm_framework_rtp_manager)
+target_link_libraries(rtp_manager_node rtp_manager)
 
 add_library(app_loader
   src/app_loader.cpp
 )
 add_dependencies(app_loader ${micros_swarm_framework_EXPORTED_TARGETS})
 
-add_executable(micros_swarm_framework_app_loader
+add_executable(app_loader_node
   src/app_loader_node.cpp
 )
-target_link_libraries(micros_swarm_framework_app_loader app_loader)
-target_link_libraries(micros_swarm_framework_app_loader ${catkin_LIBRARIES})
+target_link_libraries(app_loader_node app_loader)
+target_link_libraries(app_loader_node ${catkin_LIBRARIES})
 
-add_library(micros_swarm_framework_App1
+add_library(App1
   apps/app1.cpp
 )
-add_dependencies(micros_swarm_framework_App1 ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(App1 ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_App1 opensplice_dds_pub_sub)
+  target_link_libraries(App1 opensplice_dds_pub_sub)
 endif()
 
-add_library(micros_swarm_framework_App2
+add_library(App2
   apps/app2.cpp
 )
-add_dependencies(micros_swarm_framework_App2 ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(App2 ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_App2 opensplice_dds_pub_sub)
+  target_link_libraries(App2 opensplice_dds_pub_sub)
 endif()
 
-add_library(micros_swarm_framework_App3
+add_library(App3
   apps/app3.cpp
 )
-add_dependencies(micros_swarm_framework_App3 ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(App3 ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_App3 opensplice_dds_pub_sub)
+  target_link_libraries(App3 opensplice_dds_pub_sub)
 endif()
 
-add_library(micros_swarm_framework_OlfatiSaberFlocking
+add_library(OlfatiSaberFlocking
   lib/olfati_saber_flocking.cpp
 )
-add_dependencies(micros_swarm_framework_OlfatiSaberFlocking ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(OlfatiSaberFlocking ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_OlfatiSaberFlocking opensplice_dds_pub_sub)
+  target_link_libraries(OlfatiSaberFlocking opensplice_dds_pub_sub)
 endif()
 
-add_library(micros_swarm_framework_TestNC
+add_library(TestNC
   test/testnc.cpp
 )
-add_dependencies(micros_swarm_framework_TestNC ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(TestNC ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_TestNC opensplice_dds_pub_sub)
+  target_link_libraries(TestNC opensplice_dds_pub_sub)
 endif()
 
-add_library(micros_swarm_framework_TestVstig
+add_library(TestVstig
   test/testvstig.cpp
 )
-add_dependencies(micros_swarm_framework_TestVstig ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(TestVstig ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_TestVstig opensplice_dds_pub_sub)
+  target_link_libraries(TestVstig opensplice_dds_pub_sub)
 endif()
 
-add_library(micros_swarm_framework_TestBb
+add_library(TestBb
    test/testbb.cpp
 )
-add_dependencies(micros_swarm_framework_TestBb ${micros_swarm_framework_EXPORTED_TARGETS})
+add_dependencies(TestBb ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(micros_swarm_framework_TestBb opensplice_dds_pub_sub)
+  target_link_libraries(TestBb opensplice_dds_pub_sub)
 endif()
 
 #add_executable(testrtp test/testrtp.cpp src/runtime_platform.cpp)
@@ -250,9 +250,9 @@ target_link_libraries(testpso
 )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS micros_swarm_framework_rtp_core micros_swarm_framework_rtp_manager micros_swarm_framework_rtp_node
-  app_loader  micros_swarm_framework_app_loader
-  micros_swarm_framework_App1 micros_swarm_framework_App2 micros_swarm_framework_App3
+install(TARGETS rtp_core rtp_manager rtp_manager_node
+  app_loader  app_loader_node
+  App1 App2 App3
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

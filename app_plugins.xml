@@ -1,36 +1,36 @@
 <!--This is the plugin for the micros_swarm_framework applications-->
-<library path="lib/libmicros_swarm_framework_App1">
+<library path="lib/libApp1">
     <class name="micros_swarm_framework/App1" type="micros_swarm_framework::App1" base_class_type="micros_swarm_framework::Application">
-        <description>micros_swarm_framework app1.</description>
+        <description>app1.</description>
     </class>
 </library>
 
-<library path="lib/libmicros_swarm_framework_App2">
+<library path="lib/libApp2">
     <class name="micros_swarm_framework/App2" type="micros_swarm_framework::App2" base_class_type="micros_swarm_framework::Application">
-        <description>micros_swarm_framework app2.</description>
+        <description>app2.</description>
     </class>
 </library>
 
-<library path="lib/libmicros_swarm_framework_App3">
+<library path="lib/libApp3">
     <class name="micros_swarm_framework/App3" type="micros_swarm_framework::App3" base_class_type="micros_swarm_framework::Application">
-        <description>micros_swarm_framework app3.</description>
+        <description>app3.</description>
     </class>
 </library>
 
-<library path="lib/libmicros_swarm_framework_TestNC">
+<library path="lib/libTestNC">
     <class name="micros_swarm_framework/TestNC" type="micros_swarm_framework::TestNC" base_class_type="micros_swarm_framework::Application">
-        <description>micros_swarm_framework test neighbor communication.</description>
+        <description>test neighbor communication.</description>
     </class>
 </library>
 
-<library path="lib/libmicros_swarm_framework_TestVstig">
+<library path="lib/libTestVstig">
     <class name="micros_swarm_framework/TestVstig" type="micros_swarm_framework::TestVstig" base_class_type="micros_swarm_framework::Application">
-        <description>micros_swarm_framework test virtual stigmergy.</description>
+        <description>test virtual stigmergy.</description>
     </class>
 </library>
 
-<library path="lib/libmicros_swarm_framework_TestBb">
+<library path="lib/libTestBb">
     <class name="micros_swarm_framework/TestBb" type="micros_swarm_framework::TestBb" base_class_type="micros_swarm_framework::Application">
-        <description>micros_swarm_framework test blackboard.</description>
+        <description>test blackboard.</description>
     </class>
 </library>
