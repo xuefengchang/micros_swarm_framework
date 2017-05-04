@@ -4,6 +4,8 @@ project(micros_swarm_framework)
 #use c++ 11
 set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 
+#set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+
 # set communication mechanism
 option(USE_ROS "Using ROS" OFF)
 set(USE_ROS ON CACHE BOOL "Using ROS" FORCE)
@@ -40,6 +42,20 @@ elseif (${USE_OPENDDS})
 else()
   message("communication mechanism are not configured correctly. Using ROS default.")
   add_definitions(-DROS)
+endif()
+
+## Opensplice DDS pub/sub C++ library
+if (${USE_OPENSPLICE_DDS})
+  add_library(opensplice_dds_pub_sub
+    src/opensplice_dds/MSFPPacket.cpp
+    src/opensplice_dds/MSFPPacketDcps.cpp
+    src/opensplice_dds/MSFPPacketDcps_impl.cpp
+    src/opensplice_dds/MSFPPacketSplDcps.cpp
+    src/opensplice_dds/check_status.cpp
+    src/opensplice_dds/MSFPPacket_listener.cpp
+    src/opensplice_dds/publisher.cpp
+    src/opensplice_dds/subscriber.cpp
+  )
 endif()
 
 ## Find catkin macros and libraries
@@ -105,20 +121,6 @@ link_directories(
   ${Boost_REGEX_LIBRARY}
   ${Boost_SERIALIZATION_LIBRARY}
 )
-
-## Declare a C++ library
-if (${USE_OPENSPLICE_DDS})
-  add_library(opensplice_dds_pub_sub
-    src/opensplice_dds/MSFPPacket.cpp 
-    src/opensplice_dds/MSFPPacketDcps.cpp 
-    src/opensplice_dds/MSFPPacketDcps_impl.cpp 
-    src/opensplice_dds/MSFPPacketSplDcps.cpp
-    src/opensplice_dds/check_status.cpp
-    src/opensplice_dds/MSFPPacket_listener.cpp
-    src/opensplice_dds/publisher.cpp
-    src/opensplice_dds/subscriber.cpp
-  )
-endif()
 
 ## Declare a C++ library
 add_library(micros_swarm_framework_rtp_core
