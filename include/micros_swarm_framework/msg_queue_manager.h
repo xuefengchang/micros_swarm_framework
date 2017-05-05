@@ -26,6 +26,7 @@ ARISING IN ANY WAY OUType OF TypeHE USE OF TypeHIS SOFTypeWARE, EVEN IF ADVISED 
 #include <iostream>
 #include <boost/thread.hpp>
 
+#include "micros_swarm_framework/semaphore.h"
 #include "micros_swarm_framework/circular_queue.h"
 #ifdef ROS
 #include "micros_swarm_framework/ros_communication.h"
