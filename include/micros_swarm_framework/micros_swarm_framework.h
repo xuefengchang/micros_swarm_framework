@@ -27,7 +27,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm_framework/neighbors.h"
 #include "micros_swarm_framework/virtual_stigmergy.h"
 #include "micros_swarm_framework/blackboard.h"
-#include "micros_swarm_framework/neighbor_communication.h"
+#include "micros_swarm_framework/neighbor_comm.h"
 #include "micros_swarm_framework/application.h"
 
 #endif

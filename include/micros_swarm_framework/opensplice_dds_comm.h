@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      opensplice_dds_communication.h
+\file      opensplice_dds_comm.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,12 +20,12 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef OPENSPLICE_DDS_COMMUNICATION_H_
-#define OPENSPLICE_DDS_COMMUNICATION_H_
+#ifndef OPENSPLICE_DDS_COMM_H_
+#define OPENSPLICE_DDS_COMM_H_
 
 #include <iostream>
 
-#include "micros_swarm_framework/communication_interface.h"
+#include "micros_swarm_framework/comm_interface.h"
 #include "opensplice_dds/MSFPPacket.h"
 #include "opensplice_dds/check_status.h"
 #include "opensplice_dds/publisher.h"
@@ -33,9 +33,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm_framework{
     
-    class OpenSpliceDDSCommunication : public CommunicationInterface{
+    class OpenSpliceDDSComm : public CommInterface{
         public:
-            OpenSpliceDDSCommunication()
+            OpenSpliceDDSComm()
             {
                 name_="OPENSPLICE_DDS";
                 packet_publisher_.reset(new micros_swarm_framework::Publisher("micros_swarm_framework_topic"));

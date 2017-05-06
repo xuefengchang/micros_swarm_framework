@@ -29,12 +29,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm_framework/singleton.h"
 #include "micros_swarm_framework/message.h"
 #include "micros_swarm_framework/runtime_platform.h"
-#include "micros_swarm_framework/communication_interface.h"
+#include "micros_swarm_framework/comm_interface.h"
 #ifdef ROS
-#include "micros_swarm_framework/ros_communication.h"
+#include "micros_swarm_framework/ros_comm.h"
 #endif
 #ifdef OPENSPLICE_DDS
-#include "micros_swarm_framework/opensplice_dds_communication.h"
+#include "micros_swarm_framework/opensplice_dds_comm.h"
 #endif
 #include "micros_swarm_framework/packet_parser.h"
 
@@ -45,7 +45,7 @@ namespace micros_swarm_framework{
     public:
         ros::NodeHandle node_handle_;
         boost::shared_ptr<RuntimePlatform> rtp_;
-        boost::shared_ptr<CommunicationInterface> communicator_;
+        boost::shared_ptr<CommInterface> communicator_;
         boost::shared_ptr<PacketParser> parser_;
 
         ros::Timer publish_robot_base_timer_;

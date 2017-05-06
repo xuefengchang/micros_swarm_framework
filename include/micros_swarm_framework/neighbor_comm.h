@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      neighbor_communication.h 
+\file      neighbor_comm.h 
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,19 +20,19 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef NEIGHBOR_COMMUNICATION_H_
-#define NEIGHBOR_COMMUNICATION_H_
+#ifndef NEIGHBOR_COMM_H_
+#define NEIGHBOR_COMM_H_
 
 #include <iostream>
 
 #include "micros_swarm_framework/runtime_platform.h"
 #include "micros_swarm_framework/listener_helper.h"
-#include "micros_swarm_framework/communication_interface.h"
+#include "micros_swarm_framework/comm_interface.h"
 #ifdef ROS
-#include "micros_swarm_framework/ros_communication.h"
+#include "micros_swarm_framework/ros_comm.h"
 #endif
 #ifdef OPENSPLICE_DDS
-#include "micros_swarm_framework/opensplice_dds_communication.h"
+#include "micros_swarm_framework/opensplice_dds_comm.h"
 #endif
 
 namespace micros_swarm_framework{
@@ -45,10 +45,10 @@ namespace micros_swarm_framework{
                 key_=key;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
                 #ifdef ROS
-                communicator_=Singleton<ROSCommunication>::getSingleton();
+                communicator_=Singleton<ROSComm>::getSingleton();
                 #endif
                 #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
                 #endif
             }
             
@@ -83,7 +83,7 @@ namespace micros_swarm_framework{
             }
         private:
             boost::shared_ptr<RuntimePlatform> rtp_;
-            boost::shared_ptr<CommunicationInterface> communicator_;
+            boost::shared_ptr<CommInterface> communicator_;
             std::string key_;
     };
     

@@ -46,7 +46,7 @@ endif()
 
 ## Opensplice DDS pub/sub C++ library
 if (${USE_OPENSPLICE_DDS})
-  add_library(opensplice_dds_pub_sub
+  add_library(opensplice_dds_comm
     src/opensplice_dds/MSFPPacket.cpp
     src/opensplice_dds/MSFPPacketDcps.cpp
     src/opensplice_dds/MSFPPacketDcps_impl.cpp
@@ -56,7 +56,7 @@ if (${USE_OPENSPLICE_DDS})
     src/opensplice_dds/publisher.cpp
     src/opensplice_dds/subscriber.cpp
   )
-  target_link_libraries(opensplice_dds_pub_sub
+  target_link_libraries(opensplice_dds_comm
     $ENV{OSPL_HOME}/lib/libddskernel.so
     $ENV{OSPL_HOME}/lib/libdcpsisocpp.so
   )
@@ -140,7 +140,7 @@ target_link_libraries(rtp_core
   ${catkin_LIBRARIES}
 )
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(rtp_core opensplice_dds_pub_sub)
+  target_link_libraries(rtp_core opensplice_dds_comm)
 endif()
 
 add_library(rtp_manager
@@ -170,7 +170,7 @@ add_library(App1
 )
 add_dependencies(App1 ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(App1 opensplice_dds_pub_sub)
+  target_link_libraries(App1 opensplice_dds_comm)
 endif()
 
 add_library(App2
@@ -178,7 +178,7 @@ add_library(App2
 )
 add_dependencies(App2 ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(App2 opensplice_dds_pub_sub)
+  target_link_libraries(App2 opensplice_dds_comm)
 endif()
 
 add_library(App3
@@ -186,7 +186,7 @@ add_library(App3
 )
 add_dependencies(App3 ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(App3 opensplice_dds_pub_sub)
+  target_link_libraries(App3 opensplice_dds_comm)
 endif()
 
 add_library(OlfatiSaberFlocking
@@ -194,7 +194,7 @@ add_library(OlfatiSaberFlocking
 )
 add_dependencies(OlfatiSaberFlocking ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(OlfatiSaberFlocking opensplice_dds_pub_sub)
+  target_link_libraries(OlfatiSaberFlocking opensplice_dds_comm)
 endif()
 
 add_library(TestNC
@@ -202,7 +202,7 @@ add_library(TestNC
 )
 add_dependencies(TestNC ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(TestNC opensplice_dds_pub_sub)
+  target_link_libraries(TestNC opensplice_dds_comm)
 endif()
 
 add_library(TestVstig
@@ -210,7 +210,7 @@ add_library(TestVstig
 )
 add_dependencies(TestVstig ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(TestVstig opensplice_dds_pub_sub)
+  target_link_libraries(TestVstig opensplice_dds_comm)
 endif()
 
 add_library(TestBb
@@ -218,7 +218,7 @@ add_library(TestBb
 )
 add_dependencies(TestBb ${micros_swarm_framework_EXPORTED_TARGETS})
 if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(TestBb opensplice_dds_pub_sub)
+  target_link_libraries(TestBb opensplice_dds_comm)
 endif()
 
 #add_executable(testrtp test/testrtp.cpp src/runtime_platform.cpp)

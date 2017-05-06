@@ -32,12 +32,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm_framework/message.h"
 #include "micros_swarm_framework/singleton.h"
 #include "micros_swarm_framework/runtime_platform.h"
-#include "micros_swarm_framework/communication_interface.h"
+#include "micros_swarm_framework/comm_interface.h"
 #ifdef ROS
-#include "micros_swarm_framework/ros_communication.h"
+#include "micros_swarm_framework/ros_comm.h"
 #endif
 #ifdef OPENSPLICE_DDS
-#include "micros_swarm_framework/opensplice_dds_communication.h"
+#include "micros_swarm_framework/opensplice_dds_comm.h"
 #endif
 
 namespace micros_swarm_framework{
@@ -52,10 +52,10 @@ namespace micros_swarm_framework{
                 vstig_id_=vstig_id;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
                 #ifdef ROS
-                communicator_=Singleton<ROSCommunication>::getSingleton();
+                communicator_=Singleton<ROSComm>::getSingleton();
                 #endif
                 #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
                 #endif
                 rtp_->createVirtualStigmergy(vstig_id_);
             }
@@ -64,10 +64,10 @@ namespace micros_swarm_framework{
             {
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
                 #ifdef ROS
-                communicator_=Singleton<ROSCommunication>::getSingleton();
+                communicator_=Singleton<ROSComm>::getSingleton();
                 #endif
                 #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
                 #endif
                 vstig_id_=vs.vstig_id_;
             }
@@ -78,10 +78,10 @@ namespace micros_swarm_framework{
                     return *this;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
                 #ifdef ROS
-                communicator_=Singleton<ROSCommunication>::getSingleton();
+                communicator_=Singleton<ROSComm>::getSingleton();
                 #endif
                 #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
                 #endif
                 vstig_id_=vs.vstig_id_;
                 return *this;
@@ -202,7 +202,7 @@ namespace micros_swarm_framework{
         private:
             int vstig_id_;
             boost::shared_ptr<RuntimePlatform> rtp_;
-            boost::shared_ptr<CommunicationInterface> communicator_;
+            boost::shared_ptr<CommInterface> communicator_;
     };
 }
 #endif

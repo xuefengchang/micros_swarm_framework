@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      ros_communication.h
+\file      ros_comm.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,25 +20,25 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef ROS_COMMUNICATION_H_
-#define ROS_COMMUNICATION_H_
+#ifndef ROS_COMM_H_
+#define ROS_COMM_H_
 
 #include <iostream>
 #include <ros/ros.h>
 
-#include "micros_swarm_framework/communication_interface.h"
+#include "micros_swarm_framework/comm_interface.h"
 #include "micros_swarm_framework/MSFPPacket.h"
 
 namespace micros_swarm_framework{
     
-    class ROSCommunication : public CommunicationInterface{
+    class ROSComm : public CommInterface{
         public:
-            ROSCommunication()
+            ROSComm()
             {
                 name_="ERROR";
             }
         
-            ROSCommunication(ros::NodeHandle node_handle)
+            ROSComm(ros::NodeHandle node_handle)
             {
                 name_="ROS";
                 node_handle_=node_handle;
@@ -73,7 +73,7 @@ namespace micros_swarm_framework{
             void receive(boost::function<void(const MSFPPacket&)> parser)
             {
                 parser_=parser;
-                packet_subscriber_ = node_handle_.subscribe("/micros_swarm_framework_topic", 2000, &ROSCommunication::callback, this, ros::TransportHints().udp());
+                packet_subscriber_ = node_handle_.subscribe("/micros_swarm_framework_topic", 2000, &ROSComm::callback, this, ros::TransportHints().udp());
             }
             
         private:

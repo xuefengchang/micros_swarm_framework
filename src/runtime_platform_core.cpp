@@ -231,10 +231,10 @@ namespace micros_swarm_framework{
         rtp_->setNeighborDistance(default_neighbor_distance_);
         //construct communicator
         #ifdef ROS
-        communicator_=Singleton<ROSCommunication>::getSingleton(node_handle_);
+        communicator_=Singleton<ROSComm>::getSingleton(node_handle_);
         #endif
         #ifdef OPENSPLICE_DDS
-        communicator_=Singleton<OpenSpliceDDSCommunication>::getSingleton();
+        communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
         #endif
         //construct packet parser
         parser_ = Singleton<PacketParser>::getSingleton();

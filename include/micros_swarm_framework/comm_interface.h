@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      communication_interface.h
+\file      comm_interface.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,8 +20,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef COMMUNICATION_INTERFACE_H_
-#define COMMUNICATION_INTERFACE_H_
+#ifndef COMM_INTERFACE_H_
+#define COMM_INTERFACE_H_
 
 #include <iostream>
 
@@ -38,7 +38,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm_framework{
 
-    class CommunicationInterface{
+    class CommInterface{
         public:   
             std::string name_;
             boost::function<void(const MSFPPacket& packet)> parser_;
