@@ -4,8 +4,6 @@ project(micros_swarm_framework)
 #use c++ 11
 set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 
-#set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-
 # set communication mechanism
 option(USE_ROS "Using ROS" OFF)
 set(USE_ROS ON CACHE BOOL "Using ROS" FORCE)
@@ -114,7 +112,7 @@ generate_messages(
 ## catkin specific configuration ##
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES micros_swarm_framework
+  #LIBRARIES micros_swarm_framework
   CATKIN_DEPENDS roscpp rospy std_msgs nav_msgs geometry_msgs message_runtime
 )
 

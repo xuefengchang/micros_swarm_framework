@@ -29,10 +29,12 @@ ARISING IN ANY WAY OUType OF TypeHE USE OF TypeHIS SOFTypeWARE, EVEN IF ADVISED 
 #include "micros_swarm_framework/semaphore.h"
 #include "micros_swarm_framework/circular_queue.h"
 #ifdef ROS
-#include "micros_swarm_framework/ros_comm.h"
+#include "micros_swarm_framework/MSFPPacket.h"
+//#include "micros_swarm_framework/ros_comm.h"
 #endif
 #ifdef OPENSPLICE_DDS
-#include "micros_swarm_framework/opensplice_dds_comm.h"
+#include "opensplice_dds/MSFPPacket.h"
+//#include "micros_swarm_framework/opensplice_dds_comm.h"
 #endif
 
 namespace micros_swarm_framework{
