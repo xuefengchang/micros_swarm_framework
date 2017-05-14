@@ -13,7 +13,8 @@ In order to make it modular and extensible, we chose to decompose the framework 
 
 ## Application Demo
 We can create new applications(which are organized in ROS packages) based on micros_swarm_framework, this is a demo:
-'''
+
+```
 git clone https://github.com/xuefengchang/app_demo.git
 catkin_make
 roslaunch app_demo app_demo.launch
