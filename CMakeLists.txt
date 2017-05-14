@@ -79,10 +79,11 @@ find_package(Boost REQUIRED COMPONENTS
 )
     
 include_directories(
-  include
   ${Boost_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${DDS_INCLUDE_DIRS}
+  include
+  swarm_lib
 )
 
 ## Generate messages in the 'msg' folder
@@ -122,6 +123,9 @@ link_directories(
   ${catkin_LIBRARY_DIRS}
   ${DDS_LIBRARY_DIRS}
 )
+
+#Swarm library directory
+add_subdirectory(swarm_lib)
 
 ## Declare a C++ library
 add_library(rtp_core
@@ -186,14 +190,6 @@ if (${USE_OPENSPLICE_DDS})
   target_link_libraries(App3 opensplice_dds_comm)
 endif()
 
-add_library(OlfatiSaberFlocking
-  lib/olfati_saber_flocking.cpp
-)
-add_dependencies(OlfatiSaberFlocking ${micros_swarm_framework_EXPORTED_TARGETS})
-if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(OlfatiSaberFlocking opensplice_dds_comm)
-endif()
-
 add_library(TestNC
   test/testnc.cpp
 )
@@ -237,15 +233,6 @@ endif()
 #    opensplice_dds_pub_sub
 #)
 
-add_executable(testpso lib/testpso.cpp)
-add_dependencies(testpso ${micros_swarm_framework_EXPORTED_TARGETS})
-target_link_libraries(testpso
-   ${Boost_THREAD_LIBRARY}
-   ${Boost_REGEX_LIBRARY}
-   ${Boost_SERIALIZATION_LIBRARY}
-   ${catkin_LIBRARIES}
-)
-
 ## Mark executables and/or libraries for installation
 install(TARGETS rtp_core rtp_manager rtp_manager_node
   app_loader  app_loader_node
@@ -263,6 +250,6 @@ install(DIRECTORY include
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-install(DIRECTORY lib apps doc launch maps idl test
+install(DIRECTORY swarm_lib apps doc launch maps idl test
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )

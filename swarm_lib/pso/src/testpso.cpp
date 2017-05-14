@@ -24,7 +24,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <string>
 #include <fstream>  
 #include <iostream>
-#include "lib/pso.h"
+#include "pso.h"
 
 using namespace std;
 using namespace micros_swarm_framework;
