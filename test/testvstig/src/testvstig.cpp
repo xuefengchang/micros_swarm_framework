@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      testbb.h
+\file      testvstig.cpp 
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,32 +20,53 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef TESTBB_H_
-#define TESTBB_H_
+#include "testvstig.h"
 
-#include "std_msgs/String.h"
-#include "nav_msgs/Odometry.h"
-#include "geometry_msgs/Twist.h"
-
-#include "micros_swarm_framework/micros_swarm_framework.h"
+// Register the application
+PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::TestVstig, micros_swarm_framework::Application)
 
 namespace micros_swarm_framework{
-    
-    class TestBb : public Application
+
+    TestVstig::TestVstig()
     {
-        public:
-            ros::Timer timer;
-            ros::Publisher pub;
-            ros::Subscriber sub;
+    }
+    
+    TestVstig::~TestVstig()
+    {
+    }
+    
+    void TestVstig::loop(const ros::TimerEvent&)
+    {   
+        //static int count=0;
+        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
+        //vs.put(robot_id_string, robot_id()+count);
+        vs.put(robot_id_string, robot_id());
+        //count++;
+        //vs.get(robot_id_string);
+        std::cout<<robot_id_string<<": "<<vs.size()<<std::endl;
+    }
 
-            micros_swarm_framework::BlackBoard<int> bb;
+    void TestVstig::baseCallback(const nav_msgs::Odometry& lmsg)
+    {
+        float x=lmsg.pose.pose.position.x;
+        float y=lmsg.pose.pose.position.y;
 
-            void loop(const ros::TimerEvent&);
-            
-            TestBb();
-            ~TestBb();
-            virtual void start(); 
-    };
+        float vx=lmsg.twist.twist.linear.x;
+        float vy=lmsg.twist.twist.linear.y;
+
+        micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
+        set_base(l);
+    }
+    
+    void TestVstig::start()
+    {
+        ros::NodeHandle nh;
+        sub = nh.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
+        //test virtual stigmergy
+        vs=micros_swarm_framework::VirtualStigmergy<int>(1);
+        //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
+        //vs.put(robot_id_string, robot_id());
+        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop, this);
+    }
 };
 
-#endif

@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      testvstig.h
+\file      testbb.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,31 +20,40 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef TESTVSTIG_H_
-#define TESTVSTIG_H_
+#include "testbb.h"
 
-#include "std_msgs/String.h"
-#include "nav_msgs/Odometry.h"
-#include "geometry_msgs/Twist.h"
-
-#include "micros_swarm_framework/micros_swarm_framework.h"
+// Register the application
+PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::TestBb, micros_swarm_framework::Application)
 
 namespace micros_swarm_framework{
-    
-    class TestVstig : public Application
+
+    TestBb::TestBb()
     {
-        public:
-            ros::Timer timer;
-            ros::Publisher pub;
-            ros::Subscriber sub;
-            
-            micros_swarm_framework::VirtualStigmergy<int> vs;
-            void loop(const ros::TimerEvent&);
-            
-            TestVstig();
-            ~TestVstig();
-            virtual void start(); 
-    };
+    }
+
+    TestBb::~TestBb()
+    {
+    }
+    
+    void TestBb::loop(const ros::TimerEvent&)
+    {   
+        static int count=0;
+        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
+        bb.put(robot_id_string, robot_id()+count);
+        count++;
+        //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
+        //bb.get(robot_id_string);
+    }
+    
+    void TestBb::start()
+    {
+        ros::NodeHandle nh;
+        
+        bb=micros_swarm_framework::BlackBoard<int>(0,0);
+        //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
+        //bb.put(robot_id_string, robot_id());
+
+        timer = nh.createTimer(ros::Duration(0.1), &TestBb::loop, this);
+    }
 };
 
-#endif

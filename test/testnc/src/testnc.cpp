@@ -20,7 +20,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "apps/testnc.h"
+#include "testnc.h"
 
 // Register the application
 PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::TestNC, micros_swarm_framework::Application)

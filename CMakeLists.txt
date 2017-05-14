@@ -4,6 +4,18 @@ project(micros_swarm_framework)
 #use c++ 11
 set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 
+#Add subdirectory macro
+MACRO(MYSUBDIRLIST result curdir)
+  FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
+  SET(dirlist "")
+  FOREACH(child ${children})
+    IF(IS_DIRECTORY ${curdir}/${child})
+      LIST(APPEND dirlist ${child})
+    ENDIF()
+  ENDFOREACH()
+  SET(${result} ${dirlist})
+ENDMACRO()
+
 # set communication mechanism
 option(USE_ROS "Using ROS" OFF)
 set(USE_ROS ON CACHE BOOL "Using ROS" FORCE)
@@ -83,7 +95,8 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${DDS_INCLUDE_DIRS}
   include
-  swarm_lib
+  #swarm_lib
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 ## Generate messages in the 'msg' folder
@@ -112,7 +125,7 @@ generate_messages(
 
 ## catkin specific configuration ##
 catkin_package(
-  INCLUDE_DIRS include
+  INCLUDE_DIRS include ${CMAKE_CURRENT_SOURCE_DIR}
   CATKIN_DEPENDS roscpp rospy std_msgs nav_msgs geometry_msgs message_runtime
 )
 
@@ -123,9 +136,6 @@ link_directories(
   ${catkin_LIBRARY_DIRS}
   ${DDS_LIBRARY_DIRS}
 )
-
-#Swarm library directory
-add_subdirectory(swarm_lib)
 
 ## Declare a C++ library
 add_library(rtp_core
@@ -166,62 +176,12 @@ add_executable(app_loader_node
 target_link_libraries(app_loader_node app_loader)
 target_link_libraries(app_loader_node ${catkin_LIBRARIES})
 
-add_library(App1
-  apps/app1.cpp
-)
-add_dependencies(App1 ${micros_swarm_framework_EXPORTED_TARGETS})
-if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(App1 opensplice_dds_comm)
-endif()
-
-add_library(App2
-  apps/app2.cpp
-)
-add_dependencies(App2 ${micros_swarm_framework_EXPORTED_TARGETS})
-if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(App2 opensplice_dds_comm)
-endif()
-
-add_library(App3
-  apps/app3.cpp
-)
-add_dependencies(App3 ${micros_swarm_framework_EXPORTED_TARGETS})
-if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(App3 opensplice_dds_comm)
-endif()
-
-add_library(TestNC
-  test/testnc.cpp
-)
-add_dependencies(TestNC ${micros_swarm_framework_EXPORTED_TARGETS})
-if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(TestNC opensplice_dds_comm)
-endif()
-
-add_library(TestVstig
-  test/testvstig.cpp
-)
-add_dependencies(TestVstig ${micros_swarm_framework_EXPORTED_TARGETS})
-if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(TestVstig opensplice_dds_comm)
-endif()
-
-add_library(TestBb
-   test/testbb.cpp
-)
-add_dependencies(TestBb ${micros_swarm_framework_EXPORTED_TARGETS})
-if (${USE_OPENSPLICE_DDS})
-  target_link_libraries(TestBb opensplice_dds_comm)
-endif()
-
-#add_executable(testrtp test/testrtp.cpp src/runtime_platform.cpp)
-#add_dependencies(testrtp ${micros_swarm_framework_EXPORTED_TARGETS})
-#target_link_libraries(testrtp
-#   ${Boost_THREAD_LIBRARY}
-#   ${Boost_REGEX_LIBRARY}
-#   ${Boost_SERIALIZATION_LIBRARY}
-#   ${catkin_LIBRARIES}
-#)
+#Swarm library directory
+add_subdirectory(swarm_lib)
+#Swarm application directory
+add_subdirectory(apps)
+#Test directory
+add_subdirectory(test)
 
 #add_executable(pub src/opensplice_dds/pub.cpp)
 #target_link_libraries(pub
@@ -236,14 +196,9 @@ endif()
 ## Mark executables and/or libraries for installation
 install(TARGETS rtp_core rtp_manager rtp_manager_node
   app_loader  app_loader_node
-  App1 App2 App3
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
-install(FILES app_plugins.xml
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 install(DIRECTORY include

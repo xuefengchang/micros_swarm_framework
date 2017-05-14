@@ -59,7 +59,9 @@
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
-    <micros_swarm_framework plugin="${prefix}/app_plugins.xml"/>
+    <micros_swarm_framework plugin="${prefix}/apps/app_plugins.xml"/>
+    <micros_swarm_framework plugin="${prefix}/swarm_lib/swarm_lib_plugins.xml"/>
+    <micros_swarm_framework plugin="${prefix}/test/test_plugins.xml"/>
   </export>
   
 </package>

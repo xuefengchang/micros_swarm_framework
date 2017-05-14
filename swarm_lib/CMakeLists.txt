@@ -1,17 +1,5 @@
 #This is a swarm library based on the micros_swarm_framework
 #add_subdirectory(olfati_saber_flocking)
-
-MACRO(MYSUBDIRLIST result curdir)
-    FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
-    SET(dirlist "")
-    FOREACH(child ${children})
-        IF(IS_DIRECTORY ${curdir}/${child})
-            LIST(APPEND dirlist ${child})
-        ENDIF()
-    ENDFOREACH()
-    SET(${result} ${dirlist})
-ENDMACRO()
-
 MYSUBDIRLIST(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
 message("-- find libs in swarm_lib of micros_swarm_framework:")
 message("+++++++++++++++++++++++++++++++++++++++++++++")

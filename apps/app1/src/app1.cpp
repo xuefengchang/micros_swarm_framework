@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      testvstig.cpp 
+\file      app1.cpp 
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,53 +20,112 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "apps/testvstig.h"
+#include "app1.h"
 
 // Register the application
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::TestVstig, micros_swarm_framework::Application)
+PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App1, micros_swarm_framework::Application)
 
 namespace micros_swarm_framework{
 
-    TestVstig::TestVstig()
+    struct XY
+    {
+        float x;
+        float y;
+    };
+
+    App1::App1()
     {
     }
     
-    TestVstig::~TestVstig()
+    App1::~App1()
     {
     }
     
-    void TestVstig::loop(const ros::TimerEvent&)
-    {   
-        //static int count=0;
-        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
-        //vs.put(robot_id_string, robot_id()+count);
-        vs.put(robot_id_string, robot_id());
-        //count++;
-        //vs.get(robot_id_string);
-        std::cout<<robot_id_string<<": "<<vs.size()<<std::endl;
+    void App1::init()
+    {
+        //set parameters
+        delta = 7;
+        epsilon = 150;
+    }
+    
+    float App1::force_mag(float dist)
+    {
+        return -(epsilon/(dist+0.1)) *(pow(delta/(dist+0.1), 4) - pow(delta/(dist+0.1), 2));
     }
 
-    void TestVstig::baseCallback(const nav_msgs::Odometry& lmsg)
+    XY App1::force_sum(micros_swarm_framework::NeighborBase n, XY &s)
+    {
+        micros_swarm_framework::Base l=base();
+        float xl=l.x;
+        float yl=l.y;
+    
+        float xn=n.x;
+        float yn=n.y;
+    
+        float dist=sqrt(pow((xl-xn),2)+pow((yl-yn),2));
+     
+        float fm = force_mag(dist)/1000;
+        if(fm>0.5) fm=0.5;
+    
+        float fx=(fm/(dist+0.1))*(xn-xl);
+        float fy=(fm/(dist+0.1))*(yn-yl);
+    
+        s.x+=fx;
+        s.y+=fy;
+        return s;
+    }
+
+    XY App1::direction()
+    {
+        XY sum;
+        sum.x=0;
+        sum.y=0;
+    
+        micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
+        //n.print();
+        boost::function<XY(NeighborBase, XY &)> bf=boost::bind(&App1::force_sum, this, _1, _2);
+        sum=n.reduce(bf, sum);
+    
+        return sum;
+    }
+    
+    void App1::publish_cmd(const ros::TimerEvent&)
+    {
+        XY v=direction();
+        geometry_msgs::Twist t;
+        t.linear.x=v.x;
+        t.linear.y=v.y;
+
+        pub.publish(t);
+    }
+
+    void App1::motion()
+    {
+        ros::NodeHandle nh;
+        timer = nh.createTimer(ros::Duration(0.1), &App1::publish_cmd, this);
+    }
+    
+    void App1::baseCallback(const nav_msgs::Odometry& lmsg)
     {
         float x=lmsg.pose.pose.position.x;
         float y=lmsg.pose.pose.position.y;
-
+    
         float vx=lmsg.twist.twist.linear.x;
         float vy=lmsg.twist.twist.linear.y;
-
+    
         micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
         set_base(l);
     }
     
-    void TestVstig::start()
+    void App1::start()
     {
+        init();
+
         ros::NodeHandle nh;
-        sub = nh.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
-        //test virtual stigmergy
-        vs=micros_swarm_framework::VirtualStigmergy<int>(1);
-        //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
-        //vs.put(robot_id_string, robot_id());
-        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop, this);
+        pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+        sub = nh.subscribe("base_pose_ground_truth", 1000, &App1::baseCallback, this, ros::TransportHints().udp());
+        
+        motion();
     }
 };
 
