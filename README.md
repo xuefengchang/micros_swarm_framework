@@ -8,21 +8,29 @@ micros_swarm_framework is a programming framework to facilitate application deve
 In order to make it modular and extensible, we chose to decompose the framework into a layered structure, as shown in Fig. 1. The Communication Interface layer is to implement an abstraction of the underlying communication mechanisms, and provides a set of unified interface to layer above. At the core of the framework is a runtime platform, based on which APIs including abstract data structures, such as Swarm, Neighbor, and Virtual Stigmergy, are provided to the user. Upon this core part, we are also trying to build a library of typical swarm algorithms to further facilitate the application development.
 
 <center>
-![image0](doc/images/architecture.png)
+![image0](https://github.com/xuefengchang/micros_swarm_framework/doc/images/architecture.png)
 </center>
+
+## Application Demo
+We can create new applications(which are organized in ROS packages) based on micros_swarm_framework, this is a demo:
+'''
+git clone https://github.com/xuefengchang/app_demo.git
+catkin_make
+roslaunch app_demo app_demo.launch
+```
 
 ## Simulation
 #### Motion and Spatial Coordination
 <center>
-![image1](doc/images/app1.png)
+![image1](https://github.com/xuefengchang/micros_swarm_framework/doc/images/app1.png)
 </center>
 
 #### Separation into Multiple Swarms
 <center>
-![image2](doc/images/app2.png)
+![image2](https://github.com/xuefengchang/micros_swarm_framework/doc/images/app2.png)
 </center>
 
-#### Flocking
+#### Swarm Flocking
 <center>
-![image3](doc/images/app3.png)
+![image3](https://github.com/xuefengchang/micros_swarm_framework/doc/images/app3.png)
 </center>
