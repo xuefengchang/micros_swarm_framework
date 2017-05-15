@@ -18,10 +18,10 @@ ENDMACRO()
 
 # set communication mechanism
 option(USE_ROS "Using ROS" OFF)
-set(USE_ROS OFF CACHE BOOL "Using ROS" FORCE)
+set(USE_ROS ON CACHE BOOL "Using ROS" FORCE)
 #message("ROS?" ${ROS})
 option(USE_OPENSPLICE_DDS "Using OpenSplice DDS" OFF)
-set(USE_OPENSPLICE_DDS ON CACHE BOOL "Using OpenSplice DDS" FORCE)
+set(USE_OPENSPLICE_DDS OFF CACHE BOOL "Using OpenSplice DDS" FORCE)
 #message("OPENSPLICE_DDS?" ${OPENSPLICE_DDS})
 option(USE_OPENDDS "Using OpenDDS" OFF)
 set(USE_OPENDDS OFF CACHE BOOL "Using OpenDDS" FORCE)
@@ -214,7 +214,8 @@ install(FILES
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
-install(DIRECTORY core/micros_swarm_framework/include
+install(DIRECTORY
+  core/micros_swarm_framework/include
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
