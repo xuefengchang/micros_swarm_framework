@@ -18,10 +18,10 @@ ENDMACRO()
 
 # set communication mechanism
 option(USE_ROS "Using ROS" OFF)
-set(USE_ROS ON CACHE BOOL "Using ROS" FORCE)
+set(USE_ROS OFF CACHE BOOL "Using ROS" FORCE)
 #message("ROS?" ${ROS})
 option(USE_OPENSPLICE_DDS "Using OpenSplice DDS" OFF)
-set(USE_OPENSPLICE_DDS OFF CACHE BOOL "Using OpenSplice DDS" FORCE)
+set(USE_OPENSPLICE_DDS ON CACHE BOOL "Using OpenSplice DDS" FORCE)
 #message("OPENSPLICE_DDS?" ${OPENSPLICE_DDS})
 option(USE_OPENDDS "Using OpenDDS" OFF)
 set(USE_OPENDDS OFF CACHE BOOL "Using OpenDDS" FORCE)
@@ -57,14 +57,14 @@ endif()
 ## Opensplice DDS pub/sub C++ library
 if (${USE_OPENSPLICE_DDS})
   add_library(opensplice_dds_comm
-    src/opensplice_dds/MSFPPacket.cpp
-    src/opensplice_dds/MSFPPacketDcps.cpp
-    src/opensplice_dds/MSFPPacketDcps_impl.cpp
-    src/opensplice_dds/MSFPPacketSplDcps.cpp
-    src/opensplice_dds/check_status.cpp
-    src/opensplice_dds/MSFPPacket_listener.cpp
-    src/opensplice_dds/publisher.cpp
-    src/opensplice_dds/subscriber.cpp
+    core/opensplice_dds_comm/src/MSFPPacket.cpp
+    core/opensplice_dds_comm/src/MSFPPacketDcps.cpp
+    core/opensplice_dds_comm/src/MSFPPacketDcps_impl.cpp
+    core/opensplice_dds_comm/src/MSFPPacketSplDcps.cpp
+    core/opensplice_dds_comm/src/check_status.cpp
+    core/opensplice_dds_comm/src/MSFPPacket_listener.cpp
+    core/opensplice_dds_comm/src/publisher.cpp
+    core/opensplice_dds_comm/src/subscriber.cpp
   )
   target_link_libraries(opensplice_dds_comm
     $ENV{OSPL_HOME}/lib/libddskernel.so
@@ -94,21 +94,23 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${DDS_INCLUDE_DIRS}
-  include
-  #swarm_lib
   ${CMAKE_CURRENT_SOURCE_DIR}
+  core/micros_swarm_framework/include
+  core/app_loader/include
+  core/ros_comm/include
+  core/opensplice_dds_comm/include
 )
 
 ## Generate messages in the 'msg' folder
 add_message_files(
-  DIRECTORY msg
+  DIRECTORY core/ros_comm/msg
   FILES
   MSFPPacket.msg
 )
 
 ## Generate services in the 'srv' folder
 add_service_files(
-  DIRECTORY srv
+  DIRECTORY core/app_loader/srv
   FILES
   AppLoad.srv
   AppUnload.srv
@@ -125,8 +127,14 @@ generate_messages(
 
 ## catkin specific configuration ##
 catkin_package(
-  INCLUDE_DIRS include ${CMAKE_CURRENT_SOURCE_DIR}
-  CATKIN_DEPENDS roscpp rospy std_msgs nav_msgs geometry_msgs message_runtime
+  INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    core/micros_swarm_framework/include
+    core/app_loader/include
+    core/ros_comm/include
+    core/opensplice_dds_comm/include
+  CATKIN_DEPENDS
+    roscpp rospy std_msgs nav_msgs geometry_msgs message_runtime
 )
 
 link_directories(
@@ -139,8 +147,8 @@ link_directories(
 
 ## Declare a C++ library
 add_library(rtp_core
-  src/runtime_platform.cpp
-  src/runtime_platform_core.cpp
+  core/micros_swarm_framework/src/runtime_platform.cpp
+  core/micros_swarm_framework/src/runtime_platform_core.cpp
 )
 add_dependencies(rtp_core ${micros_swarm_framework_EXPORTED_TARGETS})
 
@@ -155,23 +163,23 @@ if (${USE_OPENSPLICE_DDS})
 endif()
 
 add_library(rtp_manager
-  src/runtime_platform_manager.cpp
+  core/micros_swarm_framework/src/runtime_platform_manager.cpp
 )
 add_dependencies(rtp_manager ${micros_swarm_framework_EXPORTED_TARGETS})
 target_link_libraries(rtp_manager rtp_core)
 
 add_executable(rtp_manager_node
-  src/rtp_manager_node.cpp
+  core/micros_swarm_framework/src/rtp_manager_node.cpp
 )
 target_link_libraries(rtp_manager_node rtp_manager)
 
 add_library(app_loader
-  src/app_loader.cpp
+  core/app_loader/src/app_loader.cpp
 )
 add_dependencies(app_loader ${micros_swarm_framework_EXPORTED_TARGETS})
 
 add_executable(app_loader_node
-  src/app_loader_node.cpp
+  core/app_loader/src/app_loader_node.cpp
 )
 target_link_libraries(app_loader_node app_loader)
 target_link_libraries(app_loader_node ${catkin_LIBRARIES})
@@ -201,10 +209,17 @@ install(TARGETS rtp_core rtp_manager rtp_manager_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(DIRECTORY include
+install(FILES
+  swarm_lib/swarm_lib_plugins.xml
+  apps/app_plugins.xml
+  test/test_plugins.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(DIRECTORY core/micros_swarm_framework/include
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-install(DIRECTORY swarm_lib apps docs launch maps idl test
+install(DIRECTORY swarm_lib apps test stage launch docs
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )

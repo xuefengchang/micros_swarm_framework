@@ -1,0 +1,68 @@
+include "swarm.inc"
+include "turtlebot_intruder.inc"
+
+define floorplan model
+(
+  # sombre, sensible, artistic
+  color "gray30"
+
+  # most maps will need a bounding box
+  boundary 1
+
+  gui_nose 0
+  gui_grid 0
+  gui_outline 0
+  gripper_return 0
+  fiducial_return 0
+  laser_return 1
+)
+
+resolution 0.02
+interval_sim 10  # simulation timestep in milliseconds
+
+window
+(
+  size [ 600.0 700.0 ]
+  center [ 0.0 0.0 ]
+  rotate [ 0.0 0.0 ]
+  scale 60
+)
+
+floorplan
+(
+  name "swarm"
+  bitmap "../maps/swarm.png"
+  #size [ 100.0 100.0 2.0 ]
+  #pose [  50.0  50.0 0.0 0.0 ]
+  size [ 40.0 40.0 2.0 ]
+  pose [ 20.0 20.0 0.0 0.0]
+)
+
+
+define block model
+(
+size [0.5 7 0.5]
+gui_nose 1
+)
+
+swarm( pose [ 16.0 16.0 0 0 ] name "era" color "red")
+swarm( pose [ 18.0 16.0 0 0 ] name "era2" color "red")
+swarm( pose [ 20.0 16.0 0 0 ] name "era3" color "red")
+swarm( pose [ 22.0 16.0 0 0 ] name "era4" color "red")
+swarm( pose [ 24.0 16.0 0 0 ] name "era5" color "red")
+swarm( pose [ 16.0 18.0 0 0 ] name "era6" color "red")
+swarm( pose [ 18.0 18.0 0 0 ] name "era7" color "red")
+swarm( pose [ 20.0 18.0 0 0 ] name "era8" color "red")
+swarm( pose [ 22.0 18.0 0 0 ] name "era9" color "red")
+swarm( pose [ 24.0 18.0 0 0 ] name "era10" color "red")
+swarm( pose [ 16.0 20.0 0 0 ] name "era11" color "red")
+swarm( pose [ 18.0 20.0 0 0 ] name "era12" color "red")
+swarm( pose [ 20.0 20.0 0 0 ] name "era13" color "red")
+swarm( pose [ 22.0 20.0 0 0 ] name "era14" color "red")
+swarm( pose [ 24.0 20.0 0 0 ] name "era15" color "red")
+swarm( pose [ 16.0 22.0 0 0 ] name "era16" color "red")
+swarm( pose [ 18.0 22.0 0 0 ] name "era17" color "red")
+swarm( pose [ 20.0 22.0 0 0 ] name "era18" color "red")
+swarm( pose [ 22.0 22.0 0 0 ] name "era19" color "red")
+swarm( pose [ 24.0 22.0 0 0 ] name "era20" color "red")
+

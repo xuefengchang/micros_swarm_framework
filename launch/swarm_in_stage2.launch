@@ -2,8 +2,8 @@
 <launch>
 
   <!-- Name of the map to use (without path nor extension) and initial position -->
-  <arg name="map_file"       default=" $(find micros_swarm_framework)/maps/swarm.yaml"/> <!-- robopark_plan -->
-  <arg name="world_file"     default=" $(find micros_swarm_framework)/maps/stage/swarm2.world"/>
+  <arg name="map_file"       default=" $(find micros_swarm_framework)/stage/maps/swarm.yaml"/> <!-- robopark_plan -->
+  <arg name="world_file"     default=" $(find micros_swarm_framework)/stage/worlds/swarm2.world"/>
 
   <param name="/use_sim_time" value="true"/>
   
