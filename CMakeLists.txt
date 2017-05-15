@@ -94,7 +94,6 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${DDS_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}
   core/micros_swarm_framework/include
   core/app_loader/include
   core/ros_comm/include
@@ -128,7 +127,6 @@ generate_messages(
 ## catkin specific configuration ##
 catkin_package(
   INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}
     core/micros_swarm_framework/include
     core/app_loader/include
     core/ros_comm/include
