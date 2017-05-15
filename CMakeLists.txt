@@ -205,6 +205,6 @@ install(DIRECTORY include
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-install(DIRECTORY swarm_lib apps doc launch maps idl test
+install(DIRECTORY swarm_lib apps docs launch maps idl test
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
