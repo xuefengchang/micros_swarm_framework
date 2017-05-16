@@ -1,5 +1,5 @@
 
-module micros_swarm_framework{
+module opensplice_dds_comm{
 
     struct MSFPPacket {
         long packet_source;

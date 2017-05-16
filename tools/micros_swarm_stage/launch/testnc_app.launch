@@ -1,0 +1,7 @@
+<launch>
+    <node pkg="app_loader" type="app_loader_node" name="app_loader_node0" output="screen">
+        <param name="app_name" type="string" value="test_nc"/>
+        <param name="app_type" type="string" value="testnc/TestNC"/>
+    </node>
+</launch>
+

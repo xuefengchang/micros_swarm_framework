@@ -1,15 +1,15 @@
-#include "MSFPPacketSplDcps.h"
-#include "ccpp_MSFPPacket.h"
+#include "opensplice_dds_comm/MSFPPacketSplDcps.h"
+#include "opensplice_dds_comm/ccpp_MSFPPacket.h"
 #include "dds_type_aliases.h"
 
 const char *
-__micros_swarm_framework_MSFPPacket__name(void)
+__opensplice_dds_comm_MSFPPacket__name(void)
 {
-    return (const char*)"micros_swarm_framework::MSFPPacket";
+    return (const char*)"opensplice_dds_comm::MSFPPacket";
 }
 
 const char *
-__micros_swarm_framework_MSFPPacket__keys(void)
+__opensplice_dds_comm_MSFPPacket__keys(void)
 {
     return (const char*)"";
 }
@@ -21,10 +21,10 @@ __micros_swarm_framework_MSFPPacket__keys(void)
 #include <os_report.h>
 
 c_bool
-__micros_swarm_framework_MSFPPacket__copyIn(
+__opensplice_dds_comm_MSFPPacket__copyIn(
     c_base base,
-    struct ::micros_swarm_framework::MSFPPacket *from,
-    struct _micros_swarm_framework_MSFPPacket *to)
+    struct ::opensplice_dds_comm::MSFPPacket *from,
+    struct _opensplice_dds_comm_MSFPPacket *to)
 {
     c_bool result = OS_C_TRUE;
     (void) base;
@@ -36,7 +36,7 @@ __micros_swarm_framework_MSFPPacket__copyIn(
     if(from->packet_data){
         to->packet_data = c_stringNew(base, from->packet_data);
     } else {
-        OS_REPORT (OS_ERROR, "copyIn", 0,"Member 'micros_swarm_framework::MSFPPacket.packet_data' of type 'c_string' is NULL.");
+        OS_REPORT (OS_ERROR, "copyIn", 0,"Member 'opensplice_dds_comm::MSFPPacket.packet_data' of type 'c_string' is NULL.");
         result = OS_C_FALSE;
     }
 #else
@@ -47,12 +47,12 @@ __micros_swarm_framework_MSFPPacket__copyIn(
 }
 
 void
-__micros_swarm_framework_MSFPPacket__copyOut(
+__opensplice_dds_comm_MSFPPacket__copyOut(
     void *_from,
     void *_to)
 {
-    struct _micros_swarm_framework_MSFPPacket *from = (struct _micros_swarm_framework_MSFPPacket *)_from;
-    struct ::micros_swarm_framework::MSFPPacket *to = (struct ::micros_swarm_framework::MSFPPacket *)_to;
+    struct _opensplice_dds_comm_MSFPPacket *from = (struct _opensplice_dds_comm_MSFPPacket *)_from;
+    struct ::opensplice_dds_comm::MSFPPacket *to = (struct ::opensplice_dds_comm::MSFPPacket *)_to;
     to->packet_source = (::DDS::Long)from->packet_source;
     to->packet_version = (::DDS::UShort)from->packet_version;
     to->packet_type = (::DDS::UShort)from->packet_type;

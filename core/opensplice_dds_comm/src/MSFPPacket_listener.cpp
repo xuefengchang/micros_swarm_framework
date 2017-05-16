@@ -20,8 +20,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "MSFPPacket_listener.h"
-#include "check_status.h"
+#include "opensplice_dds_comm/MSFPPacket_listener.h"
+#include "opensplice_dds_comm/check_status.h"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/string.hpp> 
@@ -31,7 +31,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 using namespace DDS;
 
-namespace micros_swarm_framework{
+namespace opensplice_dds_comm{
 
     void MSFPPacketListener::on_data_available(DDS::DataReader_ptr reader)
       THROW_ORB_EXCEPTIONS

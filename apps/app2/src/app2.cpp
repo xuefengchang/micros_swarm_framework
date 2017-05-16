@@ -20,7 +20,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "app2.h"
+#include "app2/app2.h"
 
 #define BARRIER_VSTIG  1
 #define ROBOT_SUM 20
@@ -29,9 +29,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define BLUE_SWARM 2
 
 // Register the application
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App2, micros_swarm_framework::Application)
+PLUGINLIB_EXPORT_CLASS(app2::App2, micros_swarm::Application)
 
-namespace micros_swarm_framework{
+namespace app2{
 
     struct XY
     {
@@ -68,9 +68,9 @@ namespace micros_swarm_framework{
         return -(epsilon_nonkin/(dist+0.1)) *(pow(delta_nonkin/(dist+0.1), 4) - pow(delta_nonkin/(dist+0.1), 2));
     }
 
-    XY App2::force_sum_kin(micros_swarm_framework::NeighborBase n, XY &s)
+    XY App2::force_sum_kin(micros_swarm::NeighborBase n, XY &s)
     {
-        micros_swarm_framework::Base l=base();
+        micros_swarm::Base l=base();
         float xl=l.x;
         float yl=l.y;
     
@@ -90,9 +90,9 @@ namespace micros_swarm_framework{
         return s;
     }
 
-    XY App2::force_sum_nonkin(micros_swarm_framework::NeighborBase n, XY &s)
+    XY App2::force_sum_nonkin(micros_swarm::NeighborBase n, XY &s)
     {
-        micros_swarm_framework::Base l=base();
+        micros_swarm::Base l=base();
         float xl=l.x;
         float yl=l.y;
     
@@ -118,9 +118,9 @@ namespace micros_swarm_framework{
         sum.x=0;
         sum.y=0;
     
-        micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
-        boost::function<XY(NeighborBase, XY &)> bf_kin=boost::bind(&App2::force_sum_kin, this, _1, _2);
-        boost::function<XY(NeighborBase, XY &)> bf_nonkin=boost::bind(&App2::force_sum_nonkin, this, _1, _2);
+        micros_swarm::Neighbors<micros_swarm::NeighborBase> n(true);
+        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf_kin=boost::bind(&App2::force_sum_kin, this, _1, _2);
+        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf_nonkin=boost::bind(&App2::force_sum_nonkin, this, _1, _2);
         sum=n.kin(RED_SWARM).reduce(bf_kin, sum);
         sum=n.nonkin(RED_SWARM).reduce(bf_nonkin, sum);
     
@@ -133,9 +133,9 @@ namespace micros_swarm_framework{
         sum.x=0;
         sum.y=0;
     
-        micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
-        boost::function<XY(NeighborBase, XY &)> bf_kin=boost::bind(&App2::force_sum_kin, this, _1, _2);
-        boost::function<XY(NeighborBase, XY &)> bf_nonkin=boost::bind(&App2::force_sum_nonkin, this, _1, _2);
+        micros_swarm::Neighbors<micros_swarm::NeighborBase> n(true);
+        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf_kin=boost::bind(&App2::force_sum_kin, this, _1, _2);
+        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf_nonkin=boost::bind(&App2::force_sum_nonkin, this, _1, _2);
         sum=n.kin(BLUE_SWARM).reduce(bf_kin, sum);
         sum=n.nonkin(BLUE_SWARM).reduce(bf_nonkin, sum);
     
@@ -196,7 +196,7 @@ namespace micros_swarm_framework{
         float vx=lmsg.twist.twist.linear.x;
         float vy=lmsg.twist.twist.linear.y;
     
-        micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
+        micros_swarm::Base l(x, y, 0, vx, vy, 0);
         set_base(l);
     }
     
@@ -211,9 +211,9 @@ namespace micros_swarm_framework{
         boost::function<bool()> bfred=boost::bind(&App2::red, this, robot_id());
         boost::function<bool()> bfblue=boost::bind(&App2::blue, this, robot_id());
     
-        micros_swarm_framework::Swarm red_swarm(RED_SWARM);
+        micros_swarm::Swarm red_swarm(RED_SWARM);
         red_swarm.select(bfred);
-        micros_swarm_framework::Swarm blue_swarm(BLUE_SWARM);
+        micros_swarm::Swarm blue_swarm(BLUE_SWARM);
         blue_swarm.select(bfblue);
 
         red_swarm.print();

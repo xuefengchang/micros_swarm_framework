@@ -21,9 +21,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 */
 
 #include <ros/ros.h>
-#include "micros_swarm_framework/micros_swarm_framework.h"
+#include "micros_swarm/micros_swarm.h"
 
-using namespace micros_swarm_framework;
+using namespace micros_swarm;
 
 int main(int argc, char** argv)
 {

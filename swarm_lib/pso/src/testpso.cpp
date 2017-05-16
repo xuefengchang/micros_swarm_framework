@@ -24,10 +24,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <string>
 #include <fstream>  
 #include <iostream>
-#include "pso.h"
+#include "pso/pso.h"
 
 using namespace std;
-using namespace micros_swarm_framework;
+using namespace pso;
 
 int main()
 {

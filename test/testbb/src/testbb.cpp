@@ -20,12 +20,12 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "testbb.h"
+#include "testbb/testbb.h"
 
 // Register the application
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::TestBb, micros_swarm_framework::Application)
+PLUGINLIB_EXPORT_CLASS(testbb::TestBb, micros_swarm::Application)
 
-namespace micros_swarm_framework{
+namespace testbb{
 
     TestBb::TestBb()
     {
@@ -49,7 +49,7 @@ namespace micros_swarm_framework{
     {
         ros::NodeHandle nh;
         
-        bb=micros_swarm_framework::BlackBoard<int>(0,0);
+        bb=micros_swarm::BlackBoard<int>(0,0);
         //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
         //bb.put(robot_id_string, robot_id());
 

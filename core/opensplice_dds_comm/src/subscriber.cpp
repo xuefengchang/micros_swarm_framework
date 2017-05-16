@@ -23,16 +23,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <iostream>
 #include <string>
 #include "ccpp_dds_dcps.h"
-#include "check_status.h"
-#include "ccpp_MSFPPacket.h"
-#include "example_main.h"
-#include "MSFPPacket_listener.h"
+#include "opensplice_dds_comm/check_status.h"
+#include "opensplice_dds_comm/ccpp_MSFPPacket.h"
+#include "opensplice_dds_comm/example_main.h"
+#include "opensplice_dds_comm/MSFPPacket_listener.h"
 
-#include "subscriber.h"
+#include "opensplice_dds_comm/subscriber.h"
 
 using namespace DDS;
 
-namespace micros_swarm_framework{
+namespace opensplice_dds_comm{
     
     Subscriber::Subscriber(const std::string& topic_name)
     {

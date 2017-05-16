@@ -1,0 +1,5 @@
+<library path="lib/libTestVstig">
+    <class name="testvstig/TestVstig" type="testvstig::TestVstig" base_class_type="micros_swarm::Application">
+        <description>testvstig.</description>
+    </class>
+</library>

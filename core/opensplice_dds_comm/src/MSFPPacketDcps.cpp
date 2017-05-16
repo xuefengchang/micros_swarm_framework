@@ -4,28 +4,28 @@
 //  
 //  File name: MSFPPacketDcps.cpp
 //  Source: gencxx/MSFPPacketDcps.idl
-//  Generated: Mon Jul 11 22:29:42 2016
+//  Generated: Tue May 16 13:43:48 2017
 //  OpenSplice V6.4.140407OSS
 //  
 //******************************************************************
 
-#include "MSFPPacketDcps.h"
+#include "opensplice_dds_comm/MSFPPacketDcps.h"
 
 #if DDS_USE_EXPLICIT_TEMPLATES
-template class DDS_DCPSUVLSeq < micros_swarm_framework::MSFPPacket, struct MSFPPacketSeq_uniq_>;
+template class DDS_DCPSUVLSeq < opensplice_dds_comm::MSFPPacket, struct MSFPPacketSeq_uniq_>;
 #endif
 
-const char * micros_swarm_framework::MSFPPacketTypeSupportInterface::_local_id = "IDL:micros_swarm_framework/MSFPPacketTypeSupportInterface:1.0";
+const char * opensplice_dds_comm::MSFPPacketTypeSupportInterface::_local_id = "IDL:opensplice_dds_comm/MSFPPacketTypeSupportInterface:1.0";
 
-micros_swarm_framework::MSFPPacketTypeSupportInterface_ptr micros_swarm_framework::MSFPPacketTypeSupportInterface::_duplicate (micros_swarm_framework::MSFPPacketTypeSupportInterface_ptr p)
+opensplice_dds_comm::MSFPPacketTypeSupportInterface_ptr opensplice_dds_comm::MSFPPacketTypeSupportInterface::_duplicate (opensplice_dds_comm::MSFPPacketTypeSupportInterface_ptr p)
 {
    if (p) p->m_count++;
    return p;
 }
 
-DDS::Boolean micros_swarm_framework::MSFPPacketTypeSupportInterface::_local_is_a (const char * _id)
+DDS::Boolean opensplice_dds_comm::MSFPPacketTypeSupportInterface::_local_is_a (const char * _id)
 {
-   if (strcmp (_id, micros_swarm_framework::MSFPPacketTypeSupportInterface::_local_id) == 0)
+   if (strcmp (_id, opensplice_dds_comm::MSFPPacketTypeSupportInterface::_local_id) == 0)
    {
       return true;
    }
@@ -40,36 +40,36 @@ DDS::Boolean micros_swarm_framework::MSFPPacketTypeSupportInterface::_local_is_a
    return false;
 }
 
-micros_swarm_framework::MSFPPacketTypeSupportInterface_ptr micros_swarm_framework::MSFPPacketTypeSupportInterface::_narrow (DDS::Object_ptr p)
+opensplice_dds_comm::MSFPPacketTypeSupportInterface_ptr opensplice_dds_comm::MSFPPacketTypeSupportInterface::_narrow (DDS::Object_ptr p)
 {
-   micros_swarm_framework::MSFPPacketTypeSupportInterface_ptr result = NULL;
-   if (p && p->_is_a (micros_swarm_framework::MSFPPacketTypeSupportInterface::_local_id))
+   opensplice_dds_comm::MSFPPacketTypeSupportInterface_ptr result = NULL;
+   if (p && p->_is_a (opensplice_dds_comm::MSFPPacketTypeSupportInterface::_local_id))
    {
-      result = dynamic_cast < micros_swarm_framework::MSFPPacketTypeSupportInterface_ptr> (p);
+      result = dynamic_cast < opensplice_dds_comm::MSFPPacketTypeSupportInterface_ptr> (p);
       if (result) result->m_count++;
    }
    return result;
 }
 
-micros_swarm_framework::MSFPPacketTypeSupportInterface_ptr micros_swarm_framework::MSFPPacketTypeSupportInterface::_unchecked_narrow (DDS::Object_ptr p)
+opensplice_dds_comm::MSFPPacketTypeSupportInterface_ptr opensplice_dds_comm::MSFPPacketTypeSupportInterface::_unchecked_narrow (DDS::Object_ptr p)
 {
-   micros_swarm_framework::MSFPPacketTypeSupportInterface_ptr result;
-   result = dynamic_cast < micros_swarm_framework::MSFPPacketTypeSupportInterface_ptr> (p);
+   opensplice_dds_comm::MSFPPacketTypeSupportInterface_ptr result;
+   result = dynamic_cast < opensplice_dds_comm::MSFPPacketTypeSupportInterface_ptr> (p);
    if (result) result->m_count++;
    return result;
 }
 
-const char * micros_swarm_framework::MSFPPacketDataWriter::_local_id = "IDL:micros_swarm_framework/MSFPPacketDataWriter:1.0";
+const char * opensplice_dds_comm::MSFPPacketDataWriter::_local_id = "IDL:opensplice_dds_comm/MSFPPacketDataWriter:1.0";
 
-micros_swarm_framework::MSFPPacketDataWriter_ptr micros_swarm_framework::MSFPPacketDataWriter::_duplicate (micros_swarm_framework::MSFPPacketDataWriter_ptr p)
+opensplice_dds_comm::MSFPPacketDataWriter_ptr opensplice_dds_comm::MSFPPacketDataWriter::_duplicate (opensplice_dds_comm::MSFPPacketDataWriter_ptr p)
 {
    if (p) p->m_count++;
    return p;
 }
 
-DDS::Boolean micros_swarm_framework::MSFPPacketDataWriter::_local_is_a (const char * _id)
+DDS::Boolean opensplice_dds_comm::MSFPPacketDataWriter::_local_is_a (const char * _id)
 {
-   if (strcmp (_id, micros_swarm_framework::MSFPPacketDataWriter::_local_id) == 0)
+   if (strcmp (_id, opensplice_dds_comm::MSFPPacketDataWriter::_local_id) == 0)
    {
       return true;
    }
@@ -84,36 +84,36 @@ DDS::Boolean micros_swarm_framework::MSFPPacketDataWriter::_local_is_a (const ch
    return false;
 }
 
-micros_swarm_framework::MSFPPacketDataWriter_ptr micros_swarm_framework::MSFPPacketDataWriter::_narrow (DDS::Object_ptr p)
+opensplice_dds_comm::MSFPPacketDataWriter_ptr opensplice_dds_comm::MSFPPacketDataWriter::_narrow (DDS::Object_ptr p)
 {
-   micros_swarm_framework::MSFPPacketDataWriter_ptr result = NULL;
-   if (p && p->_is_a (micros_swarm_framework::MSFPPacketDataWriter::_local_id))
+   opensplice_dds_comm::MSFPPacketDataWriter_ptr result = NULL;
+   if (p && p->_is_a (opensplice_dds_comm::MSFPPacketDataWriter::_local_id))
    {
-      result = dynamic_cast < micros_swarm_framework::MSFPPacketDataWriter_ptr> (p);
+      result = dynamic_cast < opensplice_dds_comm::MSFPPacketDataWriter_ptr> (p);
       if (result) result->m_count++;
    }
    return result;
 }
 
-micros_swarm_framework::MSFPPacketDataWriter_ptr micros_swarm_framework::MSFPPacketDataWriter::_unchecked_narrow (DDS::Object_ptr p)
+opensplice_dds_comm::MSFPPacketDataWriter_ptr opensplice_dds_comm::MSFPPacketDataWriter::_unchecked_narrow (DDS::Object_ptr p)
 {
-   micros_swarm_framework::MSFPPacketDataWriter_ptr result;
-   result = dynamic_cast < micros_swarm_framework::MSFPPacketDataWriter_ptr> (p);
+   opensplice_dds_comm::MSFPPacketDataWriter_ptr result;
+   result = dynamic_cast < opensplice_dds_comm::MSFPPacketDataWriter_ptr> (p);
    if (result) result->m_count++;
    return result;
 }
 
-const char * micros_swarm_framework::MSFPPacketDataReader::_local_id = "IDL:micros_swarm_framework/MSFPPacketDataReader:1.0";
+const char * opensplice_dds_comm::MSFPPacketDataReader::_local_id = "IDL:opensplice_dds_comm/MSFPPacketDataReader:1.0";
 
-micros_swarm_framework::MSFPPacketDataReader_ptr micros_swarm_framework::MSFPPacketDataReader::_duplicate (micros_swarm_framework::MSFPPacketDataReader_ptr p)
+opensplice_dds_comm::MSFPPacketDataReader_ptr opensplice_dds_comm::MSFPPacketDataReader::_duplicate (opensplice_dds_comm::MSFPPacketDataReader_ptr p)
 {
    if (p) p->m_count++;
    return p;
 }
 
-DDS::Boolean micros_swarm_framework::MSFPPacketDataReader::_local_is_a (const char * _id)
+DDS::Boolean opensplice_dds_comm::MSFPPacketDataReader::_local_is_a (const char * _id)
 {
-   if (strcmp (_id, micros_swarm_framework::MSFPPacketDataReader::_local_id) == 0)
+   if (strcmp (_id, opensplice_dds_comm::MSFPPacketDataReader::_local_id) == 0)
    {
       return true;
    }
@@ -128,36 +128,36 @@ DDS::Boolean micros_swarm_framework::MSFPPacketDataReader::_local_is_a (const ch
    return false;
 }
 
-micros_swarm_framework::MSFPPacketDataReader_ptr micros_swarm_framework::MSFPPacketDataReader::_narrow (DDS::Object_ptr p)
+opensplice_dds_comm::MSFPPacketDataReader_ptr opensplice_dds_comm::MSFPPacketDataReader::_narrow (DDS::Object_ptr p)
 {
-   micros_swarm_framework::MSFPPacketDataReader_ptr result = NULL;
-   if (p && p->_is_a (micros_swarm_framework::MSFPPacketDataReader::_local_id))
+   opensplice_dds_comm::MSFPPacketDataReader_ptr result = NULL;
+   if (p && p->_is_a (opensplice_dds_comm::MSFPPacketDataReader::_local_id))
    {
-      result = dynamic_cast < micros_swarm_framework::MSFPPacketDataReader_ptr> (p);
+      result = dynamic_cast < opensplice_dds_comm::MSFPPacketDataReader_ptr> (p);
       if (result) result->m_count++;
    }
    return result;
 }
 
-micros_swarm_framework::MSFPPacketDataReader_ptr micros_swarm_framework::MSFPPacketDataReader::_unchecked_narrow (DDS::Object_ptr p)
+opensplice_dds_comm::MSFPPacketDataReader_ptr opensplice_dds_comm::MSFPPacketDataReader::_unchecked_narrow (DDS::Object_ptr p)
 {
-   micros_swarm_framework::MSFPPacketDataReader_ptr result;
-   result = dynamic_cast < micros_swarm_framework::MSFPPacketDataReader_ptr> (p);
+   opensplice_dds_comm::MSFPPacketDataReader_ptr result;
+   result = dynamic_cast < opensplice_dds_comm::MSFPPacketDataReader_ptr> (p);
    if (result) result->m_count++;
    return result;
 }
 
-const char * micros_swarm_framework::MSFPPacketDataReaderView::_local_id = "IDL:micros_swarm_framework/MSFPPacketDataReaderView:1.0";
+const char * opensplice_dds_comm::MSFPPacketDataReaderView::_local_id = "IDL:opensplice_dds_comm/MSFPPacketDataReaderView:1.0";
 
-micros_swarm_framework::MSFPPacketDataReaderView_ptr micros_swarm_framework::MSFPPacketDataReaderView::_duplicate (micros_swarm_framework::MSFPPacketDataReaderView_ptr p)
+opensplice_dds_comm::MSFPPacketDataReaderView_ptr opensplice_dds_comm::MSFPPacketDataReaderView::_duplicate (opensplice_dds_comm::MSFPPacketDataReaderView_ptr p)
 {
    if (p) p->m_count++;
    return p;
 }
 
-DDS::Boolean micros_swarm_framework::MSFPPacketDataReaderView::_local_is_a (const char * _id)
+DDS::Boolean opensplice_dds_comm::MSFPPacketDataReaderView::_local_is_a (const char * _id)
 {
-   if (strcmp (_id, micros_swarm_framework::MSFPPacketDataReaderView::_local_id) == 0)
+   if (strcmp (_id, opensplice_dds_comm::MSFPPacketDataReaderView::_local_id) == 0)
    {
       return true;
    }
@@ -172,21 +172,21 @@ DDS::Boolean micros_swarm_framework::MSFPPacketDataReaderView::_local_is_a (cons
    return false;
 }
 
-micros_swarm_framework::MSFPPacketDataReaderView_ptr micros_swarm_framework::MSFPPacketDataReaderView::_narrow (DDS::Object_ptr p)
+opensplice_dds_comm::MSFPPacketDataReaderView_ptr opensplice_dds_comm::MSFPPacketDataReaderView::_narrow (DDS::Object_ptr p)
 {
-   micros_swarm_framework::MSFPPacketDataReaderView_ptr result = NULL;
-   if (p && p->_is_a (micros_swarm_framework::MSFPPacketDataReaderView::_local_id))
+   opensplice_dds_comm::MSFPPacketDataReaderView_ptr result = NULL;
+   if (p && p->_is_a (opensplice_dds_comm::MSFPPacketDataReaderView::_local_id))
    {
-      result = dynamic_cast < micros_swarm_framework::MSFPPacketDataReaderView_ptr> (p);
+      result = dynamic_cast < opensplice_dds_comm::MSFPPacketDataReaderView_ptr> (p);
       if (result) result->m_count++;
    }
    return result;
 }
 
-micros_swarm_framework::MSFPPacketDataReaderView_ptr micros_swarm_framework::MSFPPacketDataReaderView::_unchecked_narrow (DDS::Object_ptr p)
+opensplice_dds_comm::MSFPPacketDataReaderView_ptr opensplice_dds_comm::MSFPPacketDataReaderView::_unchecked_narrow (DDS::Object_ptr p)
 {
-   micros_swarm_framework::MSFPPacketDataReaderView_ptr result;
-   result = dynamic_cast < micros_swarm_framework::MSFPPacketDataReaderView_ptr> (p);
+   opensplice_dds_comm::MSFPPacketDataReaderView_ptr result;
+   result = dynamic_cast < opensplice_dds_comm::MSFPPacketDataReaderView_ptr> (p);
    if (result) result->m_count++;
    return result;
 }

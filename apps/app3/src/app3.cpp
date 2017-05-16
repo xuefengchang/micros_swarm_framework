@@ -20,7 +20,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "app3.h"
+#include "app3/app3.h"
 
 #define PI 3.14159265358979323846
 #define EPSILON 0.1
@@ -159,9 +159,9 @@ pair<double,double> f_r()
 }
 
 // Register the application
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App3, micros_swarm_framework::Application)
+PLUGINLIB_EXPORT_CLASS(app3::App3, micros_swarm::Application)
 
-namespace micros_swarm_framework{
+namespace app3{
 
     App3::App3()
     {
@@ -181,16 +181,16 @@ namespace micros_swarm_framework{
     void App3::publish_cmd(const ros::TimerEvent&)
     {
         geometry_msgs:: Twist msg;
-        micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
+        micros_swarm::Neighbors<micros_swarm::NeighborBase> n(true);
 
-        typename std::map<int, micros_swarm_framework::NeighborBase>::iterator it; 
+        typename std::map<int, micros_swarm::NeighborBase>::iterator it;
         for(it=n.data().begin();it!=n.data().end();it++)
         {
             NeighborHandle* nh=new NeighborHandle(it->first, it->second.x, it->second.y, it->second.vx, it->second.vy);
             neighbor_list.push_back(nh);
         }
 
-        micros_swarm_framework::Base nl=base();
+        micros_swarm::Base nl=base();
 
         my_position=pair<double,double>(nl.x, nl.y);
         my_velocity=pair<double,double>(nl.vx, nl.vy);
@@ -220,7 +220,7 @@ namespace micros_swarm_framework{
         float vx=lmsg.twist.twist.linear.x;
         float vy=lmsg.twist.twist.linear.y;
     
-        micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
+        micros_swarm::Base l(x, y, 0, vx, vy, 0);
         set_base(l);
     }
     

@@ -1,0 +1,5 @@
+<library path="lib/libOlfatiSaberFlocking">
+    <class name="micros_swarm_framework/OlfatiSaberFlocking" type="micros_swarm_framework::OlfatiSaberFlocking" base_class_type="micros_swarm_framework::Application">
+        <description>OlfatiSaber Flocking.</description>
+    </class>
+</library>

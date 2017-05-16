@@ -1,0 +1,5 @@
+<library path="lib/libTestNc">
+    <class name="testnc/TestNc" type="testnc::TestNc" base_class_type="micros_swarm::Application">
+        <description>testnc.</description>
+    </class>
+</library>
