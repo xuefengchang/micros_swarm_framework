@@ -33,14 +33,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/singleton.h"
 #include "micros_swarm/runtime_platform.h"
 #include "micros_swarm/comm_interface.h"
-#ifdef ROS
+/*#ifdef ROS
 #include "micros_swarm/ros_comm.h"
 using namespace micros_swarm;
 #endif
 #ifdef OPENSPLICE_DDS
 #include "opensplice_dds_comm/opensplice_dds_comm.h"
 using namespace opensplice_dds_comm;
-#endif
+#endif*/
 
 namespace micros_swarm{
     
@@ -53,24 +53,14 @@ namespace micros_swarm{
             {
                 vstig_id_=vstig_id;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
-                #ifdef ROS
-                communicator_=Singleton<ROSComm>::getSingleton();
-                #endif
-                #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
-                #endif
+                communicator_=Singleton<CommInterface>::getExistedSingleton();
                 rtp_->createVirtualStigmergy(vstig_id_);
             }
             
             VirtualStigmergy(const VirtualStigmergy& vs)
             {
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
-                #ifdef ROS
-                communicator_=Singleton<ROSComm>::getSingleton();
-                #endif
-                #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
-                #endif
+                communicator_=Singleton<CommInterface>::getExistedSingleton();
                 vstig_id_=vs.vstig_id_;
             }
             
@@ -79,12 +69,7 @@ namespace micros_swarm{
                 if(this==&vs)
                     return *this;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
-                #ifdef ROS
-                communicator_=Singleton<ROSComm>::getSingleton();
-                #endif
-                #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
-                #endif
+                communicator_=Singleton<CommInterface>::getExistedSingleton();
                 vstig_id_=vs.vstig_id_;
                 return *this;
             }
@@ -123,17 +108,11 @@ namespace micros_swarm{
                 archive2<<vsp;
                 std::string vsp_str=archiveStream2.str();   
                       
-                MSFPPacket p;
+                micros_swarm::CommPacket p;
                 p.packet_source=rtp_->getRobotID();
                 p.packet_version=1;
                 p.packet_type=VIRTUAL_STIGMERGY_PUT;
-                #ifdef ROS
                 p.packet_data=vsp_str;
-                #endif
-                #ifdef OPENSPLICE_DDS
-                //std::cout<<"vsp_str.data(): "<<vsp_str.data()<<std::endl;
-                p.packet_data=vsp_str.data();
-                #endif
                 p.package_check_sum=0;
                 
                 rtp_->getOutMsgQueue()->pushVstigMsgQueue(p);
@@ -179,17 +158,11 @@ namespace micros_swarm{
                 archive2<<vsq;
                 std::string vsg_str=archiveStream2.str();  
                 
-                MSFPPacket p;
+                micros_swarm::CommPacket p;
                 p.packet_source=rtp_->getRobotID();
                 p.packet_version=1;
                 p.packet_type=VIRTUAL_STIGMERGY_QUERY;
-                #ifdef ROS
                 p.packet_data=vsg_str;
-                #endif
-                #ifdef OPENSPLICE_DDS
-                //std::cout<<"vsg_str.data(): "<<vsg_str.data()<<std::endl;
-                p.packet_data=vsg_str.data();
-                #endif
                 p.package_check_sum=0;
                 
                 rtp_->getOutMsgQueue()->pushVstigMsgQueue(p);

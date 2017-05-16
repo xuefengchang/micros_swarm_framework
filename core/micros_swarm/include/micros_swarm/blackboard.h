@@ -30,14 +30,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/singleton.h"
 #include "micros_swarm/runtime_platform.h"
 #include "micros_swarm/comm_interface.h"
-#ifdef ROS
+/*#ifdef ROS
 #include "micros_swarm/ros_comm.h"
 using namespace micros_swarm;
 #endif
 #ifdef OPENSPLICE_DDS
 #include "opensplice_dds_comm/opensplice_dds_comm.h"
 using namespace opensplice_dds_comm;
-#endif
+#endif*/
 
 namespace micros_swarm{
     
@@ -52,12 +52,7 @@ namespace micros_swarm{
                 on_robot_id_=on_robot_id;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
                 robot_id_=rtp_->getRobotID();
-                #ifdef ROS
-                communicator_=Singleton<ROSComm>::getSingleton();
-                #endif
-                #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
-                #endif
+                communicator_=Singleton<micros_swarm::CommInterface>::getExistedSingleton();
                 is_local_=false;
                 if(on_robot_id_==robot_id_)
                 {
@@ -69,12 +64,7 @@ namespace micros_swarm{
             BlackBoard(const BlackBoard& bb)
             {
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
-                #ifdef ROS
-                communicator_=Singleton<ROSComm>::getSingleton();
-                #endif
-                #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
-                #endif
+                communicator_=Singleton<CommInterface>::getExistedSingleton();
                 bb_id_=bb.bb_id_;
                 on_robot_id_=bb.on_robot_id_;
                 robot_id_=bb.robot_id_;
@@ -86,12 +76,7 @@ namespace micros_swarm{
                 if(this==&bb)
                     return *this;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
-                #ifdef ROS
-                communicator_=Singleton<ROSComm>::getSingleton();
-                #endif
-                #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
-                #endif
+                communicator_=Singleton<micros_swarm::CommInterface>::getExistedSingleton();
                 bb_id_=bb.bb_id_;
                 on_robot_id_=bb.on_robot_id_;
                 robot_id_=bb.robot_id_;
@@ -124,17 +109,11 @@ namespace micros_swarm{
                     archive2<<bbp;
                     std::string bbp_str=archiveStream2.str();
 
-                    MSFPPacket p;
+                    micros_swarm::CommPacket p;
                     p.packet_source=rtp_->getRobotID();
                     p.packet_version=1;
                     p.packet_type=BLACKBOARD_PUT;
-                    #ifdef ROS
                     p.packet_data=bbp_str;
-                    #endif
-                    #ifdef OPENSPLICE_DDS
-                    //std::cout<<"vsp_str.data(): "<<vsp_str.data()<<std::endl;
-                    p.packet_data=bbp_str.data();
-                    #endif
                     p.package_check_sum=0;
 
                     rtp_->getOutMsgQueue()->pushBbMsgQueue(p);
@@ -168,16 +147,11 @@ namespace micros_swarm{
                     archive2 << bbq;
                     std::string bbq_str = archiveStream2.str();
 
-                    MSFPPacket p;
+                    micros_swarm::CommPacket p;
                     p.packet_source = rtp_->getRobotID();
                     p.packet_version = 1;
                     p.packet_type = BLACKBOARD_QUERY;
-                    #ifdef ROS
                     p.packet_data=bbq_str;
-                    #endif
-                    #ifdef OPENSPLICE_DDS
-                    p.packet_data=bbq_str.data();
-                    #endif
                     p.package_check_sum = 0;
                     rtp_->createBlackBoard(bb_id_);
                     rtp_->insertOrUpdateBlackBoard(bb_id_, key, "", 0, -1);
@@ -200,9 +174,7 @@ namespace micros_swarm{
                             break;
                         }
                         loop_rate.sleep();
-                        #ifdef ROS
                         ros::spinOnce();
-                        #endif
                     }
 
                     return data;

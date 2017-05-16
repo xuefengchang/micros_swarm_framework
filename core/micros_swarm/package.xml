@@ -63,5 +63,8 @@
   <!--run_depend>comm_interface</run_depend>
   <run_depend>ros_comm</run_depend>
   <run_depend>opensplice_dds_comm</run_depend-->
+  <export>
+    <micros_swarm plugin="${prefix}/roscomm_plugin.xml"/>
+  </export>
  
 </package>

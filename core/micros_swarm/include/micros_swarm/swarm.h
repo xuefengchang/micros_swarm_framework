@@ -32,14 +32,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/singleton.h"
 #include "micros_swarm/runtime_platform.h"
 #include "micros_swarm/comm_interface.h"
-#ifdef ROS
+/*#ifdef ROS
 #include "micros_swarm/ros_comm.h"
 using namespace micros_swarm;
 #endif
 #ifdef OPENSPLICE_DDS
 #include "opensplice_dds_comm/opensplice_dds_comm.h"
 using namespace opensplice_dds_comm;
-#endif
+#endif*/
 
 namespace micros_swarm{
     
@@ -54,25 +54,14 @@ namespace micros_swarm{
             {
                 swarm_id_=swarm_id;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
-                #ifdef ROS
-                communicator_=Singleton<ROSComm>::getSingleton();
-                #endif
-                #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
-                #endif
-        
+                communicator_=Singleton<micros_swarm::CommInterface>::getExistedSingleton();
                 rtp_->insertOrUpdateSwarm(swarm_id_, 0);
             }
             
             Swarm(const Swarm& s)
             {
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
-                #ifdef ROS
-                communicator_=Singleton<ROSComm>::getSingleton();
-                #endif
-                #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
-                #endif
+                communicator_=Singleton<micros_swarm::CommInterface>::getExistedSingleton();
                 swarm_id_=s.swarm_id_;
             }
             
@@ -81,12 +70,7 @@ namespace micros_swarm{
                 if(this==&s)
                     return *this;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
-                #ifdef ROS
-                communicator_=Singleton<ROSComm>::getSingleton();
-                #endif
-                #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
-                #endif
+                communicator_=Singleton<CommInterface>::getExistedSingleton();
                 swarm_id_=s.swarm_id_;
                 return *this;
             }
@@ -121,16 +105,11 @@ namespace micros_swarm{
                 archive<<srjs;
                 std::string srjs_str=archiveStream.str();   
                       
-                MSFPPacket p;
+                micros_swarm::CommPacket p;
                 p.packet_source=robot_id;
                 p.packet_version=1;
                 p.packet_type=SINGLE_ROBOT_JOIN_SWARM;
-                #ifdef ROS
                 p.packet_data=srjs_str;
-                #endif
-                #ifdef OPENSPLICE_DDS
-                p.packet_data=srjs_str.data();
-                #endif
                 p.package_check_sum=0;
                 
                 rtp_->getOutMsgQueue()->pushSwarmMsgQueue(p);
@@ -148,16 +127,11 @@ namespace micros_swarm{
                 archive<<srls;
                 std::string srjs_str=archiveStream.str();   
                       
-                MSFPPacket p;
+                micros_swarm::CommPacket p;
                 p.packet_source=robot_id;
                 p.packet_version=1;
                 p.packet_type=SINGLE_ROBOT_LEAVE_SWARM;
-                #ifdef ROS
                 p.packet_data=srjs_str;
-                #endif
-                #ifdef OPENSPLICE_DDS
-                p.packet_data=srjs_str.data();
-                #endif
                 p.package_check_sum=0;
                 
                 rtp_->getOutMsgQueue()->pushSwarmMsgQueue(p);

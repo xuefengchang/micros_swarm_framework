@@ -36,14 +36,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/random.h"
 
 #include "micros_swarm/comm_interface.h"
-#ifdef ROS
+/*#ifdef ROS
 #include "micros_swarm/ros_comm.h"
 using namespace micros_swarm;
 #endif
 #ifdef OPENSPLICE_DDS
 #include "opensplice_dds_comm/opensplice_dds_comm.h"
 using namespace opensplice_dds_comm;
-#endif
+#endif*/
 
 namespace micros_swarm{
 
@@ -51,16 +51,11 @@ namespace micros_swarm{
         public:
             PacketParser()
             {
-                rtp_=Singleton<RuntimePlatform>::getSingleton();   
-                #ifdef ROS
-                communicator_=Singleton<ROSComm>::getSingleton();
-                #endif
-                #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
-                #endif
+                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                communicator_=Singleton<micros_swarm::CommInterface>::getExistedSingleton();
             }
 
-            void parser(const MSFPPacket& packet)
+            void parser(const micros_swarm::CommPacket& packet)
             {
                 int shm_rid=rtp_->getRobotID();
                 int packet_source=packet.packet_source;
@@ -71,12 +66,7 @@ namespace micros_swarm{
         
                 try{
                 const int packet_type=packet.packet_type;
-                #ifdef ROS
                 std::string packet_data=packet.packet_data;
-                #endif
-                #ifdef OPENSPLICE_DDS
-                std::string packet_data=(std::string)packet.packet_data;
-                #endif
         
                 std::istringstream archiveStream(packet_data);
                 boost::archive::text_iarchive archive(archiveStream);
@@ -222,16 +212,11 @@ namespace micros_swarm{
                             archive2<<vsp_new;
                             std::string vsp_new_string=archiveStream2.str();
                     
-                            MSFPPacket p;
+                            micros_swarm::CommPacket p;
                             p.packet_source=shm_rid;
                             p.packet_version=1;
                             p.packet_type=VIRTUAL_STIGMERGY_PUT;
-                            #ifdef ROS
                             p.packet_data=vsp_new_string;
-                            #endif
-                            #ifdef OPENSPLICE_DDS
-                            p.packet_data=vsp_new_string.data();
-                            #endif
                             p.package_check_sum=0;
                     
                             rtp_->getOutMsgQueue()->pushVstigMsgQueue(p);
@@ -261,16 +246,11 @@ namespace micros_swarm{
                             archive2<<vsp;
                             std::string vsp_string=archiveStream2.str();
                     
-                            MSFPPacket p;
+                            micros_swarm::CommPacket p;
                             p.packet_source=shm_rid;
                             p.packet_version=1;
                             p.packet_type=VIRTUAL_STIGMERGY_PUT;
-                            #ifdef ROS
                             p.packet_data=vsp_string;
-                            #endif
-                            #ifdef OPENSPLICE_DDS
-                            p.packet_data=vsp_string.data();
-                            #endif
                             p.package_check_sum=0;
                     
                             rtp_->getOutMsgQueue()->pushVstigMsgQueue(p);
@@ -328,17 +308,11 @@ namespace micros_swarm{
                             archive2<<vsp_new;
                             std::string vsp_new_string=archiveStream2.str();
                     
-                            MSFPPacket p;
+                            micros_swarm::CommPacket p;
                             p.packet_source=shm_rid;
                             p.packet_version=1;
                             p.packet_type=VIRTUAL_STIGMERGY_PUT;
-                            #ifdef ROS
                             p.packet_data=vsp_new_string;
-                            #endif
-                            #ifdef OPENSPLICE_DDS
-                            //std::cout<<"vsp_string.data(): "<<vsp_string.data()<<std::endl;
-                            p.packet_data=vsp_new_string.data();
-                            #endif
                             p.package_check_sum=0;
                     
                             rtp_->getOutMsgQueue()->pushVstigMsgQueue(p);
@@ -395,16 +369,11 @@ namespace micros_swarm{
                             archive2<<bbqa;
                             std::string bbqa_string=archiveStream2.str();
 
-                            MSFPPacket p;
+                            micros_swarm::CommPacket p;
                             p.packet_source=shm_rid;
                             p.packet_version=1;
                             p.packet_type=BLACKBOARD_QUERY_ACK;
-                            #ifdef ROS
                             p.packet_data=bbqa_string;
-                            #endif
-                            #ifdef OPENSPLICE_DDS
-                            p.packet_data=bbqa_string.data();
-                            #endif
                             p.package_check_sum=0;
                             rtp_->getOutMsgQueue()->pushBbMsgQueue(p);
                         }
@@ -454,16 +423,11 @@ namespace micros_swarm{
                         archive2<<ba;
                         std::string ba_string=archiveStream2.str();
                     
-                        MSFPPacket p;
+                        micros_swarm::CommPacket p;
                         p.packet_source=shm_rid;
                         p.packet_version=1;
                         p.packet_type=BARRIER_ACK;
-                        #ifdef ROS
                         p.packet_data=ba_string;
-                        #endif
-                        #ifdef OPENSPLICE_DDS
-                        p.packet_data=ba_string.data();
-                        #endif
                         p.package_check_sum=0;
                     
                         communicator_->broadcast(p);

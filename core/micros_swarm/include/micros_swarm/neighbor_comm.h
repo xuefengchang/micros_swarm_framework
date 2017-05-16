@@ -28,14 +28,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/runtime_platform.h"
 #include "micros_swarm/listener_helper.h"
 #include "micros_swarm/comm_interface.h"
-#ifdef ROS
+/*#ifdef ROS
 #include "micros_swarm/ros_comm.h"
 using namespace micros_swarm;
 #endif
 #ifdef OPENSPLICE_DDS
 #include "opensplice_dds_comm/opensplice_dds_comm.h"
 using namespace opensplice_dds_comm;
-#endif
+#endif*/
 
 namespace micros_swarm{
     
@@ -46,12 +46,7 @@ namespace micros_swarm{
             {
                 key_=key;
                 rtp_=Singleton<RuntimePlatform>::getSingleton();
-                #ifdef ROS
-                communicator_=Singleton<ROSComm>::getSingleton();
-                #endif
-                #ifdef OPENSPLICE_DDS
-                communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
-                #endif
+                communicator_=Singleton<CommInterface>::getExistedSingleton();
             }
             
             void broadcast(const Type& value)
@@ -68,16 +63,11 @@ namespace micros_swarm{
                 archive2<<nbkv;
                 std::string nbkv_str=archiveStream2.str();  
                 
-                MSFPPacket p;
+                micros_swarm::CommPacket p;
                 p.packet_source=rtp_->getRobotID();
                 p.packet_version=1;
                 p.packet_type=NEIGHBOR_BROADCAST_KEY_VALUE;
-                #ifdef ROS
                 p.packet_data=nbkv_str;
-                #endif
-                #ifdef OPENSPLICE_DDS
-                p.packet_data=nbkv_str.data();
-                #endif
                 p.package_check_sum=0;
                 
                 //communicator_->broadcast(p);

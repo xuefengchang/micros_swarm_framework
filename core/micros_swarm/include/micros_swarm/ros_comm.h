@@ -25,60 +25,23 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <iostream>
 #include <ros/ros.h>
+#include <pluginlib/class_list_macros.h>
 
 #include "micros_swarm/comm_interface.h"
 #include "micros_swarm/MSFPPacket.h"
-
-using namespace micros_swarm;
 
 namespace micros_swarm{
     
     class ROSComm : public CommInterface{
         public:
-            ROSComm()
-            {
-                name_="ERROR";
-            }
-        
-            ROSComm(ros::NodeHandle node_handle)
-            {
-                name_="ROS";
-                node_handle_=node_handle;
-                packet_publisher_ = node_handle_.advertise<MSFPPacket>("/micros_swarm_framework_topic", 2000, true);
-            }
-            
-            void broadcast(const MSFPPacket& msfp_packet)
-            {
-                static bool flag=false;
-                if(!flag)
-                {
-                    ros::Duration(1).sleep();
-                    if(!packet_publisher_)
-                    {
-                        ROS_INFO("ROS communicator could not initialize!");
-                        exit(-1);
-                    }
-                    flag=true;
-                }
-        
-                if(ros::ok())
-                {
-                    packet_publisher_.publish(msfp_packet);
-                }
-            }
-            
-            void callback(const MSFPPacket& packet)
-            {
-                parser_(packet);
-            }
-            
-            void receive(boost::function<void(const MSFPPacket&)> parser)
-            {
-                parser_=parser;
-                packet_subscriber_ = node_handle_.subscribe("/micros_swarm_framework_topic", 2000, &ROSComm::callback, this, ros::TransportHints().udp());
-            }
-            
+            ROSComm();
+            void init(std::string name, boost::function<void(const CommPacket& packet)> func);
+            void broadcast(const CommPacket& packet);
+            void callback(const MSFPPacket& ros_msg);
+            void receive();
         private:
+            std::string name_;
+            boost::function<void(const micros_swarm::CommPacket& packet)> parser_func_;
             ros::NodeHandle node_handle_;
             ros::Publisher packet_publisher_;
             ros::Subscriber packet_subscriber_;

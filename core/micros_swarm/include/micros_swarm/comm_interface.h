@@ -25,26 +25,22 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <iostream>
 
-#ifdef ROS
-#include "micros_swarm/MSFPPacket.h"
-#endif
-
-#ifdef OPENSPLICE_DDS
-#include "opensplice_dds_comm/MSFPPacket.h"
-#include "opensplice_dds_comm/check_status.h"
-#include "opensplice_dds_comm/publisher.h"
-#include "opensplice_dds_comm/subscriber.h"
-#endif
-
 namespace micros_swarm{
 
+    struct CommPacket{
+        int packet_source;
+        int packet_version;
+        int packet_type;
+        std::string packet_data;
+        double package_check_sum;
+        CommPacket():packet_source(-1),packet_version(1),packet_type(-1),packet_data(""),package_check_sum(0.0){}
+    };
+
     class CommInterface{
-        public:   
-            std::string name_;
-            boost::function<void(const MSFPPacket& packet)> parser_;
-            
-            virtual void broadcast(const MSFPPacket& msfp_packet)=0;
-            virtual void receive(boost::function<void(const MSFPPacket& packet)> callback)=0;
+        public:
+            virtual void init(std::string name, boost::function<void(const micros_swarm::CommPacket& packet)> func)=0;
+            virtual void broadcast(const micros_swarm::CommPacket& packet)=0;
+            virtual void receive()=0;
     };
 };
 #endif

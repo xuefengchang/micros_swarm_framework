@@ -120,6 +120,9 @@ add_library(rtp_manager
 add_dependencies(rtp_manager ${micros_swarm_EXPORTED_TARGETS})
 target_link_libraries(rtp_manager rtp_core)
 
+add_library(ROSComm src/ros_comm.cpp)
+add_dependencies(ROSComm ${micros_swarm_EXPORTED_TARGETS})
+
 add_executable(rtp_manager_node
   src/rtp_manager_node.cpp
 )

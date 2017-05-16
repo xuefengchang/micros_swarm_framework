@@ -1,0 +1,5 @@
+<library path="lib/libROSComm">
+    <class name="micros_swarm/ROSComm" type="micros_swarm::ROSComm" base_class_type="micros_swarm::CommInterface">
+        <description>ROS comm interface.</description>
+    </class>
+</library>

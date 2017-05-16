@@ -25,17 +25,18 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <iostream>
 #include <ros/ros.h>
+#include <pluginlib/class_loader.h>
 
 #include "micros_swarm/singleton.h"
 #include "micros_swarm/message.h"
 #include "micros_swarm/runtime_platform.h"
 #include "micros_swarm/comm_interface.h"
-#ifdef ROS
+/*#ifdef ROS
 #include "micros_swarm/ros_comm.h"
 #endif
 #ifdef OPENSPLICE_DDS
 #include "opensplice_dds_comm/opensplice_dds_comm.h"
-#endif
+#endif*/
 #include "micros_swarm/packet_parser.h"
 
 namespace micros_swarm{
@@ -46,7 +47,9 @@ namespace micros_swarm{
         ros::NodeHandle node_handle_;
         boost::shared_ptr<RuntimePlatform> rtp_;
         boost::shared_ptr<CommInterface> communicator_;
-        boost::shared_ptr<PacketParser> parser_;
+        std::string comm_name_;
+        pluginlib::ClassLoader<micros_swarm::CommInterface> ci_loader_;
+        boost::shared_ptr<micros_swarm::PacketParser> parser_;
 
         ros::Timer publish_robot_base_timer_;
         ros::Timer publish_swarm_list_timer_;

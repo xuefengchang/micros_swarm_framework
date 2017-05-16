@@ -37,7 +37,6 @@ namespace micros_swarm{
         app_unload_srv_ = nh.advertiseService("micros_swarm_framework_unload_app", &RTPManager::unloadService, this);
         apps_.clear();
         start_app_timer_=nh.createTimer(ros::Duration(1), &RTPManager::startApp, this);
-
         //rtp_manager_destroy_pub_ = nh.advertise<std_msgs::Int8>("micros_swarm_framework_rtp_manager_destroy", 1000);
     }
 
@@ -66,6 +65,7 @@ namespace micros_swarm{
 
     RTPManager::~RTPManager()
     {
+        rtp_core_.reset();
         std::vector<AppInstance>::iterator app_it;
         for(app_it=apps_.begin(); app_it!=apps_.end(); app_it++)
         {

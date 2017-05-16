@@ -28,14 +28,15 @@ ARISING IN ANY WAY OUType OF TypeHE USE OF TypeHIS SOFTypeWARE, EVEN IF ADVISED 
 
 #include "micros_swarm/semaphore.h"
 #include "micros_swarm/circular_queue.h"
-#ifdef ROS
+#include "micros_swarm/comm_interface.h"
+/*#ifdef ROS
 #include "micros_swarm/MSFPPacket.h"
 using namespace micros_swarm;
 #endif
 #ifdef OPENSPLICE_DDS
 #include "opensplice_dds_comm/MSFPPacket.h"
 using namespace opensplice_dds_comm;
-#endif
+#endif*/
 
 namespace micros_swarm{
     class MsgQueueManager
@@ -43,20 +44,20 @@ namespace micros_swarm{
         public:
             explicit MsgQueueManager()
             {
-                base_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
-                swarm_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
-                vstig_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
-                bb_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
-                nc_msg_queue_.reset(new cqueue<MSFPPacket>(1000));
+                base_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
+                swarm_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
+                vstig_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
+                bb_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
+                nc_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
             }
             
             explicit MsgQueueManager(int num1, int num2, int num3, int num4, int num5)
             {
-                base_msg_queue_.reset(new cqueue<MSFPPacket>(num1));
-                swarm_msg_queue_.reset(new cqueue<MSFPPacket>(num2));
-                vstig_msg_queue_.reset(new cqueue<MSFPPacket>(num3));
-                bb_msg_queue_.reset(new cqueue<MSFPPacket>(num4));
-                nc_msg_queue_.reset(new cqueue<MSFPPacket>(num5));
+                base_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num1));
+                swarm_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num2));
+                vstig_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num3));
+                bb_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num4));
+                nc_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num5));
             }
         
             bool baseMsgQueueFull()
@@ -71,7 +72,7 @@ namespace micros_swarm{
                 return base_msg_queue_->empty();
             }
     
-            const MSFPPacket& baseMsgQueueFront()
+            const micros_swarm::CommPacket& baseMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(base_msg_mutex_);
                 return base_msg_queue_->front();
@@ -89,7 +90,7 @@ namespace micros_swarm{
                 base_msg_queue_->pop();
             }
     
-            void pushBaseMsgQueue(const MSFPPacket& p)
+            void pushBaseMsgQueue(const micros_swarm::CommPacket& p)
             {
                 boost::unique_lock<boost::shared_mutex> lock(base_msg_mutex_);
                 base_msg_queue_->push(p);
@@ -108,7 +109,7 @@ namespace micros_swarm{
                 return swarm_msg_queue_->empty();
             }
     
-            const MSFPPacket& swarmMsgQueueFront()
+            const micros_swarm::CommPacket& swarmMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(swarm_msg_mutex_);
                 return swarm_msg_queue_->front();
@@ -126,7 +127,7 @@ namespace micros_swarm{
                 swarm_msg_queue_->pop();
             }
     
-            void pushSwarmMsgQueue(const MSFPPacket& p)
+            void pushSwarmMsgQueue(const micros_swarm::CommPacket& p)
             {
                 boost::unique_lock<boost::shared_mutex> lock(swarm_msg_mutex_);
                 swarm_msg_queue_->push(p);
@@ -145,7 +146,7 @@ namespace micros_swarm{
                 return vstig_msg_queue_->empty();
             }
     
-            const MSFPPacket& vstigMsgQueueFront()
+            const micros_swarm::CommPacket& vstigMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(vstig_msg_mutex_);
                 return vstig_msg_queue_->front();
@@ -163,7 +164,7 @@ namespace micros_swarm{
                 vstig_msg_queue_->pop();
             }
     
-            void pushVstigMsgQueue(const MSFPPacket& p)
+            void pushVstigMsgQueue(const micros_swarm::CommPacket& p)
             {
                 boost::unique_lock<boost::shared_mutex> lock(vstig_msg_mutex_);
                 vstig_msg_queue_->push(p);
@@ -182,7 +183,7 @@ namespace micros_swarm{
                 return bb_msg_queue_->empty();
             }
 
-            const MSFPPacket& bbMsgQueueFront()
+            const micros_swarm::CommPacket& bbMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(bb_msg_mutex_);
                 return bb_msg_queue_->front();
@@ -200,7 +201,7 @@ namespace micros_swarm{
                 bb_msg_queue_->pop();
             }
 
-            void pushBbMsgQueue(const MSFPPacket& p)
+            void pushBbMsgQueue(const micros_swarm::CommPacket& p)
             {
                 boost::unique_lock<boost::shared_mutex> lock(bb_msg_mutex_);
                 bb_msg_queue_->push(p);
@@ -219,7 +220,7 @@ namespace micros_swarm{
                 return nc_msg_queue_->empty();
             }
     
-            const MSFPPacket& ncMsgQueueFront()
+            const micros_swarm::CommPacket& ncMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(nc_msg_mutex_);
                 return nc_msg_queue_->front();
@@ -237,7 +238,7 @@ namespace micros_swarm{
                 nc_msg_queue_->pop();
             }
     
-            void pushNcMsgQueue(const MSFPPacket& p)
+            void pushNcMsgQueue(const micros_swarm::CommPacket& p)
             {
                 boost::unique_lock<boost::shared_mutex> lock(nc_msg_mutex_);
                 nc_msg_queue_->push(p);
@@ -247,11 +248,11 @@ namespace micros_swarm{
             boost::mutex msg_queue_mutex;
             boost::condition_variable_any msg_queue_condition;
         private:
-            boost::shared_ptr<cqueue<MSFPPacket> > base_msg_queue_;
-            boost::shared_ptr<cqueue<MSFPPacket> > swarm_msg_queue_;
-            boost::shared_ptr<cqueue<MSFPPacket> > vstig_msg_queue_;
-            boost::shared_ptr<cqueue<MSFPPacket> > bb_msg_queue_;
-            boost::shared_ptr<cqueue<MSFPPacket> > nc_msg_queue_;
+            boost::shared_ptr<cqueue<micros_swarm::CommPacket> > base_msg_queue_;
+            boost::shared_ptr<cqueue<micros_swarm::CommPacket> > swarm_msg_queue_;
+            boost::shared_ptr<cqueue<micros_swarm::CommPacket> > vstig_msg_queue_;
+            boost::shared_ptr<cqueue<micros_swarm::CommPacket> > bb_msg_queue_;
+            boost::shared_ptr<cqueue<micros_swarm::CommPacket> > nc_msg_queue_;
             
             boost::shared_mutex base_msg_mutex_, swarm_msg_mutex_,
                                 vstig_msg_mutex_, bb_msg_mutex_,

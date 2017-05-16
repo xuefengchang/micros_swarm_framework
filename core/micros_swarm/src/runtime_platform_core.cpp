@@ -26,7 +26,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 //#define PUBLISH_SWARM_LIST_DURATION 5
 
 namespace micros_swarm{
-    RuntimePlatformCore::RuntimePlatformCore()
+    RuntimePlatformCore::RuntimePlatformCore():ci_loader_("micros_swarm", "micros_swarm::CommInterface")
     {
     }
 
@@ -35,6 +35,10 @@ namespace micros_swarm{
         spin_thread_->interrupt();
         spin_thread_->join();
         delete spin_thread_;
+
+        rtp_.reset();
+        communicator_.reset();
+        ci_loader_.unloadLibraryForClass(comm_name_);
     }
     
     void RuntimePlatformCore::spin_msg_queue()
@@ -98,18 +102,12 @@ namespace micros_swarm{
         archive<<bs;
         std::string bs_string=archiveStream.str();
     
-        MSFPPacket p;
+        micros_swarm::CommPacket p;
         p.packet_source=robot_id;
         p.packet_version=1;
         p.packet_type=micros_swarm::BARRIER_SYN;
-        #ifdef ROS
         p.packet_data=bs_string;
-        #endif
-        #ifdef OPENSPLICE_DDS
-        p.packet_data=bs_string.data();
-        #endif
         p.package_check_sum=0;
-    
         communicator_->broadcast(p);
     }
     
@@ -126,16 +124,11 @@ namespace micros_swarm{
         archive<<srbb;
         std::string srbb_str=archiveStream.str();
                       
-        MSFPPacket p;
+        micros_swarm::CommPacket p;
         p.packet_source=robot_id;
         p.packet_version=1;
         p.packet_type=SINGLE_ROBOT_BROADCAST_BASE;
-        #ifdef ROS
         p.packet_data=srbb_str;
-        #endif
-        #ifdef OPENSPLICE_DDS
-        p.packet_data=srbb_str.data();
-        #endif
         p.package_check_sum=0;
         
         rtp_->getOutMsgQueue()->pushBaseMsgQueue(p);
@@ -156,16 +149,11 @@ namespace micros_swarm{
         archive<<srsl;
         std::string srsl_str=archiveStream.str();
                       
-        MSFPPacket p;
+        micros_swarm::CommPacket p;
         p.packet_source=robot_id;
         p.packet_version=1;
         p.packet_type=SINGLE_ROBOT_SWARM_LIST;
-        #ifdef ROS
         p.packet_data=srsl_str;
-        #endif
-        #ifdef OPENSPLICE_DDS
-        p.packet_data=srsl_str.data();
-        #endif
         p.package_check_sum=0;
 
         rtp_->getOutMsgQueue()->pushSwarmMsgQueue(p);
@@ -220,28 +208,25 @@ namespace micros_swarm{
         ros::NodeHandle private_nh("~");
         private_nh.param("unique_robot_id", robot_id_, 0);
         std::cout<<"unique_robot_id = "<<robot_id_<<std::endl;
+        private_nh.param<std::string>("comm_name", comm_name_, "micros_swarm/ROSComm");
     }
     
     void RuntimePlatformCore::initialize()
     {
         setParameters();
-    
         //construct runtime platform
         rtp_=Singleton<RuntimePlatform>::getSingleton(robot_id_);
         rtp_->setNeighborDistance(default_neighbor_distance_);
         //construct communicator
-        #ifdef ROS
-        communicator_=Singleton<ROSComm>::getSingleton(node_handle_);
-        #endif
-        #ifdef OPENSPLICE_DDS
-        communicator_=Singleton<OpenSpliceDDSComm>::getSingleton();
-        #endif
+        communicator_ = ci_loader_.createInstance(comm_name_);
+        Singleton<CommInterface>::makeSingleton(communicator_);
         //construct packet parser
         parser_ = Singleton<PacketParser>::getSingleton();
         //parser_.reset(new PacketParser());
-        boost::function<void(const MSFPPacket& packet)> parser_func=boost::bind(&PacketParser::parser, parser_, _1);
-        //transfer the parser function to the communicator 
-        communicator_->receive(parser_func);
+        boost::function<void(const micros_swarm::CommPacket& packet)> parser_func=boost::bind(&PacketParser::parser, parser_, _1);
+        //transfer the parser function to the communicator
+        communicator_->init(comm_name_, parser_func);
+        communicator_->receive();
         
         //boost::thread spin_thread(&RuntimePlatformCore::spin_msg_queue, this);
         spin_thread_ = new boost::thread(&RuntimePlatformCore::spin_msg_queue, this);
