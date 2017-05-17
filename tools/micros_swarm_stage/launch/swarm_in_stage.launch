@@ -1,0 +1,26 @@
+<!-- xml -->
+<launch>
+
+  <!-- Name of the map to use (without path nor extension) and initial position -->
+  <arg name="map_file"       default=" $(find micros_swarm_stage)/maps/swarm.yaml"/> <!-- robopark_plan -->
+  <arg name="world_file"     default=" $(find micros_swarm_stage)/worlds/swarm.world"/>
+
+  <param name="/use_sim_time" value="true"/>
+  
+  <!--node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
+    <param name="frame_id" value="/map"/>
+  </node-->
+  
+  <node pkg="stage_ros" type="stageros" name="stageros" args="$(arg world_file)">
+    
+  </node>
+  
+  <!--include file="$(find multi_robot_stage)/launch/robot_model.launch"/-->
+  <!--include file="$(find multi_robot_stage)/launch/navigation.launch"/-->
+
+  <!--  **************** Visualisation ****************  -->
+  <!--node name="rviz" pkg="rviz" type="rviz" args="-d $(find multi_robot_stage)/rviz/multi_robot_navigation.rviz"/>
+  <node name="sound_play" pkg="sound_play" type="soundplay_node.py" />
+  <node name="play_builtin" pkg="sound_play" type="playbuiltin.py" /-->
+
+</launch>

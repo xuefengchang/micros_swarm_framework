@@ -22,8 +22,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <iostream>
 #include <vector>
-#include "check_status.h"
-#include "publisher.h"
+#include "opensplice_dds_comm/check_status.h"
+#include "opensplice_dds_comm/publisher.h"
 
 #define MAX_PACKET_LEN 256
 #define NUM_PACKET 1000000
@@ -32,14 +32,14 @@ using namespace DDS;
 
 int main()
 {
-    micros_swarm_framework::MSFPPacket packet;
+    opensplice_dds_comm::MSFPPacket packet;
     checkHandle(&packet, "new MSFPPacket");
     
     char buf[MAX_PACKET_LEN];
     
     std::string test=NULL;
-    
-    micros_swarm_framework::Publisher publisher("micros_swarm_framework_topic");
+
+    opensplice_dds_comm::Publisher publisher("micros_swarm_framework_topic");
     
     for (int i = 1; i <= NUM_PACKET; i++) 
     {

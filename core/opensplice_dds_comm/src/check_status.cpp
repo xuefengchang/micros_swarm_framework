@@ -21,7 +21,7 @@
  *
  ***/
 
-#include "check_status.h"
+#include "opensplice_dds_comm/check_status.h"
 
 /* Array to hold the names for all ReturnCodes. */
 const char *RetCodeName[13] = {

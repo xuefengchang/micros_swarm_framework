@@ -20,12 +20,12 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "app1.h"
+#include "app1/app1.h"
 
 // Register the application
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::App1, micros_swarm_framework::Application)
+PLUGINLIB_EXPORT_CLASS(app1::App1, micros_swarm::Application)
 
-namespace micros_swarm_framework{
+namespace app1{
 
     struct XY
     {
@@ -53,9 +53,9 @@ namespace micros_swarm_framework{
         return -(epsilon/(dist+0.1)) *(pow(delta/(dist+0.1), 4) - pow(delta/(dist+0.1), 2));
     }
 
-    XY App1::force_sum(micros_swarm_framework::NeighborBase n, XY &s)
+    XY App1::force_sum(micros_swarm::NeighborBase n, XY &s)
     {
-        micros_swarm_framework::Base l=base();
+        micros_swarm::Base l=base();
         float xl=l.x;
         float yl=l.y;
     
@@ -81,9 +81,9 @@ namespace micros_swarm_framework{
         sum.x=0;
         sum.y=0;
     
-        micros_swarm_framework::Neighbors<micros_swarm_framework::NeighborBase> n(true);
+        micros_swarm::Neighbors<micros_swarm::NeighborBase> n(true);
         //n.print();
-        boost::function<XY(NeighborBase, XY &)> bf=boost::bind(&App1::force_sum, this, _1, _2);
+        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf=boost::bind(&App1::force_sum, this, _1, _2);
         sum=n.reduce(bf, sum);
     
         return sum;
@@ -113,7 +113,7 @@ namespace micros_swarm_framework{
         float vx=lmsg.twist.twist.linear.x;
         float vy=lmsg.twist.twist.linear.y;
     
-        micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
+        micros_swarm::Base l(x, y, 0, vx, vy, 0);
         set_base(l);
     }
     

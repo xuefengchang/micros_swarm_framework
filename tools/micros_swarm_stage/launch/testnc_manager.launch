@@ -1,0 +1,11 @@
+<launch>
+    <param name="publish_robot_id_duration" type="double" value="0.1"/>
+    <param name="publish_swarm_list_duration" type="double" value="5.0"/>
+    <param name="default_neighbor_distance" type="double" value="50"/>
+    <param name="total_robot_numbers" type="int" value="1"/>
+
+    <node pkg="micros_swarm" type="rtp_manager_node" name="rtp_manager_node0" output="screen">
+        <param name="unique_robot_id" type="int" value="0"/>
+    </node>
+</launch>
+

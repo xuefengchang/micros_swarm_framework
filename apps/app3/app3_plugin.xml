@@ -1,0 +1,5 @@
+<library path="lib/libApp3">
+    <class name="app3/App3" type="app3::App3" base_class_type="micros_swarm::Application">
+        <description>micros_swarm app3.</description>
+    </class>
+</library>

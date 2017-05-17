@@ -1,0 +1,5 @@
+<library path="lib/libTestRtp">
+    <class name="testrtp/TestRtp" type="testrtp::TestRtp" base_class_type="micros_swarm::Application">
+        <description>testrtp.</description>
+    </class>
+</library>

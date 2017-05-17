@@ -20,13 +20,13 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "app_loader.h"
+#include "app_loader/app_loader.h"
 
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "micros_swarm_framework_app_loader");
 
-    micros_swarm_framework::AppLoader app_loader;
+    app_loader::AppLoader app_loader;
 
     ros::Rate r(10);
     while(ros::ok())

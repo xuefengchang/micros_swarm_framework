@@ -20,9 +20,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "app_loader.h"
+#include "app_loader/app_loader.h"
 
-namespace micros_swarm_framework{
+namespace app_loader{
 
     AppLoader::AppLoader()
     {
@@ -33,10 +33,10 @@ namespace micros_swarm_framework{
 
         //get app name and type
         private_nh.param("app_name", app_name_, std::string("app_demo"));
-        private_nh.param("app_type", app_type_, std::string("micros_swarm_framework/AppDemo"));
+        private_nh.param("app_type", app_type_, std::string("micros_swarm/AppDemo"));
 
-        ros::ServiceClient client = nh.serviceClient<micros_swarm_framework::AppLoad>("micros_swarm_framework_load_app");
-        micros_swarm_framework::AppLoad srv;
+        ros::ServiceClient client = nh.serviceClient<app_loader::AppLoad>("micros_swarm_framework_load_app");
+        app_loader::AppLoad srv;
         srv.request.name = app_name_;
         srv.request.type = app_type_;
         if (client.call(srv))
@@ -58,8 +58,8 @@ namespace micros_swarm_framework{
         rtp_manager_destroy_srv_.shutdown();
         if(!rtp_manager_destroy_) {
             ros::NodeHandle nh;
-            ros::ServiceClient client = nh.serviceClient<micros_swarm_framework::AppUnload>("micros_swarm_framework_unload_app");
-            micros_swarm_framework::AppUnload srv;
+            ros::ServiceClient client = nh.serviceClient<app_loader::AppUnload>("micros_swarm_framework_unload_app");
+            app_loader::AppUnload srv;
             srv.request.name = app_name_;
             srv.request.type = app_type_;
 
@@ -74,7 +74,7 @@ namespace micros_swarm_framework{
         }
     }
 
-    bool AppLoader::rtpManagerDestroyCB(micros_swarm_framework::RTPDestroy::Request &req, micros_swarm_framework::RTPDestroy::Response &resp)
+    bool AppLoader::rtpManagerDestroyCB(app_loader::RTPDestroy::Request &req, app_loader::RTPDestroy::Response &resp)
     {
         resp.success = false;
         if(req.code == 1) {

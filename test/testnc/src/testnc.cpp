@@ -20,12 +20,12 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "testnc.h"
+#include "testnc/testnc.h"
 
 // Register the application
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::TestNC, micros_swarm_framework::Application)
+PLUGINLIB_EXPORT_CLASS(testnc::TestNC, micros_swarm::Application)
 
-namespace micros_swarm_framework{
+namespace testnc{
 
     TestNC::TestNC()
     {
@@ -43,9 +43,9 @@ namespace micros_swarm_framework{
     void TestNC::start()
     {
         std::cout<<"TestNC step into start..."<<std::endl;
-        Broadcaster<float> bc("testkey");
+        micros_swarm::Broadcaster<float> bc("testkey");
         boost::function<void(const float&)> cb=boost::bind(&TestNC::callback, this, _1);
-        Listener<float> ls("testkey", cb);
+        micros_swarm::Listener<float> ls("testkey", cb);
         //ls.ignore();
         
         for(int i=0;i<10;i++)

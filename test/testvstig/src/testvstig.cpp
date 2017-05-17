@@ -20,12 +20,12 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "testvstig.h"
+#include "testvstig/testvstig.h"
 
 // Register the application
-PLUGINLIB_EXPORT_CLASS(micros_swarm_framework::TestVstig, micros_swarm_framework::Application)
+PLUGINLIB_EXPORT_CLASS(testvstig::TestVstig, micros_swarm::Application)
 
-namespace micros_swarm_framework{
+namespace testvstig{
 
     TestVstig::TestVstig()
     {
@@ -54,7 +54,7 @@ namespace micros_swarm_framework{
         float vx=lmsg.twist.twist.linear.x;
         float vy=lmsg.twist.twist.linear.y;
 
-        micros_swarm_framework::Base l(x, y, 0, vx, vy, 0);
+        micros_swarm::Base l(x, y, 0, vx, vy, 0);
         set_base(l);
     }
     
@@ -63,7 +63,7 @@ namespace micros_swarm_framework{
         ros::NodeHandle nh;
         sub = nh.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
         //test virtual stigmergy
-        vs=micros_swarm_framework::VirtualStigmergy<int>(1);
+        vs=micros_swarm::VirtualStigmergy<int>(1);
         //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
         //vs.put(robot_id_string, robot_id());
         timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop, this);
