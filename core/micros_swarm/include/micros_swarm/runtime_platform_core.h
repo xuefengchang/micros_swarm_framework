@@ -49,6 +49,7 @@ namespace micros_swarm{
         boost::shared_ptr<CommInterface> communicator_;
         std::string comm_name_;
         pluginlib::ClassLoader<micros_swarm::CommInterface> ci_loader_;
+        //class_loader::MultiLibraryClassLoader
         boost::shared_ptr<micros_swarm::PacketParser> parser_;
 
         ros::Timer publish_robot_base_timer_;

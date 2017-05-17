@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>comm_interface</name>
+  <name>ros_comm</name>
   <version>0.0.15</version>
-  <description>comm_interface package.</description>
+  <description>ros_comm package.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
@@ -43,9 +43,15 @@
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
+  <build_depend>micros_swarm</build_depend>
   <run_depend>message_runtime</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>std_msgs</run_depend>
+  <run_depend>micros_swarm</run_depend>
+
+  <export>
+    <micros_swarm plugin="${prefix}/ros_comm.xml"/>
+  </export>
  
 </package>

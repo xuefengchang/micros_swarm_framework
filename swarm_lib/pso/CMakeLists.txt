@@ -127,7 +127,7 @@ include_directories(
 # )
 
 add_executable(TestPso src/testpso.cpp)
-add_dependencies(TestPso ${micros_swarm_EXPORTED_TARGETS})
+#add_dependencies(TestPso ${micros_swarm_EXPORTED_TARGETS})
 target_link_libraries(TestPso
   ${Boost_THREAD_LIBRARY}
   ${Boost_REGEX_LIBRARY}

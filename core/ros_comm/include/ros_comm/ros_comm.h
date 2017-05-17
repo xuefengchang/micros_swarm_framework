@@ -28,16 +28,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <pluginlib/class_list_macros.h>
 
 #include "micros_swarm/comm_interface.h"
-#include "micros_swarm/MSFPPacket.h"
+#include "ros_comm/GSDFPacket.h"
 
-namespace micros_swarm{
+namespace ros_comm{
     
-    class ROSComm : public CommInterface{
+    class ROSComm : public micros_swarm::CommInterface{
         public:
             ROSComm();
-            void init(std::string name, boost::function<void(const CommPacket& packet)> func);
-            void broadcast(const CommPacket& packet);
-            void callback(const MSFPPacket& ros_msg);
+            void init(std::string name, boost::function<void(const micros_swarm::CommPacket& packet)> func);
+            void broadcast(const micros_swarm::CommPacket& packet);
+            void callback(const GSDFPacket& ros_msg);
             void receive();
         private:
             std::string name_;

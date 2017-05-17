@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(micros_swarm)
+project(ros_comm)
 
 #use c++ 11
 set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
@@ -10,7 +10,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-  app_loader
+  message_generation
+  micros_swarm
 )
 
 find_package(Boost REQUIRED COMPONENTS
@@ -23,14 +24,8 @@ find_package(Boost REQUIRED COMPONENTS
 include_directories(
   ${Boost_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
+  ${DDS_INCLUDE_DIRS}
   include
-)
-
-## catkin specific configuration ##
-catkin_package(
-  INCLUDE_DIRS include
-  CATKIN_DEPENDS
-    roscpp rospy std_msgs app_loader
 )
 
 link_directories(
@@ -40,40 +35,41 @@ link_directories(
   ${catkin_LIBRARY_DIRS}
 )
 
-## Declare a C++ library
-add_library(rtp_core
-  src/runtime_platform.cpp
-  src/runtime_platform_core.cpp
+## Generate messages in the 'msg' folder
+add_message_files(
+  DIRECTORY msg
+  FILES
+  GSDFPacket.msg
 )
-#add_dependencies(rtp_core ${micros_swarm_EXPORTED_TARGETS})
-
-target_link_libraries(rtp_core
-  ${Boost_THREAD_LIBRARY}
-  ${Boost_REGEX_LIBRARY}
-  ${Boost_SERIALIZATION_LIBRARY}
-  ${catkin_LIBRARIES}
+## Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  std_msgs
 )
 
-add_library(rtp_manager
-  src/runtime_platform_manager.cpp
+## catkin specific configuration ##
+catkin_package(
+  INCLUDE_DIRS
+  include
+  CATKIN_DEPENDS
+  roscpp rospy message_runtime std_msgs micros_swarm
 )
-#add_dependencies(rtp_manager ${micros_swarm_EXPORTED_TARGETS})
-target_link_libraries(rtp_manager rtp_core)
 
-add_executable(rtp_manager_node
-  src/rtp_manager_node.cpp
-)
-target_link_libraries(rtp_manager_node rtp_manager)
+add_library(ROSComm src/ros_comm.cpp)
+add_dependencies(ROSComm ${ros_comm_EXPORTED_TARGETS})
 
 ## Mark executables and/or libraries for installation
-install(TARGETS rtp_core rtp_manager rtp_manager_node
+install(TARGETS ROSComm
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(FILES ros_comm.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 install(DIRECTORY
   include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
-

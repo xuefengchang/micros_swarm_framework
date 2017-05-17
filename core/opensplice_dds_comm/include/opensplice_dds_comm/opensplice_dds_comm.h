@@ -24,6 +24,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define OPENSPLICE_DDS_COMM_H_
 
 #include <iostream>
+#include <pluginlib/class_list_macros.h>
+#include <class_loader/multi_library_class_loader.h>
 
 #include "micros_swarm/comm_interface.h"
 #include "MSFPPacket.h"
@@ -35,49 +37,12 @@ namespace opensplice_dds_comm{
     
     class OpenSpliceDDSComm : public micros_swarm::CommInterface{
         public:
-            OpenSpliceDDSComm()
-            {
-                name_="OPENSPLICE_DDS";
-                packet_publisher_.reset(new opensplice_dds_comm::Publisher("micros_swarm_framework_topic"));
-                packet_subscriber_.reset(new opensplice_dds_comm::Subscriber("micros_swarm_framework_topic"));
-            }
-
-            void init(std::string name, boost::function<void(const micros_swarm::CommPacket& packet)> func)
-            {
-                name_=name;
-                parser_func_=func;
-            }
-
-            void broadcast(const micros_swarm::CommPacket& packet)
-            {
-                opensplice_dds_comm::MSFPPacket dds_msg;
-                dds_msg.packet_source=packet.packet_source;
-                dds_msg.packet_version=packet.packet_version;
-                dds_msg.packet_type=packet.packet_type;
-                dds_msg.packet_data=packet.packet_data.data();
-                dds_msg.package_check_sum=packet.package_check_sum;
-
-                packet_publisher_->publish(dds_msg);
-            }
-
-            void callback(const opensplice_dds_comm::MSFPPacket& dds_msg)
-            {
-                micros_swarm::CommPacket packet;
-                packet.packet_source=dds_msg.packet_source;
-                packet.packet_version=dds_msg.packet_version;
-                packet.packet_type=dds_msg.packet_type;
-                packet.packet_data=dds_msg.packet_data;
-                packet.package_check_sum=dds_msg.package_check_sum;
-
-                parser_func_(packet);
-            }
-            
-            void receive()
-            {
-                packet_subscriber_->subscribe(&OpenSpliceDDSComm::callback);
-            }
-            
+            OpenSpliceDDSComm();
+            void init(std::string name, boost::function<void(const micros_swarm::CommPacket& packet)> func);
+            void broadcast(const micros_swarm::CommPacket& packet);
+            void receive();
         private:
+            void callback(const opensplice_dds_comm::MSFPPacket& dds_msg);
             std::string name_;
             boost::function<void(const micros_swarm::CommPacket& packet)> parser_func_;
             boost::shared_ptr<opensplice_dds_comm::Publisher> packet_publisher_;

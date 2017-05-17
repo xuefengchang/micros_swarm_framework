@@ -4,20 +4,10 @@ project(opensplice_dds_comm)
 #use c++ 11
 set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 
-# set communication mechanism
-option(USE_ROS "Using ROS" OFF)
-set(USE_ROS OFF CACHE BOOL "Using ROS" FORCE)
-#message("ROS?" ${ROS})
 option(USE_OPENSPLICE_DDS "Using OpenSplice DDS" OFF)
 set(USE_OPENSPLICE_DDS ON CACHE BOOL "Using OpenSplice DDS" FORCE)
-#message("OPENSPLICE_DDS?" ${OPENSPLICE_DDS})
-option(USE_OPENDDS "Using OpenDDS" OFF)
-set(USE_OPENDDS OFF CACHE BOOL "Using OpenDDS" FORCE)
-#message("OPENSPLICE_DDS?" ${OPENSPLICE_DDS})
 
-if(${USE_ROS})
-  add_definitions(-DROS)
-elseif (${USE_OPENSPLICE_DDS})
+if (${USE_OPENSPLICE_DDS})
   if (NOT DEFINED ENV{OSPL_HOME})
     message(FATAL_ERROR "OpenSplice DDS environment variable OSPL_HOME is not defined")
   endif()
@@ -26,31 +16,17 @@ elseif (${USE_OPENSPLICE_DDS})
   endif()
   set(DDS_INCLUDE_DIRS $ENV{OSPL_HOME}/include $ENV{OSPL_HOME}/include/sys $ENV{OSPL_HOME}/include/dcps/C++/SACPP $ENV{OSPL_HOME}/include/dcps/C++/isocpp)
   set(DDS_LIBRARY_DIRS $ENV{OSPL_HOME}/lib)
-  add_definitions(-DOPENSPLICE_DDS)
-elseif (${USE_OPENDDS})
-  if (NOT DEFINED ENV{DDS_ROOT}) 
-    message(FATAL_ERROR "OpenDDS environment variable DDS_ROOT is not defined")
-  endif()
-  if (NOT EXISTS $ENV{DDS_ROOT})
-    message(FATAL_ERROR "OpenDDS home directory (DDS_ROOT) dosen't exist")
-  endif()
-  set(DDS_INCLUDE_DIRS $ENV{DDS_ROOT} $ENV{ACE_ROOT}/TAO $ENV{ACE_ROOT} $ENV{DDS_ROOT}/dds/InfoRepo $ENV{DDS_ROOT}/lib)
-  set(DDS_LIBRARY_DIRS $ENV{DDS_ROOT}/lib $ENV{ACE_ROOT}/lib)
-  add_definitions(-DOPEN_DDS)
-else()
-  message("communication mechanism are not configured correctly. Using ROS default.")
-  add_definitions(-DROS)
+  set(DDS_LIBRARIES dcpssacpp ddskernel)
 endif()
 
+if (${USE_OPENSPLICE_DDS})
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
   pluginlib
   roscpp
   rospy
   std_msgs
-  nav_msgs
-  geometry_msgs
-  message_generation
+  micros_swarm
 )
 
 find_package(Boost REQUIRED COMPONENTS
@@ -72,7 +48,7 @@ catkin_package(
   INCLUDE_DIRS
     include
   CATKIN_DEPENDS
-    roscpp rospy
+    roscpp rospy micros_swarm
 )
 
 link_directories(
@@ -84,22 +60,21 @@ link_directories(
 )
 
 ## Opensplice DDS pub/sub C++ library
-if (${USE_OPENSPLICE_DDS})
-  add_library(opensplice_dds_comm
-    src/MSFPPacket.cpp
-    src/MSFPPacketDcps.cpp
-    src/MSFPPacketDcps_impl.cpp
-    src/MSFPPacketSplDcps.cpp
-    src/check_status.cpp
-    src/MSFPPacket_listener.cpp
-    src/publisher.cpp
-    src/subscriber.cpp
-  )
-  target_link_libraries(opensplice_dds_comm
-    $ENV{OSPL_HOME}/lib/libddskernel.so
-    $ENV{OSPL_HOME}/lib/libdcpsisocpp.so
-  )
-endif()
+add_library(OpenspliceDDSComm
+  src/MSFPPacket.cpp
+  src/MSFPPacketDcps.cpp
+  src/MSFPPacketDcps_impl.cpp
+  src/MSFPPacketSplDcps.cpp
+  src/check_status.cpp
+  src/MSFPPacket_listener.cpp
+  src/publisher.cpp
+  src/subscriber.cpp
+)
+#add_dependencies(OpenspliceDDSComm ${opensplice_dds_comm_EXPORTED_TARGETS})
+target_link_libraries(OpenspliceDDSComm
+  $ENV{OSPL_HOME}/lib/libddskernel.so
+  $ENV{OSPL_HOME}/lib/libdcpsisocpp.so
+)
 
 #add_executable(pub src/opensplice_dds/pub.cpp)
 #target_link_libraries(pub
@@ -112,11 +87,14 @@ endif()
 #)
 
 ## Mark executables and/or libraries for installation
-if (${USE_OPENSPLICE_DDS})
-install(TARGETS opensplice_dds_comm
+install(TARGETS OpenspliceDDSComm
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(FILES opensplice_dds_comm.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 install(DIRECTORY

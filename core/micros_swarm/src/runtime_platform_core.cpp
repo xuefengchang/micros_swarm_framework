@@ -208,7 +208,8 @@ namespace micros_swarm{
         ros::NodeHandle private_nh("~");
         private_nh.param("unique_robot_id", robot_id_, 0);
         std::cout<<"unique_robot_id = "<<robot_id_<<std::endl;
-        private_nh.param<std::string>("comm_name", comm_name_, "micros_swarm/ROSComm");
+        private_nh.param<std::string>("comm_name", comm_name_, "ros_comm/ROSComm");
+        //private_nh.param<std::string>("comm_name", comm_name_, "opensplice_dds_comm/OpenspliceDDSComm");
     }
     
     void RuntimePlatformCore::initialize()

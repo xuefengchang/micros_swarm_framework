@@ -39,32 +39,16 @@
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>message_generation</build_depend>
   <build_depend>pluginlib</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>app_loader</build_depend>
-  <build_depend>opensplice_dds_comm</build_depend>
 
-
-  <!--build_depend>comm_interface</build_depend>
-  <build_depend>ros_comm</build_depend>
-  <build_depend>opensplice_dds_comm</build_depend-->
-  
-  <run_depend>message_runtime</run_depend>
   <run_depend>pluginlib</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>app_loader</run_depend>
-  <run_depend>opensplice_dds_comm</run_depend>
-
-  <!--run_depend>comm_interface</run_depend>
-  <run_depend>ros_comm</run_depend>
-  <run_depend>opensplice_dds_comm</run_depend-->
-  <export>
-    <micros_swarm plugin="${prefix}/roscomm_plugin.xml"/>
-  </export>
  
 </package>
