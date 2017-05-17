@@ -29,9 +29,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <boost/bind.hpp>
 #include "ccpp_dds_dcps.h"
 #include "check_status.h"
-#include "ccpp_MSFPPacket.h"
+#include "ccpp_GSDFPacket.h"
 #include "example_main.h"
-#include "MSFPPacket_listener.h"
+#include "GSDFPacket_listener.h"
 
 using namespace DDS;
 
@@ -40,24 +40,24 @@ namespace opensplice_dds_comm{
     {
         public:
             Subscriber(const std::string& topic_name);
-            void subscribe(void (*callBack)(const MSFPPacket& packet));
-            void subscribe(boost::function<void(const MSFPPacket&)> callBack);
+            void subscribe(void (*callBack)(const GSDFPacket& packet));
+            void subscribe(boost::function<void(const GSDFPacket&)> callBack);
             ~Subscriber();
         private:
             DomainId_t  domain;
             ReturnCode_t  status;
             const char *topic_name_;
-            char  *MSFPPacketTypeName;
+            char  *GSDFPacketTypeName;
             
             //Generic DDS entities
             DomainParticipantFactory_var  dpf;
             DomainParticipant_var  participant;
-            Topic_var  MSFPPacketTopic;
+            Topic_var  GSDFPacketTopic;
             Subscriber_var  subscriber_;
             DataReader_ptr  parentReader;
 
-            MSFPPacketTypeSupport_var  MSFPPacketTS;
-            MSFPPacketDataReader_var  MSFPPacketDR;
+            GSDFPacketTypeSupport_var  GSDFPacketTS;
+            GSDFPacketDataReader_var  GSDFPacketDR;
 
             //QosPolicy holders
             TopicQos  topic_qos;

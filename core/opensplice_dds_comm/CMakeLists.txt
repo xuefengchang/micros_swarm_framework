@@ -5,7 +5,7 @@ project(opensplice_dds_comm)
 set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 
 option(USE_OPENSPLICE_DDS "Using OpenSplice DDS" OFF)
-set(USE_OPENSPLICE_DDS ON CACHE BOOL "Using OpenSplice DDS" FORCE)
+set(USE_OPENSPLICE_DDS OFF CACHE BOOL "Using OpenSplice DDS" FORCE)
 
 if (${USE_OPENSPLICE_DDS})
   if (NOT DEFINED ENV{OSPL_HOME})
@@ -61,12 +61,12 @@ link_directories(
 
 ## Opensplice DDS pub/sub C++ library
 add_library(opensplice_dds
-  src/MSFPPacket.cpp
-  src/MSFPPacketDcps.cpp
-  src/MSFPPacketDcps_impl.cpp
-  src/MSFPPacketSplDcps.cpp
+  src/GSDFPacket.cpp
+  src/GSDFPacketDcps.cpp
+  src/GSDFPacketDcps_impl.cpp
+  src/GSDFPacketSplDcps.cpp
   src/check_status.cpp
-  src/MSFPPacket_listener.cpp
+  src/GSDFPacket_listener.cpp
   src/publisher.cpp
   src/subscriber.cpp
 )
@@ -81,7 +81,7 @@ target_link_libraries(OpenSpliceDDSComm opensplice_dds)
 target_link_libraries(OpenSpliceDDSComm ${catkin_LIBRARIES})
 
 ## Mark executables and/or libraries for installation
-install(TARGETS OpenSpliceDDSComm
+install(TARGETS opensplice_dds OpenSpliceDDSComm
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

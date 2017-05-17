@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <class_loader/multi_library_class_loader.h>
 
 #include "micros_swarm/comm_interface.h"
-#include "MSFPPacket.h"
+#include "GSDFPacket.h"
 #include "check_status.h"
 #include "publisher.h"
 #include "subscriber.h"
@@ -42,7 +42,7 @@ namespace opensplice_dds_comm{
             void broadcast(const micros_swarm::CommPacket& packet);
             void receive();
         private:
-            void callback(const opensplice_dds_comm::MSFPPacket& dds_msg);
+            void callback(const opensplice_dds_comm::GSDFPacket& dds_msg);
             std::string name_;
             boost::function<void(const micros_swarm::CommPacket& packet)> parser_func_;
             boost::shared_ptr<opensplice_dds_comm::Publisher> packet_publisher_;

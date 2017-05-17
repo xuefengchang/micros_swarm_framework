@@ -118,7 +118,6 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${DDS_INCLUDE_DIRS}
-  #micros_swarm
 )
 
 ## Declare a C++ library
@@ -127,7 +126,6 @@ include_directories(
 # )
 
 add_library(TestNc src/testnc.cpp)
-#add_dependencies(TestNc ${micros_swarm_EXPORTED_TARGETS})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

@@ -1,66 +1,66 @@
-#include "opensplice_dds_comm/MSFPPacketDcps_impl.h"
+#include "opensplice_dds_comm/GSDFPacketDcps_impl.h"
 #include "gapi.h"
 #include "gapi_loanRegistry.h"
-#include "opensplice_dds_comm/MSFPPacketSplDcps.h"
+#include "opensplice_dds_comm/GSDFPacketSplDcps.h"
 #include "ccpp_DataReader_impl.h"
 #include "ccpp_DataReaderView_impl.h"
 
 
 extern c_bool
-__opensplice_dds_comm_MSFPPacket__copyIn(
+__opensplice_dds_comm_GSDFPacket__copyIn(
     c_base base,
-    struct opensplice_dds_comm::MSFPPacket *from,
-    struct _opensplice_dds_comm_MSFPPacket *to);
+    struct opensplice_dds_comm::GSDFPacket *from,
+    struct _opensplice_dds_comm_GSDFPacket *to);
 
 extern void
-__opensplice_dds_comm_MSFPPacket__copyOut(
+__opensplice_dds_comm_GSDFPacket__copyOut(
     void *_from,
     void *_to);
 
-// DDS opensplice_dds_comm::MSFPPacket TypeSupportFactory Object Body
+// DDS opensplice_dds_comm::GSDFPacket TypeSupportFactory Object Body
 
 ::DDS::DataWriter_ptr
-opensplice_dds_comm::MSFPPacketTypeSupportFactory::create_datawriter (gapi_dataWriter handle)
+opensplice_dds_comm::GSDFPacketTypeSupportFactory::create_datawriter (gapi_dataWriter handle)
 {
-    return new opensplice_dds_comm::MSFPPacketDataWriter_impl(handle);
+    return new opensplice_dds_comm::GSDFPacketDataWriter_impl(handle);
 }
 
 ::DDS::DataReader_ptr
-opensplice_dds_comm::MSFPPacketTypeSupportFactory::create_datareader (gapi_dataReader handle)
+opensplice_dds_comm::GSDFPacketTypeSupportFactory::create_datareader (gapi_dataReader handle)
 {
-    return new opensplice_dds_comm::MSFPPacketDataReader_impl (handle);
+    return new opensplice_dds_comm::GSDFPacketDataReader_impl (handle);
 }
 
 
 ::DDS::DataReaderView_ptr
-opensplice_dds_comm::MSFPPacketTypeSupportFactory::create_view (gapi_dataReaderView handle)
+opensplice_dds_comm::GSDFPacketTypeSupportFactory::create_view (gapi_dataReaderView handle)
 {
-    return new opensplice_dds_comm::MSFPPacketDataReaderView_impl (handle);
+    return new opensplice_dds_comm::GSDFPacketDataReaderView_impl (handle);
 }
 
-// DDS opensplice_dds_comm::MSFPPacket TypeSupport Object Body
+// DDS opensplice_dds_comm::GSDFPacket TypeSupport Object Body
 
-opensplice_dds_comm::MSFPPacketTypeSupport::MSFPPacketTypeSupport(void) :
+opensplice_dds_comm::GSDFPacketTypeSupport::GSDFPacketTypeSupport(void) :
     TypeSupport_impl(
-        __opensplice_dds_comm_MSFPPacket__name(),
-        __opensplice_dds_comm_MSFPPacket__keys(),
-        opensplice_dds_comm::MSFPPacketTypeSupport::metaDescriptor,
-        (gapi_copyIn) __opensplice_dds_comm_MSFPPacket__copyIn,
-        (gapi_copyOut) __opensplice_dds_comm_MSFPPacket__copyOut,
-        (gapi_readerCopy) ::DDS::ccpp_DataReaderCopy<opensplice_dds_comm::MSFPPacketSeq, opensplice_dds_comm::MSFPPacket>,
-        new  opensplice_dds_comm::MSFPPacketTypeSupportFactory(),
-        opensplice_dds_comm::MSFPPacketTypeSupport::metaDescriptorArrLength)
+        __opensplice_dds_comm_GSDFPacket__name(),
+        __opensplice_dds_comm_GSDFPacket__keys(),
+        opensplice_dds_comm::GSDFPacketTypeSupport::metaDescriptor,
+        (gapi_copyIn) __opensplice_dds_comm_GSDFPacket__copyIn,
+        (gapi_copyOut) __opensplice_dds_comm_GSDFPacket__copyOut,
+        (gapi_readerCopy) ::DDS::ccpp_DataReaderCopy<opensplice_dds_comm::GSDFPacketSeq, opensplice_dds_comm::GSDFPacket>,
+        new  opensplice_dds_comm::GSDFPacketTypeSupportFactory(),
+        opensplice_dds_comm::GSDFPacketTypeSupport::metaDescriptorArrLength)
 {
     // Parent constructor takes care of everything.
 }
 
-opensplice_dds_comm::MSFPPacketTypeSupport::~MSFPPacketTypeSupport(void)
+opensplice_dds_comm::GSDFPacketTypeSupport::~GSDFPacketTypeSupport(void)
 {
     // Parent destructor takes care of everything.
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketTypeSupport::register_type(
+opensplice_dds_comm::GSDFPacketTypeSupport::register_type(
     ::DDS::DomainParticipant_ptr domain,
     const char * type_name) THROW_ORB_EXCEPTIONS
 {
@@ -68,51 +68,51 @@ opensplice_dds_comm::MSFPPacketTypeSupport::register_type(
 }
 
 char *
-opensplice_dds_comm::MSFPPacketTypeSupport::get_type_name() THROW_ORB_EXCEPTIONS
+opensplice_dds_comm::GSDFPacketTypeSupport::get_type_name() THROW_ORB_EXCEPTIONS
 {
     return TypeSupport_impl::get_type_name();
 }
 
-// DDS opensplice_dds_comm::MSFPPacket DataWriter_impl Object Body
+// DDS opensplice_dds_comm::GSDFPacket DataWriter_impl Object Body
 
-opensplice_dds_comm::MSFPPacketDataWriter_impl::MSFPPacketDataWriter_impl (
+opensplice_dds_comm::GSDFPacketDataWriter_impl::GSDFPacketDataWriter_impl (
     gapi_dataWriter handle
 ) : ::DDS::DataWriter_impl(handle)
 {
     // Parent constructor takes care of everything.
 }
 
-opensplice_dds_comm::MSFPPacketDataWriter_impl::~MSFPPacketDataWriter_impl(void)
+opensplice_dds_comm::GSDFPacketDataWriter_impl::~GSDFPacketDataWriter_impl(void)
 {
     // Parent destructor takes care of everything.
 }
 
 ::DDS::InstanceHandle_t
-opensplice_dds_comm::MSFPPacketDataWriter_impl::register_instance(
-    const opensplice_dds_comm::MSFPPacket & instance_data) THROW_ORB_EXCEPTIONS
+opensplice_dds_comm::GSDFPacketDataWriter_impl::register_instance(
+    const opensplice_dds_comm::GSDFPacket & instance_data) THROW_ORB_EXCEPTIONS
 {
     return DataWriter_impl::register_instance(&instance_data);
 }
 
 ::DDS::InstanceHandle_t
-opensplice_dds_comm::MSFPPacketDataWriter_impl::register_instance_w_timestamp(
-    const MSFPPacket & instance_data,
+opensplice_dds_comm::GSDFPacketDataWriter_impl::register_instance_w_timestamp(
+    const GSDFPacket & instance_data,
     const ::DDS::Time_t & source_timestamp) THROW_ORB_EXCEPTIONS
 {
     return DataWriter_impl::register_instance_w_timestamp(&instance_data, source_timestamp);
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataWriter_impl::unregister_instance(
-    const opensplice_dds_comm::MSFPPacket & instance_data,
+opensplice_dds_comm::GSDFPacketDataWriter_impl::unregister_instance(
+    const opensplice_dds_comm::GSDFPacket & instance_data,
     ::DDS::InstanceHandle_t handle) THROW_ORB_EXCEPTIONS
 {
     return DataWriter_impl::unregister_instance(&instance_data, handle);
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataWriter_impl::unregister_instance_w_timestamp(
-    const MSFPPacket & instance_data,
+opensplice_dds_comm::GSDFPacketDataWriter_impl::unregister_instance_w_timestamp(
+    const GSDFPacket & instance_data,
     ::DDS::InstanceHandle_t handle,
     const ::DDS::Time_t & source_timestamp) THROW_ORB_EXCEPTIONS
 {
@@ -120,16 +120,16 @@ opensplice_dds_comm::MSFPPacketDataWriter_impl::unregister_instance_w_timestamp(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataWriter_impl::write(
-    const opensplice_dds_comm::MSFPPacket & instance_data,
+opensplice_dds_comm::GSDFPacketDataWriter_impl::write(
+    const opensplice_dds_comm::GSDFPacket & instance_data,
     ::DDS::InstanceHandle_t handle) THROW_ORB_EXCEPTIONS
 {
     return DataWriter_impl::write(&instance_data, handle);
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataWriter_impl::write_w_timestamp(
-    const MSFPPacket & instance_data,
+opensplice_dds_comm::GSDFPacketDataWriter_impl::write_w_timestamp(
+    const GSDFPacket & instance_data,
     ::DDS::InstanceHandle_t handle,
     const ::DDS::Time_t & source_timestamp) THROW_ORB_EXCEPTIONS
 {
@@ -137,16 +137,16 @@ opensplice_dds_comm::MSFPPacketDataWriter_impl::write_w_timestamp(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataWriter_impl::dispose(
-    const opensplice_dds_comm::MSFPPacket & instance_data,
+opensplice_dds_comm::GSDFPacketDataWriter_impl::dispose(
+    const opensplice_dds_comm::GSDFPacket & instance_data,
     ::DDS::InstanceHandle_t handle) THROW_ORB_EXCEPTIONS
 {
     return DataWriter_impl::dispose(&instance_data, handle);
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataWriter_impl::dispose_w_timestamp(
-    const MSFPPacket & instance_data,
+opensplice_dds_comm::GSDFPacketDataWriter_impl::dispose_w_timestamp(
+    const GSDFPacket & instance_data,
     ::DDS::InstanceHandle_t handle,
     const ::DDS::Time_t & source_timestamp) THROW_ORB_EXCEPTIONS
 {
@@ -154,16 +154,16 @@ opensplice_dds_comm::MSFPPacketDataWriter_impl::dispose_w_timestamp(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataWriter_impl::writedispose(
-    const opensplice_dds_comm::MSFPPacket & instance_data,
+opensplice_dds_comm::GSDFPacketDataWriter_impl::writedispose(
+    const opensplice_dds_comm::GSDFPacket & instance_data,
     ::DDS::InstanceHandle_t handle) THROW_ORB_EXCEPTIONS
 {
     return DataWriter_impl::writedispose(&instance_data, handle);
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataWriter_impl::writedispose_w_timestamp(
-    const MSFPPacket & instance_data,
+opensplice_dds_comm::GSDFPacketDataWriter_impl::writedispose_w_timestamp(
+    const GSDFPacket & instance_data,
     ::DDS::InstanceHandle_t handle,
     const ::DDS::Time_t & source_timestamp) THROW_ORB_EXCEPTIONS
 {
@@ -171,38 +171,38 @@ opensplice_dds_comm::MSFPPacketDataWriter_impl::writedispose_w_timestamp(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataWriter_impl::get_key_value(
-    MSFPPacket & key_holder,
+opensplice_dds_comm::GSDFPacketDataWriter_impl::get_key_value(
+    GSDFPacket & key_holder,
     ::DDS::InstanceHandle_t handle) THROW_ORB_EXCEPTIONS
 {
     return DataWriter_impl::get_key_value(&key_holder, handle);
 }
 
 ::DDS::InstanceHandle_t
-opensplice_dds_comm::MSFPPacketDataWriter_impl::lookup_instance(
-    const opensplice_dds_comm::MSFPPacket & instance_data) THROW_ORB_EXCEPTIONS
+opensplice_dds_comm::GSDFPacketDataWriter_impl::lookup_instance(
+    const opensplice_dds_comm::GSDFPacket & instance_data) THROW_ORB_EXCEPTIONS
 {
     return DataWriter_impl::lookup_instance(&instance_data);
 }
 
-// DDS opensplice_dds_comm::MSFPPacket DataReader_impl Object Body
+// DDS opensplice_dds_comm::GSDFPacket DataReader_impl Object Body
 
-opensplice_dds_comm::MSFPPacketDataReader_impl::MSFPPacketDataReader_impl (
+opensplice_dds_comm::GSDFPacketDataReader_impl::GSDFPacketDataReader_impl (
     gapi_dataReader handle
-) : ::DDS::DataReader_impl(handle, ::DDS::ccpp_DataReaderParallelDemarshallingMain<opensplice_dds_comm::MSFPPacketSeq>)
+) : ::DDS::DataReader_impl(handle, ::DDS::ccpp_DataReaderParallelDemarshallingMain<opensplice_dds_comm::GSDFPacketSeq>)
 {
     // Parent constructor takes care of everything.
 }
 
-opensplice_dds_comm::MSFPPacketDataReader_impl::~MSFPPacketDataReader_impl(void)
+opensplice_dds_comm::GSDFPacketDataReader_impl::~GSDFPacketDataReader_impl(void)
 {
     // Parent destructor takes care of everything.
 }
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::read(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::read(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::SampleStateMask sample_states,
@@ -219,8 +219,8 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::read(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::take(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::take(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::SampleStateMask sample_states,
@@ -237,8 +237,8 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::take(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::read_w_condition(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::read_w_condition(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::ReadCondition_ptr a_condition) THROW_ORB_EXCEPTIONS
@@ -253,8 +253,8 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::read_w_condition(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::take_w_condition(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::take_w_condition(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::ReadCondition_ptr a_condition) THROW_ORB_EXCEPTIONS
@@ -270,8 +270,8 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::take_w_condition(
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::read_next_sample(
-    opensplice_dds_comm::MSFPPacket & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::read_next_sample(
+    opensplice_dds_comm::GSDFPacket & received_data,
     ::DDS::SampleInfo & sample_info) THROW_ORB_EXCEPTIONS
 {
     return DataReader_impl::read_next_sample(&received_data, sample_info);
@@ -279,8 +279,8 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::read_next_sample(
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::take_next_sample(
-    opensplice_dds_comm::MSFPPacket & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::take_next_sample(
+    opensplice_dds_comm::GSDFPacket & received_data,
     ::DDS::SampleInfo & sample_info) THROW_ORB_EXCEPTIONS
 {
     return DataReader_impl::take_next_sample(&received_data, sample_info);
@@ -288,8 +288,8 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::take_next_sample(
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::read_instance(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::read_instance(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::InstanceHandle_t a_handle,
@@ -307,8 +307,8 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::read_instance(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::take_instance(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::take_instance(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::InstanceHandle_t a_handle,
@@ -326,8 +326,8 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::take_instance(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::read_next_instance(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::read_next_instance(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::InstanceHandle_t a_handle,
@@ -345,8 +345,8 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::read_next_instance(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::take_next_instance(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::take_next_instance(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::InstanceHandle_t a_handle,
@@ -365,8 +365,8 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::take_next_instance(
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::read_next_instance_w_condition(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::read_next_instance_w_condition(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::InstanceHandle_t a_handle,
@@ -383,8 +383,8 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::read_next_instance_w_condition(
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::take_next_instance_w_condition(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::take_next_instance_w_condition(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::InstanceHandle_t a_handle,
@@ -401,8 +401,8 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::take_next_instance_w_condition(
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::return_loan(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::return_loan(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq) THROW_ORB_EXCEPTIONS
 {
     ::DDS::ReturnCode_t status = ::DDS::RETCODE_OK;
@@ -416,7 +416,7 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::return_loan(
 
                 if ( status == ::DDS::RETCODE_OK ) {
                     if ( !received_data.release() ) {
-                        opensplice_dds_comm::MSFPPacketSeq::freebuf( received_data.get_buffer(false) );
+                        opensplice_dds_comm::GSDFPacketSeq::freebuf( received_data.get_buffer(false) );
                         received_data.replace(0, 0, NULL, false);
                         ::DDS::SampleInfoSeq::freebuf( info_seq.get_buffer(false) );
                         info_seq.replace(0, 0, NULL, false);
@@ -438,23 +438,23 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::return_loan(
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::get_key_value(
-    opensplice_dds_comm::MSFPPacket & key_holder,
+opensplice_dds_comm::GSDFPacketDataReader_impl::get_key_value(
+    opensplice_dds_comm::GSDFPacket & key_holder,
     ::DDS::InstanceHandle_t handle) THROW_ORB_EXCEPTIONS
 {
     return DataReader_impl::get_key_value(&key_holder, handle);
 }
 
 ::DDS::InstanceHandle_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::lookup_instance(
-    const opensplice_dds_comm::MSFPPacket & instance) THROW_ORB_EXCEPTIONS
+opensplice_dds_comm::GSDFPacketDataReader_impl::lookup_instance(
+    const opensplice_dds_comm::GSDFPacket & instance) THROW_ORB_EXCEPTIONS
 {
     return DataReader_impl::lookup_instance(&instance);
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReader_impl::check_preconditions(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReader_impl::check_preconditions(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples)
 {
@@ -475,24 +475,24 @@ opensplice_dds_comm::MSFPPacketDataReader_impl::check_preconditions(
 }
 
 
-// DDS opensplice_dds_comm::MSFPPacket DataReaderView_impl Object Body
+// DDS opensplice_dds_comm::GSDFPacket DataReaderView_impl Object Body
 
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::MSFPPacketDataReaderView_impl (
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::GSDFPacketDataReaderView_impl (
     gapi_dataReaderView handle
 ) : ::DDS::DataReaderView_impl(handle)
 {
     // Parent constructor takes care of everything.
 }
 
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::~MSFPPacketDataReaderView_impl(void)
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::~GSDFPacketDataReaderView_impl(void)
 {
     // Parent destructor takes care of everything.
 }
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::read(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::read(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::SampleStateMask sample_states,
@@ -501,7 +501,7 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::read(
 {
     ::DDS::ReturnCode_t status;
 
-    status = opensplice_dds_comm::MSFPPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
+    status = opensplice_dds_comm::GSDFPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
     if ( status == ::DDS::RETCODE_OK ) {
         status = DataReaderView_impl::read(&received_data, info_seq, max_samples, sample_states, view_states, instance_states);
     }
@@ -509,8 +509,8 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::read(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::take(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::take(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::SampleStateMask sample_states,
@@ -519,7 +519,7 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::take(
 {
     ::DDS::ReturnCode_t status;
 
-    status = opensplice_dds_comm::MSFPPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
+    status = opensplice_dds_comm::GSDFPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
     if ( status == ::DDS::RETCODE_OK ) {
         status = DataReaderView_impl::take(&received_data, info_seq, max_samples, sample_states, view_states, instance_states);
     }
@@ -527,15 +527,15 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::take(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::read_w_condition(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::read_w_condition(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::ReadCondition_ptr a_condition) THROW_ORB_EXCEPTIONS
 {
     ::DDS::ReturnCode_t status;
 
-    status = opensplice_dds_comm::MSFPPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
+    status = opensplice_dds_comm::GSDFPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
     if ( status == ::DDS::RETCODE_OK ) {
         status = DataReaderView_impl::read_w_condition(&received_data, info_seq, max_samples, a_condition);
     }
@@ -543,15 +543,15 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::read_w_condition(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::take_w_condition(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::take_w_condition(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::ReadCondition_ptr a_condition) THROW_ORB_EXCEPTIONS
 {
     ::DDS::ReturnCode_t status;
 
-    status = opensplice_dds_comm::MSFPPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
+    status = opensplice_dds_comm::GSDFPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
     if ( status == ::DDS::RETCODE_OK ) {
         status = DataReaderView_impl::take_w_condition(&received_data, info_seq, max_samples, a_condition);
     }
@@ -560,8 +560,8 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::take_w_condition(
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::read_next_sample(
-    opensplice_dds_comm::MSFPPacket & received_data,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::read_next_sample(
+    opensplice_dds_comm::GSDFPacket & received_data,
     ::DDS::SampleInfo & sample_info) THROW_ORB_EXCEPTIONS
 {
     return DataReaderView_impl::read_next_sample(&received_data, sample_info);
@@ -569,8 +569,8 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::read_next_sample(
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::take_next_sample(
-    opensplice_dds_comm::MSFPPacket & received_data,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::take_next_sample(
+    opensplice_dds_comm::GSDFPacket & received_data,
     ::DDS::SampleInfo & sample_info) THROW_ORB_EXCEPTIONS
 {
     return DataReaderView_impl::take_next_sample(&received_data, sample_info);
@@ -578,8 +578,8 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::take_next_sample(
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::read_instance(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::read_instance(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::InstanceHandle_t a_handle,
@@ -589,7 +589,7 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::read_instance(
 {
     ::DDS::ReturnCode_t status;
 
-    status = opensplice_dds_comm::MSFPPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
+    status = opensplice_dds_comm::GSDFPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
     if ( status == ::DDS::RETCODE_OK ) {
         status = DataReaderView_impl::read_instance(&received_data, info_seq, max_samples, a_handle, sample_states, view_states, instance_states);
     }
@@ -597,8 +597,8 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::read_instance(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::take_instance(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::take_instance(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::InstanceHandle_t a_handle,
@@ -608,7 +608,7 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::take_instance(
 {
     ::DDS::ReturnCode_t status;
 
-    status = opensplice_dds_comm::MSFPPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
+    status = opensplice_dds_comm::GSDFPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
     if ( status == ::DDS::RETCODE_OK ) {
         status = DataReaderView_impl::take_instance(&received_data, info_seq, max_samples, a_handle, sample_states, view_states, instance_states);
     }
@@ -616,8 +616,8 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::take_instance(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::read_next_instance(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::read_next_instance(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::InstanceHandle_t a_handle,
@@ -627,7 +627,7 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::read_next_instance(
 {
     ::DDS::ReturnCode_t status;
 
-    status = opensplice_dds_comm::MSFPPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
+    status = opensplice_dds_comm::GSDFPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
     if ( status == ::DDS::RETCODE_OK ) {
         status = DataReaderView_impl::read_next_instance(&received_data, info_seq, max_samples, a_handle, sample_states, view_states, instance_states);
     }
@@ -635,8 +635,8 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::read_next_instance(
 }
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::take_next_instance(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::take_next_instance(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::InstanceHandle_t a_handle,
@@ -646,7 +646,7 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::take_next_instance(
 {
     ::DDS::ReturnCode_t status;
 
-    status = opensplice_dds_comm::MSFPPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
+    status = opensplice_dds_comm::GSDFPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
     if ( status == ::DDS::RETCODE_OK ) {
         status = DataReaderView_impl::take_next_instance(&received_data, info_seq, max_samples, a_handle, sample_states, view_states, instance_states);
     }
@@ -655,8 +655,8 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::take_next_instance(
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::read_next_instance_w_condition(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::read_next_instance_w_condition(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::InstanceHandle_t a_handle,
@@ -664,7 +664,7 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::read_next_instance_w_conditi
 {
     ::DDS::ReturnCode_t status;
 
-    status = opensplice_dds_comm::MSFPPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
+    status = opensplice_dds_comm::GSDFPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
     if ( status == ::DDS::RETCODE_OK ) {
         status = DataReaderView_impl::read_next_instance_w_condition(&received_data, info_seq, max_samples, a_handle, a_condition);
     }
@@ -673,8 +673,8 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::read_next_instance_w_conditi
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::take_next_instance_w_condition(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::take_next_instance_w_condition(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq,
     ::DDS::Long max_samples,
     ::DDS::InstanceHandle_t a_handle,
@@ -682,7 +682,7 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::take_next_instance_w_conditi
 {
     ::DDS::ReturnCode_t status;
 
-    status = opensplice_dds_comm::MSFPPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
+    status = opensplice_dds_comm::GSDFPacketDataReader_impl::check_preconditions(received_data, info_seq, max_samples);
     if ( status == ::DDS::RETCODE_OK ) {
         status = DataReaderView_impl::take_next_instance_w_condition(&received_data, info_seq, max_samples, a_handle, a_condition);
     }
@@ -691,8 +691,8 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::take_next_instance_w_conditi
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::return_loan(
-    opensplice_dds_comm::MSFPPacketSeq & received_data,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::return_loan(
+    opensplice_dds_comm::GSDFPacketSeq & received_data,
     ::DDS::SampleInfoSeq & info_seq) THROW_ORB_EXCEPTIONS
 {
     ::DDS::ReturnCode_t status = ::DDS::RETCODE_OK;
@@ -706,7 +706,7 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::return_loan(
 
                 if ( status == ::DDS::RETCODE_OK ) {
                     if ( !received_data.release() ) {
-                        opensplice_dds_comm::MSFPPacketSeq::freebuf( received_data.get_buffer(false) );
+                        opensplice_dds_comm::GSDFPacketSeq::freebuf( received_data.get_buffer(false) );
                         received_data.replace(0, 0, NULL, false);
                         ::DDS::SampleInfoSeq::freebuf( info_seq.get_buffer(false) );
                         info_seq.replace(0, 0, NULL, false);
@@ -728,24 +728,24 @@ opensplice_dds_comm::MSFPPacketDataReaderView_impl::return_loan(
 
 
 ::DDS::ReturnCode_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::get_key_value(
-    opensplice_dds_comm::MSFPPacket & key_holder,
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::get_key_value(
+    opensplice_dds_comm::GSDFPacket & key_holder,
     ::DDS::InstanceHandle_t handle) THROW_ORB_EXCEPTIONS
 {
     return DataReaderView_impl::get_key_value(&key_holder, handle);
 }
 
 ::DDS::InstanceHandle_t
-opensplice_dds_comm::MSFPPacketDataReaderView_impl::lookup_instance(
-    const opensplice_dds_comm::MSFPPacket & instance) THROW_ORB_EXCEPTIONS
+opensplice_dds_comm::GSDFPacketDataReaderView_impl::lookup_instance(
+    const opensplice_dds_comm::GSDFPacket & instance) THROW_ORB_EXCEPTIONS
 {
     return DataReaderView_impl::lookup_instance(&instance);
 }
 
 
 
-const char * ::opensplice_dds_comm::MSFPPacketTypeSupport::metaDescriptor[] = {"<MetaData version=\"1.0.0\"><Module name=\"opensplice_dds_comm\"><Struct name=\"MSFPPacket\"><Member name=\"packet_source\">",
+const char * ::opensplice_dds_comm::GSDFPacketTypeSupport::metaDescriptor[] = {"<MetaData version=\"1.0.0\"><Module name=\"opensplice_dds_comm\"><Struct name=\"GSDFPacket\"><Member name=\"packet_source\">",
 "<Long/></Member><Member name=\"packet_version\"><UShort/></Member><Member name=\"packet_type\"><UShort/>",
 "</Member><Member name=\"packet_data\"><String/></Member><Member name=\"package_check_sum\"><LongLong/>",
 "</Member></Struct></Module></MetaData>"};
-const ::DDS::ULong (::opensplice_dds_comm::MSFPPacketTypeSupport::metaDescriptorArrLength) = 4;
+const ::DDS::ULong (::opensplice_dds_comm::GSDFPacketTypeSupport::metaDescriptorArrLength) = 4;

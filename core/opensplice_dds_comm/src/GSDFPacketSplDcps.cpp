@@ -1,15 +1,15 @@
-#include "opensplice_dds_comm/MSFPPacketSplDcps.h"
-#include "opensplice_dds_comm/ccpp_MSFPPacket.h"
+#include "opensplice_dds_comm/GSDFPacketSplDcps.h"
+#include "opensplice_dds_comm/ccpp_GSDFPacket.h"
 #include "dds_type_aliases.h"
 
 const char *
-__opensplice_dds_comm_MSFPPacket__name(void)
+__opensplice_dds_comm_GSDFPacket__name(void)
 {
-    return (const char*)"opensplice_dds_comm::MSFPPacket";
+    return (const char*)"opensplice_dds_comm::GSDFPacket";
 }
 
 const char *
-__opensplice_dds_comm_MSFPPacket__keys(void)
+__opensplice_dds_comm_GSDFPacket__keys(void)
 {
     return (const char*)"";
 }
@@ -21,10 +21,10 @@ __opensplice_dds_comm_MSFPPacket__keys(void)
 #include <os_report.h>
 
 c_bool
-__opensplice_dds_comm_MSFPPacket__copyIn(
+__opensplice_dds_comm_GSDFPacket__copyIn(
     c_base base,
-    struct ::opensplice_dds_comm::MSFPPacket *from,
-    struct _opensplice_dds_comm_MSFPPacket *to)
+    struct ::opensplice_dds_comm::GSDFPacket *from,
+    struct _opensplice_dds_comm_GSDFPacket *to)
 {
     c_bool result = OS_C_TRUE;
     (void) base;
@@ -36,7 +36,7 @@ __opensplice_dds_comm_MSFPPacket__copyIn(
     if(from->packet_data){
         to->packet_data = c_stringNew(base, from->packet_data);
     } else {
-        OS_REPORT (OS_ERROR, "copyIn", 0,"Member 'opensplice_dds_comm::MSFPPacket.packet_data' of type 'c_string' is NULL.");
+        OS_REPORT (OS_ERROR, "copyIn", 0,"Member 'opensplice_dds_comm::GSDFPacket.packet_data' of type 'c_string' is NULL.");
         result = OS_C_FALSE;
     }
 #else
@@ -47,12 +47,12 @@ __opensplice_dds_comm_MSFPPacket__copyIn(
 }
 
 void
-__opensplice_dds_comm_MSFPPacket__copyOut(
+__opensplice_dds_comm_GSDFPacket__copyOut(
     void *_from,
     void *_to)
 {
-    struct _opensplice_dds_comm_MSFPPacket *from = (struct _opensplice_dds_comm_MSFPPacket *)_from;
-    struct ::opensplice_dds_comm::MSFPPacket *to = (struct ::opensplice_dds_comm::MSFPPacket *)_to;
+    struct _opensplice_dds_comm_GSDFPacket *from = (struct _opensplice_dds_comm_GSDFPacket *)_from;
+    struct ::opensplice_dds_comm::GSDFPacket *to = (struct ::opensplice_dds_comm::GSDFPacket *)_to;
     to->packet_source = (::DDS::Long)from->packet_source;
     to->packet_version = (::DDS::UShort)from->packet_version;
     to->packet_type = (::DDS::UShort)from->packet_type;

@@ -118,7 +118,6 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${DDS_INCLUDE_DIRS}
-  #micros_swarm
 )
 
 ## Declare a C++ library

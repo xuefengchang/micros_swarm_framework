@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      MSFPPacket_listener.h
+\file      GSDFPacket_listener.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,8 +20,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef MSFPPACKET_LISTENER_H_
-#define MSFPPACKET_LISTENER_H_
+#ifndef GSDFPACKET_LISTENER_H_
+#define GSDFPACKET_LISTENER_H_
 
 #include <string>
 #include <sstream>
@@ -30,16 +30,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <boost/bind.hpp>
 #include "ccpp_dds_dcps.h" 
 #include "check_status.h"
-#include "ccpp_MSFPPacket.h"
+#include "ccpp_GSDFPacket.h"
 
 namespace opensplice_dds_comm{
 
-    class MSFPPacketListener: public virtual DDS::DataReaderListener
+    class GSDFPacketListener: public virtual DDS::DataReaderListener
     {
         public:
-            boost::function<void(const MSFPPacket&)> callBack_;
+            boost::function<void(const GSDFPacket&)> callBack_;
 
-	        MSFPPacketListener () 
+	        GSDFPacketListener ()
 	        {
 		    
 	        }

@@ -197,6 +197,15 @@ namespace micros_swarm{
         }else{
             std::cout<<"total_robot_numbers = "<<total_robot_numbers_<<std::endl;
         }
+
+        param_ok =node_handle_.getParam("/comm_name", comm_name_);
+        if(!param_ok)
+        {
+            std::cout<<"could not get parameter comm_name, use the default ros_comm."<<std::endl;
+            comm_name_="ros_comm/ROSComm";
+        }else{
+            std::cout<<"comm_name: "<<comm_name_<<std::endl;
+        }
     
         /*param_ok =node_handle_.getParam("unique_robot_id", robot_id_);
         if(!param_ok)
@@ -210,7 +219,7 @@ namespace micros_swarm{
         private_nh.param("unique_robot_id", robot_id_, 0);
         std::cout<<"unique_robot_id = "<<robot_id_<<std::endl;
         //private_nh.param<std::string>("comm_name", comm_name_, "ros_comm/ROSComm");
-        private_nh.param<std::string>("comm_name", comm_name_, "opensplice_dds_comm/OpenSpliceDDSComm");
+        //private_nh.param<std::string>("comm_name", comm_name_, "opensplice_dds_comm/OpenSpliceDDSComm");
     }
     
     void RuntimePlatformCore::initialize()

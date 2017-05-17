@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      MSFPPacket_listener.cpp
+\file      GSDFPacket_listener.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,7 +20,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "opensplice_dds_comm/MSFPPacket_listener.h"
+#include "opensplice_dds_comm/GSDFPacket_listener.h"
 #include "opensplice_dds_comm/check_status.h"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -33,18 +33,18 @@ using namespace DDS;
 
 namespace opensplice_dds_comm{
 
-    void MSFPPacketListener::on_data_available(DDS::DataReader_ptr reader)
+    void GSDFPacketListener::on_data_available(DDS::DataReader_ptr reader)
       THROW_ORB_EXCEPTIONS
     {
         DDS::ReturnCode_t status;
-        MSFPPacketSeq packetSeq;
+        GSDFPacketSeq packetSeq;
         SampleInfoSeq infoSeq;
         
-        MSFPPacketDataReader_var MSFPPacketDR_ = MSFPPacketDataReader::_narrow(reader);
+        GSDFPacketDataReader_var GSDFPacketDR_ = GSDFPacketDataReader::_narrow(reader);
 
-        status = MSFPPacketDR_->take(packetSeq, infoSeq, LENGTH_UNLIMITED,
+        status = GSDFPacketDR_->take(packetSeq, infoSeq, LENGTH_UNLIMITED,
         ANY_SAMPLE_STATE, ANY_VIEW_STATE, ANY_INSTANCE_STATE);
-        checkStatus(status, "MSFPPacketDataReader::read");
+        checkStatus(status, "GSDFPacketDataReader::read");
 
         for (CORBA::ULong i = 0; i < packetSeq.length(); i++)
         {
@@ -54,45 +54,45 @@ namespace opensplice_dds_comm{
                 return;
             }
         }
-        status = MSFPPacketDR_->return_loan(packetSeq, infoSeq);
-        checkStatus(status, "MSFPPacketDataReader::return_loan");
+        status = GSDFPacketDR_->return_loan(packetSeq, infoSeq);
+        checkStatus(status, "GSDFPacketDataReader::return_loan");
     };
 
-    void MSFPPacketListener::on_requested_deadline_missed(DDS::DataReader_ptr
+    void GSDFPacketListener::on_requested_deadline_missed(DDS::DataReader_ptr
       reader, const DDS::RequestedDeadlineMissedStatus &status)THROW_ORB_EXCEPTIONS
     {
-        printf("\n=== [MSFPPacketListener::on_requested_deadline_missed] : triggered\n");
-        printf("\n=== [MSFPPacketListener::on_requested_deadline_missed] : stopping\n");
+        printf("\n=== [GSDFPacketListener::on_requested_deadline_missed] : triggered\n");
+        printf("\n=== [GSDFPacketListener::on_requested_deadline_missed] : stopping\n");
     };
 
-    void MSFPPacketListener::on_requested_incompatible_qos(DDS::DataReader_ptr
+    void GSDFPacketListener::on_requested_incompatible_qos(DDS::DataReader_ptr
       reader, const DDS::RequestedIncompatibleQosStatus &status)
       THROW_ORB_EXCEPTIONS
     {
-        printf("\n=== [MSFPPacketListener::on_requested_incompatible_qos] : triggered\n");
+        printf("\n=== [GSDFPacketListener::on_requested_incompatible_qos] : triggered\n");
     };
 
-    void MSFPPacketListener::on_sample_rejected(DDS::DataReader_ptr reader, const
+    void GSDFPacketListener::on_sample_rejected(DDS::DataReader_ptr reader, const
       DDS::SampleRejectedStatus &status)THROW_ORB_EXCEPTIONS
     {
-        printf("\n=== [MSFPPacketListener::on_sample_rejected] : triggered\n");
+        printf("\n=== [GSDFPacketListener::on_sample_rejected] : triggered\n");
     };
 
-    void MSFPPacketListener::on_liveliness_changed(DDS::DataReader_ptr reader,
+    void GSDFPacketListener::on_liveliness_changed(DDS::DataReader_ptr reader,
       const DDS::LivelinessChangedStatus &status)THROW_ORB_EXCEPTIONS
     {
-        printf("\n=== [MSFPPacketListener::on_liveliness_changed] : triggered\n");
+        printf("\n=== [GSDFPacketListener::on_liveliness_changed] : triggered\n");
     };
 
-    void MSFPPacketListener::on_subscription_matched(DDS::DataReader_ptr reader,
+    void GSDFPacketListener::on_subscription_matched(DDS::DataReader_ptr reader,
       const DDS::SubscriptionMatchedStatus &status)THROW_ORB_EXCEPTIONS
     {
-        printf("\n=== [MSFPPacketListener::on_subscription_matched] : triggered\n");
+        printf("\n=== [GSDFPacketListener::on_subscription_matched] : triggered\n");
     };
 
-    void MSFPPacketListener::on_sample_lost(DDS::DataReader_ptr reader, const DDS
+    void GSDFPacketListener::on_sample_lost(DDS::DataReader_ptr reader, const DDS
       ::SampleLostStatus &status)THROW_ORB_EXCEPTIONS
     {
-        printf("\n=== [MSFPPacketListener::on_sample_lost] : triggered\n");
+        printf("\n=== [GSDFPacketListener::on_sample_lost] : triggered\n");
     };
 };

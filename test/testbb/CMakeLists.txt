@@ -10,7 +10,6 @@ set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs micros_swarm)
 
-
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 
@@ -119,7 +118,6 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${DDS_INCLUDE_DIRS}
-  #micros_swarm
 )
 
 ## Declare a C++ library
@@ -128,7 +126,6 @@ include_directories(
 # )
 
 add_library(TestBb src/testbb.cpp)
-#add_dependencies(TestBb ${micros_swarm_EXPORTED_TARGETS})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

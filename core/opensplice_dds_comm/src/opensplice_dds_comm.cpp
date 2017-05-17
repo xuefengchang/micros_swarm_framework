@@ -44,7 +44,7 @@ namespace opensplice_dds_comm{
 
     void OpenSpliceDDSComm::broadcast(const micros_swarm::CommPacket& packet)
     {
-        opensplice_dds_comm::MSFPPacket dds_msg;
+        opensplice_dds_comm::GSDFPacket dds_msg;
         dds_msg.packet_source=packet.packet_source;
         dds_msg.packet_version=packet.packet_version;
         dds_msg.packet_type=packet.packet_type;
@@ -54,7 +54,7 @@ namespace opensplice_dds_comm{
         packet_publisher_->publish(dds_msg);
     }
 
-    void OpenSpliceDDSComm::callback(const opensplice_dds_comm::MSFPPacket& dds_msg)
+    void OpenSpliceDDSComm::callback(const opensplice_dds_comm::GSDFPacket& dds_msg)
     {
         micros_swarm::CommPacket packet;
         packet.packet_source=dds_msg.packet_source;
@@ -68,7 +68,7 @@ namespace opensplice_dds_comm{
             
     void OpenSpliceDDSComm::receive()
     {
-        boost::function<void(const opensplice_dds_comm::MSFPPacket&)> func=boost::bind(&OpenSpliceDDSComm::callback,this,_1);
+        boost::function<void(const opensplice_dds_comm::GSDFPacket&)> func=boost::bind(&OpenSpliceDDSComm::callback,this,_1);
         packet_subscriber_->subscribe(func);
     }
 };

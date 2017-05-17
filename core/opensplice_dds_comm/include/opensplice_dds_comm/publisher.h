@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <vector>
 #include "ccpp_dds_dcps.h"
 #include "check_status.h"
-#include "ccpp_MSFPPacket.h"
+#include "ccpp_GSDFPacket.h"
 #include "example_main.h"
 
 using namespace DDS;
@@ -38,16 +38,16 @@ namespace opensplice_dds_comm{
     {
         public:
             Publisher(const std::string& topic_name);
-            void publish(const MSFPPacket& packet);
+            void publish(const GSDFPacket& packet);
             ~Publisher();
         private:
             DomainId_t  domain;
             const char *topic_name_;
-            char  *MSFPPacketTypeName;
+            char  *GSDFPacketTypeName;
             
             DomainParticipantFactory_var  dpf;
             DomainParticipant_var  participant;
-            Topic_var  MSFPPacketTopic;
+            Topic_var  GSDFPacketTopic;
             Publisher_var  publisher_;
             DataWriter_ptr  parentWriter;
             TopicQos  topic_qos;
@@ -56,8 +56,8 @@ namespace opensplice_dds_comm{
 
             ReturnCode_t  status;
 
-            MSFPPacketTypeSupport_var  MSFPPacketTS;
-            MSFPPacketDataWriter_var  MSFPPacketDW;
+            GSDFPacketTypeSupport_var  GSDFPacketTS;
+            GSDFPacketDataWriter_var  GSDFPacketDW;
     };
 };
 

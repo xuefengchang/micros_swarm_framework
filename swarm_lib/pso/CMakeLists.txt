@@ -118,7 +118,6 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${DDS_INCLUDE_DIRS}
-  #micros_swarm
 )
 
 ## Declare a C++ library
@@ -127,7 +126,6 @@ include_directories(
 # )
 
 add_executable(TestPso src/testpso.cpp)
-#add_dependencies(TestPso ${micros_swarm_EXPORTED_TARGETS})
 target_link_libraries(TestPso
   ${Boost_THREAD_LIBRARY}
   ${Boost_REGEX_LIBRARY}
