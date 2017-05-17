@@ -37,6 +37,7 @@ namespace micros_swarm{
         delete spin_thread_;
 
         rtp_.reset();
+        parser_.reset();
         communicator_.reset();
         ci_loader_.unloadLibraryForClass(comm_name_);
     }
@@ -208,8 +209,8 @@ namespace micros_swarm{
         ros::NodeHandle private_nh("~");
         private_nh.param("unique_robot_id", robot_id_, 0);
         std::cout<<"unique_robot_id = "<<robot_id_<<std::endl;
-        private_nh.param<std::string>("comm_name", comm_name_, "ros_comm/ROSComm");
-        //private_nh.param<std::string>("comm_name", comm_name_, "opensplice_dds_comm/OpenspliceDDSComm");
+        //private_nh.param<std::string>("comm_name", comm_name_, "ros_comm/ROSComm");
+        private_nh.param<std::string>("comm_name", comm_name_, "opensplice_dds_comm/OpenSpliceDDSComm");
     }
     
     void RuntimePlatformCore::initialize()

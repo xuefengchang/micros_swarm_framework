@@ -1,5 +1,5 @@
-<library path="lib/libOpenspliceDDSComm">
-    <class name="opensplice_dds_comm/OpenspliceDDSComm" type="opensplice_dds_comm::OpenspliceDDSComm" base_class_type="micros_swarm::CommInterface">
+<library path="lib/libOpenSpliceDDSComm">
+    <class name="opensplice_dds_comm/OpenSpliceDDSComm" type="opensplice_dds_comm::OpenSpliceDDSComm" base_class_type="micros_swarm::CommInterface">
         <description>Opensplice DDS comm interface.</description>
     </class>
 </library>

@@ -24,10 +24,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "micros_swarm/comm_interface.h"
 #include "opensplice_dds_comm/opensplice_dds_comm.h"
-#include "MSFPPacket.h"
-#include "check_status.h"
-#include "publisher.h"
-#include "subscriber.h"
 
 PLUGINLIB_EXPORT_CLASS(opensplice_dds_comm::OpenSpliceDDSComm, micros_swarm::CommInterface)
 
@@ -40,13 +36,13 @@ namespace opensplice_dds_comm{
         packet_subscriber_.reset(new opensplice_dds_comm::Subscriber("micros_swarm_framework_topic"));
     }
 
-    void init(std::string name, boost::function<void(const micros_swarm::CommPacket& packet)> func)
+    void OpenSpliceDDSComm::init(std::string name, boost::function<void(const micros_swarm::CommPacket& packet)> func)
     {
         name_=name;
         parser_func_=func;
     }
 
-    void broadcast(const micros_swarm::CommPacket& packet)
+    void OpenSpliceDDSComm::broadcast(const micros_swarm::CommPacket& packet)
     {
         opensplice_dds_comm::MSFPPacket dds_msg;
         dds_msg.packet_source=packet.packet_source;
@@ -58,7 +54,7 @@ namespace opensplice_dds_comm{
         packet_publisher_->publish(dds_msg);
     }
 
-    void callback(const opensplice_dds_comm::MSFPPacket& dds_msg)
+    void OpenSpliceDDSComm::callback(const opensplice_dds_comm::MSFPPacket& dds_msg)
     {
         micros_swarm::CommPacket packet;
         packet.packet_source=dds_msg.packet_source;
@@ -70,8 +66,9 @@ namespace opensplice_dds_comm{
         parser_func_(packet);
     }
             
-    void receive()
+    void OpenSpliceDDSComm::receive()
     {
-        packet_subscriber_->subscribe(&OpenSpliceDDSComm::callback);
+        boost::function<void(const opensplice_dds_comm::MSFPPacket&)> func=boost::bind(&OpenSpliceDDSComm::callback,this,_1);
+        packet_subscriber_->subscribe(func);
     }
 };

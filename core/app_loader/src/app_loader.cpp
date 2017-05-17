@@ -33,7 +33,7 @@ namespace app_loader{
 
         //get app name and type
         private_nh.param("app_name", app_name_, std::string("app_demo"));
-        private_nh.param("app_type", app_type_, std::string("micros_swarm_framework/AppDemo"));
+        private_nh.param("app_type", app_type_, std::string("micros_swarm/AppDemo"));
 
         ros::ServiceClient client = nh.serviceClient<app_loader::AppLoad>("micros_swarm_framework_load_app");
         app_loader::AppLoad srv;

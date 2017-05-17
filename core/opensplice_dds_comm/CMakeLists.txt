@@ -60,7 +60,7 @@ link_directories(
 )
 
 ## Opensplice DDS pub/sub C++ library
-add_library(OpenspliceDDSComm
+add_library(opensplice_dds
   src/MSFPPacket.cpp
   src/MSFPPacketDcps.cpp
   src/MSFPPacketDcps_impl.cpp
@@ -71,23 +71,17 @@ add_library(OpenspliceDDSComm
   src/subscriber.cpp
 )
 #add_dependencies(OpenspliceDDSComm ${opensplice_dds_comm_EXPORTED_TARGETS})
-target_link_libraries(OpenspliceDDSComm
+target_link_libraries(opensplice_dds
   $ENV{OSPL_HOME}/lib/libddskernel.so
   $ENV{OSPL_HOME}/lib/libdcpsisocpp.so
 )
 
-#add_executable(pub src/opensplice_dds/pub.cpp)
-#target_link_libraries(pub
-#    opensplice_dds_pub_sub
-#)
-
-#add_executable(sub src/opensplice_dds/sub.cpp)
-#target_link_libraries(sub
-#    opensplice_dds_pub_sub
-#)
+add_library(OpenSpliceDDSComm src/opensplice_dds_comm.cpp)
+target_link_libraries(OpenSpliceDDSComm opensplice_dds)
+target_link_libraries(OpenSpliceDDSComm ${catkin_LIBRARIES})
 
 ## Mark executables and/or libraries for installation
-install(TARGETS OpenspliceDDSComm
+install(TARGETS OpenSpliceDDSComm
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

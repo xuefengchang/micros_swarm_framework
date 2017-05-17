@@ -24,6 +24,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define COMM_INTERFACE_H_
 
 #include <iostream>
+#include <boost/function.hpp>
 
 namespace micros_swarm{
 
