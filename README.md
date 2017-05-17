@@ -10,13 +10,8 @@ In order to make it modular and extensible, we chose to decompose the framework 
 ![image0](https://github.com/xuefengchang/micros_swarm_framework/raw/master/docs/images/architecture.png)
 
 ## Application Demo
-We can create new applications(which are organized in ROS packages) based on micros_swarm_framework, this is a demo:
-
-```
-git clone https://github.com/xuefengchang/app_demo.git
-catkin_make
-roslaunch app_demo app_demo.launch
-```
+We can create new applications organized in ROS packages based on micros_swarm_framework.
+There are some demos under the "apps" sub-folder.
 
 ## Simulation
 #### Motion and Spatial Coordination
