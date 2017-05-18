@@ -56,7 +56,7 @@
   
   <run_depend>testbb</run_depend>
   <run_depend>testnc</run_depend>
-  <run_depend>testrtp</run_depend>
+  <run_depend>testrth</run_depend>
   <run_depend>testvstig</run_depend>
 
   <run_depend>micros_swarm_stage</run_depend>
