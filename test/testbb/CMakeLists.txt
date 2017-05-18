@@ -207,7 +207,7 @@ install(TARGETS TestBb
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(FILES testbb_plugins.xml
+install(FILES testbb_plugin.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 

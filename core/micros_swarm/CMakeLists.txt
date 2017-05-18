@@ -42,10 +42,10 @@ link_directories(
 
 ## Declare a C++ library
 add_library(rtp_core
-  src/runtime_platform.cpp
-  src/runtime_platform_core.cpp
+  src/runtime_handle.cpp
+  src/app_manager.cpp
+  src/runtime_core.cpp
 )
-#add_dependencies(rtp_core ${micros_swarm_EXPORTED_TARGETS})
 
 target_link_libraries(rtp_core
   ${Boost_THREAD_LIBRARY}
@@ -54,19 +54,13 @@ target_link_libraries(rtp_core
   ${catkin_LIBRARIES}
 )
 
-add_library(rtp_manager
-  src/runtime_platform_manager.cpp
+add_executable(rtp_node
+  src/rtp_node.cpp
 )
-#add_dependencies(rtp_manager ${micros_swarm_EXPORTED_TARGETS})
-target_link_libraries(rtp_manager rtp_core)
-
-add_executable(rtp_manager_node
-  src/rtp_manager_node.cpp
-)
-target_link_libraries(rtp_manager_node rtp_manager)
+target_link_libraries(rtp_node rtp_core)
 
 ## Mark executables and/or libraries for installation
-install(TARGETS rtp_core rtp_manager rtp_manager_node
+install(TARGETS rtp_core rtp_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

@@ -28,16 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "micros_swarm/message.h"
 #include "micros_swarm/singleton.h"
-#include "micros_swarm/runtime_platform.h"
+#include "micros_swarm/runtime_handle.h"
 #include "micros_swarm/comm_interface.h"
-/*#ifdef ROS
-#include "micros_swarm/ros_comm.h"
-using namespace micros_swarm;
-#endif
-#ifdef OPENSPLICE_DDS
-#include "opensplice_dds_comm/opensplice_dds_comm.h"
-using namespace opensplice_dds_comm;
-#endif*/
 
 namespace micros_swarm{
     
@@ -50,20 +42,20 @@ namespace micros_swarm{
             {
                 bb_id_=bb_id;
                 on_robot_id_=on_robot_id;
-                rtp_=Singleton<RuntimePlatform>::getSingleton();
-                robot_id_=rtp_->getRobotID();
+                rth_=Singleton<RuntimeHandle>::getSingleton();
+                robot_id_=rth_->getRobotID();
                 communicator_=Singleton<micros_swarm::CommInterface>::getExistedSingleton();
                 is_local_=false;
                 if(on_robot_id_==robot_id_)
                 {
-                    rtp_->createBlackBoard(bb_id_);
+                    rth_->createBlackBoard(bb_id_);
                     is_local_=true;
                 }
             }
 
             BlackBoard(const BlackBoard& bb)
             {
-                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                rth_=Singleton<RuntimeHandle>::getSingleton();
                 communicator_=Singleton<CommInterface>::getExistedSingleton();
                 bb_id_=bb.bb_id_;
                 on_robot_id_=bb.on_robot_id_;
@@ -75,7 +67,7 @@ namespace micros_swarm{
             {
                 if(this==&bb)
                     return *this;
-                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                rth_=Singleton<RuntimeHandle>::getSingleton();
                 communicator_=Singleton<micros_swarm::CommInterface>::getExistedSingleton();
                 bb_id_=bb.bb_id_;
                 on_robot_id_=bb.on_robot_id_;
@@ -94,7 +86,7 @@ namespace micros_swarm{
                     boost::archive::text_oarchive archive(archiveStream);
                     archive<<data;
                     std::string s=archiveStream.str();
-                    rtp_->insertOrUpdateBlackBoard(bb_id_, key, s, time(0), rtp_->getRobotID());
+                    rth_->insertOrUpdateBlackBoard(bb_id_, key, s, time(0), rth_->getRobotID());
                 }
                 else
                 {
@@ -102,7 +94,7 @@ namespace micros_swarm{
                     boost::archive::text_oarchive archive(archiveStream);
                     archive<<data;
                     std::string s=archiveStream.str();
-                    BlackBoardPut bbp(bb_id_,on_robot_id_, key, s, time(0), rtp_->getRobotID());
+                    BlackBoardPut bbp(bb_id_,on_robot_id_, key, s, time(0), rth_->getRobotID());
 
                     std::ostringstream archiveStream2;
                     boost::archive::text_oarchive archive2(archiveStream2);
@@ -110,13 +102,13 @@ namespace micros_swarm{
                     std::string bbp_str=archiveStream2.str();
 
                     micros_swarm::CommPacket p;
-                    p.packet_source=rtp_->getRobotID();
+                    p.packet_source=rth_->getRobotID();
                     p.packet_version=1;
                     p.packet_type=BLACKBOARD_PUT;
                     p.packet_data=bbp_str;
                     p.package_check_sum=0;
 
-                    rtp_->getOutMsgQueue()->pushBbMsgQueue(p);
+                    rth_->getOutMsgQueue()->pushBbMsgQueue(p);
                 }
             }
             
@@ -125,7 +117,7 @@ namespace micros_swarm{
                 if(is_local_)
                 {
                     BlackBoardTuple bb;
-                    rtp_->getBlackBoardTuple(bb_id_, key, bb);
+                    rth_->getBlackBoardTuple(bb_id_, key, bb);
 
                     if (bb.bb_timestamp == 0) {
                         std::cout << "ID " << bb_id_ << " blackboard, " << key << " is not exist." << std::endl;
@@ -148,14 +140,14 @@ namespace micros_swarm{
                     std::string bbq_str = archiveStream2.str();
 
                     micros_swarm::CommPacket p;
-                    p.packet_source = rtp_->getRobotID();
+                    p.packet_source = rth_->getRobotID();
                     p.packet_version = 1;
                     p.packet_type = BLACKBOARD_QUERY;
                     p.packet_data=bbq_str;
                     p.package_check_sum = 0;
-                    rtp_->createBlackBoard(bb_id_);
-                    rtp_->insertOrUpdateBlackBoard(bb_id_, key, "", 0, -1);
-                    rtp_->getOutMsgQueue()->pushBbMsgQueue(p);
+                    rth_->createBlackBoard(bb_id_);
+                    rth_->insertOrUpdateBlackBoard(bb_id_, key, "", 0, -1);
+                    rth_->getOutMsgQueue()->pushBbMsgQueue(p);
 
                     Type data;
                     BlackBoardTuple bbt;
@@ -163,14 +155,14 @@ namespace micros_swarm{
                     int count=0;
                     while(count<500)
                     {
-                        rtp_->getBlackBoardTuple(bb_id_, key, bbt);
+                        rth_->getBlackBoardTuple(bb_id_, key, bbt);
                         if(bbt.bb_value!="")
                         {
                             std::string data_str=bbt.bb_value;
                             std::istringstream archiveStream(data_str);
                             boost::archive::text_iarchive archive(archiveStream);
                             archive>>data;
-                            rtp_->deleteBlackBoardValue(bb_id_, key);
+                            rth_->deleteBlackBoardValue(bb_id_, key);
                             break;
                         }
                         loop_rate.sleep();
@@ -185,7 +177,7 @@ namespace micros_swarm{
             {
                 if(is_local_)
                 {
-                    return rtp_->getBlackBoardSize(bb_id_);
+                    return rth_->getBlackBoardSize(bb_id_);
                 }
                 else
                 {
@@ -197,7 +189,7 @@ namespace micros_swarm{
             int bb_id_;
             int on_robot_id_;
             bool is_local_;
-            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<RuntimeHandle> rth_;
             boost::shared_ptr<CommInterface> communicator_;
     };
 }

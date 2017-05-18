@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      runtime_platform_core.cpp
+\file      runtime_core.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,80 +20,80 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "micros_swarm/runtime_platform_core.h"
+#include "micros_swarm/runtime_core.h"
 
 //#define PUBLISH_ROBOT_ID_DURATION 0.1
 //#define PUBLISH_SWARM_LIST_DURATION 5
 
 namespace micros_swarm{
-    RuntimePlatformCore::RuntimePlatformCore():ci_loader_("micros_swarm", "micros_swarm::CommInterface")
+    RuntimeCore::RuntimeCore():ci_loader_("micros_swarm", "micros_swarm::CommInterface")
     {
     }
 
-    RuntimePlatformCore::~RuntimePlatformCore()
+    RuntimeCore::~RuntimeCore()
     {
         spin_thread_->interrupt();
         spin_thread_->join();
         delete spin_thread_;
 
-        rtp_.reset();
+        rth_.reset();
         parser_.reset();
         communicator_.reset();
-        ci_loader_.unloadLibraryForClass(comm_name_);
+        ci_loader_.unloadLibraryForClass(comm_type_);
     }
     
-    void RuntimePlatformCore::spin_msg_queue()
+    void RuntimeCore::spin_msg_queue()
     {
         for(;;)
         {
-            boost::unique_lock<boost::mutex> lock(rtp_->getOutMsgQueue()->msg_queue_mutex);
+            boost::unique_lock<boost::mutex> lock(rth_->getOutMsgQueue()->msg_queue_mutex);
     
-            if(!rtp_->getOutMsgQueue()->baseMsgQueueEmpty())
+            if(!rth_->getOutMsgQueue()->baseMsgQueueEmpty())
             {
-                communicator_->broadcast(rtp_->getOutMsgQueue()->baseMsgQueueFront());
-                rtp_->getOutMsgQueue()->popBaseMsgQueue();
+                communicator_->broadcast(rth_->getOutMsgQueue()->baseMsgQueueFront());
+                rth_->getOutMsgQueue()->popBaseMsgQueue();
             }
-            if(!rtp_->getOutMsgQueue()->ncMsgQueueEmpty())
+            if(!rth_->getOutMsgQueue()->ncMsgQueueEmpty())
             {
-                communicator_->broadcast(rtp_->getOutMsgQueue()->ncMsgQueueFront());
-                rtp_->getOutMsgQueue()->popNcMsgQueue();
+                communicator_->broadcast(rth_->getOutMsgQueue()->ncMsgQueueFront());
+                rth_->getOutMsgQueue()->popNcMsgQueue();
             }
-            if(!rtp_->getOutMsgQueue()->swarmMsgQueueEmpty())
+            if(!rth_->getOutMsgQueue()->swarmMsgQueueEmpty())
             {
-                communicator_->broadcast(rtp_->getOutMsgQueue()->swarmMsgQueueFront());
-                rtp_->getOutMsgQueue()->popSwarmMsgQueue();
+                communicator_->broadcast(rth_->getOutMsgQueue()->swarmMsgQueueFront());
+                rth_->getOutMsgQueue()->popSwarmMsgQueue();
             }
-            if(!rtp_->getOutMsgQueue()->vstigMsgQueueEmpty())
+            if(!rth_->getOutMsgQueue()->vstigMsgQueueEmpty())
             {
-                communicator_->broadcast(rtp_->getOutMsgQueue()->vstigMsgQueueFront());
-                rtp_->getOutMsgQueue()->popVstigMsgQueue();
+                communicator_->broadcast(rth_->getOutMsgQueue()->vstigMsgQueueFront());
+                rth_->getOutMsgQueue()->popVstigMsgQueue();
             }
-            if(!rtp_->getOutMsgQueue()->bbMsgQueueEmpty())
+            if(!rth_->getOutMsgQueue()->bbMsgQueueEmpty())
             {
-                communicator_->broadcast(rtp_->getOutMsgQueue()->bbMsgQueueFront());
-                rtp_->getOutMsgQueue()->popBbMsgQueue();
+                communicator_->broadcast(rth_->getOutMsgQueue()->bbMsgQueueFront());
+                rth_->getOutMsgQueue()->popBbMsgQueue();
             }
             
-            while(rtp_->getOutMsgQueue()->baseMsgQueueEmpty()&&rtp_->getOutMsgQueue()->swarmMsgQueueEmpty()&&
-                  rtp_->getOutMsgQueue()->vstigMsgQueueEmpty()&&rtp_->getOutMsgQueue()->bbMsgQueueEmpty()&&
-                  rtp_->getOutMsgQueue()->ncMsgQueueEmpty())
+            while(rth_->getOutMsgQueue()->baseMsgQueueEmpty()&&rth_->getOutMsgQueue()->swarmMsgQueueEmpty()&&
+                  rth_->getOutMsgQueue()->vstigMsgQueueEmpty()&&rth_->getOutMsgQueue()->bbMsgQueueEmpty()&&
+                  rth_->getOutMsgQueue()->ncMsgQueueEmpty())
             {
-                rtp_->getOutMsgQueue()->msg_queue_condition.wait(lock);
+                rth_->getOutMsgQueue()->msg_queue_condition.wait(lock);
             }
         }
     }
     
-    void RuntimePlatformCore::barrier_check(const ros::TimerEvent&)
+    void RuntimeCore::barrier_check(const ros::TimerEvent&)
     {
-        int barrier_size=rtp_->getBarrierSize();
+        int barrier_size=rth_->getBarrierSize();
         if(barrier_size>=total_robot_numbers_-1)
         {
-            std::cout<<"robot "<<rtp_->getRobotID()<<" runtime_platform_kernel started successfully."<<std::endl;    
+            std::cout<<"robot "<<rth_->getRobotID()<<" runtime core start."<<std::endl;
             barrier_timer_.stop();
         }
                 
         //barrier
-        int robot_id=rtp_->getRobotID();
+        int robot_id=rth_->getRobotID();
     
         std::string syn="SYN";
         micros_swarm::Barrier_Syn bs(syn);
@@ -112,11 +112,11 @@ namespace micros_swarm{
         communicator_->broadcast(p);
     }
     
-    void RuntimePlatformCore::publish_robot_base(const ros::TimerEvent&)
+    void RuntimeCore::publish_robot_base(const ros::TimerEvent&)
     {
-        int robot_id=rtp_->getRobotID();
+        int robot_id=rth_->getRobotID();
         
-        const Base& l=rtp_->getRobotBase();
+        const Base& l=rth_->getRobotBase();
         
         SingleRobotBroadcastBase srbb(robot_id, l.x, l.y, l.z, l.vx, l.vy, l.vz, l.valid);
         
@@ -132,16 +132,16 @@ namespace micros_swarm{
         p.packet_data=srbb_str;
         p.package_check_sum=0;
         
-        rtp_->getOutMsgQueue()->pushBaseMsgQueue(p);
+        rth_->getOutMsgQueue()->pushBaseMsgQueue(p);
     }
     
-    void RuntimePlatformCore::publish_swarm_list(const ros::TimerEvent&)
+    void RuntimeCore::publish_swarm_list(const ros::TimerEvent&)
     {
-        int robot_id=rtp_->getRobotID();
+        int robot_id=rth_->getRobotID();
         
         std::vector<int> swarm_list;
         swarm_list.clear();
-        rtp_->getSwarmList(swarm_list);
+        rth_->getSwarmList(swarm_list);
         
         SingleRobotSwarmList srsl(robot_id, swarm_list);
         
@@ -157,10 +157,10 @@ namespace micros_swarm{
         p.packet_data=srsl_str;
         p.package_check_sum=0;
 
-        rtp_->getOutMsgQueue()->pushSwarmMsgQueue(p);
+        rth_->getOutMsgQueue()->pushSwarmMsgQueue(p);
     }
     
-    void RuntimePlatformCore::setParameters()
+    void RuntimeCore::setParameters()
     {
         bool param_ok =node_handle_.getParam("/publish_robot_id_duration", publish_robot_base_duration_);
         if(!param_ok)
@@ -198,13 +198,13 @@ namespace micros_swarm{
             std::cout<<"total_robot_numbers = "<<total_robot_numbers_<<std::endl;
         }
 
-        param_ok =node_handle_.getParam("/comm_name", comm_name_);
+        param_ok =node_handle_.getParam("/comm_type", comm_type_);
         if(!param_ok)
         {
-            std::cout<<"could not get parameter comm_name, use the default ros_comm."<<std::endl;
-            comm_name_="ros_comm/ROSComm";
+            std::cout<<"could not get parameter comm_type, use the default ros_comm."<<std::endl;
+            comm_type_="ros_comm/ROSComm";
         }else{
-            std::cout<<"comm_name: "<<comm_name_<<std::endl;
+            std::cout<<"rt comm_type: "<<comm_type_<<std::endl;
         }
     
         /*param_ok =node_handle_.getParam("unique_robot_id", robot_id_);
@@ -218,32 +218,33 @@ namespace micros_swarm{
         ros::NodeHandle private_nh("~");
         private_nh.param("unique_robot_id", robot_id_, 0);
         std::cout<<"unique_robot_id = "<<robot_id_<<std::endl;
-        //private_nh.param<std::string>("comm_name", comm_name_, "ros_comm/ROSComm");
-        //private_nh.param<std::string>("comm_name", comm_name_, "opensplice_dds_comm/OpenSpliceDDSComm");
+        //private_nh.param<std::string>("comm_type", comm_type_, "ros_comm/ROSComm");
+        //private_nh.param<std::string>("comm_type", comm_type_, "opensplice_dds_comm/OpenSpliceDDSComm");
     }
     
-    void RuntimePlatformCore::initialize()
+    void RuntimeCore::initialize()
     {
         setParameters();
         //construct runtime platform
-        rtp_=Singleton<RuntimePlatform>::getSingleton(robot_id_);
-        rtp_->setNeighborDistance(default_neighbor_distance_);
+        rth_=Singleton<RuntimeHandle>::getSingleton(robot_id_);
+        rth_->setNeighborDistance(default_neighbor_distance_);
         //construct communicator
-        communicator_ = ci_loader_.createInstance(comm_name_);
+        communicator_ = ci_loader_.createInstance(comm_type_);
         Singleton<CommInterface>::makeSingleton(communicator_);
         //construct packet parser
         parser_ = Singleton<PacketParser>::getSingleton();
         //parser_.reset(new PacketParser());
         boost::function<void(const micros_swarm::CommPacket& packet)> parser_func=boost::bind(&PacketParser::parser, parser_, _1);
         //transfer the parser function to the communicator
-        communicator_->init(comm_name_, parser_func);
+        communicator_->init(comm_type_, parser_func);
         communicator_->receive();
+        app_manager_=Singleton<AppManager>::getSingleton();
         
         //boost::thread spin_thread(&RuntimePlatformCore::spin_msg_queue, this);
-        spin_thread_ = new boost::thread(&RuntimePlatformCore::spin_msg_queue, this);
-        publish_robot_base_timer_ = node_handle_.createTimer(ros::Duration(publish_robot_base_duration_), &RuntimePlatformCore::publish_robot_base, this);
-        publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(publish_swarm_list_duration_), &RuntimePlatformCore::publish_swarm_list, this);
-        barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimePlatformCore::barrier_check, this);
+        spin_thread_ = new boost::thread(&RuntimeCore::spin_msg_queue, this);
+        publish_robot_base_timer_ = node_handle_.createTimer(ros::Duration(publish_robot_base_duration_), &RuntimeCore::publish_robot_base, this);
+        publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(publish_swarm_list_duration_), &RuntimeCore::publish_swarm_list, this);
+        barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimeCore::barrier_check, this);
     }
 };
 

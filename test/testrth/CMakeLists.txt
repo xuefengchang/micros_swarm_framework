@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(testrtp)
+project(testrth)
 
 ## Add support for C++11, supported in ROS Kinetic and newer
 # add_definitions(-std=c++11)
@@ -125,7 +125,13 @@ include_directories(
 #   src/${PROJECT_NAME}/test_app.cpp
 # )
 
-add_library(TestRtp src/testrtp.cpp)
+add_library(TestRth src/testrth.cpp)
+#target_link_libraries(TestRth
+#  ${Boost_THREAD_LIBRARY}
+#  ${Boost_REGEX_LIBRARY}
+#  ${Boost_SERIALIZATION_LIBRARY}
+#  ${catkin_LIBRARIES}
+#)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -201,17 +207,17 @@ add_library(TestRtp src/testrtp.cpp)
 # catkin_add_nosetests(test)
 
 ## Mark executables and/or libraries for installation
-install(TARGETS TestRtp
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+#install(TARGETS TestRth
+#  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+#)
 
-install(FILES testrtp_plugins.xml
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
+#install(FILES testrth_plugin.xml
+#  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+#)
 
-install(DIRECTORY
-  include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-)
+#install(DIRECTORY
+#  include/${PROJECT_NAME}/
+#  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#)

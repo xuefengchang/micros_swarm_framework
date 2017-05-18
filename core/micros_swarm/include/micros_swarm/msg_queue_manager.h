@@ -29,14 +29,6 @@ ARISING IN ANY WAY OUType OF TypeHE USE OF TypeHIS SOFTypeWARE, EVEN IF ADVISED 
 #include "micros_swarm/semaphore.h"
 #include "micros_swarm/circular_queue.h"
 #include "micros_swarm/comm_interface.h"
-/*#ifdef ROS
-#include "micros_swarm/MSFPPacket.h"
-using namespace micros_swarm;
-#endif
-#ifdef OPENSPLICE_DDS
-#include "opensplice_dds_comm/MSFPPacket.h"
-using namespace opensplice_dds_comm;
-#endif*/
 
 namespace micros_swarm{
     class MsgQueueManager

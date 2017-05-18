@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <pluginlib/class_list_macros.h>
 
 #include "micros_swarm/singleton.h"
-#include "micros_swarm/runtime_platform.h"
+#include "micros_swarm/runtime_handle.h"
 
 namespace micros_swarm{
 
@@ -37,7 +37,7 @@ namespace micros_swarm{
     public:
         Application()
         {
-            rtp = Singleton<RuntimePlatform>::getSingleton();
+            rth = Singleton<RuntimeHandle>::getSingleton();
         }
 
         virtual ~Application(){}
@@ -45,33 +45,33 @@ namespace micros_swarm{
         //application api
         const int robot_id()
         {
-            return rtp->getRobotID();
+            return rth->getRobotID();
         }
 
         const Base& base()
         {
-            return rtp->getRobotBase();
+            return rth->getRobotBase();
         }
 
         void set_base(const Base& robot_base)
         {
-            rtp->setRobotBase(robot_base);
+            rth->setRobotBase(robot_base);
         }
 
         float neighbor_distance()
         {
-            return rtp->getNeighborDistance();
+            return rth->getNeighborDistance();
         }
 
         void set_neighbor_distance(float neighbor_distance)
         {
-            rtp->setNeighborDistance(neighbor_distance);
+            rth->setNeighborDistance(neighbor_distance);
         }
 
         //entry function
         virtual void start()=0;
     private:
-        boost::shared_ptr<RuntimePlatform> rtp;
+        boost::shared_ptr<RuntimeHandle> rth;
     };
 };
 

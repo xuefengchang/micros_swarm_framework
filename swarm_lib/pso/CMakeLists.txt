@@ -213,7 +213,7 @@ install(TARGETS TestPso
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-#install(FILES pso_plugins.xml
+#install(FILES pso_plugin.xml
 #  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 #)
 

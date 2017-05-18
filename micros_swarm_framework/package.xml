@@ -60,6 +60,7 @@
   <run_depend>testvstig</run_depend>
 
   <run_depend>micros_swarm_stage</run_depend>
+  <run_depend>micros_swarm_gazebo</run_depend>
 
   <export>
     <metapackage/>

@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      runtime_platform_manager.cpp
+\file      app_manager.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,27 +20,21 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "micros_swarm/runtime_platform_manager.h"
+#include "micros_swarm/app_manager.h"
 
 namespace micros_swarm{
 
-    RTPManager::RTPManager():app_loader_("micros_swarm", "micros_swarm::Application")
+    AppManager::AppManager():app_loader_("micros_swarm", "micros_swarm::Application")
     {
         ros::NodeHandle nh;
-        rtp_core_.reset(new micros_swarm::RuntimePlatformCore());
-        rtp_core_->initialize();
-        /*boost::thread rtp_core_thread([&] ()
-                      {
-                          rtp_core_->initialize();
-                      });*/
-        app_load_srv_ = nh.advertiseService("micros_swarm_framework_load_app", &RTPManager::loadService, this);
-        app_unload_srv_ = nh.advertiseService("micros_swarm_framework_unload_app", &RTPManager::unloadService, this);
+        app_load_srv_ = nh.advertiseService("micros_swarm_framework_load_app", &AppManager::loadService, this);
+        app_unload_srv_ = nh.advertiseService("micros_swarm_framework_unload_app", &AppManager::unloadService, this);
         apps_.clear();
-        start_app_timer_=nh.createTimer(ros::Duration(1), &RTPManager::startApp, this);
+        start_app_timer_=nh.createTimer(ros::Duration(1), &AppManager::startApp, this);
         //rtp_manager_destroy_pub_ = nh.advertise<std_msgs::Int8>("micros_swarm_framework_rtp_manager_destroy", 1000);
     }
 
-    void RTPManager::shutdown()
+    void AppManager::shutdown()
     {
         ros::NodeHandle nh;
         std::vector<AppInstance>::iterator app_it;
@@ -63,9 +57,8 @@ namespace micros_swarm{
         }
     }
 
-    RTPManager::~RTPManager()
+    AppManager::~AppManager()
     {
-        rtp_core_.reset();
         std::vector<AppInstance>::iterator app_it;
         for(app_it=apps_.begin(); app_it!=apps_.end(); app_it++)
         {
@@ -76,7 +69,7 @@ namespace micros_swarm{
         std::cout<<"[RTPManager]: all Apps were unloaded successfully."<<std::endl;
     }
 
-    void RTPManager::startApp(const ros::TimerEvent &)
+    void AppManager::startApp(const ros::TimerEvent &)
     {
         std::vector<AppInstance>::iterator app_it;
         for(app_it=apps_.begin(); app_it!=apps_.end(); app_it++)
@@ -89,7 +82,7 @@ namespace micros_swarm{
         }
     }
 
-    bool RTPManager::loadService(app_loader::AppLoad::Request &req, app_loader::AppLoad::Response &resp)
+    bool AppManager::loadService(app_loader::AppLoad::Request &req, app_loader::AppLoad::Response &resp)
     {
         std::string app_name = req.name;
         std::string app_type = req.type;
@@ -162,7 +155,7 @@ namespace micros_swarm{
         }*/
     }
 
-    bool RTPManager::unloadService(app_loader::AppUnload::Request &req, app_loader::AppUnload::Response &resp)
+    bool AppManager::unloadService(app_loader::AppUnload::Request &req, app_loader::AppUnload::Response &resp)
     {
         std::string app_name = req.name;
         std::string app_type = req.type;

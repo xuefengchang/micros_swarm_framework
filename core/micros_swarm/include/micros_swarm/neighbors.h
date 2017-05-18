@@ -29,7 +29,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <algorithm>
 
 #include "micros_swarm/singleton.h"
-#include "micros_swarm/runtime_platform.h"
+#include "micros_swarm/runtime_handle.h"
 
 namespace micros_swarm{
     
@@ -39,12 +39,12 @@ namespace micros_swarm{
             Neighbors()
             {
                 data_.clear();
-                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                rth_=Singleton<RuntimeHandle>::getSingleton();
             }
             
             Neighbors(const Neighbors<Type>& n)
             {
-                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                rth_=Singleton<RuntimeHandle>::getSingleton();
                 data_=n.data_;
             }
             
@@ -193,7 +193,7 @@ namespace micros_swarm{
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    if(rtp_->inNeighborSwarm(n_it->first, swarm_id))
+                    if(rth_->inNeighborSwarm(n_it->first, swarm_id))
                     {
                         result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
                     }
@@ -210,7 +210,7 @@ namespace micros_swarm{
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    if(!rtp_->inNeighborSwarm(n_it->first, swarm_id))
+                    if(!rth_->inNeighborSwarm(n_it->first, swarm_id))
                     {
                         result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
                     }
@@ -219,7 +219,7 @@ namespace micros_swarm{
                 return result;
             }
         private:
-            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<RuntimeHandle> rth_;
             std::map<int, Type> data_;
     };
     
@@ -232,7 +232,7 @@ namespace micros_swarm{
             Neighbors()
             {
                 data_.clear();
-                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                rth_=Singleton<RuntimeHandle>::getSingleton();
             }
             
             Neighbors(bool get_data_now)
@@ -240,19 +240,19 @@ namespace micros_swarm{
                 if(get_data_now)
                 {
                     data_.clear();
-                    rtp_=Singleton<RuntimePlatform>::getSingleton();
-                    rtp_->getNeighbors(data_);
+                    rth_=Singleton<RuntimeHandle>::getSingleton();
+                    rth_->getNeighbors(data_);
                 }
                 else
                 {
                     data_.clear();
-                    rtp_=Singleton<RuntimePlatform>::getSingleton();
+                    rth_=Singleton<RuntimeHandle>::getSingleton();
                 }
             }
             
             Neighbors(const Neighbors<NeighborBase>& n)
             {
-                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                rth_=Singleton<RuntimeHandle>::getSingleton();
                 data_=n.data_;
             }
             
@@ -404,7 +404,7 @@ namespace micros_swarm{
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    if(rtp_->inNeighborSwarm(n_it->first, swarm_id))
+                    if(rth_->inNeighborSwarm(n_it->first, swarm_id))
                     {
                         result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
@@ -421,7 +421,7 @@ namespace micros_swarm{
     
                 for(n_it=data_.begin(); n_it!=data_.end();n_it++)
                 {
-                    if(!rtp_->inNeighborSwarm(n_it->first, swarm_id))
+                    if(!rth_->inNeighborSwarm(n_it->first, swarm_id))
                     {
                         result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
@@ -430,7 +430,7 @@ namespace micros_swarm{
                 return result;
             }
         private:
-            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<RuntimeHandle> rth_;
             std::map<int, NeighborBase> data_;
     };
 };

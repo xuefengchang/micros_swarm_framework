@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      runtime_platform.cpp 
+\file      runtime_handle.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,11 +20,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "micros_swarm/runtime_platform.h"
+#include "micros_swarm/runtime_handle.h"
 
 namespace micros_swarm{
 
-    RuntimePlatform::RuntimePlatform()
+    RuntimeHandle::RuntimeHandle()
     {
         robot_id_=0;
         robot_base_=Base(0,0,0,0,0,0);
@@ -41,7 +41,7 @@ namespace micros_swarm{
         barrier_.clear();
     }
     
-    RuntimePlatform::RuntimePlatform(int robot_id)
+    RuntimeHandle::RuntimeHandle(int robot_id)
     {
         robot_id_=robot_id;
         robot_base_=Base(0,0,0,0,0,0);
@@ -58,49 +58,49 @@ namespace micros_swarm{
         barrier_.clear();
     }
     
-    int RuntimePlatform::getRobotID()
+    int RuntimeHandle::getRobotID()
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex1_);
         return robot_id_;
     }
     
-    void RuntimePlatform::setRobotID(int robot_id)
+    void RuntimeHandle::setRobotID(int robot_id)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex1_);
         robot_id_=robot_id;
     }
     
-    int RuntimePlatform::getRobotType()
+    int RuntimeHandle::getRobotType()
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex2_);
         return robot_type_;
     }
     
-    void RuntimePlatform::setRobotType(int robot_type)
+    void RuntimeHandle::setRobotType(int robot_type)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex2_);
         robot_type_=robot_type;
     }
     
-    int RuntimePlatform::getRobotStatus()
+    int RuntimeHandle::getRobotStatus()
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex3_);
         return robot_status_;
     }
     
-    void RuntimePlatform::setRobotStatus(int robot_status)
+    void RuntimeHandle::setRobotStatus(int robot_status)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex3_);
         robot_status_=robot_status;
     }
     
-    const Base& RuntimePlatform::getRobotBase()
+    const Base& RuntimeHandle::getRobotBase()
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex4_);
         return robot_base_;
     }
     
-    void RuntimePlatform::setRobotBase(const Base& robot_base)
+    void RuntimeHandle::setRobotBase(const Base& robot_base)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex4_);
         robot_base_=robot_base;
@@ -109,7 +109,7 @@ namespace micros_swarm{
             robot_base_.valid=1;
     }    
     
-    void RuntimePlatform::printRobotBase()
+    void RuntimeHandle::printRobotBase()
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex4_);
         std::cout<<"robot base: "<<robot_base_.x<<", "<<robot_base_.y<<", "<<\
@@ -117,29 +117,29 @@ namespace micros_swarm{
             robot_base_.vz<<std::endl;
     }
 
-    int RuntimePlatform::getFloodingFactor()
+    int RuntimeHandle::getFloodingFactor()
     {
         return flooding_factor_;
     }
 
-    void RuntimePlatform::setFloodingFactor(int flooding_factor)
+    void RuntimeHandle::setFloodingFactor(int flooding_factor)
     {
         flooding_factor_=flooding_factor;
     }
         
-    void RuntimePlatform::getNeighbors(std::map<int, NeighborBase>& neighbors)
+    void RuntimeHandle::getNeighbors(std::map<int, NeighborBase>& neighbors)
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex5_);
         neighbors=neighbors_;
     }
 
-    std::map<int, NeighborBase> RuntimePlatform::getNeighbors()
+    std::map<int, NeighborBase> RuntimeHandle::getNeighbors()
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex5_);
         return neighbors_;
     };
      
-    void RuntimePlatform::insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz)
+    void RuntimeHandle::insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz)
     {
         boost::upgrade_lock<boost::shared_mutex> lock(mutex5_);
         std::map<int, NeighborBase>::iterator n_it=neighbors_.find(robot_id);
@@ -158,13 +158,13 @@ namespace micros_swarm{
         }
     }
     
-    void RuntimePlatform::deleteNeighbor(int robot_id)
+    void RuntimeHandle::deleteNeighbor(int robot_id)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex5_);
         neighbors_.erase(robot_id);
     }
     
-    bool RuntimePlatform::inNeighbors(int robot_id)
+    bool RuntimeHandle::inNeighbors(int robot_id)
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex5_);
         std::map<int, NeighborBase>::iterator n_it=neighbors_.find(robot_id);
@@ -177,7 +177,7 @@ namespace micros_swarm{
         return false;
     }
     
-    void RuntimePlatform::printNeighbor()
+    void RuntimeHandle::printNeighbor()
     {
         std::map<int, NeighborBase>::iterator n_it;
         
@@ -193,7 +193,7 @@ namespace micros_swarm{
         }
     }
      
-    void RuntimePlatform::insertOrUpdateSwarm(int swarm_id, bool value)
+    void RuntimeHandle::insertOrUpdateSwarm(int swarm_id, bool value)
     {
         boost::upgrade_lock<boost::shared_mutex> lock(mutex6_);
         std::map<int, bool>::iterator s_it=swarms_.find(swarm_id);
@@ -210,7 +210,7 @@ namespace micros_swarm{
         }
     }
     
-    bool RuntimePlatform::getSwarmFlag(int swarm_id)
+    bool RuntimeHandle::getSwarmFlag(int swarm_id)
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex6_);
         std::map<int, bool>::iterator s_it=swarms_.find(swarm_id);
@@ -223,7 +223,7 @@ namespace micros_swarm{
         return false;
     }
     
-    void RuntimePlatform::getSwarmList(std::vector<int>& swarm_list)
+    void RuntimeHandle::getSwarmList(std::vector<int>& swarm_list)
     {
         swarm_list.clear();
   
@@ -237,13 +237,13 @@ namespace micros_swarm{
         }
     }
     
-    void RuntimePlatform::deleteSwarm(int swarm_id)
+    void RuntimeHandle::deleteSwarm(int swarm_id)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex6_);
         swarms_.erase(swarm_id);
     }
     
-    void RuntimePlatform::printSwarm()
+    void RuntimeHandle::printSwarm()
     {
         std::map<int, bool>::iterator s_it;
         
@@ -256,7 +256,7 @@ namespace micros_swarm{
         }
     }
     
-    bool RuntimePlatform::inNeighborSwarm(int robot_id, int swarm_id)
+    bool RuntimeHandle::inNeighborSwarm(int robot_id, int swarm_id)
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
         boost::shared_lock<boost::shared_mutex> lock(mutex7_);
@@ -279,7 +279,7 @@ namespace micros_swarm{
         }
     }
     
-    void RuntimePlatform::joinNeighborSwarm(int robot_id, int swarm_id)
+    void RuntimeHandle::joinNeighborSwarm(int robot_id, int swarm_id)
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
         boost::upgrade_lock<boost::shared_mutex> lock(mutex7_);
@@ -310,7 +310,7 @@ namespace micros_swarm{
         }
     }
     
-    void RuntimePlatform::leaveNeighborSwarm(int robot_id, int swarm_id)
+    void RuntimeHandle::leaveNeighborSwarm(int robot_id, int swarm_id)
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
         boost::upgrade_lock<boost::shared_mutex> lock(mutex7_);
@@ -336,7 +336,7 @@ namespace micros_swarm{
         }
     }
             
-    void RuntimePlatform::insertOrRefreshNeighborSwarm(int robot_id, const std::vector<int>& swarm_list)
+    void RuntimeHandle::insertOrRefreshNeighborSwarm(int robot_id, const std::vector<int>& swarm_list)
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
         boost::upgrade_lock<boost::shared_mutex> lock(mutex7_);
@@ -356,7 +356,7 @@ namespace micros_swarm{
         }
     }
     
-    void RuntimePlatform::getSwarmMembers(int swarm_id, std::set<int>& swarm_members)
+    void RuntimeHandle::getSwarmMembers(int swarm_id, std::set<int>& swarm_members)
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
         swarm_members.clear();
@@ -369,13 +369,13 @@ namespace micros_swarm{
         }
     }
     
-    void RuntimePlatform::deleteNeighborSwarm(int robot_id)
+    void RuntimeHandle::deleteNeighborSwarm(int robot_id)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex7_);
         neighbor_swarms_.erase(robot_id);
     }
     
-    void RuntimePlatform::printNeighborSwarm()
+    void RuntimeHandle::printNeighborSwarm()
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
         
@@ -394,7 +394,7 @@ namespace micros_swarm{
         }
     }
             
-    void RuntimePlatform::createVirtualStigmergy(int id)
+    void RuntimeHandle::createVirtualStigmergy(int id)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         boost::upgrade_lock<boost::shared_mutex> lock(mutex8_);
@@ -412,7 +412,7 @@ namespace micros_swarm{
         }
     }
     
-    void RuntimePlatform::insertOrUpdateVirtualStigmergy(int id, const std::string& key, const std::string& value, const time_t& time_now, int robot_id)
+    void RuntimeHandle::insertOrUpdateVirtualStigmergy(int id, const std::string& key, const std::string& value, const time_t& time_now, int robot_id)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         boost::upgrade_lock<boost::shared_mutex> lock(mutex8_);
@@ -442,7 +442,7 @@ namespace micros_swarm{
         }
     }
     
-    void RuntimePlatform::getVirtualStigmergyTuple(int id, const std::string& key, VirtualStigmergyTuple& vstig_tuple)
+    void RuntimeHandle::getVirtualStigmergyTuple(int id, const std::string& key, VirtualStigmergyTuple& vstig_tuple)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         boost::shared_lock<boost::shared_mutex> lock(mutex8_);
@@ -458,7 +458,7 @@ namespace micros_swarm{
         }
     }
     
-    int RuntimePlatform::getVirtualStigmergySize(int id)
+    int RuntimeHandle::getVirtualStigmergySize(int id)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         boost::shared_lock<boost::shared_mutex> lock(mutex8_);
@@ -472,13 +472,13 @@ namespace micros_swarm{
         return 0;
     }
     
-    void RuntimePlatform::deleteVirtualStigmergy(int id)
+    void RuntimeHandle::deleteVirtualStigmergy(int id)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex8_);
         virtual_stigmergy_.erase(id);
     }
     
-    void RuntimePlatform::deleteVirtualStigmergyValue(int id, const std::string& key)
+    void RuntimeHandle::deleteVirtualStigmergyValue(int id, const std::string& key)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         boost::upgrade_lock<boost::shared_mutex> lock(mutex8_);
@@ -504,7 +504,7 @@ namespace micros_swarm{
         }
     }
     
-   void RuntimePlatform::printVirtualStigmergy()
+   void RuntimeHandle::printVirtualStigmergy()
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         std::map<std::string, VirtualStigmergyTuple>::iterator svstt_it;
@@ -525,7 +525,7 @@ namespace micros_swarm{
         }
     }
 
-    void RuntimePlatform::createBlackBoard(int id)
+    void RuntimeHandle::createBlackBoard(int id)
     {
         std::map<int, std::map<std::string, BlackBoardTuple> >::iterator bb_it;
         boost::upgrade_lock<boost::shared_mutex> lock(bb_mutex_);
@@ -543,7 +543,7 @@ namespace micros_swarm{
         }
     }
 
-    void RuntimePlatform::insertOrUpdateBlackBoard(int id, const std::string& key, const std::string& value, const time_t& time_now, int robot_id)
+    void RuntimeHandle::insertOrUpdateBlackBoard(int id, const std::string& key, const std::string& value, const time_t& time_now, int robot_id)
     {
         std::map<int, std::map<std::string, BlackBoardTuple> >::iterator bb_it;
         boost::upgrade_lock<boost::shared_mutex> lock(bb_mutex_);
@@ -573,7 +573,7 @@ namespace micros_swarm{
         }
     }
 
-    void RuntimePlatform::getBlackBoardTuple(int id, const std::string& key, BlackBoardTuple& bb_tuple)
+    void RuntimeHandle::getBlackBoardTuple(int id, const std::string& key, BlackBoardTuple& bb_tuple)
     {
         std::map<int, std::map<std::string, BlackBoardTuple> >::iterator bb_it;
         boost::shared_lock<boost::shared_mutex> lock(bb_mutex_);
@@ -589,7 +589,7 @@ namespace micros_swarm{
         }
     }
 
-    int RuntimePlatform::getBlackBoardSize(int id)
+    int RuntimeHandle::getBlackBoardSize(int id)
     {
         std::map<int, std::map<std::string, BlackBoardTuple> >::iterator bb_it;
         boost::shared_lock<boost::shared_mutex> lock(bb_mutex_);
@@ -603,13 +603,13 @@ namespace micros_swarm{
         return 0;
     }
 
-    void RuntimePlatform::deleteBlackBoard(int id)
+    void RuntimeHandle::deleteBlackBoard(int id)
     {
         boost::unique_lock<boost::shared_mutex> lock(bb_mutex_);
         blackboard_.erase(id);
     }
 
-    void RuntimePlatform::deleteBlackBoardValue(int id, const std::string& key)
+    void RuntimeHandle::deleteBlackBoardValue(int id, const std::string& key)
     {
         std::map<int, std::map<std::string, BlackBoardTuple> >::iterator bb_it;
         boost::upgrade_lock<boost::shared_mutex> lock(bb_mutex_);
@@ -635,7 +635,7 @@ namespace micros_swarm{
         }
     }
 
-    void RuntimePlatform::printBlackBoard()
+    void RuntimeHandle::printBlackBoard()
     {
         std::map<int, std::map<std::string, BlackBoardTuple> >::iterator bb_it;
         std::map<std::string, BlackBoardTuple>::iterator sbbt_it;
@@ -656,19 +656,19 @@ namespace micros_swarm{
         }
     }
     
-    float RuntimePlatform::getNeighborDistance()
+    float RuntimeHandle::getNeighborDistance()
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex9_);
         return neighbor_distance_;
     }
     
-    void RuntimePlatform::setNeighborDistance(float neighbor_distance)
+    void RuntimeHandle::setNeighborDistance(float neighbor_distance)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex9_);
         neighbor_distance_=neighbor_distance;
     }
     
-    void RuntimePlatform::insertOrUpdateListenerHelper(const std::string& key, const boost::shared_ptr<ListenerHelper> helper)
+    void RuntimeHandle::insertOrUpdateListenerHelper(const std::string& key, const boost::shared_ptr<ListenerHelper> helper)
     {
         std::map<std::string, boost::shared_ptr<ListenerHelper> >::iterator lh_it;
         boost::upgrade_lock<boost::shared_mutex> lock(mutex10_);
@@ -686,7 +686,7 @@ namespace micros_swarm{
         } 
     }
     
-    const boost::shared_ptr<ListenerHelper> RuntimePlatform::getListenerHelper(const std::string& key)
+    const boost::shared_ptr<ListenerHelper> RuntimeHandle::getListenerHelper(const std::string& key)
     {
         std::map<std::string, boost::shared_ptr<ListenerHelper> >::iterator lh_it;
         boost::shared_lock<boost::shared_mutex> lock(mutex10_);
@@ -701,29 +701,29 @@ namespace micros_swarm{
         return NULL;
     }
     
-    void RuntimePlatform::deleteListenerHelper(const std::string& key)
+    void RuntimeHandle::deleteListenerHelper(const std::string& key)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex10_);
         listener_helpers_.erase(key);
     }
     
-    const boost::shared_ptr<MsgQueueManager>& RuntimePlatform::getOutMsgQueue()
+    const boost::shared_ptr<MsgQueueManager>& RuntimeHandle::getOutMsgQueue()
     {
         return out_msg_queue_;
     }
     
-    const boost::shared_ptr<MsgQueueManager>& RuntimePlatform::getInMsgQueue()
+    const boost::shared_ptr<MsgQueueManager>& RuntimeHandle::getInMsgQueue()
     {
         return in_msg_queue_;
     }
     
-    void RuntimePlatform::insertBarrier(int robot_id)
+    void RuntimeHandle::insertBarrier(int robot_id)
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex11_);
         barrier_.insert(robot_id);
     }
     
-    int RuntimePlatform::getBarrierSize()
+    int RuntimeHandle::getBarrierSize()
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex11_);
         return barrier_.size();

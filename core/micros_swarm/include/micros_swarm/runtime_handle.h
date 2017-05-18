@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      runtime_platform.h
+\file      runtime_handle.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,8 +20,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef RUNTIME_PLATFORM_H_
-#define RUNTIME_PLATFORM_H_
+#ifndef RUNTIME_HANDLE_H_
+#define RUNTIME_HANDLE_H_
 
 #include <iostream>
 #include <vector>
@@ -34,10 +34,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm{
 
-    class  RuntimePlatform{
+    class  RuntimeHandle{
         public:
-            RuntimePlatform();
-            RuntimePlatform(int robot_id);
+            RuntimeHandle();
+            RuntimeHandle(int robot_id);
             
             int getRobotID();
             void setRobotID(int robot_id);

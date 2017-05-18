@@ -207,7 +207,7 @@ install(TARGETS TestVstig
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(FILES testvstig_plugins.xml
+install(FILES testvstig_plugin.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 

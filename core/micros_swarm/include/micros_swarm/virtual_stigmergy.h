@@ -31,16 +31,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/random.h"
 #include "micros_swarm/message.h"
 #include "micros_swarm/singleton.h"
-#include "micros_swarm/runtime_platform.h"
+#include "micros_swarm/runtime_handle.h"
 #include "micros_swarm/comm_interface.h"
-/*#ifdef ROS
-#include "micros_swarm/ros_comm.h"
-using namespace micros_swarm;
-#endif
-#ifdef OPENSPLICE_DDS
-#include "opensplice_dds_comm/opensplice_dds_comm.h"
-using namespace opensplice_dds_comm;
-#endif*/
 
 namespace micros_swarm{
     
@@ -52,14 +44,14 @@ namespace micros_swarm{
             VirtualStigmergy(int vstig_id)
             {
                 vstig_id_=vstig_id;
-                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                rth_=Singleton<RuntimeHandle>::getSingleton();
                 communicator_=Singleton<CommInterface>::getExistedSingleton();
-                rtp_->createVirtualStigmergy(vstig_id_);
+                rth_->createVirtualStigmergy(vstig_id_);
             }
             
             VirtualStigmergy(const VirtualStigmergy& vs)
             {
-                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                rth_=Singleton<RuntimeHandle>::getSingleton();
                 communicator_=Singleton<CommInterface>::getExistedSingleton();
                 vstig_id_=vs.vstig_id_;
             }
@@ -68,7 +60,7 @@ namespace micros_swarm{
             {
                 if(this==&vs)
                     return *this;
-                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                rth_=Singleton<RuntimeHandle>::getSingleton();
                 communicator_=Singleton<CommInterface>::getExistedSingleton();
                 vstig_id_=vs.vstig_id_;
                 return *this;
@@ -83,10 +75,10 @@ namespace micros_swarm{
                 archive<<data;
                 std::string s=archiveStream.str();
                 
-                rtp_->insertOrUpdateVirtualStigmergy(vstig_id_, key, s, time(0), rtp_->getRobotID());
+                rth_->insertOrUpdateVirtualStigmergy(vstig_id_, key, s, time(0), rth_->getRobotID());
 
                 std::map<int, NeighborBase> neighbors;
-                rtp_->getNeighbors(neighbors);
+                rth_->getNeighbors(neighbors);
                 if(neighbors.size()==0)
                     return;
                 int random_neighbor_index=random_int(0,neighbors.size()-1, time(NULL));
@@ -97,11 +89,11 @@ namespace micros_swarm{
                     it++;
                 }
                 int certain_receiving_id=it->first;
-                int flooding_factor=rtp_->getFloodingFactor();
+                int flooding_factor=rth_->getFloodingFactor();
                 int flooding_radix=(neighbors.size()-1)>=flooding_factor?(neighbors.size()-1):flooding_factor;
                 float receiving_probability=(float)flooding_factor/flooding_radix;
                 
-                VirtualStigmergyPut vsp(vstig_id_, key, s, time(0), rtp_->getRobotID(), certain_receiving_id, receiving_probability);
+                VirtualStigmergyPut vsp(vstig_id_, key, s, time(0), rth_->getRobotID(), certain_receiving_id, receiving_probability);
                 
                 std::ostringstream archiveStream2;
                 boost::archive::text_oarchive archive2(archiveStream2);
@@ -109,19 +101,19 @@ namespace micros_swarm{
                 std::string vsp_str=archiveStream2.str();   
                       
                 micros_swarm::CommPacket p;
-                p.packet_source=rtp_->getRobotID();
+                p.packet_source=rth_->getRobotID();
                 p.packet_version=1;
                 p.packet_type=VIRTUAL_STIGMERGY_PUT;
                 p.packet_data=vsp_str;
                 p.package_check_sum=0;
                 
-                rtp_->getOutMsgQueue()->pushVstigMsgQueue(p);
+                rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
             }
             
             Type get(const std::string& key)
             {
                 VirtualStigmergyTuple vst;
-                rtp_->getVirtualStigmergyTuple(vstig_id_, key, vst);
+                rth_->getVirtualStigmergyTuple(vstig_id_, key, vst);
                 
                 if(vst.vstig_timestamp==0)
                 {
@@ -136,7 +128,7 @@ namespace micros_swarm{
                 archive>>data;
 
                 std::map<int, NeighborBase> neighbors;
-                rtp_->getNeighbors(neighbors);
+                rth_->getNeighbors(neighbors);
                 if(neighbors.size()==0)
                     return;
                 int random_neighbor_index=random_int(0,neighbors.size()-1, time(NULL));
@@ -147,7 +139,7 @@ namespace micros_swarm{
                     it++;
                 }
                 int certain_receiving_id=it->first;
-                int flooding_factor=rtp_->getFloodingFactor();
+                int flooding_factor=rth_->getFloodingFactor();
                 int flooding_radix=(neighbors.size()-1)>=flooding_factor?(neighbors.size()-1):flooding_factor;
                 float receiving_probability=(float)flooding_factor/flooding_radix;
                 
@@ -159,24 +151,24 @@ namespace micros_swarm{
                 std::string vsg_str=archiveStream2.str();  
                 
                 micros_swarm::CommPacket p;
-                p.packet_source=rtp_->getRobotID();
+                p.packet_source=rth_->getRobotID();
                 p.packet_version=1;
                 p.packet_type=VIRTUAL_STIGMERGY_QUERY;
                 p.packet_data=vsg_str;
                 p.package_check_sum=0;
                 
-                rtp_->getOutMsgQueue()->pushVstigMsgQueue(p);
+                rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
                 
                 return data;  
             }
             
             int size()
             {
-                return rtp_->getVirtualStigmergySize(vstig_id_);
+                return rth_->getVirtualStigmergySize(vstig_id_);
             }
         private:
             int vstig_id_;
-            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<RuntimeHandle> rth_;
             boost::shared_ptr<CommInterface> communicator_;
     };
 }

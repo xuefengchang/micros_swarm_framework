@@ -25,17 +25,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <iostream>
 
-#include "micros_swarm/runtime_platform.h"
+#include "micros_swarm/runtime_handle.h"
 #include "micros_swarm/listener_helper.h"
 #include "micros_swarm/comm_interface.h"
-/*#ifdef ROS
-#include "micros_swarm/ros_comm.h"
-using namespace micros_swarm;
-#endif
-#ifdef OPENSPLICE_DDS
-#include "opensplice_dds_comm/opensplice_dds_comm.h"
-using namespace opensplice_dds_comm;
-#endif*/
 
 namespace micros_swarm{
     
@@ -45,7 +37,7 @@ namespace micros_swarm{
             Broadcaster(const std::string& key)
             {
                 key_=key;
-                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                rth_=Singleton<RuntimeHandle>::getSingleton();
                 communicator_=Singleton<CommInterface>::getExistedSingleton();
             }
             
@@ -64,17 +56,17 @@ namespace micros_swarm{
                 std::string nbkv_str=archiveStream2.str();  
                 
                 micros_swarm::CommPacket p;
-                p.packet_source=rtp_->getRobotID();
+                p.packet_source=rth_->getRobotID();
                 p.packet_version=1;
                 p.packet_type=NEIGHBOR_BROADCAST_KEY_VALUE;
                 p.packet_data=nbkv_str;
                 p.package_check_sum=0;
                 
                 //communicator_->broadcast(p);
-                rtp_->getOutMsgQueue()->pushNcMsgQueue(p);
+                rth_->getOutMsgQueue()->pushNcMsgQueue(p);
             }
         private:
-            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<RuntimeHandle> rth_;
             boost::shared_ptr<CommInterface> communicator_;
             std::string key_;
     };
@@ -85,19 +77,19 @@ namespace micros_swarm{
             Listener(const std::string& key, const boost::function<void(const Type&)>& callback)
             {
                 key_=key;
-                rtp_=Singleton<RuntimePlatform>::getSingleton();
+                rth_=Singleton<RuntimeHandle>::getSingleton();
                 
                 helper_.reset(new ListenerHelperT<Type>(key, callback));
-                rtp_->insertOrUpdateListenerHelper(key_, helper_);
+                rth_->insertOrUpdateListenerHelper(key_, helper_);
             }
             
             void ignore()
             {
-                rtp_->deleteListenerHelper(key_);
+                rth_->deleteListenerHelper(key_);
             }
         private:
             std::string key_;
-            boost::shared_ptr<RuntimePlatform> rtp_;
+            boost::shared_ptr<RuntimeHandle> rth_;
             boost::shared_ptr<ListenerHelper> helper_;
     };
 };
