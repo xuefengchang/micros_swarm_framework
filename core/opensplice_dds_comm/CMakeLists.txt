@@ -19,7 +19,6 @@ if (${USE_OPENSPLICE_DDS})
   set(DDS_LIBRARIES dcpssacpp ddskernel)
 endif()
 
-if (${USE_OPENSPLICE_DDS})
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
   pluginlib
@@ -51,6 +50,7 @@ catkin_package(
     roscpp rospy micros_swarm
 )
 
+if (${USE_OPENSPLICE_DDS})
 link_directories(
   ${Boost_THREAD_LIBRARY}
   ${Boost_REGEX_LIBRARY}
