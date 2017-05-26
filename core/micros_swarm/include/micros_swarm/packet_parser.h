@@ -56,7 +56,7 @@ namespace micros_swarm{
                 if(packet_source==shm_rid)
                     return;
         
-                try{
+                try {
                 const int packet_type=packet.packet_type;
                 std::string packet_data=packet.packet_data;
         
@@ -88,9 +88,9 @@ namespace micros_swarm{
                     case SINGLE_ROBOT_JOIN_SWARM:{
                         SingleRobotJoinSwarm srjs;
                         archive>>srjs;
-                
+
                         rth_->joinNeighborSwarm(srjs.robot_id, srjs.swarm_id);
-                
+
                         /*
                         if(!rth_->inNeighborSwarm(robot_id, swarm_id))
                         {
@@ -99,8 +99,8 @@ namespace micros_swarm{
                             std::ostringstream archiveStream2;
                             boost::archive::text_oarchive archive2(archiveStream2);
                             archive2<<srjs;
-                            std::string srjs_str=archiveStream2.str();   
-                      
+                            std::string srjs_str=archiveStream2.str();
+
                             micros_swarm_framework::MSFPPacket p;
                             p.packet_source=shm_rid;
                             p.packet_version=1;
@@ -123,9 +123,9 @@ namespace micros_swarm{
                     {
                         SingleRobotLeaveSwarm srls;
                         archive>>srls;
-                
+
                         rth_->leaveNeighborSwarm(srls.robot_id, srls.swarm_id);
-                
+
                         /*
                         if(rth_->inNeighborSwarm(robot_id, swarm_id))
                         {
@@ -134,8 +134,8 @@ namespace micros_swarm{
                             std::ostringstream archiveStream;
                             boost::archive::text_oarchive archive2(archiveStream2);
                             archive2<<srls;
-                            std::string srls_str=archiveStream2.str();   
-                      
+                            std::string srls_str=archiveStream2.str();
+
                             micros_swarm_framework::MSFPPacket p;
                             p.packet_source=shm_rid;
                             p.packet_version=1;
@@ -167,10 +167,6 @@ namespace micros_swarm{
                     {
                         VirtualStigmergyQuery vsq;
                         archive>>vsq;
-
-                        float probability = random_float(0.0, 1.0, time(NULL));
-                        if((vsq.certain_receiving_id != shm_rid) && (probability>vsq.receiving_probability))
-                            return;
                 
                         VirtualStigmergyTuple local;
                         rth_->getVirtualStigmergyTuple(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, local);
@@ -182,22 +178,8 @@ namespace micros_swarm{
                             rth_->insertOrUpdateVirtualStigmergy(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, vsq.virtual_stigmergy_value,
                                                                  vsq.virtual_stigmergy_timestamp, vsq.robot_id);
 
-                            std::map<int, NeighborBase> neighbors;
-                            rth_->getNeighbors(neighbors);
-                            if(neighbors.size()==0)
-                                return;
-                            int random_neighbor_index=random_int(0,neighbors.size()-1, time(NULL));
-                            std::map<int, NeighborBase>::iterator it=neighbors.begin();
-                            int loop_index=0;
-                            for(loop_index=0;loop_index<=random_neighbor_index;loop_index++)
-                                it++;
-                            int certain_receiving_id=it->first;
-                            int flooding_factor=rth_->getFloodingFactor();
-                            int flooding_radix=(neighbors.size()-1)>=flooding_factor?(neighbors.size()-1):flooding_factor;
-                            float receiving_probability=(float)flooding_factor/flooding_radix;
-
                             VirtualStigmergyPut vsp_new(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, vsq.virtual_stigmergy_value, 
-                                                        vsq.virtual_stigmergy_timestamp, vsq.robot_id, certain_receiving_id, receiving_probability);
+                                                        vsq.virtual_stigmergy_timestamp, vsq.robot_id);
                     
                             std::ostringstream archiveStream2;
                             boost::archive::text_oarchive archive2(archiveStream2);
@@ -215,24 +197,8 @@ namespace micros_swarm{
                         }
                         else if(local.vstig_timestamp>vsq.virtual_stigmergy_timestamp)  //local timestamp is larger
                         {
-                            std::map<int, NeighborBase> neighbors;
-                            rth_->getNeighbors(neighbors);
-                            if(neighbors.size()==0)
-                                return;
-                            int random_neighbor_index=random_int(0,neighbors.size()-1, time(NULL));
-                            std::map<int, NeighborBase>::iterator it=neighbors.begin();
-                            int loop_index=0;
-                            for(loop_index=0;loop_index<=random_neighbor_index;loop_index++)
-                            {
-                                it++;
-                            }
-                            int certain_receiving_id=it->first;
-                            int flooding_factor=rth_->getFloodingFactor();
-                            int flooding_radix=(neighbors.size()-1)>=flooding_factor?(neighbors.size()-1):flooding_factor;
-                            float receiving_probability=(float)flooding_factor/flooding_radix;
-
                             VirtualStigmergyPut vsp(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, local.vstig_value,
-                                                    local.vstig_timestamp, local.robot_id, certain_receiving_id, receiving_probability);
+                                                    local.vstig_timestamp, local.robot_id);
                             std::ostringstream archiveStream2;
                             boost::archive::text_oarchive archive2(archiveStream2);
                             archive2<<vsp;
@@ -262,10 +228,6 @@ namespace micros_swarm{
                     {
                         VirtualStigmergyPut vsp;
                         archive>>vsp;
-
-                        float probability = random_float(0.0, 1.0, time(NULL));
-                        if((vsp.certain_receiving_id != shm_rid) && (probability>vsp.receiving_probability))
-                            return;
                 
                         VirtualStigmergyTuple local;
                         rth_->getVirtualStigmergyTuple(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, local);
@@ -277,24 +239,8 @@ namespace micros_swarm{
                 
                             rth_->insertOrUpdateVirtualStigmergy(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, vsp.virtual_stigmergy_value,
                                                                  vsp.virtual_stigmergy_timestamp, vsp.robot_id);
-
-                            std::map<int, NeighborBase> neighbors;
-                            rth_->getNeighbors(neighbors);
-                            if(neighbors.size()==0)
-                                return;
-                            int random_neighbor_index=random_int(0,neighbors.size()-1, time(NULL));
-                            std::map<int, NeighborBase>::iterator it=neighbors.begin();
-                            int loop_index=0;
-                            for(loop_index=0;loop_index<=random_neighbor_index;loop_index++)
-                            {
-                                it++;
-                            }
-                            int certain_receiving_id=it->first;
-                            int flooding_factor=rth_->getFloodingFactor();
-                            int flooding_radix=(neighbors.size()-1)>=flooding_factor?(neighbors.size()-1):flooding_factor;
-                            float receiving_probability=(float)flooding_factor/flooding_radix;
                             VirtualStigmergyPut vsp_new(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, vsp.virtual_stigmergy_value,
-                                                        vsp.virtual_stigmergy_timestamp, vsp.robot_id, certain_receiving_id, receiving_probability);
+                                                        vsp.virtual_stigmergy_timestamp, vsp.robot_id);
                             std::ostringstream archiveStream2;
                             boost::archive::text_oarchive archive2(archiveStream2);
                             archive2<<vsp_new;

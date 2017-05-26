@@ -149,8 +149,6 @@ namespace micros_swarm{
         std::string virtual_stigmergy_value;
         time_t virtual_stigmergy_timestamp;
         int robot_id;
-        int certain_receiving_id;
-        float receiving_probability;
             
         template<class Archive>
         void serialize(Archive & ar, const unsigned int version)
@@ -160,17 +158,13 @@ namespace micros_swarm{
             ar & virtual_stigmergy_value;
             ar & virtual_stigmergy_timestamp;
             ar & robot_id;
-            ar & certain_receiving_id;
-            ar & receiving_probability;
         }
             
         VirtualStigmergyQuery(){}
 
-        VirtualStigmergyQuery(int id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_, \
-        int certain_receiving_id_, float receiving_probability_):
+        VirtualStigmergyQuery(int id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):
             virtual_stigmergy_id(id_), virtual_stigmergy_key(key_), virtual_stigmergy_value(value_),
-            virtual_stigmergy_timestamp(time_now_), robot_id(robot_id_), certain_receiving_id(certain_receiving_id_), \
-            receiving_probability(receiving_probability_){}
+            virtual_stigmergy_timestamp(time_now_), robot_id(robot_id_){}
     };
 
     struct VirtualStigmergyPut
@@ -180,8 +174,6 @@ namespace micros_swarm{
         std::string virtual_stigmergy_value;
         time_t virtual_stigmergy_timestamp;
         int robot_id;
-        int certain_receiving_id;
-        float receiving_probability;
             
         template<class Archive>
         void serialize(Archive & ar, const unsigned int version)
@@ -191,17 +183,13 @@ namespace micros_swarm{
             ar & virtual_stigmergy_value;
             ar & virtual_stigmergy_timestamp;
             ar & robot_id;
-            ar & certain_receiving_id;
-            ar & receiving_probability;
         }
             
         VirtualStigmergyPut(){};
             
-        VirtualStigmergyPut(int id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_, int certain_receiving_id_, \
-        float receiving_probability_):
+        VirtualStigmergyPut(int id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):
             virtual_stigmergy_id(id_), virtual_stigmergy_key(key_), virtual_stigmergy_value(value_),
-            virtual_stigmergy_timestamp(time_now_), robot_id(robot_id_), certain_receiving_id(certain_receiving_id_), \
-            receiving_probability(receiving_probability_){}
+            virtual_stigmergy_timestamp(time_now_), robot_id(robot_id_){}
     };
 
     struct BlackBoardQuery
