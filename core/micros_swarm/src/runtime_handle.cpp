@@ -360,7 +360,8 @@ namespace micros_swarm{
     {
         std::map<int, NeighborSwarmTuple>::iterator os_it;
         swarm_members.clear();
-        
+        if(getSwarmFlag(swarm_id))
+            swarm_members.insert(robot_id_);
         boost::shared_lock<boost::shared_mutex> lock(mutex7_);
         for(os_it=neighbor_swarms_.begin(); os_it!=neighbor_swarms_.end(); os_it++)
         {
