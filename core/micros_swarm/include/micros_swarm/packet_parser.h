@@ -90,32 +90,6 @@ namespace micros_swarm{
                         archive>>srjs;
 
                         rth_->joinNeighborSwarm(srjs.robot_id, srjs.swarm_id);
-
-                        /*
-                        if(!rth_->inNeighborSwarm(robot_id, swarm_id))
-                        {
-                            rth_->joinNeighborSwarm(robot_id, swarm_id);
-                    
-                            std::ostringstream archiveStream2;
-                            boost::archive::text_oarchive archive2(archiveStream2);
-                            archive2<<srjs;
-                            std::string srjs_str=archiveStream2.str();
-
-                            micros_swarm_framework::MSFPPacket p;
-                            p.packet_source=shm_rid;
-                            p.packet_version=1;
-                            p.packet_type=SINGLE_ROBOT_JOIN_SWARM;
-                            #ifdef ROS
-                            p.packet_data=srjs_str;
-                            #endif
-                            #ifdef OPENSPLICE_DDS
-                            p.packet_data=srjs_str.data();
-                            #endif
-                            p.package_check_sum=0;
-                
-                            rth_->getOutMsgQueue()->pushSwarmMsgQueue(p);
-                        }
-                        */
                 
                         break;
                     }
@@ -125,32 +99,6 @@ namespace micros_swarm{
                         archive>>srls;
 
                         rth_->leaveNeighborSwarm(srls.robot_id, srls.swarm_id);
-
-                        /*
-                        if(rth_->inNeighborSwarm(robot_id, swarm_id))
-                        {
-                            rth_->leaveNeighborSwarm(robot_id, swarm_id);
-                    
-                            std::ostringstream archiveStream;
-                            boost::archive::text_oarchive archive2(archiveStream2);
-                            archive2<<srls;
-                            std::string srls_str=archiveStream2.str();
-
-                            micros_swarm_framework::MSFPPacket p;
-                            p.packet_source=shm_rid;
-                            p.packet_version=1;
-                            p.packet_type=SINGLE_ROBOT_LEAVE_SWARM;
-                            #ifdef ROS
-                            p.packet_data=srls_str;
-                            #endif
-                            #ifdef OPENSPLICE_DDS
-                            p.packet_data=srls_str.data();
-                            #endif
-                            p.package_check_sum=0;
-                
-                            rth_->getOutMsgQueue()->pushSwarmMsgQueue(p);
-                        }
-                        */
                 
                         break;
                     }
