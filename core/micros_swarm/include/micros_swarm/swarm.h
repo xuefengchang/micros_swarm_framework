@@ -272,11 +272,6 @@ namespace micros_swarm{
                 return result_swarm;
             }
             
-            void pso()  
-            {
-            
-            }
-            
             void print() const
             {
                 std::set<int> s;
