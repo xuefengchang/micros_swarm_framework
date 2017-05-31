@@ -42,9 +42,10 @@ link_directories(
 
 ## Declare a C++ library
 add_library(rtp_core
+  src/packet_parser.cpp
   src/runtime_handle.cpp
-  src/app_manager.cpp
   src/runtime_core.cpp
+  src/app_manager.cpp
 )
 
 target_link_libraries(rtp_core

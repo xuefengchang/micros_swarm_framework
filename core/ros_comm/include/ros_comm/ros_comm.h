@@ -28,6 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <pluginlib/class_list_macros.h>
 
 #include "micros_swarm/comm_interface.h"
+#include "micros_swarm/packet_parser.h"
 #include "ros_comm/GSDFPacket.h"
 
 namespace ros_comm{

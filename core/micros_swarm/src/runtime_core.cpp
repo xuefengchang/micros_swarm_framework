@@ -73,10 +73,15 @@ namespace micros_swarm{
                 communicator_->broadcast(rth_->getOutMsgQueue()->bbMsgQueueFront());
                 rth_->getOutMsgQueue()->popBbMsgQueue();
             }
+            if(!rth_->getOutMsgQueue()->barrierMsgQueueEmpty())
+            {
+                communicator_->broadcast(rth_->getOutMsgQueue()->barrierMsgQueueFront());
+                rth_->getOutMsgQueue()->popBarrierMsgQueue();
+            }
             
             while(rth_->getOutMsgQueue()->baseMsgQueueEmpty()&&rth_->getOutMsgQueue()->swarmMsgQueueEmpty()&&
                   rth_->getOutMsgQueue()->vstigMsgQueueEmpty()&&rth_->getOutMsgQueue()->bbMsgQueueEmpty()&&
-                  rth_->getOutMsgQueue()->ncMsgQueueEmpty())
+                  rth_->getOutMsgQueue()->ncMsgQueueEmpty()&&rth_->getOutMsgQueue()->barrierMsgQueueEmpty())
             {
                 rth_->getOutMsgQueue()->msg_queue_condition.wait(lock);
             }
@@ -109,7 +114,7 @@ namespace micros_swarm{
         p.packet_type=micros_swarm::BARRIER_SYN;
         p.packet_data=bs_string;
         p.package_check_sum=0;
-        communicator_->broadcast(p);
+        rth_->getOutMsgQueue()->pushBarrierMsgQueue(p);
     }
     
     void RuntimeCore::publish_robot_base(const ros::TimerEvent&)
