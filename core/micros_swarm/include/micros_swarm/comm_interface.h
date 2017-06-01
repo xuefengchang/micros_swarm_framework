@@ -26,20 +26,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <iostream>
 #include <boost/function.hpp>
 
-namespace micros_swarm{
+#include "micros_swarm/comm_packet.h"
+#include "micros_swarm/packet_parser.h"
 
-    struct CommPacket{
-        int packet_source;
-        int packet_version;
-        int packet_type;
-        std::string packet_data;
-        double package_check_sum;
-        CommPacket():packet_source(-1),packet_version(1),packet_type(-1),packet_data(""),package_check_sum(0.0){}
-    };
+namespace micros_swarm{
 
     class CommInterface{
         public:
-            virtual void init(std::string name, boost::function<void(const micros_swarm::CommPacket& packet)> func)=0;
+            virtual void init(std::string name, const micros_swarm::PacketParser& parser)=0;
             virtual void broadcast(const micros_swarm::CommPacket& packet)=0;
             virtual void receive()=0;
     };

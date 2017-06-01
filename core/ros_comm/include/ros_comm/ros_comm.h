@@ -27,22 +27,24 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <ros/ros.h>
 #include <pluginlib/class_list_macros.h>
 
-#include "micros_swarm/comm_interface.h"
-#include "micros_swarm/packet_parser.h"
 #include "ros_comm/GSDFPacket.h"
+
+#include "micros_swarm/comm_packet.h"
+#include "micros_swarm/comm_interface.h"
 
 namespace ros_comm{
     
     class ROSComm : public micros_swarm::CommInterface{
         public:
             ROSComm();
-            void init(std::string name, boost::function<void(const micros_swarm::CommPacket& packet)> func);
+            void init(std::string name, const micros_swarm::PacketParser& parser);
             void broadcast(const micros_swarm::CommPacket& packet);
-            void callback(const GSDFPacket& ros_msg);
             void receive();
         private:
+            void callback(const GSDFPacket& ros_msg);
+
             std::string name_;
-            boost::function<void(const micros_swarm::CommPacket& packet)> parser_func_;
+            micros_swarm::PacketParser parser_;
             ros::NodeHandle node_handle_;
             ros::Publisher packet_publisher_;
             ros::Subscriber packet_subscriber_;

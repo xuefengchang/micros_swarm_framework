@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      opensplice_dds_comm.h
+\file      comm_packet.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,36 +20,20 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef OPENSPLICE_DDS_COMM_H_
-#define OPENSPLICE_DDS_COMM_H_
+#ifndef COMM_PACKET_H_
+#define COMM_PACKET_H_
 
 #include <iostream>
-#include <pluginlib/class_list_macros.h>
-#include <class_loader/multi_library_class_loader.h>
 
-#include "GSDFPacket.h"
-#include "check_status.h"
-#include "publisher.h"
-#include "subscriber.h"
+namespace micros_swarm{
 
-#include "micros_swarm/comm_packet.h"
-#include "micros_swarm/comm_interface.h"
-
-namespace opensplice_dds_comm{
-    
-    class OpenSpliceDDSComm : public micros_swarm::CommInterface{
-        public:
-            OpenSpliceDDSComm();
-            void init(std::string name, const micros_swarm::PacketParser& parser);
-            void broadcast(const micros_swarm::CommPacket& packet);
-            void receive();
-        private:
-            void callback(const opensplice_dds_comm::GSDFPacket& dds_msg);
-
-            std::string name_;
-            micros_swarm::PacketParser parser_;
-            boost::shared_ptr<opensplice_dds_comm::Publisher> packet_publisher_;
-            boost::shared_ptr<opensplice_dds_comm::Subscriber> packet_subscriber_;
+    struct CommPacket{
+        int packet_source;
+        int packet_version;
+        int packet_type;
+        std::string packet_data;
+        double package_check_sum;
+        CommPacket():packet_source(-1),packet_version(1),packet_type(-1),packet_data(""),package_check_sum(0.0){}
     };
 };
 #endif

@@ -38,7 +38,7 @@ namespace micros_swarm{
         rth_=Singleton<RuntimeHandle>::getSingleton();
     }
 
-    void PacketParser::parser(const micros_swarm::CommPacket& packet)
+    void PacketParser::parse(const micros_swarm::CommPacket& packet)
     {
         int shm_rid=rth_->getRobotID();
         int packet_source=packet.packet_source;
@@ -46,7 +46,6 @@ namespace micros_swarm{
         //ignore the packet of the local robot
         if(packet_source==shm_rid)
             return;
-        
         try
         {
             const int packet_type=packet.packet_type;

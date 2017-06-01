@@ -93,7 +93,7 @@ namespace micros_swarm{
         int barrier_size=rth_->getBarrierSize();
         if(barrier_size>=total_robot_numbers_-1)
         {
-            std::cout<<"robot "<<rth_->getRobotID()<<" runtime core start."<<std::endl;
+            std::cout<<"robot "<<rth_->getRobotID()<<" daemon node start."<<std::endl;
             barrier_timer_.stop();
         }
                 
@@ -173,7 +173,7 @@ namespace micros_swarm{
             std::cout<<"could not get parameter publish_robot_id_duration! use the default value."<<std::endl;
             publish_robot_base_duration_=0.1;
         }else{
-            std::cout<<"publish_robot_id_duration = "<<publish_robot_base_duration_<<std::endl;
+            std::cout<<"publish_robot_id_duration: "<<publish_robot_base_duration_<<std::endl;
         }
         
         param_ok =node_handle_.getParam("/publish_swarm_list_duration", publish_swarm_list_duration_);
@@ -182,7 +182,7 @@ namespace micros_swarm{
             std::cout<<"could not get parameter publish_swarm_list_duration! use the default value."<<std::endl;
             publish_swarm_list_duration_=5.0;
         }else{
-            std::cout<<"publish_swarm_list_duration = "<<publish_swarm_list_duration_<<std::endl;
+            std::cout<<"publish_swarm_list_duration: "<<publish_swarm_list_duration_<<std::endl;
         }
         
         param_ok =node_handle_.getParam("/default_neighbor_distance", default_neighbor_distance_);
@@ -191,7 +191,7 @@ namespace micros_swarm{
             std::cout<<"could not get parameter default_neighbor_distance! use the default value."<<std::endl;
             default_neighbor_distance_=50;
         }else{
-            std::cout<<"default_neighbor_distance = "<<default_neighbor_distance_<<std::endl;
+            std::cout<<"default_neighbor_distance: "<<default_neighbor_distance_<<std::endl;
         }
         
         param_ok =node_handle_.getParam("/total_robot_numbers", total_robot_numbers_);
@@ -200,7 +200,7 @@ namespace micros_swarm{
             std::cout<<"could not get parameter total_robot_numbers! use the default value."<<std::endl;
             total_robot_numbers_=1;
         }else{
-            std::cout<<"total_robot_numbers = "<<total_robot_numbers_<<std::endl;
+            std::cout<<"total_robot_numbers: "<<total_robot_numbers_<<std::endl;
         }
 
         param_ok =node_handle_.getParam("/comm_type", comm_type_);
@@ -211,18 +211,10 @@ namespace micros_swarm{
         }else{
             std::cout<<"rt comm_type: "<<comm_type_<<std::endl;
         }
-    
-        /*param_ok =node_handle_.getParam("unique_robot_id", robot_id_);
-        if(!param_ok)
-        {
-            std::cout<<"could not get parameter unique_robot_id! use the default value."<<std::endl;
-            robot_id_=0;
-        }else{
-            std::cout<<"unique_robot_id = "<<robot_id_<<std::endl;
-        }*/
+
         ros::NodeHandle private_nh("~");
-        private_nh.param("unique_robot_id", robot_id_, 0);
-        std::cout<<"unique_robot_id = "<<robot_id_<<std::endl;
+        private_nh.param("robot_id", robot_id_, 0);
+        std::cout<<"robot_id: "<<robot_id_<<std::endl;
         //private_nh.param<std::string>("comm_type", comm_type_, "ros_comm/ROSComm");
         //private_nh.param<std::string>("comm_type", comm_type_, "opensplice_dds_comm/OpenSpliceDDSComm");
     }
@@ -238,11 +230,10 @@ namespace micros_swarm{
         Singleton<CommInterface>::makeSingleton(communicator_);
         //construct packet parser
         parser_ = Singleton<PacketParser>::getSingleton();
-        //parser_.reset(new PacketParser());
-        boost::function<void(const micros_swarm::CommPacket& packet)> parser_func=boost::bind(&PacketParser::parser, parser_, _1);
-        //transfer the parser function to the communicator
-        communicator_->init(comm_type_, parser_func);
+        //initialize the communicator
+        communicator_->init(comm_type_, *parser_);
         communicator_->receive();
+        //construct app manager
         app_manager_=Singleton<AppManager>::getSingleton();
         
         //boost::thread spin_thread(&RuntimePlatformCore::spin_msg_queue, this);

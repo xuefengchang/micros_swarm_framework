@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUType OF TypeHE USE OF TypeHIS SOFTypeWARE, EVEN IF ADVISED 
 
 #include "micros_swarm/semaphore.h"
 #include "micros_swarm/circular_queue.h"
-#include "micros_swarm/comm_interface.h"
+#include "micros_swarm/comm_packet.h"
 
 namespace micros_swarm{
     class MsgQueueManager

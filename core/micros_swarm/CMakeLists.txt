@@ -55,13 +55,13 @@ target_link_libraries(rtp_core
   ${catkin_LIBRARIES}
 )
 
-add_executable(rtp_node
-  src/rtp_node.cpp
+add_executable(daemon_node
+  src/daemon_node.cpp
 )
-target_link_libraries(rtp_node rtp_core)
+target_link_libraries(daemon_node rtp_core)
 
 ## Mark executables and/or libraries for installation
-install(TARGETS rtp_core rtp_node
+install(TARGETS rtp_core daemon_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

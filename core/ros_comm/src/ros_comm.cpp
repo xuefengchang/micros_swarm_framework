@@ -34,10 +34,10 @@ namespace ros_comm{
         packet_publisher_ = node_handle_.advertise<ros_comm::GSDFPacket>("/micros_swarm_framework_topic", 2000, true);
     }
 
-    void ROSComm::init(std::string name, boost::function<void(const micros_swarm::CommPacket& packet)> func)
+    void ROSComm::init(std::string name, const micros_swarm::PacketParser& parser)
     {
         name_=name;
-        parser_func_=func;
+        parser_=parser;
     }
             
     void ROSComm::broadcast(const micros_swarm::CommPacket& packet)
@@ -75,7 +75,7 @@ namespace ros_comm{
         packet.packet_data=ros_msg.packet_data;
         packet.package_check_sum=ros_msg.package_check_sum;
 
-        parser_func_(packet);
+        parser_.parse(packet);
     }
 
     void ROSComm::receive()

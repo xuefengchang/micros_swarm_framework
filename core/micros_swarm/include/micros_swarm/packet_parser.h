@@ -24,16 +24,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define PACKET_PARSER_H_
 
 #include "micros_swarm/runtime_handle.h"
-#include "micros_swarm/comm_interface.h"
+#include "micros_swarm/comm_packet.h"
 
 namespace micros_swarm{
 
     class PacketParser{
         public:
             PacketParser();
-            void parser(const micros_swarm::CommPacket& packet);
+            void parse(const micros_swarm::CommPacket& packet);
         private:
-            boost::shared_ptr<RuntimeHandle> rth_;
+            boost::shared_ptr<micros_swarm::RuntimeHandle> rth_;
     };
 };
 

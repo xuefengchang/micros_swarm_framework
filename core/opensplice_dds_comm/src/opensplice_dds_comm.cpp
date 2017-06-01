@@ -22,7 +22,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <iostream>
 
-#include "micros_swarm/comm_interface.h"
 #include "opensplice_dds_comm/opensplice_dds_comm.h"
 
 PLUGINLIB_EXPORT_CLASS(opensplice_dds_comm::OpenSpliceDDSComm, micros_swarm::CommInterface)
@@ -31,15 +30,14 @@ namespace opensplice_dds_comm{
 
     OpenSpliceDDSComm::OpenSpliceDDSComm()
     {
-        name_="OPENSPLICE_DDS";
         packet_publisher_.reset(new opensplice_dds_comm::Publisher("micros_swarm_framework_topic"));
         packet_subscriber_.reset(new opensplice_dds_comm::Subscriber("micros_swarm_framework_topic"));
     }
 
-    void OpenSpliceDDSComm::init(std::string name, boost::function<void(const micros_swarm::CommPacket& packet)> func)
+    void OpenSpliceDDSComm::init(std::string name, const micros_swarm::PacketParser& parser)
     {
         name_=name;
-        parser_func_=func;
+        parser_=parser;
     }
 
     void OpenSpliceDDSComm::broadcast(const micros_swarm::CommPacket& packet)
@@ -63,7 +61,7 @@ namespace opensplice_dds_comm{
         packet.packet_data=dds_msg.packet_data;
         packet.package_check_sum=dds_msg.package_check_sum;
 
-        parser_func_(packet);
+        parser_.parse(packet);
     }
             
     void OpenSpliceDDSComm::receive()
