@@ -243,5 +243,3 @@ namespace micros_swarm{
         barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimeCore::barrier_check, this);
     }
 };
-
-
