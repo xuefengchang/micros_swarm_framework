@@ -1,0 +1,5 @@
+<library path="lib/libOpenSpliceDDSBroker">
+    <class name="opensplice_dds_broker/OpenSpliceDDSBroker" type="opensplice_dds_broker::OpenSpliceDDSBroker" base_class_type="micros_swarm::CommInterface">
+        <description>Opensplice DDS comm broker plugin.</description>
+    </class>
+</library>

@@ -209,14 +209,14 @@ namespace micros_swarm{
             std::cout<<"could not get parameter comm_type, use the default ros_comm."<<std::endl;
             comm_type_="ros_comm/ROSComm";
         }else{
-            std::cout<<"rt comm_type: "<<comm_type_<<std::endl;
+            std::cout<<"comm_type: "<<comm_type_<<std::endl;
         }
 
         ros::NodeHandle private_nh("~");
         private_nh.param("robot_id", robot_id_, 0);
         std::cout<<"robot_id: "<<robot_id_<<std::endl;
-        //private_nh.param<std::string>("comm_type", comm_type_, "ros_comm/ROSComm");
-        //private_nh.param<std::string>("comm_type", comm_type_, "opensplice_dds_comm/OpenSpliceDDSComm");
+        //private_nh.param<std::string>("comm_type", comm_type_, "ros_broker/ROSBroker");
+        //private_nh.param<std::string>("comm_type", comm_type_, "opensplice_dds_broker/OpenSpliceDDSBroker");
     }
     
     void RuntimeCore::initialize()

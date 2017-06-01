@@ -1,0 +1,5 @@
+<library path="lib/libROSBroker">
+    <class name="ros_broker/ROSBroker" type="ros_broker::ROSBroker" base_class_type="micros_swarm::CommInterface">
+        <description>ROS comm broker plugin.</description>
+    </class>
+</library>
