@@ -46,7 +46,7 @@ namespace micros_swarm{
     {
         for(;;)
         {
-            boost::unique_lock<boost::mutex> lock(rth_->getOutMsgQueue()->msg_queue_mutex);
+            boost::shared_lock<boost::shared_mutex> lock(rth_->getOutMsgQueue()->msg_queue_mutex);
     
             if(!rth_->getOutMsgQueue()->baseMsgQueueEmpty())
             {
@@ -79,9 +79,7 @@ namespace micros_swarm{
                 rth_->getOutMsgQueue()->popBarrierMsgQueue();
             }
             
-            while(rth_->getOutMsgQueue()->baseMsgQueueEmpty()&&rth_->getOutMsgQueue()->swarmMsgQueueEmpty()&&
-                  rth_->getOutMsgQueue()->vstigMsgQueueEmpty()&&rth_->getOutMsgQueue()->bbMsgQueueEmpty()&&
-                  rth_->getOutMsgQueue()->ncMsgQueueEmpty()&&rth_->getOutMsgQueue()->barrierMsgQueueEmpty())
+            while(rth_->getOutMsgQueue()->allOutMsgQueueEmpty())
             {
                 rth_->getOutMsgQueue()->msg_queue_condition.wait(lock);
             }

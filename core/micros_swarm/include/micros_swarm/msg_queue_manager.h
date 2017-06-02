@@ -53,6 +53,18 @@ namespace micros_swarm{
                 nc_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num5));
                 barrier_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num5));
             }
+
+            //check that whether all the msg queue is empty
+            bool allOutMsgQueueEmpty()
+            {
+                boost::shared_lock<boost::shared_mutex> lock(msg_queue_mutex);
+                if(baseMsgQueueEmpty()&&swarmMsgQueueEmpty()&& vstigMsgQueueEmpty()&&
+                   bbMsgQueueEmpty()&&ncMsgQueueEmpty()&&barrierMsgQueueEmpty())
+                {
+                    return true;
+                }
+                return false;
+            }
         
             bool baseMsgQueueFull()
             {
@@ -276,7 +288,7 @@ namespace micros_swarm{
                 msg_queue_condition.notify_one();
             }
             
-            boost::mutex msg_queue_mutex;
+            boost::shared_mutex msg_queue_mutex;
             boost::condition_variable_any msg_queue_condition;
         private:
             boost::shared_ptr<cqueue<micros_swarm::CommPacket> > base_msg_queue_;

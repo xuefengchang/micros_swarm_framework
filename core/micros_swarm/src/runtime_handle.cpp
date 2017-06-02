@@ -36,7 +36,6 @@ namespace micros_swarm{
         blackboard_.clear();
         listener_helpers_.clear();
         listener_helpers_.insert(std::pair<std::string, boost::shared_ptr<ListenerHelper> >("" , NULL));
-        in_msg_queue_.reset(new MsgQueueManager());
         out_msg_queue_.reset(new MsgQueueManager());
         barrier_.clear();
     }
@@ -53,7 +52,6 @@ namespace micros_swarm{
         blackboard_.clear();
         listener_helpers_.clear();
         listener_helpers_.insert(std::pair<std::string, boost::shared_ptr<ListenerHelper> >("" , NULL));
-        in_msg_queue_.reset(new MsgQueueManager());
         out_msg_queue_.reset(new MsgQueueManager());
         barrier_.clear();
     }
@@ -708,14 +706,9 @@ namespace micros_swarm{
         listener_helpers_.erase(key);
     }
     
-    const boost::shared_ptr<MsgQueueManager>& RuntimeHandle::getOutMsgQueue()
+    boost::shared_ptr<MsgQueueManager>& RuntimeHandle::getOutMsgQueue()
     {
         return out_msg_queue_;
-    }
-    
-    const boost::shared_ptr<MsgQueueManager>& RuntimeHandle::getInMsgQueue()
-    {
-        return in_msg_queue_;
     }
     
     void RuntimeHandle::insertBarrier(int robot_id)

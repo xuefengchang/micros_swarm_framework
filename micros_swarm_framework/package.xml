@@ -44,8 +44,8 @@
 
   <run_depend>micros_swarm</run_depend>
   <run_depend>app_loader</run_depend>
-  <run_depend>ros_comm</run_depend>
-  <run_depend>opensplice_dds_comm</run_depend>
+  <run_depend>ros_broker</run_depend>
+  <run_depend>opensplice_dds_broker</run_depend>
 
   <run_depend>app1</run_depend>
   <run_depend>app2</run_depend>

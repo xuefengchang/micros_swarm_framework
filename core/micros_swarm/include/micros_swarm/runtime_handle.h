@@ -104,8 +104,7 @@ namespace micros_swarm{
             const boost::shared_ptr<ListenerHelper> getListenerHelper(const std::string& key);
             void deleteListenerHelper(const std::string& key);
             
-            const boost::shared_ptr<MsgQueueManager>& getOutMsgQueue();
-            const boost::shared_ptr<MsgQueueManager>& getInMsgQueue();
+            boost::shared_ptr<MsgQueueManager>& getOutMsgQueue();
             
             void insertBarrier(int robot_id);
             int getBarrierSize();
@@ -125,7 +124,6 @@ namespace micros_swarm{
             std::set<int> barrier_;
             
             boost::shared_ptr<MsgQueueManager> out_msg_queue_;
-            boost::shared_ptr<MsgQueueManager> in_msg_queue_;
             
             boost::shared_mutex mutex1_, mutex2_, mutex3_, mutex4_, mutex5_,
                                 mutex6_, mutex7_, mutex8_, mutex9_, mutex10_,
