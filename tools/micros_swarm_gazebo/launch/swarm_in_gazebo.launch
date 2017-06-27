@@ -12,7 +12,7 @@
     <arg name="gui" value="$(arg gui)"/>
     <arg name="headless" value="$(arg headless)"/>
     <arg name="debug" value="$(arg debug)"/>
-    <arg name="world_name" value="$(find micros_flocking)/planworld.world"/>
+    <arg name="world_name" value="$(find micros_swarm_gazebo)/planworld.world"/>
   </include>
 
   <!--include uav models-->
