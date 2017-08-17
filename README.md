@@ -29,6 +29,6 @@ There are some demos under the "applications" sub-folder.
 
 ####References
 
-[1] http://the.swarming.buzz/
-[2] Pinciroli C, Beltrame G. Buzz: An extensible programming language for heterogeneous swarm robotics[C]//Intelligent Robots and Systems (IROS), 2016 IEEE/RSJ International Conference on. IEEE, 2016: 3794-3800.
+[1] http://the.swarming.buzz/ \
+[2] Pinciroli C, Beltrame G. Buzz: An extensible programming language for heterogeneous swarm robotics[C]//Intelligent Robots and Systems (IROS), 2016 IEEE/RSJ International Conference on. IEEE, 2016: 3794-3800. \
 [3] Quigley M, Conley K, Gerkey B, et al. ROS: an open-source Robot Operating System[C]//ICRA workshop on open source software. 2009, 3(3.2): 5.
