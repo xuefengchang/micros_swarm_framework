@@ -27,7 +27,7 @@ There are some demos under the "applications" sub-folder.
 
 ![image3](https://github.com/xuefengchang/micros_swarm_framework/raw/master/documents/images/app3.png)
 
-#### References
+## References
 
 [1] http://the.swarming.buzz/ \
 [2] Pinciroli C, Beltrame G. Buzz: An extensible programming language for heterogeneous swarm robotics[C]//Intelligent Robots and Systems (IROS), 2016 IEEE/RSJ International Conference on. IEEE, 2016: 3794-3800. \
