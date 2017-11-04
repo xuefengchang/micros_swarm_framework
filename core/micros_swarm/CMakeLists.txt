@@ -46,6 +46,7 @@ add_library(rtp_core
   src/runtime_handle.cpp
   src/runtime_core.cpp
   src/app_manager.cpp
+  src/scds_pso.cpp
 )
 
 target_link_libraries(rtp_core
