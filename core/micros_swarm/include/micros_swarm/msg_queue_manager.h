@@ -42,6 +42,7 @@ namespace micros_swarm{
                 bb_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
                 nc_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
                 barrier_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
+                scds_pso_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(5000));
             }
             
             explicit MsgQueueManager(int num1, int num2, int num3, int num4, int num5)
@@ -52,6 +53,7 @@ namespace micros_swarm{
                 bb_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num4));
                 nc_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num5));
                 barrier_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num5));
+                scds_pso_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
             }
 
             //check that whether all the msg queue is empty
@@ -287,6 +289,43 @@ namespace micros_swarm{
                 barrier_msg_queue_->push(p);
                 msg_queue_condition.notify_one();
             }
+
+            bool SCDSPSOMsgQueueFull()
+            {
+                boost::shared_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
+                return scds_pso_msg_queue_->full();
+            }
+
+            bool SCDSPSOMsgQueueEmpty()
+            {
+                boost::shared_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
+                return scds_pso_msg_queue_->empty();
+            }
+
+            const micros_swarm::CommPacket& SCDSPSOMsgQueueFront()
+            {
+                boost::shared_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
+                return scds_pso_msg_queue_->front();
+            }
+
+            int SCDSPSOMsgQueueSize()
+            {
+                boost::shared_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
+                return scds_pso_msg_queue_->size();
+            }
+
+            void popSCDSPSOMsgQueue()
+            {
+                boost::unique_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
+                scds_pso_msg_queue_->pop();
+            }
+
+            void pushSCDSPSOMsgQueue(const micros_swarm::CommPacket& p)
+            {
+                boost::unique_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
+                scds_pso_msg_queue_->push(p);
+                msg_queue_condition.notify_one();
+            }
             
             boost::shared_mutex msg_queue_mutex;
             boost::condition_variable_any msg_queue_condition;
@@ -297,10 +336,11 @@ namespace micros_swarm{
             boost::shared_ptr<cqueue<micros_swarm::CommPacket> > bb_msg_queue_;
             boost::shared_ptr<cqueue<micros_swarm::CommPacket> > nc_msg_queue_;
             boost::shared_ptr<cqueue<micros_swarm::CommPacket> > barrier_msg_queue_;
+            boost::shared_ptr<cqueue<micros_swarm::CommPacket> > scds_pso_msg_queue_;
             
             boost::shared_mutex base_msg_mutex_, swarm_msg_mutex_,
                                 vstig_msg_mutex_, bb_msg_mutex_,
-                                nc_msg_mutex_, barrier_msg_mutex_;
+                                nc_msg_mutex_, barrier_msg_mutex_, scds_pso_msg_mutex_;
     };
 };
 

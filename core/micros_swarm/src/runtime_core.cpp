@@ -78,6 +78,11 @@ namespace micros_swarm{
                 communicator_->broadcast(rth_->getOutMsgQueue()->barrierMsgQueueFront());
                 rth_->getOutMsgQueue()->popBarrierMsgQueue();
             }
+            if(!rth_->getOutMsgQueue()->SCDSPSOMsgQueueEmpty())
+            {
+                communicator_->broadcast(rth_->getOutMsgQueue()->SCDSPSOMsgQueueFront());
+                rth_->getOutMsgQueue()->popSCDSPSOMsgQueue();
+            }
             
             while(rth_->getOutMsgQueue()->allOutMsgQueueEmpty())
             {

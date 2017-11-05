@@ -136,6 +136,26 @@ namespace micros_swarm{
             std::cout<<bb_value<<", "<<bb_timestamp<<", "<<robot_id<<std::endl;
         }
     };
+
+    struct SCDSPSODataTuple{
+        std::vector<float> pos;
+        float val;
+        int robot_id;
+        int gen;
+        time_t timestamp;
+
+        SCDSPSODataTuple():val(0), robot_id(0), gen(0), timestamp(0){}
+
+        SCDSPSODataTuple(const std::string& key_, const std::vector<float> pos_, float val_, int robot_id_, int gen_, time_t timestamp_)
+                :pos(pos_), val(val_), robot_id(robot_id_), gen(gen_), timestamp(timestamp_){}
+
+        void print()
+        {
+            for(int i=0;i<pos.size();i++)
+                std::cout<<pos[i]<<" ";
+            std::cout<<", "<<val<<", "<<robot_id<<", "<<gen<<timestamp<<std::endl;
+        }
+    };
     
     //this macro definition is used to serialize the user-defined data type
     #define BOOST_SERIALIZE  template<class Archive>\

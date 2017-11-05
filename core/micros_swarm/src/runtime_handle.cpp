@@ -38,6 +38,7 @@ namespace micros_swarm{
         listener_helpers_.insert(std::pair<std::string, boost::shared_ptr<ListenerHelper> >("" , NULL));
         out_msg_queue_.reset(new MsgQueueManager());
         barrier_.clear();
+        scds_pso_tuple_.clear();
     }
     
     RuntimeHandle::RuntimeHandle(int robot_id)
@@ -54,6 +55,7 @@ namespace micros_swarm{
         listener_helpers_.insert(std::pair<std::string, boost::shared_ptr<ListenerHelper> >("" , NULL));
         out_msg_queue_.reset(new MsgQueueManager());
         barrier_.clear();
+        scds_pso_tuple_.clear();
     }
     
     int RuntimeHandle::getRobotID()
@@ -721,5 +723,28 @@ namespace micros_swarm{
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex11_);
         return barrier_.size();
+    }
+
+    bool RuntimeHandle::getSCDSPSOValue(const std::string& aKey, SCDSPSODataTuple& aT)
+    {
+        boost::shared_lock<boost::shared_mutex> lock(scds_pso_tuple_mutex_);
+        std::map<std::string, SCDSPSODataTuple>::iterator iter=scds_pso_tuple_.find(aKey);
+        if (iter!=scds_pso_tuple_.end()) {
+            aT = iter->second;
+            return true;
+        }
+        else return false;
+    }
+
+    void RuntimeHandle::insertOrUpdateSCDSPSOValue(const std::string& aKey, const SCDSPSODataTuple& aT)
+    {
+        boost::unique_lock<boost::shared_mutex> lock(scds_pso_tuple_mutex_);
+        std::map<std::string, SCDSPSODataTuple>::iterator iter=scds_pso_tuple_.find(aKey);
+        if (iter!=scds_pso_tuple_.end()) {
+            if (iter->second.val < aT.val)
+                scds_pso_tuple_[aKey]=aT;
+        }
+        else
+            scds_pso_tuple_[aKey]=aT;
     }
 };

@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      micros_swarm_framework.h
+\file      testvstig.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,15 +20,36 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef MICROS_SWARM_FRAMEWORK_H_
-#define MICROS_SWARM_FRAMEWORK_H_
+#ifndef TESTSCDSPSO_H_
+#define TESTSCDSPSO_H_
 
-#include "micros_swarm/swarm.h"
-#include "micros_swarm/neighbors.h"
-#include "micros_swarm/virtual_stigmergy.h"
-#include "micros_swarm/blackboard.h"
-#include "micros_swarm/neighbor_comm.h"
+#include "std_msgs/String.h"
+#include "nav_msgs/Odometry.h"
+#include "geometry_msgs/Twist.h"
+
 #include "micros_swarm/scds_pso.h"
-#include "micros_swarm/application.h"
+#include "micros_swarm/micros_swarm.h"
+
+namespace testscdspso{
+    
+    class TestSCDSPSO : public micros_swarm::Application
+    {
+        public:
+            ros::Timer timer;
+            ros::Publisher pub;
+            ros::Subscriber sub;
+
+            micros_swarm::Agent agent;
+            micros_swarm::SCDSPSOTuple tuple;
+            void loop(const ros::TimerEvent&);
+            void baseCallback(const nav_msgs::Odometry& lmsg);
+
+            float fitness(const std::vector<float>& vec);
+
+            TestSCDSPSO();
+            ~TestSCDSPSO();
+            virtual void start(); 
+    };
+};
 
 #endif

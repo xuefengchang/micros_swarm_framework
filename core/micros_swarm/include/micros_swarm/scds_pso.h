@@ -29,13 +29,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <boost/function.hpp>
 #include <ros/ros.h>
 
+#include "micros_swarm/singleton.h"
+#include "micros_swarm/runtime_handle.h"
+#include "micros_swarm/comm_interface.h"
 #include "micros_swarm/data_type.h"
 #include "micros_swarm/random.h"
-#include "micros_swarm/virtual_stigmergy.h"
+#include "micros_swarm/scds_pso_tuple.h"
 
 namespace micros_swarm{
 
-    struct PSODataType{
+    /*struct PSODataType{
         std::vector<float> pos;
         float val;
         int gen;
@@ -54,25 +57,30 @@ namespace micros_swarm{
             val = val_;
             gen = gen_;
         }
-
-        /*void printPSODataType()
-        {
-            std::cout<<"pos = "<<pos<<std::endl;
-            std::cout<<"val = "<<val<<std::endl;
-            std::cout<<"gen = "<<gen<<std::endl;
-        }*/
-    };
+    };*/
 
     class Agent{
         public:
             Agent():name_(""), run_(false), dim_(0), fitness_(0)
             {
-                vs_ = VirtualStigmergy<PSODataType>(0);
+                best_tuple_ = SCDSPSOTuple();
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                robot_id_ = rth_->getRobotID();
+                cur_gen_ = 0;
+
+                //timer = nh.createTimer(ros::Duration(0.1), &Agent::loop, this);
             }
 
             Agent(std::string name):name_(name), run_(false), dim_(0), fitness_(0)
             {
-                vs_ = VirtualStigmergy<PSODataType>(0);
+                best_tuple_ = SCDSPSOTuple();
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                robot_id_ = rth_->getRobotID();
+                cur_gen_ = 0;
+
+                //timer = nh.createTimer(ros::Duration(0.1), &Agent::loop, this);
             }
             void set_dim(int dim);
             void set_fitness(const boost::function<float(const std::vector<float>& )>& fitness);
@@ -89,6 +97,8 @@ namespace micros_swarm{
             bool has_pos_limit(int index);
             bool has_vel_limit(int index);
 
+            void loop(const ros::TimerEvent&);
+
             std::string name_;
             bool run_;
             int dim_;
@@ -99,11 +109,22 @@ namespace micros_swarm{
             std::vector<float> max_vel_;
             std::vector<float> cur_pos_;
             std::vector<float> cur_vel_;
-            std::vector<float> pbest_;
-            float pbest_val_;
-            std::vector<float> gbest_;
-            float gbest_val_;
-            VirtualStigmergy<PSODataType> vs_;
+            //std::vector<float> pbest_;
+            //float pbest_val_;
+            //std::vector<float> gbest_;
+            //float gbest_val_;
+            SCDSPSODataTuple pbest_;
+            SCDSPSODataTuple gbest_;
+            int cur_gen_;
+            //time_t timestamp_;
+            SCDSPSOTuple best_tuple_;
+
+            int robot_id_;
+            boost::shared_ptr<RuntimeHandle> rth_;
+            boost::shared_ptr<CommInterface> communicator_;
+
+            ros::NodeHandle nh;
+            ros::Timer timer;
     };
 };
 

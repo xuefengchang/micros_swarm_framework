@@ -274,6 +274,88 @@ namespace micros_swarm{
 
                     break;
                 }
+                case SCDS_PSO_PUT:
+                {
+                    SCDSPSOPut scds_put;
+                    archive>>scds_put;
+
+                    SCDSPSODataTuple local;
+                    bool exist = rth_->getSCDSPSOValue(scds_put.key, local);
+
+                    //local tuple is not exist or local timestamp is smaller
+                    if ((!exist) || (local.val < scds_put.val))
+                    {
+                        SCDSPSODataTuple new_data;
+                        new_data.pos = scds_put.pos;
+                        new_data.val = scds_put.val;
+                        new_data.robot_id = scds_put.robot_id;
+                        new_data.gen = scds_put.gen;
+                        new_data.timestamp = scds_put.timestamp;
+                        rth_->insertOrUpdateSCDSPSOValue(scds_put.key, new_data);
+
+                        micros_swarm::CommPacket p;
+                        p.packet_source=shm_rid;
+                        p.packet_version=1;
+                        p.packet_type=SCDS_PSO_PUT;
+                        p.packet_data=packet_data;
+                        p.package_check_sum=0;
+                        rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(p);
+                    }
+
+                    break;
+                }
+                case SCDS_PSO_GET:
+                {
+                    SCDSPSOGet scds_get;
+                    archive>>scds_get;
+
+                    SCDSPSODataTuple local;
+                    bool exist = rth_->getSCDSPSOValue(scds_get.key, local);
+
+                    //local tuple is not exist or local timestamp is smaller
+                    if ((!exist) || (local.val < scds_get.val))
+                    {
+                        SCDSPSODataTuple new_data;
+                        new_data.pos = scds_get.pos;
+                        new_data.val = scds_get.val;
+                        new_data.robot_id = scds_get.robot_id;
+                        new_data.gen = scds_get.gen;
+                        new_data.timestamp = scds_get.timestamp;
+                        rth_->insertOrUpdateSCDSPSOValue(scds_get.key, new_data);
+
+                        micros_swarm::CommPacket p;
+                        p.packet_source=shm_rid;
+                        p.packet_version=1;
+                        p.packet_type=SCDS_PSO_PUT;
+                        p.packet_data=packet_data;
+                        p.package_check_sum=0;
+                        rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(p);
+                    }
+                    else if(local.val > scds_get.val)
+                    {
+                        SCDSPSOPut scds_put(scds_get.key, local.pos, local.val, local.robot_id, local.gen, local.timestamp);
+
+                        std::ostringstream archiveStream2;
+                        boost::archive::text_oarchive archive2(archiveStream2);
+                        archive2<<scds_put;
+                        std::string scds_put_string=archiveStream2.str();
+
+                        micros_swarm::CommPacket p;
+                        p.packet_source=shm_rid;
+                        p.packet_version=1;
+                        p.packet_type=SCDS_PSO_PUT;
+                        p.packet_data=scds_put_string;
+                        p.package_check_sum=0;
+
+                        rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(p);
+                    }
+                    else
+                    {
+
+                    }
+
+                    break;
+                }
                 case NEIGHBOR_BROADCAST_KEY_VALUE:
                 {
                     NeighborBroadcastKeyValue nbkv;

@@ -1,0 +1,5 @@
+<library path="lib/libTestSCDSPSO">
+    <class name="testscdspso/TestSCDSPSO" type="testscdspso::TestSCDSPSO" base_class_type="micros_swarm::Application">
+        <description>testscdspso.</description>
+    </class>
+</library>

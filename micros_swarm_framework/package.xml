@@ -58,6 +58,7 @@
   <run_depend>testnc</run_depend>
   <run_depend>testrth</run_depend>
   <run_depend>testvstig</run_depend>
+  <run_depend>testscdspso</run_depend>
 
   <run_depend>micros_swarm_stage</run_depend>
   <run_depend>micros_swarm_gazebo</run_depend>

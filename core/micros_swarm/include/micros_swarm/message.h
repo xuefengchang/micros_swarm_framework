@@ -53,6 +53,9 @@ namespace micros_swarm{
         BLACKBOARD_QUERY,  //query a value of blackboard
         BLACKBOARD_QUERY_ACK,  //query ack
         BLACKBOARD_PUT,  //put a value into blackboard
+
+        SCDS_PSO_PUT,
+        SCDS_PSO_GET,
         
         NEIGHBOR_BROADCAST_KEY_VALUE,  //broadcast <key, value> tuple
         
@@ -268,6 +271,58 @@ namespace micros_swarm{
         BlackBoardPut(int id_, int on_robot_id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):
                 bb_id(id_), on_robot_id(on_robot_id_), bb_key(key_), bb_value(value_),
                 bb_timestamp(time_now_), robot_id(robot_id_){}
+    };
+
+    struct SCDSPSOGet
+    {
+        std::string key;
+        std::vector<float> pos;
+        float val;
+        int robot_id;
+        int gen;
+        time_t timestamp;
+
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & key;
+            ar & pos;
+            ar & val;
+            ar & robot_id;
+            ar & gen;
+            ar & timestamp;
+        }
+
+        SCDSPSOGet(){}
+
+        SCDSPSOGet(const std::string& key_, const std::vector<float> pos_, float val_, int robot_id_, int gen_, time_t timestamp_)
+                :key(key_), pos(pos_), val(val_), robot_id(robot_id_), gen(gen_), timestamp(timestamp_){}
+    };
+
+    struct SCDSPSOPut
+    {
+        std::string key;
+        std::vector<float> pos;
+        float val;
+        int robot_id;
+        int gen;
+        time_t timestamp;
+
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & key;
+            ar & pos;
+            ar & val;
+            ar & robot_id;
+            ar & gen;
+            ar & timestamp;
+        }
+
+        SCDSPSOPut(){}
+
+        SCDSPSOPut(const std::string& key_, const std::vector<float> pos_, float val_, int robot_id_, int gen_, time_t timestamp_)
+                :key(key_), pos(pos_), val(val_), robot_id(robot_id_), gen(gen_), timestamp(timestamp_){}
     };
     
     struct NeighborBroadcastKeyValue{

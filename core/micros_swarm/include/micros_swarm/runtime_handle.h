@@ -108,6 +108,10 @@ namespace micros_swarm{
             
             void insertBarrier(int robot_id);
             int getBarrierSize();
+
+            bool getSCDSPSOValue(const std::string& aKey, SCDSPSODataTuple& aT);
+            void insertOrUpdateSCDSPSOValue(const std::string& aKey, const SCDSPSODataTuple& aT);
+
         private:
             int robot_id_;
             int robot_type_;  //TODO
@@ -122,12 +126,14 @@ namespace micros_swarm{
             float neighbor_distance_;
             std::map<std::string, boost::shared_ptr<ListenerHelper> > listener_helpers_;
             std::set<int> barrier_;
+
+            std::map<std::string, SCDSPSODataTuple> scds_pso_tuple_;
             
             boost::shared_ptr<MsgQueueManager> out_msg_queue_;
             
             boost::shared_mutex mutex1_, mutex2_, mutex3_, mutex4_, mutex5_,
                                 mutex6_, mutex7_, mutex8_, mutex9_, mutex10_,
-                                mutex11_, bb_mutex_;
+                                mutex11_, bb_mutex_, scds_pso_tuple_mutex_;
     };
 };
 
