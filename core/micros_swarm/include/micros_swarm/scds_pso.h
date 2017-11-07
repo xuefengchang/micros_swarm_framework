@@ -38,50 +38,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm{
 
-    /*struct PSODataType{
-        std::vector<float> pos;
-        float val;
-        int gen;
-
-        BOOST_SERIALIZE
-        {
-            MEMBER pos;
-            MEMBER val;
-            MEMBER gen;
-        }
-
-        PSODataType(){}
-        PSODataType(std::vector<float> pos_, float val_, int gen_)
-        {
-            pos = pos_;
-            val = val_;
-            gen = gen_;
-        }
-    };*/
-
     class Agent{
         public:
-            Agent():name_(""), run_(false), dim_(0), fitness_(0)
-            {
-                best_tuple_ = SCDSPSOTuple();
-                rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<CommInterface>::getExistedSingleton();
-                robot_id_ = rth_->getRobotID();
-                cur_gen_ = 0;
-
-                //timer = nh.createTimer(ros::Duration(0.1), &Agent::loop, this);
-            }
-
-            Agent(std::string name):name_(name), run_(false), dim_(0), fitness_(0)
-            {
-                best_tuple_ = SCDSPSOTuple();
-                rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<CommInterface>::getExistedSingleton();
-                robot_id_ = rth_->getRobotID();
-                cur_gen_ = 0;
-
-                //timer = nh.createTimer(ros::Duration(0.1), &Agent::loop, this);
-            }
+            Agent();
+            Agent(std::string name);
+            void set_param(float w, float c1, float c2);
             void set_dim(int dim);
             void set_fitness(const boost::function<float(const std::vector<float>& )>& fitness);
             void set_min_pos(const std::vector<float>& pos);
@@ -92,6 +53,7 @@ namespace micros_swarm{
             void init_vel(const std::vector<float>& vel);
             void rand_init();
             void start();
+            void start(int loop_gen);
             void stop();
         private:
             bool has_pos_limit(int index);
@@ -102,6 +64,9 @@ namespace micros_swarm{
             std::string name_;
             bool run_;
             int dim_;
+            float w_;
+            float c1_;
+            float c2_;
             boost::function<float(const std::vector<float>& )> fitness_;
             std::vector<float> min_pos_;
             std::vector<float> max_pos_;
@@ -109,22 +74,18 @@ namespace micros_swarm{
             std::vector<float> max_vel_;
             std::vector<float> cur_pos_;
             std::vector<float> cur_vel_;
-            //std::vector<float> pbest_;
-            //float pbest_val_;
-            //std::vector<float> gbest_;
-            //float gbest_val_;
+            int cur_gen_;
+            int gen_limit_;
             SCDSPSODataTuple pbest_;
             SCDSPSODataTuple gbest_;
-            int cur_gen_;
-            //time_t timestamp_;
             SCDSPSOTuple best_tuple_;
 
             int robot_id_;
             boost::shared_ptr<RuntimeHandle> rth_;
             boost::shared_ptr<CommInterface> communicator_;
 
-            ros::NodeHandle nh;
-            ros::Timer timer;
+            ros::NodeHandle nh_;
+            ros::Timer timer_;
     };
 };
 

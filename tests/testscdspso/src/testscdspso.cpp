@@ -77,6 +77,7 @@ namespace testscdspso{
         tuple = micros_swarm::SCDSPSOTuple();
         timer = nh.createTimer(ros::Duration(0.1), &TestSCDSPSO::loop, this);*/
 
+        agent.set_param(1, 1.49445, 1.49445);
         agent.set_dim(2);
         agent.set_fitness(boost::bind(&TestSCDSPSO::fitness, this, _1));
 
@@ -100,12 +101,12 @@ namespace testscdspso{
 
         std::vector<float> min_vel;
         min_vel.resize(2);
-        min_vel[0] = 0.5;
-        min_vel[1] = 0.5;
+        min_vel[0] = -0.5;
+        min_vel[1] = -0.5;
         agent.set_min_vel(min_vel);
 
         agent.rand_init();
-        agent.start();
+        agent.start(300);
     }
 };
 

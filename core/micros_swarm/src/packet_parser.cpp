@@ -285,6 +285,7 @@ namespace micros_swarm{
                     //local tuple is not exist or local timestamp is smaller
                     if ((!exist) || (local.val < scds_put.val))
                     {
+                        //std::cout<<"iiiiiii"<<std::endl;
                         SCDSPSODataTuple new_data;
                         new_data.pos = scds_put.pos;
                         new_data.val = scds_put.val;

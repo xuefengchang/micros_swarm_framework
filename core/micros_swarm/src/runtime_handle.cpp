@@ -738,13 +738,23 @@ namespace micros_swarm{
 
     void RuntimeHandle::insertOrUpdateSCDSPSOValue(const std::string& aKey, const SCDSPSODataTuple& aT)
     {
-        boost::unique_lock<boost::shared_mutex> lock(scds_pso_tuple_mutex_);
+        boost::upgrade_lock<boost::shared_mutex> lock(scds_pso_tuple_mutex_);
         std::map<std::string, SCDSPSODataTuple>::iterator iter=scds_pso_tuple_.find(aKey);
-        if (iter!=scds_pso_tuple_.end()) {
-            if (iter->second.val < aT.val)
+        /*if (iter!=scds_pso_tuple_.end()) {
+            //if (iter->second.val < aT.val)
                 scds_pso_tuple_[aKey]=aT;
         }
         else
+            scds_pso_tuple_[aKey]=aT;*/
+
+        if(iter!=scds_pso_tuple_.end())
+        {
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+            iter->second = aT;
+        }
+        else {
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
             scds_pso_tuple_[aKey]=aT;
+        }
     }
 };

@@ -23,11 +23,40 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <boost/function.hpp>
 #include "micros_swarm/scds_pso.h"
 
-#define c1 1.49445
-#define c2 1.49445
-#define w 0.7
-
 namespace micros_swarm {
+    Agent::Agent():name_(""), run_(false), dim_(0), fitness_(0)
+    {
+        w_ = 0.7;
+        c1_ = 1.49445;
+        c2_ = 1.49445;
+        best_tuple_ = SCDSPSOTuple();
+        rth_ = Singleton<RuntimeHandle>::getSingleton();
+        communicator_ = Singleton<CommInterface>::getExistedSingleton();
+        robot_id_ = rth_->getRobotID();
+        cur_gen_ = 0;
+        gen_limit_ = 0;
+    }
+
+    Agent::Agent(std::string name):name_(name), run_(false), dim_(0), fitness_(0)
+    {
+        w_ = 0.7;
+        c1_ = 1.49445;
+        c2_ = 1.49445;
+        best_tuple_ = SCDSPSOTuple();
+        rth_ = Singleton<RuntimeHandle>::getSingleton();
+        communicator_ = Singleton<CommInterface>::getExistedSingleton();
+        robot_id_ = rth_->getRobotID();
+        cur_gen_ = 0;
+        gen_limit_ = 0;
+    }
+
+    void Agent::set_param(float w, float c1, float c2)
+    {
+        w_ = w;
+        c1_ = c1;
+        c2_ = c2;
+    }
+
     void Agent::set_dim(int dim)
     {
         dim_ = dim;
@@ -55,14 +84,6 @@ namespace micros_swarm {
         for(int i = 0; i < dim_; i++) {
             cur_vel_[i] = 0;
         }
-        /*pbest_.resize(dim_);
-        for(int i = 0; i < dim_; i++) {
-            pbest_[i] = 0;
-        }
-        gbest_.resize(dim_);
-        for(int i = 0; i < dim_; i++) {
-            gbest_[i] = 0;
-        }*/
     }
 
     void Agent::set_fitness(const boost::function<float(const std::vector<float>& )>& fitness)
@@ -94,7 +115,7 @@ namespace micros_swarm {
     void Agent::set_max_vel(const std::vector<float>& vel)
     {
         for(int i = 0; i < vel.size(); i++) {
-            max_pos_[i] = vel[i];
+            max_vel_[i] = vel[i];
         }
     }
 
@@ -103,15 +124,13 @@ namespace micros_swarm {
         for(int i = 0; i < pos.size(); i++) {
             cur_pos_[i] = pos[i];
         }
-        //pbest_ = cur_pos_;
-        //pbest_val_ = fitness_(pbest_);
+
         pbest_.pos = cur_pos_;
         pbest_.val = fitness_(pbest_.pos);
         pbest_.robot_id = robot_id_;
         pbest_.gen = cur_gen_;
         pbest_.timestamp = time(NULL);
-        //gbest_ = cur_pos_;
-        //gbest_val_ = fitness_(gbest_);
+
         gbest_.pos = cur_pos_;
         gbest_.val = fitness_(gbest_.pos);
         gbest_.robot_id = robot_id_;
@@ -146,10 +165,10 @@ namespace micros_swarm {
     {
         for(int i = 0; i < dim_; i++) {
             if(has_pos_limit(i)) {
-                cur_pos_[i] = random_float(min_pos_[i], max_pos_[i], robot_id_);
+                cur_pos_[i] = random_float(min_pos_[i], max_pos_[i], robot_id_+time(NULL));
             }
             else {
-                cur_pos_[i] = random_float(-1000, 1000, robot_id_);
+                cur_pos_[i] = random_float(-100, 100, robot_id_+time(NULL));
             }
 
             pbest_.pos = cur_pos_;
@@ -166,10 +185,10 @@ namespace micros_swarm {
             best_tuple_.put("scds_pso", gbest_);
 
             if(has_vel_limit(i)) {
-                cur_vel_[i] = random_float(min_vel_[i], max_vel_[i], robot_id_);
+                cur_vel_[i] = random_float(min_vel_[i], max_vel_[i], robot_id_+time(NULL));
             }
             else {
-                cur_vel_[i] = random_float(-100, 100, robot_id_);
+                cur_vel_[i] = random_float(-100, 100, robot_id_+time(NULL));
             }
         }
     }
@@ -178,14 +197,22 @@ namespace micros_swarm {
     {
         if(!run_)
             return;
-        cur_gen_++;
 
-        float r1 = random_float(0, 1, time(NULL));
-        float r2 = random_float(0, 1, time(NULL));
-        SCDSPSODataTuple data_tuple = best_tuple_.get("scds_pso");
+        cur_gen_++;
+        //srand(time(NULL));
+        float  r1 = (float)rand()/RAND_MAX;
+        float  r2 = (float)rand()/RAND_MAX;
+        gbest_ = best_tuple_.get("scds_pso");
 
         for(int i = 0; i < dim_; i++) {
-            cur_vel_[i] = w*cur_vel_[i] + c1*r1*(pbest_.pos[i] - cur_pos_[i]) + c2*r2*(gbest_.pos[i] - cur_pos_[i]);
+            float s1=c1_*r1*(pbest_.pos[i] - cur_pos_[i]);
+            float s2=c2_*r2*(gbest_.pos[i] - cur_pos_[i]);
+            cur_vel_[i] = w_*cur_vel_[i] + s1 + s2;
+            if(robot_id_ == 6) {
+                std::cout<<"cur_vel: "<<cur_vel_[i]<<std::endl;
+                std::cout << "s1, s2: " << s1 << ", " << s2 << std::endl;
+            }
+
             if(has_vel_limit(i)) {
                 if(cur_vel_[i] > max_vel_[i]) {
                     cur_vel_[i] = max_vel_[i];
@@ -206,6 +233,20 @@ namespace micros_swarm {
             }
         }
 
+        if(robot_id_ == 6) {
+            std::cout << "r1, r2: " << r1 << ", " << r2 << ", ";
+            for (int i = 0; i < dim_; i++) {
+                std::cout << cur_vel_[i] << " ";
+            }
+
+            for (int i = 0; i < dim_; i++) {
+                std::cout << cur_pos_[i] << " ";
+            }
+            std::cout << std::endl;
+
+            std::cout << "---------" << std::endl;
+        }
+
         float cur_val = fitness_(cur_pos_);
         if(cur_val > pbest_.val) {
             pbest_.pos = cur_pos_;
@@ -215,7 +256,7 @@ namespace micros_swarm {
             pbest_.timestamp = time(NULL);
         }
 
-        if(cur_val > data_tuple.val) {
+        if(cur_val > gbest_.val) {
             gbest_.pos = cur_pos_;
             gbest_.val = cur_val;
             gbest_.robot_id = robot_id_;
@@ -225,13 +266,18 @@ namespace micros_swarm {
             best_tuple_.put("scds_pso", gbest_);
         }
 
-        std::cout<<"robot_id: "<<robot_id_<<", gbest: "<<gbest_.val<<", gen: "<<cur_gen_<<std::endl;
+        if(robot_id_ == 6) {
+            std::cout << "robot_id: " << robot_id_ << " cur_gen: " << cur_gen_ << ", cur_val: " << cur_val
+                      << ", gbest: " << gbest_.val << ", gen: " << gbest_.gen << std::endl;
+        }
 
         ros::spinOnce();
-        ros::Duration(0.1).sleep();
+        ros::Duration(0.5).sleep();
 
-        //if(cur_gen_>15)
-        //    break;
+        if(gen_limit_) {
+            if(cur_gen_ > gen_limit_)
+                timer_.stop();
+        }
     }
 
     void Agent::start()
@@ -247,70 +293,21 @@ namespace micros_swarm {
         }
 
         run_ = true;
+        timer_ = nh_.createTimer(ros::Duration(0.1), &Agent::loop, this);
+    }
 
-        //ros::NodeHandle nh;
-        timer = nh.createTimer(ros::Duration(0.1), &Agent::loop, this);
-
-        /*while(run_)
-        {
-            cur_gen_++;
-            float r1 = random_float(0, 1, time(NULL));
-            float r2 = random_float(0, 1, time(NULL));
-            for(int i = 0; i < dim_; i++) {
-                cur_vel_[i] = w*cur_vel_[i] + c1*r1*(pbest_.pos[i] - cur_pos_[i]) + c2*r2*(gbest_.pos[i] - cur_pos_[i]);
-                if(has_vel_limit(i)) {
-                    if(cur_vel_[i] > max_vel_[i]) {
-                        cur_vel_[i] = max_vel_[i];
-                    }
-                    if(cur_vel_[i] < min_vel_[i]) {
-                        cur_vel_[i] = min_vel_[i];
-                    }
-                }
-
-                cur_pos_[i] = cur_pos_[i] + cur_vel_[i];
-                if(has_pos_limit(i)) {
-                    if(cur_pos_[i] > max_pos_[i]) {
-                        cur_pos_[i] = max_pos_[i];
-                    }
-                    if(cur_pos_[i] < min_pos_[i]) {
-                        cur_pos_[i] = min_pos_[i];
-                    }
-                }
-            }
-
-            float cur_val = fitness_(cur_pos_);
-            if(cur_val > pbest_.val) {
-                pbest_.pos = cur_pos_;
-                pbest_.val = cur_val;
-                pbest_.robot_id = robot_id_;
-                pbest_.gen = cur_gen_;
-                pbest_.timestamp = time(NULL);
-            }
-
-            SCDSPSODataTuple data_tuple = best_tuple_.get("scds_pso");
-
-            if(cur_val > data_tuple.val) {
-                gbest_.pos = cur_pos_;
-                gbest_.val = cur_val;
-                gbest_.robot_id = robot_id_;
-                gbest_.gen = cur_gen_;
-                gbest_.timestamp = time(NULL);
-
-                best_tuple_.put("scds_pso", gbest_);
-            }
-
-            std::cout<<"robot_id: "<<robot_id_<<", gbest: "<<gbest_.val<<", gen: "<<cur_gen_<<std::endl;
-
-            ros::spinOnce();
-            ros::Duration(0.2).sleep();
-
-            if(cur_gen_>15)
-                break;
-        }*/
+    void Agent::start(int loop_gen)
+    {
+        gen_limit_ = loop_gen;
+        start();
     }
 
     void Agent::stop()
     {
         run_ = false;
+        dim_ = 0;
+        name_ = "";
+        cur_gen_ = 0;
+        gen_limit_ = 0;
     }
 };
