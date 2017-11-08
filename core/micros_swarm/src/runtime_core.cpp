@@ -243,6 +243,7 @@ namespace micros_swarm{
         spin_thread_ = new boost::thread(&RuntimeCore::spin_msg_queue, this);
         publish_robot_base_timer_ = node_handle_.createTimer(ros::Duration(publish_robot_base_duration_), &RuntimeCore::publish_robot_base, this);
         publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(publish_swarm_list_duration_), &RuntimeCore::publish_swarm_list, this);
-        barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimeCore::barrier_check, this);
+        //barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimeCore::barrier_check, this);
+        std::cout<<"robot "<<rth_->getRobotID()<<" daemon node start."<<std::endl;
     }
 };

@@ -584,9 +584,9 @@ namespace micros_swarm{
             std::map<std::string, VirtualStigmergyTuple>* svstt_pointer=&(vst_it->second);
             for (svstt_it=svstt_pointer->begin(); svstt_it!=svstt_pointer->end(); svstt_it++)
             {
-                std::cout<<"("<<svstt_it->first<<","<< \
-                    svstt_it->second.vstig_value<<","<<svstt_it->second.lamport_clock<<","<<\
-                    svstt_it->second.write_timestamp<<","<<svstt_it->second.read_count<<","<<\
+                std::cout<<"("<<svstt_it->first<<",  "<< \
+                    svstt_it->second.vstig_value<<",  "<<svstt_it->second.lamport_clock<<",  "<<\
+                    svstt_it->second.write_timestamp<<",  "<<svstt_it->second.read_count<<",  "<<\
                     svstt_it->second.robot_id<<")"<<std::endl;
             }
             std::cout<<"]"<<std::endl;

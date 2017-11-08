@@ -1,0 +1,133 @@
+include "swarm.inc"
+include "turtlebot_intruder.inc"
+
+define floorplan model
+(
+  # sombre, sensible, artistic
+  color "gray30"
+
+  # most maps will need a bounding box
+  boundary 1
+
+  gui_nose 0
+  gui_grid 0
+  gui_outline 0
+  gripper_return 0
+  fiducial_return 0
+  laser_return 1
+)
+
+resolution 0.02
+interval_sim 10  # simulation timestep in milliseconds
+
+window
+(
+  size [ 600.0 700.0 ]
+  center [ 0.0 0.0 ]
+  rotate [ 0.0 0.0 ]
+  scale 60
+)
+
+floorplan
+(
+  name "swarm"
+  bitmap "../maps/swarm.png"
+  size [ 200.0 200.0 2.0 ]
+  pose [  0.0  0.0 0.0 0.0 ]
+)
+
+
+define block model
+(
+size [0.5 7 0.5]
+gui_nose 1
+)
+
+swarm( pose [ 0 0 0 0 ] name "rob0" color "blue")
+swarm( pose [ 2 0 0 0 ] name "rob1" color "yellow")
+swarm( pose [ 4 0 0 0 ] name "rob2" color "red")
+swarm( pose [ 6 0 0 0 ] name "rob3" color "green")
+swarm( pose [ 8 0 0 0 ] name "rob4" color "blue")
+swarm( pose [ 10 0 0 0 ] name "rob5" color "yellow")
+swarm( pose [ 12 0 0 0 ] name "rob6" color "red")
+swarm( pose [ 14 0 0 0 ] name "rob7" color "green")
+swarm( pose [ 16 0 0 0 ] name "rob8" color "blue")
+swarm( pose [ 18 0 0 0 ] name "rob9" color "yellow")
+
+swarm( pose [ 0 2 0 0 ] name "rob10" color "blue")
+swarm( pose [ 2 2 0 0 ] name "rob11" color "yellow")
+swarm( pose [ 4 2 0 0 ] name "rob12" color "red")
+swarm( pose [ 6 2 0 0 ] name "rob13" color "green")
+swarm( pose [ 8 2 0 0 ] name "rob14" color "blue")
+swarm( pose [ 10 2 0 0 ] name "rob15" color "yellow")
+swarm( pose [ 12 2 0 0 ] name "rob16" color "red")
+swarm( pose [ 14 2 0 0 ] name "rob17" color "green")
+swarm( pose [ 16 2 0 0 ] name "rob18" color "blue")
+swarm( pose [ 18 2 0 0 ] name "rob19" color "yellow")
+
+swarm( pose [ 0 4 0 0 ] name "rob20" color "blue")
+swarm( pose [ 2 4 0 0 ] name "rob21" color "yellow")
+swarm( pose [ 4 4 0 0 ] name "rob22" color "red")
+swarm( pose [ 6 4 0 0 ] name "rob23" color "green")
+swarm( pose [ 8 4 0 0 ] name "rob24" color "blue")
+swarm( pose [ 10 4 0 0 ] name "rob25" color "yellow")
+swarm( pose [ 12 4 0 0 ] name "rob26" color "red")
+swarm( pose [ 14 4 0 0 ] name "rob27" color "green")
+swarm( pose [ 16 4 0 0 ] name "rob28" color "blue")
+swarm( pose [ 18 4 0 0 ] name "rob29" color "yellow")
+
+swarm( pose [ 0 6 0 0 ] name "rob30" color "blue")
+swarm( pose [ 2 6 0 0 ] name "rob31" color "yellow")
+swarm( pose [ 4 6 0 0 ] name "rob32" color "red")
+swarm( pose [ 6 6 0 0 ] name "rob33" color "green")
+swarm( pose [ 8 6 0 0 ] name "rob34" color "blue")
+swarm( pose [ 10 6 0 0 ] name "rob35" color "yellow")
+swarm( pose [ 12 6 0 0 ] name "rob36" color "red")
+swarm( pose [ 14 6 0 0 ] name "rob37" color "green")
+swarm( pose [ 16 6 0 0 ] name "rob38" color "blue")
+swarm( pose [ 18 6 0 0 ] name "rob39" color "yellow")
+
+swarm( pose [ 0 8 0 0 ] name "rob40" color "blue")
+swarm( pose [ 2 8 0 0 ] name "rob41" color "yellow")
+swarm( pose [ 4 8 0 0 ] name "rob42" color "red")
+swarm( pose [ 6 8 0 0 ] name "rob43" color "green")
+swarm( pose [ 8 8 0 0 ] name "rob44" color "blue")
+swarm( pose [ 10 8 0 0 ] name "rob45" color "yellow")
+swarm( pose [ 12 8 0 0 ] name "rob46" color "red")
+swarm( pose [ 14 8 0 0 ] name "rob47" color "green")
+swarm( pose [ 16 8 0 0 ] name "rob48" color "blue")
+swarm( pose [ 18 8 0 0 ] name "rob49" color "yellow")
+
+swarm( pose [ 0 10 0 0 ] name "rob50" color "blue")
+swarm( pose [ 2 10 0 0 ] name "rob51" color "yellow")
+swarm( pose [ 4 10 0 0 ] name "rob52" color "red")
+swarm( pose [ 6 10 0 0 ] name "rob53" color "green")
+swarm( pose [ 8 10 0 0 ] name "rob54" color "blue")
+swarm( pose [ 10 10 0 0 ] name "rob55" color "yellow")
+swarm( pose [ 12 10 0 0 ] name "rob56" color "red")
+swarm( pose [ 14 10 0 0 ] name "rob57" color "green")
+swarm( pose [ 16 10 0 0 ] name "rob58" color "blue")
+swarm( pose [ 18 10 0 0 ] name "rob59" color "yellow")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -124,9 +124,18 @@ namespace micros_swarm{
 
         double getTemperature()
         {
-            double Pw = pow(2, 1 - ((time(NULL) - (write_timestamp%5) - write_timestamp) / 5));
-            double Pr = (read_count - read_count%10) / 10;
+            double Pw, Pr;
+            time_t t = time(NULL) - write_timestamp;
+            Pw = pow(2,  - (t - (t % 5)) / 5);
+            if(read_count >= 100) {
+                Pr = 1;
+            }
+            else {
+                Pr = read_count/100.0;
+            }
+
             double P = 0.5*Pw + 0.5*Pr;
+            //std::cout<<"<"<<Pw<<", "<<Pr<<">"<<std::endl;
             return P;
         }
     };

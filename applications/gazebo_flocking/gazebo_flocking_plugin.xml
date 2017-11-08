@@ -1,0 +1,5 @@
+<library path="lib/libGazeboFlocking">
+    <class name="gazebo_flocking/GazeboFlocking" type="gazebo_flocking::GazeboFlocking" base_class_type="micros_swarm::Application">
+        <description>gazebo flocking app.</description>
+    </class>
+</library>

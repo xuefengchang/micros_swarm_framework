@@ -134,6 +134,7 @@ namespace micros_swarm{
                     //cold-hot dada distinction
                     double temperature = new_local.getTemperature();
                     double  rt = (double)rand()/RAND_MAX;
+                    //std::cout<<"<<"<<temperature<<", "<<rt<<">>"<<std::endl;
                     if(rt <= temperature) {
                         VirtualStigmergyQuery vsq(vstig_id_, key, new_local.vstig_value, new_local.lamport_clock,
                                                   new_local.robot_id);
@@ -160,6 +161,11 @@ namespace micros_swarm{
             int size()
             {
                 return rth_->getVirtualStigmergySize(vstig_id_);
+            }
+
+            void print()
+            {
+                rth_->printVirtualStigmergy();
             }
         private:
             int vstig_id_;
