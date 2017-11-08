@@ -29,14 +29,15 @@ namespace micros_swarm{
     
     class CheckNeighborInterface{
         public:
-            virtual bool isNeighbor(const Base& self, const Base& neighbor)=0;
+            virtual float getNeighborDistance() = 0;
+            virtual bool isNeighbor(const Base& self, const Base& neighbor) = 0;
     };
     
     class CheckNeighbor : public CheckNeighborInterface{
         public:
-            CheckNeighbor(float neighbor_distance)
+            CheckNeighbor(const float& neighbor_distance):neighbor_distance_(neighbor_distance)
             {
-                neighbor_distance_ = neighbor_distance;
+                //neighbor_distance_ = neighbor_distance;
             }
         
             float getNeighborDistance()
@@ -49,13 +50,13 @@ namespace micros_swarm{
                 float distance=sqrt((self.x-neighbor.x)*(self.x-neighbor.x)+(self.y-neighbor.y)*(self.y-neighbor.y)+
                     (self.z-neighbor.z)*(self.z-neighbor.z));
                     
-                if(distance<neighbor_distance_)
+                if(distance<(neighbor_distance_))
                     return true;
                     
                 return false;
             }
         private:
-            float neighbor_distance_;
+            const float& neighbor_distance_;
     };
 };
 

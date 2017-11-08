@@ -59,6 +59,7 @@ namespace micros_swarm{
             void getNeighbors(std::map<int, NeighborBase>& neighbors);
             std::map<int, NeighborBase> getNeighbors();
             bool getNeighborBase(int robot_id, NeighborBase& nb);
+            void clearNeighbors();
             void insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz);
             //delete an neighbor robot according to id
             void deleteNeighbor(int robot_id);
@@ -103,7 +104,7 @@ namespace micros_swarm{
             void deleteBlackBoardValue(int id, const std::string& key);
             void printBlackBoard();
             
-            float getNeighborDistance();
+            const float& getNeighborDistance();
             void setNeighborDistance(float neighbor_distance);
             
             void insertOrUpdateListenerHelper(const std::string& key, const boost::shared_ptr<ListenerHelper> helper);

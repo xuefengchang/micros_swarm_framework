@@ -56,12 +56,15 @@ namespace testvstig{
 
         micros_swarm::Base l(x, y, 0, vx, vy, 0);
         set_base(l);
+        //std::cout<<"<<<"<<x<<", "<<y<<">>>"<<std::endl;
     }
     
     void TestVstig::start()
     {
         ros::NodeHandle nh;
         sub = nh.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
+        ros::Duration(3).sleep();
+        set_neighbor_distance(1);
         //test virtual stigmergy
         vs=micros_swarm::VirtualStigmergy<int>(1);
         //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());

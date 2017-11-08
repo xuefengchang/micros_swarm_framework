@@ -147,6 +147,15 @@ namespace micros_swarm{
         return false;
     }
 
+    void RuntimeHandle::clearNeighbors()
+    {
+        boost::upgrade_lock<boost::shared_mutex> lock(mutex5_);
+        if(neighbors_.size()>0) {
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+            neighbors_.clear();
+        }
+    }
+
     std::map<int, NeighborBase> RuntimeHandle::getNeighbors()
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex5_);
@@ -742,7 +751,7 @@ namespace micros_swarm{
         }
     }
     
-    float RuntimeHandle::getNeighborDistance()
+    const float& RuntimeHandle::getNeighborDistance()
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex9_);
         return neighbor_distance_;
@@ -753,6 +762,8 @@ namespace micros_swarm{
         boost::unique_lock<boost::shared_mutex> lock(mutex9_);
         neighbor_distance_=neighbor_distance;
         cni_.reset(new CheckNeighbor(neighbor_distance_));
+        std::cout<<"neighbor distance is set to "<<neighbor_distance_<<std::endl;
+        clearNeighbors();
     }
     
     void RuntimeHandle::insertOrUpdateListenerHelper(const std::string& key, const boost::shared_ptr<ListenerHelper> helper)

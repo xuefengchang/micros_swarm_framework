@@ -36,8 +36,7 @@ namespace micros_swarm{
     PacketParser::PacketParser()
     {
         rth_=Singleton<RuntimeHandle>::getSingleton();
-        float neighbor_distance=rth_->getNeighborDistance();
-        cni_.reset(new CheckNeighbor(neighbor_distance));
+        cni_.reset(new CheckNeighbor(rth_->getNeighborDistance()));
     }
 
     void PacketParser::parse(const micros_swarm::CommPacket& packet)
@@ -67,9 +66,8 @@ namespace micros_swarm{
                 
                     const Base& self=rth_->getRobotBase();
                     Base neighbor(srbb.robot_x, srbb.robot_y, srbb.robot_z, srbb.robot_vx, srbb.robot_vy, srbb.robot_vz);
-                
-                    //float neighbor_distance=rth_->getNeighborDistance();
-                    //boost::shared_ptr<CheckNeighborInterface> cni(new CheckNeighbor(neighbor_distance));
+
+                    //std::cout<<"neighbor distance: "<<cni_->getNeighborDistance()<<std::endl;
                 
                     if(cni_->isNeighbor(self, neighbor))
                         rth_->insertOrUpdateNeighbor(srbb.robot_id, 0, 0, 0, srbb.robot_x, srbb.robot_y, srbb.robot_z, srbb.robot_vx, srbb.robot_vy, srbb.robot_vz);
@@ -79,6 +77,8 @@ namespace micros_swarm{
                     break;
                 }
                 case SINGLE_ROBOT_JOIN_SWARM:{
+                    //if(!rth_->inNeighbors(packet_source))
+                    //    return;
                     SingleRobotJoinSwarm srjs;
                     archive>>srjs;
 
@@ -88,6 +88,8 @@ namespace micros_swarm{
                 }
                 case SINGLE_ROBOT_LEAVE_SWARM:
                 {
+                    //if(!rth_->inNeighbors(packet_source))
+                    //    return;
                     SingleRobotLeaveSwarm srls;
                     archive>>srls;
 
@@ -97,6 +99,8 @@ namespace micros_swarm{
                 }
                 case SINGLE_ROBOT_SWARM_LIST:
                 {
+                    //if(!rth_->inNeighbors(packet_source))
+                    //    return;
                     SingleRobotSwarmList srsl;
                     archive>>srsl;
                 
@@ -106,6 +110,8 @@ namespace micros_swarm{
                 }
                 case VIRTUAL_STIGMERGY_QUERY:
                 {
+                    //if(!rth_->inNeighbors(packet_source))
+                    //    return;
                     VirtualStigmergyQuery vsq;
                     archive>>vsq;
                 
@@ -170,6 +176,8 @@ namespace micros_swarm{
                 }
                 case VIRTUAL_STIGMERGY_PUT:
                 {
+                    //if(!rth_->inNeighbors(packet_source))
+                    //    return;
                     VirtualStigmergyPut vsp;
                     archive>>vsp;
                 
@@ -215,6 +223,8 @@ namespace micros_swarm{
                 }
                 case BLACKBOARD_PUT:
                 {
+                    //if(!rth_->inNeighbors(packet_source))
+                    //    return;
                     BlackBoardPut bbp;
                     archive>>bbp;
                     int robot_id=rth_->getRobotID();
@@ -238,6 +248,8 @@ namespace micros_swarm{
                 }
                 case BLACKBOARD_QUERY:
                 {
+                    //if(!rth_->inNeighbors(packet_source))
+                    //    return;
                     BlackBoardQuery bbq;
                     archive>>bbq;
                     int robot_id=rth_->getRobotID();
@@ -268,6 +280,8 @@ namespace micros_swarm{
                 }
                 case BLACKBOARD_QUERY_ACK:
                 {
+                    //if(!rth_->inNeighbors(packet_source))
+                    //    return;
                     BlackBoardQueryAck bbqa;
                     archive>>bbqa;
                     int robot_id=rth_->getRobotID();
@@ -284,6 +298,8 @@ namespace micros_swarm{
                 }
                 case SCDS_PSO_PUT:
                 {
+                    //if(!rth_->inNeighbors(packet_source))
+                    //    return;
                     SCDSPSOPut scds_put;
                     archive>>scds_put;
 
@@ -315,6 +331,8 @@ namespace micros_swarm{
                 }
                 case SCDS_PSO_GET:
                 {
+                    //if(!rth_->inNeighbors(packet_source))
+                    //    return;
                     SCDSPSOGet scds_get;
                     archive>>scds_get;
 
@@ -367,6 +385,8 @@ namespace micros_swarm{
                 }
                 case NEIGHBOR_BROADCAST_KEY_VALUE:
                 {
+                    //if(!rth_->inNeighbors(packet_source))
+                    //    return;
                     NeighborBroadcastKeyValue nbkv;
                     archive>>nbkv;
                         
@@ -379,6 +399,8 @@ namespace micros_swarm{
                 }
                 case BARRIER_SYN:
                 {
+                    //if(!rth_->inNeighbors(packet_source))
+                    //    return;
                     Barrier_Syn bs;
                     archive>>bs;
                     if(bs.s!="SYN")
@@ -403,6 +425,8 @@ namespace micros_swarm{
                 }
                 case BARRIER_ACK:
                 {
+                    //if(!rth_->inNeighbors(packet_source))
+                    //    return;
                     Barrier_Ack ba;
                     archive>>ba;
                 
