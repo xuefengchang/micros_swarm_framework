@@ -133,6 +133,20 @@ namespace micros_swarm{
         neighbors=neighbors_;
     }
 
+    bool RuntimeHandle::getNeighborBase(int robot_id, NeighborBase& nb)
+    {
+        boost::shared_lock<boost::shared_mutex> lock(mutex5_);
+        std::map<int, NeighborBase>::iterator n_it=neighbors_.find(robot_id);
+
+        if(n_it!=neighbors_.end())
+        {
+            nb = n_it->second;
+            return true;
+        }
+
+        return false;
+    }
+
     std::map<int, NeighborBase> RuntimeHandle::getNeighbors()
     {
         boost::shared_lock<boost::shared_mutex> lock(mutex5_);
@@ -413,7 +427,8 @@ namespace micros_swarm{
         }
     }
     
-    void RuntimeHandle::insertOrUpdateVirtualStigmergy(int id, const std::string& key, const std::string& value, const time_t& time_now, int robot_id)
+    void RuntimeHandle::insertOrUpdateVirtualStigmergy(int id, const std::string& key, const std::string& value, \
+                                                       unsigned int lclock, time_t wtime, unsigned int rcount, int robot_id)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         boost::upgrade_lock<boost::shared_mutex> lock(mutex8_);
@@ -425,13 +440,13 @@ namespace micros_swarm{
         
             if(svstt_it!=vst_it->second.end())
             {
-                VirtualStigmergyTuple new_tuple(value, time_now, robot_id);
+                VirtualStigmergyTuple new_tuple(value, lclock, wtime, rcount, robot_id);
                 boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
                 svstt_it->second = new_tuple;
             }
             else
             {
-                VirtualStigmergyTuple new_tuple(value, time_now, robot_id);
+                VirtualStigmergyTuple new_tuple(value, lclock, wtime, rcount, robot_id);
                 boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
                 vst_it->second.insert(std::pair<std::string, VirtualStigmergyTuple>(key ,new_tuple));
             }
@@ -442,8 +457,24 @@ namespace micros_swarm{
             return;
         }
     }
+
+    bool RuntimeHandle::isVirtualStigmergyTupleExist(int id, const std::string& key)
+    {
+        std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
+        boost::shared_lock<boost::shared_mutex> lock(mutex8_);
+        vst_it=virtual_stigmergy_.find(id);
+        if(vst_it!=virtual_stigmergy_.end())
+        {
+            std::map<std::string, VirtualStigmergyTuple>::iterator svstt_it=vst_it->second.find(key);
+            if(svstt_it!=vst_it->second.end())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     
-    void RuntimeHandle::getVirtualStigmergyTuple(int id, const std::string& key, VirtualStigmergyTuple& vstig_tuple)
+    bool RuntimeHandle::getVirtualStigmergyTuple(int id, const std::string& key, VirtualStigmergyTuple& vstig_tuple)
     {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         boost::shared_lock<boost::shared_mutex> lock(mutex8_);
@@ -455,7 +486,34 @@ namespace micros_swarm{
             if(svstt_it!=vst_it->second.end())
             {
                 vstig_tuple=svstt_it->second;
+                return true;
             }
+        }
+        return false;
+    }
+
+    void RuntimeHandle::updateVirtualStigmergyTupleReadCount(int id, const std::string& key, int count)
+    {
+        std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
+        boost::upgrade_lock<boost::shared_mutex> lock(mutex8_);
+        vst_it=virtual_stigmergy_.find(id);
+
+        if(vst_it!=virtual_stigmergy_.end())
+        {
+            std::map<std::string, VirtualStigmergyTuple>::iterator svstt_it=vst_it->second.find(key);
+
+            if(svstt_it!=vst_it->second.end()) {
+                boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+                svstt_it->second.read_count = count;
+            }
+            else {
+                std::cout<<"ID: "<<id<<" VirtualStigmergy, key: "<<key<<" is not exist."<<std::endl;
+            }
+        }
+        else
+        {
+            std::cout<<"ID "<<id<<" VirtualStigmergy is not exist."<<std::endl;
+            return;
         }
     }
     
@@ -506,7 +564,7 @@ namespace micros_swarm{
     }
     
    void RuntimeHandle::printVirtualStigmergy()
-    {
+   {
         std::map<int, std::map<std::string, VirtualStigmergyTuple> >::iterator vst_it;
         std::map<std::string, VirtualStigmergyTuple>::iterator svstt_it;
         
@@ -518,12 +576,39 @@ namespace micros_swarm{
             for (svstt_it=svstt_pointer->begin(); svstt_it!=svstt_pointer->end(); svstt_it++)
             {
                 std::cout<<"("<<svstt_it->first<<","<< \
-                    svstt_it->second.vstig_value<<","<<svstt_it->second.vstig_timestamp<<","<<\
+                    svstt_it->second.vstig_value<<","<<svstt_it->second.lamport_clock<<","<<\
+                    svstt_it->second.write_timestamp<<","<<svstt_it->second.read_count<<","<<\
                     svstt_it->second.robot_id<<")"<<std::endl;
             }
             std::cout<<"]"<<std::endl;
             std::cout<<std::endl;
         }
+    }
+
+    bool RuntimeHandle::checkNeighborsOverlap(int robot_id)
+    {
+        if(inNeighbors(robot_id)) {
+            boost::shared_lock<boost::shared_mutex> lock(mutex5_);
+            NeighborBase nb;
+            if(!getNeighborBase(robot_id, nb)) {
+                return false;
+            }
+            Base msg_src_neighbor(nb.x, nb.y, nb.z, nb.vx, nb.vy, nb.vz);
+            std::map<int, NeighborBase>::iterator it = neighbors_.begin();
+
+            for(it=neighbors_.begin(); it!=neighbors_.end(); it++) {
+                if(it->first == robot_id) {
+                    continue;
+                }
+
+                Base neighbor(it->second.x, it->second.y, it->second.z, it->second.vx, it->second.vy, it->second.vz);
+                if(!cni_->isNeighbor(msg_src_neighbor, neighbor)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     void RuntimeHandle::createBlackBoard(int id)
@@ -667,6 +752,7 @@ namespace micros_swarm{
     {
         boost::unique_lock<boost::shared_mutex> lock(mutex9_);
         neighbor_distance_=neighbor_distance;
+        cni_.reset(new CheckNeighbor(neighbor_distance_));
     }
     
     void RuntimeHandle::insertOrUpdateListenerHelper(const std::string& key, const boost::shared_ptr<ListenerHelper> helper)

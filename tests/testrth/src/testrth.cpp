@@ -86,14 +86,14 @@ int main(int argc, char** argv)
     
     rth.createVirtualStigmergy(1);
     rth.createVirtualStigmergy(2);
-    rth.insertOrUpdateVirtualStigmergy(1, "key1", "value1", time(0), 1);
-    rth.insertOrUpdateVirtualStigmergy(1, "key2", "value2", time(0), 1);
-    rth.insertOrUpdateVirtualStigmergy(1, "key2", "value2", time(0), 1);
-    rth.insertOrUpdateVirtualStigmergy(1, "key3", "value3", time(0), 1);
-    rth.insertOrUpdateVirtualStigmergy(2, "key1", "value1", time(0), 2);
-    rth.insertOrUpdateVirtualStigmergy(2, "key2", "value2", time(0), 2);
-    rth.insertOrUpdateVirtualStigmergy(2, "key2", "value2", time(0), 2);
-    rth.insertOrUpdateVirtualStigmergy(2, "key3", "value3", time(0), 2);
+    rth.insertOrUpdateVirtualStigmergy(1, "key1", "value1", 1, time(0), 0, 1);
+    rth.insertOrUpdateVirtualStigmergy(1, "key2", "value2", 1, time(0), 0, 1);
+    rth.insertOrUpdateVirtualStigmergy(1, "key2", "value2", 1, time(0), 0, 1);
+    rth.insertOrUpdateVirtualStigmergy(1, "key3", "value3", 1, time(0), 0, 1);
+    rth.insertOrUpdateVirtualStigmergy(2, "key1", "value1", 1, time(0), 0, 2);
+    rth.insertOrUpdateVirtualStigmergy(2, "key2", "value2", 1, time(0), 0, 2);
+    rth.insertOrUpdateVirtualStigmergy(2, "key2", "value2", 1, time(0), 0, 2);
+    rth.insertOrUpdateVirtualStigmergy(2, "key3", "value3", 1, time(0), 0, 2);
     rth.printVirtualStigmergy();
     VirtualStigmergyTuple vst1;
     rth.getVirtualStigmergyTuple(1, "key2", vst1);

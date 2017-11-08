@@ -150,7 +150,7 @@ namespace micros_swarm{
         int virtual_stigmergy_id;
         std::string virtual_stigmergy_key;
         std::string virtual_stigmergy_value;
-        time_t virtual_stigmergy_timestamp;
+        unsigned int lamport_clock;
         int robot_id;
             
         template<class Archive>
@@ -159,15 +159,15 @@ namespace micros_swarm{
             ar & virtual_stigmergy_id;
             ar & virtual_stigmergy_key;
             ar & virtual_stigmergy_value;
-            ar & virtual_stigmergy_timestamp;
+            ar & lamport_clock;
             ar & robot_id;
         }
             
         VirtualStigmergyQuery(){}
 
-        VirtualStigmergyQuery(int id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):
+        VirtualStigmergyQuery(int id_, const std::string& key_, const std::string& value_, unsigned int clock_, int robot_id_):
             virtual_stigmergy_id(id_), virtual_stigmergy_key(key_), virtual_stigmergy_value(value_),
-            virtual_stigmergy_timestamp(time_now_), robot_id(robot_id_){}
+            lamport_clock(clock_), robot_id(robot_id_){}
     };
 
     struct VirtualStigmergyPut
@@ -175,7 +175,7 @@ namespace micros_swarm{
         int virtual_stigmergy_id;
         std::string virtual_stigmergy_key;
         std::string virtual_stigmergy_value;
-        time_t virtual_stigmergy_timestamp;
+        unsigned int lamport_clock;
         int robot_id;
             
         template<class Archive>
@@ -184,15 +184,15 @@ namespace micros_swarm{
             ar & virtual_stigmergy_id;
             ar & virtual_stigmergy_key;
             ar & virtual_stigmergy_value;
-            ar & virtual_stigmergy_timestamp;
+            ar & lamport_clock;
             ar & robot_id;
         }
             
         VirtualStigmergyPut(){};
             
-        VirtualStigmergyPut(int id_, const std::string& key_, const std::string& value_, time_t time_now_, int robot_id_):
+        VirtualStigmergyPut(int id_, const std::string& key_, const std::string& value_, unsigned int clock_, int robot_id_):
             virtual_stigmergy_id(id_), virtual_stigmergy_key(key_), virtual_stigmergy_value(value_),
-            virtual_stigmergy_timestamp(time_now_), robot_id(robot_id_){}
+            lamport_clock(clock_), robot_id(robot_id_){}
     };
 
     struct BlackBoardQuery

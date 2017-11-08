@@ -34,6 +34,7 @@ namespace micros_swarm{
             void parse(const micros_swarm::CommPacket& packet);
         private:
             boost::shared_ptr<micros_swarm::RuntimeHandle> rth_;
+            boost::shared_ptr<CheckNeighborInterface> cni_;
     };
 };
 

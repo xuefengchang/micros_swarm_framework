@@ -31,6 +31,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/data_type.h"
 #include "micros_swarm/listener_helper.h"
 #include "micros_swarm/msg_queue_manager.h"
+#include "micros_swarm/check_neighbor.h"
 
 namespace micros_swarm{
 
@@ -57,6 +58,7 @@ namespace micros_swarm{
             
             void getNeighbors(std::map<int, NeighborBase>& neighbors);
             std::map<int, NeighborBase> getNeighbors();
+            bool getNeighborBase(int robot_id, NeighborBase& nb);
             void insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz);
             //delete an neighbor robot according to id
             void deleteNeighbor(int robot_id);
@@ -82,12 +84,16 @@ namespace micros_swarm{
             void printNeighborSwarm();
             
             void createVirtualStigmergy(int id);
-            void insertOrUpdateVirtualStigmergy(int id, const std::string& key, const std::string& value, const time_t& time_now, int robot_id);
-            void getVirtualStigmergyTuple(int id, const std::string& key, VirtualStigmergyTuple& vstig_tuple);
+            void insertOrUpdateVirtualStigmergy(int id, const std::string& key, const std::string& value, \
+                                                       unsigned int lclock, time_t wtime, unsigned int rcount, int robot_id);
+            bool isVirtualStigmergyTupleExist(int id, const std::string& key);
+            bool getVirtualStigmergyTuple(int id, const std::string& key, VirtualStigmergyTuple& vstig_tuple);
+            void updateVirtualStigmergyTupleReadCount(int id, const std::string& key, int count);
             int getVirtualStigmergySize(int id);
             void deleteVirtualStigmergy(int id);
             void deleteVirtualStigmergyValue(int id, const std::string& key);
             void printVirtualStigmergy();
+            bool checkNeighborsOverlap(int robot_id);
 
             void createBlackBoard(int id);
             void insertOrUpdateBlackBoard(int id, const std::string& key, const std::string& value, const time_t& time_now, int robot_id);
@@ -126,6 +132,8 @@ namespace micros_swarm{
             float neighbor_distance_;
             std::map<std::string, boost::shared_ptr<ListenerHelper> > listener_helpers_;
             std::set<int> barrier_;
+
+            boost::shared_ptr<CheckNeighborInterface> cni_;
 
             std::map<std::string, SCDSPSODataTuple> scds_pso_tuple_;
             

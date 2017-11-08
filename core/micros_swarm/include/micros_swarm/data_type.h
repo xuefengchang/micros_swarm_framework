@@ -25,6 +25,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <iostream>
 #include <time.h>
+#include <math.h>
 #include <vector>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -105,18 +106,28 @@ namespace micros_swarm{
     
     struct VirtualStigmergyTuple{
         std::string vstig_value;
-        time_t vstig_timestamp;
+        unsigned int lamport_clock;
+        time_t write_timestamp;
+        unsigned int read_count;
         //the id of the robot which last change the virtual stigmergy
         int robot_id;
             
-        VirtualStigmergyTuple():vstig_value(""), vstig_timestamp(0), robot_id(-1){}
+        VirtualStigmergyTuple():vstig_value(""), lamport_clock(0), write_timestamp(0), read_count(0), robot_id(-1){}
             
-        VirtualStigmergyTuple(const std::string& value_, time_t time_, int id_)
-            :vstig_value(value_), vstig_timestamp(time_), robot_id(id_){}
+        VirtualStigmergyTuple(const std::string& value_, unsigned int clock_, time_t time_, unsigned int count_, int id_)
+            :vstig_value(value_), lamport_clock(clock_), write_timestamp(time_), read_count(count_), robot_id(id_){}
             
         void print()
         {
-            std::cout<<vstig_value<<", "<<vstig_timestamp<<", "<<robot_id<<std::endl;
+            std::cout<<vstig_value<<", "<<lamport_clock<<", "<<write_timestamp<<", "<<read_count<<", "<<robot_id<<std::endl;
+        }
+
+        double getTemperature()
+        {
+            double Pw = pow(2, 1 - ((time(NULL) - (write_timestamp%5) - write_timestamp) / 5));
+            double Pr = (read_count - read_count%10) / 10;
+            double P = 0.5*Pw + 0.5*Pr;
+            return P;
         }
     };
 

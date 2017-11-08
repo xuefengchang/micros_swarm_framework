@@ -36,6 +36,8 @@ namespace micros_swarm{
     PacketParser::PacketParser()
     {
         rth_=Singleton<RuntimeHandle>::getSingleton();
+        float neighbor_distance=rth_->getNeighborDistance();
+        cni_.reset(new CheckNeighbor(neighbor_distance));
     }
 
     void PacketParser::parse(const micros_swarm::CommPacket& packet)
@@ -66,10 +68,10 @@ namespace micros_swarm{
                     const Base& self=rth_->getRobotBase();
                     Base neighbor(srbb.robot_x, srbb.robot_y, srbb.robot_z, srbb.robot_vx, srbb.robot_vy, srbb.robot_vz);
                 
-                    float neighbor_distance=rth_->getNeighborDistance();
-                    boost::shared_ptr<CheckNeighborInterface> cni(new CheckNeighbor(neighbor_distance));
+                    //float neighbor_distance=rth_->getNeighborDistance();
+                    //boost::shared_ptr<CheckNeighborInterface> cni(new CheckNeighbor(neighbor_distance));
                 
-                    if(cni->isNeighbor(self, neighbor))
+                    if(cni_->isNeighbor(self, neighbor))
                         rth_->insertOrUpdateNeighbor(srbb.robot_id, 0, 0, 0, srbb.robot_x, srbb.robot_y, srbb.robot_z, srbb.robot_vx, srbb.robot_vy, srbb.robot_vz);
                     else
                         rth_->deleteNeighbor(srbb.robot_id);
@@ -108,36 +110,39 @@ namespace micros_swarm{
                     archive>>vsq;
                 
                     VirtualStigmergyTuple local;
-                    rth_->getVirtualStigmergyTuple(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, local);
+                    bool exist=rth_->getVirtualStigmergyTuple(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, local);
                 
                     //local tuple is not exist or the local timestamp is smaller
-                    if((local.vstig_timestamp==0)||(local.vstig_timestamp<vsq.virtual_stigmergy_timestamp))
+                    if(!exist||(local.lamport_clock<vsq.lamport_clock))
                     {
                         rth_->createVirtualStigmergy(vsq.virtual_stigmergy_id);
                         rth_->insertOrUpdateVirtualStigmergy(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, vsq.virtual_stigmergy_value,
-                                                                 vsq.virtual_stigmergy_timestamp, vsq.robot_id);
+                                                                 vsq.lamport_clock, time(NULL), 0, vsq.robot_id);
 
-                        VirtualStigmergyPut vsp_new(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, vsq.virtual_stigmergy_value,
-                                                        vsq.virtual_stigmergy_timestamp, vsq.robot_id);
-                    
-                        std::ostringstream archiveStream2;
-                        boost::archive::text_oarchive archive2(archiveStream2);
-                        archive2<<vsp_new;
-                        std::string vsp_new_string=archiveStream2.str();
-                    
-                        micros_swarm::CommPacket p;
-                        p.packet_source=shm_rid;
-                        p.packet_version=1;
-                        p.packet_type=VIRTUAL_STIGMERGY_PUT;
-                        p.packet_data=vsp_new_string;
-                        p.package_check_sum=0;
-                    
-                        rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
+                        if(!rth_->checkNeighborsOverlap(packet_source)) {
+                            VirtualStigmergyPut vsp_new(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key,
+                                                        vsq.virtual_stigmergy_value,
+                                                        vsq.lamport_clock, vsq.robot_id);
+
+                            std::ostringstream archiveStream2;
+                            boost::archive::text_oarchive archive2(archiveStream2);
+                            archive2 << vsp_new;
+                            std::string vsp_new_string = archiveStream2.str();
+
+                            micros_swarm::CommPacket p;
+                            p.packet_source = shm_rid;
+                            p.packet_version = 1;
+                            p.packet_type = VIRTUAL_STIGMERGY_PUT;
+                            p.packet_data = vsp_new_string;
+                            p.package_check_sum = 0;
+
+                            rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
+                        }
                     }
-                    else if(local.vstig_timestamp>vsq.virtual_stigmergy_timestamp)  //local timestamp is larger
+                    else if(local.lamport_clock>vsq.lamport_clock)  //local timestamp is larger
                     {
                         VirtualStigmergyPut vsp(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, local.vstig_value,
-                                                local.vstig_timestamp, local.robot_id);
+                                                local.lamport_clock, local.robot_id);
                         std::ostringstream archiveStream2;
                         boost::archive::text_oarchive archive2(archiveStream2);
                         archive2<<vsp;
@@ -152,7 +157,7 @@ namespace micros_swarm{
                     
                         rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
                     }
-                    else if((local.vstig_timestamp==vsq.virtual_stigmergy_timestamp)&&(local.robot_id!=vsq.robot_id))
+                    else if((local.lamport_clock==vsq.lamport_clock)&&(local.robot_id!=vsq.robot_id))
                     {
                         //std::cout<<"query conflict"<<std::endl;
                     }
@@ -169,32 +174,35 @@ namespace micros_swarm{
                     archive>>vsp;
                 
                     VirtualStigmergyTuple local;
-                    rth_->getVirtualStigmergyTuple(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, local);
+                    bool exist = rth_->getVirtualStigmergyTuple(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, local);
                 
                     //local tuple is not exist or local timestamp is smaller
-                    if((local.vstig_timestamp==0)||(local.vstig_timestamp<vsp.virtual_stigmergy_timestamp))
+                    if(!exist||(local.lamport_clock<vsp.lamport_clock))
                     {
                         rth_->createVirtualStigmergy(vsp.virtual_stigmergy_id);
-                
                         rth_->insertOrUpdateVirtualStigmergy(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, vsp.virtual_stigmergy_value,
-                                                             vsp.virtual_stigmergy_timestamp, vsp.robot_id);
-                        VirtualStigmergyPut vsp_new(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, vsp.virtual_stigmergy_value,
-                                                    vsp.virtual_stigmergy_timestamp, vsp.robot_id);
-                        std::ostringstream archiveStream2;
-                        boost::archive::text_oarchive archive2(archiveStream2);
-                        archive2<<vsp_new;
-                        std::string vsp_new_string=archiveStream2.str();
-                    
-                        micros_swarm::CommPacket p;
-                        p.packet_source=shm_rid;
-                        p.packet_version=1;
-                        p.packet_type=VIRTUAL_STIGMERGY_PUT;
-                        p.packet_data=vsp_new_string;
-                        p.package_check_sum=0;
-                    
-                        rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
+                                                             vsp.lamport_clock, time(NULL), 0, vsp.robot_id);
+
+                        if(!rth_->checkNeighborsOverlap(packet_source)) {
+                            VirtualStigmergyPut vsp_new(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key,
+                                                        vsp.virtual_stigmergy_value,
+                                                        vsp.lamport_clock, vsp.robot_id);
+                            std::ostringstream archiveStream2;
+                            boost::archive::text_oarchive archive2(archiveStream2);
+                            archive2 << vsp_new;
+                            std::string vsp_new_string = archiveStream2.str();
+
+                            micros_swarm::CommPacket p;
+                            p.packet_source = shm_rid;
+                            p.packet_version = 1;
+                            p.packet_type = VIRTUAL_STIGMERGY_PUT;
+                            p.packet_data = vsp_new_string;
+                            p.package_check_sum = 0;
+
+                            rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
+                        }
                     }
-                    else if((local.vstig_timestamp==vsp.virtual_stigmergy_timestamp)&&(local.robot_id!=vsp.robot_id))
+                    else if((local.lamport_clock==vsp.lamport_clock)&&(local.robot_id!=vsp.robot_id))
                     {
                         //std::cout<<"put conflict"<<std::endl;
                     }
