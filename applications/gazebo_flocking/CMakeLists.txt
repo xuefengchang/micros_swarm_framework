@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs micros_swarm)
+find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs tf micros_swarm)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
@@ -101,7 +101,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 catkin_package(
    INCLUDE_DIRS include
 #  LIBRARIES test_app
-   CATKIN_DEPENDS micros_swarm roscpp rospy std_msgs nav_msgs geometry_msgs
+   CATKIN_DEPENDS micros_swarm roscpp rospy std_msgs nav_msgs tf geometry_msgs
 #  DEPENDS system_lib
 )
 
