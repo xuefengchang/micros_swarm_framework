@@ -57,6 +57,7 @@ namespace micros_swarm{
         double default_neighbor_distance_;
         int total_robot_numbers_;
         int robot_id_;
+        int worker_num_;
 
         boost::thread* spin_thread_;
 

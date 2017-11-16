@@ -69,7 +69,10 @@ namespace micros_swarm{
         }
 
         //entry function
+        void init();
         virtual void start()=0;
+        void pause();
+        void stop();
     private:
         boost::shared_ptr<RuntimeHandle> rth;
     };

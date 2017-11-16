@@ -218,6 +218,8 @@ namespace micros_swarm{
         ros::NodeHandle private_nh("~");
         private_nh.param("robot_id", robot_id_, 0);
         std::cout<<"robot_id: "<<robot_id_<<std::endl;
+        private_nh.param("worker_num", worker_num_, 4);
+        std::cout<<"worker_num: "<<worker_num_<<std::endl;
         //private_nh.param<std::string>("comm_type", comm_type_, "ros_broker/ROSBroker");
         //private_nh.param<std::string>("comm_type", comm_type_, "opensplice_dds_broker/OpenSpliceDDSBroker");
     }
@@ -237,7 +239,7 @@ namespace micros_swarm{
         communicator_->init(comm_type_, *parser_);
         communicator_->receive();
         //construct app manager
-        app_manager_=Singleton<AppManager>::getSingleton();
+        app_manager_=Singleton<AppManager>::getSingleton(worker_num_);
         
         //boost::thread spin_thread(&RuntimePlatformCore::spin_msg_queue, this);
         spin_thread_ = new boost::thread(&RuntimeCore::spin_msg_queue, this);
