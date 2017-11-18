@@ -29,7 +29,7 @@ namespace micros_swarm{
         ros::NodeHandle nh;
         app_load_srv_ = nh.advertiseService("micros_swarm_framework_load_app", &AppManager::loadService, this);
         app_unload_srv_ = nh.advertiseService("micros_swarm_framework_unload_app", &AppManager::unloadService, this);
-        worker_num_ = 16;
+        worker_num_ = 4;
         worker_table_.clear();
         load_table_.clear();
         for(int i = 0; i < worker_num_; i++) {
@@ -60,21 +60,19 @@ namespace micros_swarm{
     {
         ros::NodeHandle nh;
         std::map<std::string, int>::iterator it;
-        for(it = apps_record_.begin(); it != apps_record_.end(); it++)
-        {
+        for(it = apps_record_.begin(); it != apps_record_.end(); it++) {
             std::string topic_name = "micros_swarm_framework_rtp_manager_destroy_" + it->first;
             ros::ServiceClient client = nh.serviceClient<app_loader::RTPDestroy>(topic_name);
             app_loader::RTPDestroy srv;
             srv.request.code = 1;
 
-            if (client.call(srv))
-            {
+            if (client.call(srv)) {
                 //ROS_INFO("[RTPManager]: App %s unloaded successfully.", app_it->app_name_.c_str());
             }
-            else
-            {
+            else {
                 //ROS_ERROR("[RTPManager]: Failed to unload App %s.", app_it->app_name_.c_str());
             }
+            ros::Duration(0.05).sleep();
         }
     }
 
@@ -84,21 +82,29 @@ namespace micros_swarm{
         for(it = apps_record_.begin(); it != apps_record_.end(); it++)
         {
             int worker_id = it->second;
-            worker_table_[worker_id]->getAppInstance(it->first)->app_ptr_.reset();
-            std::string app_type = worker_table_[worker_id]->getAppInstance(it->first)->app_type_;
-            app_loader_.unloadLibraryForClass(app_type);
-            worker_table_[worker_id]->removeTask(it->first);
-            load_table_[worker_id] -= 1;
+            AppInstance *instance = worker_table_[worker_id]->getAppInstance(it->first);
+            if(instance != NULL) {
+                instance->app_ptr_.reset();
+                std::string app_type = instance->app_type_;
+                app_loader_.unloadLibraryForClass(app_type);
+                worker_table_[worker_id]->removeApp(it->first);
+                load_table_[worker_id] -= 1;
+            }
         }
         std::cout<<"[RTPManager]: all Apps were unloaded successfully."<<std::endl;
+
+        for(int i = 0; i < worker_table_.size(); i++) {
+            delete worker_table_[i];
+        }
+        worker_table_.clear();
+        std::cout<<"[RTPManager]: destroy all the worker successfully."<<std::endl;
     }
 
     bool AppManager::recordExist(const std::string& name)
     {
         std::map<std::string, int>::iterator it = apps_record_.find(name);
 
-        if(it != apps_record_.end())
-        {
+        if(it != apps_record_.end()) {
             return true;
         }
 
@@ -155,9 +161,9 @@ namespace micros_swarm{
             app_instance->running_= false;
 
             int worker_index = allocateWorker();
-            worker_table_[worker_index]->addTask(app_instance);
-            addRecord(app_name, worker_index);
+            worker_table_[worker_index]->addApp(app_instance);
             load_table_[worker_index] += 1;
+            addRecord(app_name, worker_index);
             ROS_INFO("[RTPManager]: App %s was loaded successfully.", app_name.c_str());
             ros::Duration(0.05).sleep();
             resp.success = true;
@@ -172,11 +178,18 @@ namespace micros_swarm{
 
         if(recordExist(app_name)) {
             int worker_id = apps_record_[app_name];
-            worker_table_[worker_id]->getAppInstance(app_name)->app_ptr_.reset();
+            AppInstance *instance = worker_table_[worker_id]->getAppInstance(app_name);
+            if(instance == NULL) {
+                ROS_WARN("[RTPManager]: Get App instance %s failed.", app_name.c_str());
+                ros::Duration(0.05).sleep();
+                resp.success = false;
+                return false;
+            }
+            instance->app_ptr_.reset();
             app_loader_.unloadLibraryForClass(app_type);
-            worker_table_[worker_id]->removeTask(app_name);
-            removeRecord(app_name);
+            worker_table_[worker_id]->removeApp(app_name);
             load_table_[worker_id] -= 1;
+            removeRecord(app_name);
             ROS_INFO("[RTPManager]: App %s was unloaded successfully.", app_name.c_str());
             ros::Duration(0.05).sleep();
             resp.success = true;

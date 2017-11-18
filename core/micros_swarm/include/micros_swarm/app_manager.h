@@ -51,17 +51,17 @@ namespace micros_swarm{
 
     struct Worker{
     public:
-        void addTask(AppInstance* app)
+        void addApp(AppInstance* app)
         {
-            tasks_.push_back(app);
+            apps_.push_back(app);
         }
 
-        void removeTask(const std::string& app_name)
+        void removeApp(const std::string& app_name)
         {
             std::vector<AppInstance*>::iterator app_it;
-            for(app_it = tasks_.begin(); app_it != tasks_.end();) {
+            for(app_it = apps_.begin(); app_it != apps_.end();) {
                 if((*app_it)->app_name_ == app_name) {
-                    app_it = tasks_.erase(app_it);
+                    app_it = apps_.erase(app_it);
                 }
                 else {
                     ++app_it;
@@ -73,7 +73,7 @@ namespace micros_swarm{
         AppInstance* getAppInstance(const std::string& app_name)
         {
             std::vector<AppInstance*>::iterator app_it;
-            for(app_it = tasks_.begin(); app_it != tasks_.end(); app_it++) {
+            for(app_it = apps_.begin(); app_it != apps_.end(); app_it++) {
                 if((*app_it)->app_name_ == app_name) {
                     return (*app_it);
                 }
@@ -84,7 +84,7 @@ namespace micros_swarm{
         }
 
         boost::thread* thread_;
-        std::vector<AppInstance*> tasks_;
+        std::vector<AppInstance*> apps_;
         int id_;
 
         Worker(int id)
@@ -92,12 +92,17 @@ namespace micros_swarm{
             id_ = id;
             thread_ = new boost::thread(&Worker::workFunc, this);
             run_ = true;
-            tasks_.clear();
+            apps_.clear();
         }
 
         ~Worker()
         {
             run_ = false;
+            thread_->join();
+            for(int i = 0; i < apps_.size(); i++) {
+                delete apps_[i];
+            }
+            apps_.clear();
         }
 
     private:
@@ -106,7 +111,7 @@ namespace micros_swarm{
         {
             while(run_) {
                 std::vector<AppInstance*>::iterator app_it;
-                for(app_it = tasks_.begin(); app_it != tasks_.end(); app_it++)
+                for(app_it = apps_.begin(); app_it != apps_.end(); app_it++)
                 {
                     if(!(*app_it)->running_)
                     {
@@ -114,7 +119,7 @@ namespace micros_swarm{
                         (*app_it)->running_=true;
                     }
                 }
-                ros::Duration(0.05).sleep();
+                ros::Duration(0.1).sleep();
             }
         }
     };
