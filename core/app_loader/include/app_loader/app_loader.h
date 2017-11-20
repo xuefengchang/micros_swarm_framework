@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "app_loader/AppLoad.h"
 #include "app_loader/AppUnload.h"
-#include "app_loader/RTPDestroy.h"
+#include "app_loader/RTDestroy.h"
 
 namespace app_loader{
 
@@ -43,7 +43,7 @@ namespace app_loader{
             std::string app_type_;
             bool rtp_manager_destroy_;
             ros::ServiceServer rtp_manager_destroy_srv_;
-            bool rtpManagerDestroyCB(app_loader::RTPDestroy::Request &req, app_loader::RTPDestroy::Response &resp);
+            bool rtpManagerDestroyCB(app_loader::RTDestroy::Request &req, app_loader::RTDestroy::Response &resp);
     };
 };
 

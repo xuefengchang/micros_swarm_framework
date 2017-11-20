@@ -24,6 +24,76 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm{
 
+    Worker::Worker(int id)
+    {
+        id_ = id;
+        thread_ = new boost::thread(&Worker::workFunc, this);
+        run_ = true;
+        apps_.clear();
+    }
+
+    Worker::~Worker()
+    {
+        run_ = false;
+        thread_->join();
+        for(int i = 0; i < apps_.size(); i++) {
+            delete apps_[i];
+        }
+        apps_.clear();
+    }
+
+    void Worker::addApp(AppInstance* app)
+    {
+        apps_.push_back(app);
+    }
+
+    void Worker::removeApp(const std::string& app_name)
+    {
+        std::vector<AppInstance*>::iterator app_it;
+        for(app_it = apps_.begin(); app_it != apps_.end(); app_it++) {
+            if((*app_it)->app_name_ == app_name) {
+                //(*app_it)->app_ptr_->stop();
+                (*app_it)->running_ = false;
+                (*app_it)->app_ptr_.reset();
+                delete (*app_it);
+                app_it = apps_.erase(app_it);
+                return;
+            }
+        }
+    }
+
+    int Worker::getAppNum()
+    {
+        return apps_.size();
+    }
+
+    AppInstance* Worker::getAppInstance(const std::string& app_name)
+    {
+        std::vector<AppInstance*>::iterator app_it;
+        for(app_it = apps_.begin(); app_it != apps_.end(); app_it++) {
+            if((*app_it)->app_name_ == app_name) {
+                return (*app_it);
+            }
+        }
+
+        AppInstance *app_ins = NULL;
+        return app_ins;
+    }
+
+    void Worker::workFunc()
+    {
+        while(run_) {
+            std::vector<AppInstance*>::iterator app_it;
+            for(app_it = apps_.begin(); app_it != apps_.end(); app_it++) {
+                if(!(*app_it)->running_) {
+                    (*app_it)->app_ptr_->start();
+                    (*app_it)->running_ = true;
+                }
+            }
+            ros::Duration(0.5).sleep();
+        }
+    }
+
     AppManager::AppManager():app_loader_("micros_swarm", "micros_swarm::Application")
     {
         ros::NodeHandle nh;
@@ -62,8 +132,8 @@ namespace micros_swarm{
         std::map<std::string, int>::iterator it;
         for(it = apps_record_.begin(); it != apps_record_.end(); it++) {
             std::string topic_name = "micros_swarm_framework_rtp_manager_destroy_" + it->first;
-            ros::ServiceClient client = nh.serviceClient<app_loader::RTPDestroy>(topic_name);
-            app_loader::RTPDestroy srv;
+            ros::ServiceClient client = nh.serviceClient<app_loader::RTDestroy>(topic_name);
+            app_loader::RTDestroy srv;
             srv.request.code = 1;
 
             if (client.call(srv)) {
@@ -72,7 +142,7 @@ namespace micros_swarm{
             else {
                 //ROS_ERROR("[RTPManager]: Failed to unload App %s.", app_it->app_name_.c_str());
             }
-            ros::Duration(0.05).sleep();
+            ros::Duration(0.1).sleep();
         }
     }
 
@@ -91,13 +161,13 @@ namespace micros_swarm{
                 load_table_[worker_id] -= 1;
             }
         }
-        std::cout<<"[RTPManager]: all Apps were unloaded successfully."<<std::endl;
+        std::cout<<"[AppManager]: all Apps were unloaded successfully."<<std::endl;
 
         for(int i = 0; i < worker_table_.size(); i++) {
             delete worker_table_[i];
         }
         worker_table_.clear();
-        std::cout<<"[RTPManager]: destroy all the worker successfully."<<std::endl;
+        std::cout<<"[AppManager]: destroy all the worker successfully."<<std::endl;
     }
 
     bool AppManager::recordExist(const std::string& name)
@@ -140,8 +210,8 @@ namespace micros_swarm{
 
         bool app_exist = recordExist(app_name);
         if(app_exist) {
-            ROS_WARN("[RTPManager]: App %s was already existed.", app_name.c_str());
-            ros::Duration(0.05).sleep();
+            ROS_WARN("[AppManager]: App %s was already existed.", app_name.c_str());
+            ros::Duration(0.1).sleep();
             resp.success = false;
             return false;
         }
@@ -151,21 +221,21 @@ namespace micros_swarm{
                 app = app_loader_.createInstance(app_type);
             }
             catch(pluginlib::PluginlibException& ex) {
-                ROS_ERROR("[RTPManager]: App %s failed to load for some reason. Error: %s", app_name.c_str(), ex.what());
+                ROS_ERROR("[AppManager]: App %s failed to load for some reason. Error: %s", app_name.c_str(), ex.what());
             }
 
             AppInstance* app_instance = new AppInstance();
-            app_instance->app_name_=app_name;
-            app_instance->app_type_=app_type;
-            app_instance->app_ptr_=app;
-            app_instance->running_= false;
+            app_instance->app_name_ = app_name;
+            app_instance->app_type_ = app_type;
+            app_instance->app_ptr_ = app;
+            app_instance->running_ = false;
 
             int worker_index = allocateWorker();
             worker_table_[worker_index]->addApp(app_instance);
             load_table_[worker_index] += 1;
             addRecord(app_name, worker_index);
-            ROS_INFO("[RTPManager]: App %s was loaded successfully.", app_name.c_str());
-            ros::Duration(0.05).sleep();
+            ROS_INFO("[AppManager]: App %s was loaded successfully.", app_name.c_str());
+            ros::Duration(0.1).sleep();
             resp.success = true;
             return true;
         }
@@ -180,8 +250,8 @@ namespace micros_swarm{
             int worker_id = apps_record_[app_name];
             AppInstance *instance = worker_table_[worker_id]->getAppInstance(app_name);
             if(instance == NULL) {
-                ROS_WARN("[RTPManager]: Get App instance %s failed.", app_name.c_str());
-                ros::Duration(0.05).sleep();
+                ROS_WARN("[AppManager]: Get App instance %s failed.", app_name.c_str());
+                ros::Duration(0.1).sleep();
                 resp.success = false;
                 return false;
             }
@@ -190,13 +260,13 @@ namespace micros_swarm{
             worker_table_[worker_id]->removeApp(app_name);
             load_table_[worker_id] -= 1;
             removeRecord(app_name);
-            ROS_INFO("[RTPManager]: App %s was unloaded successfully.", app_name.c_str());
-            ros::Duration(0.05).sleep();
+            ROS_INFO("[AppManager]: App %s was unloaded successfully.", app_name.c_str());
+            ros::Duration(0.1).sleep();
             resp.success = true;
             return true;
         }
-        ROS_WARN("[RTPManager]: App %s does not exist.", app_name.c_str());
-        ros::Duration(0.05).sleep();
+        ROS_WARN("[AppManager]: App %s does not exist.", app_name.c_str());
+        ros::Duration(0.1).sleep();
         resp.success = false;
         return false;
     }

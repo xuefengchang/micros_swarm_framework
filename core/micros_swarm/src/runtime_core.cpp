@@ -39,6 +39,7 @@ namespace micros_swarm{
         rth_.reset();
         parser_.reset();
         communicator_.reset();
+        app_manager_.reset();
         ci_loader_.unloadLibraryForClass(comm_type_);
     }
     

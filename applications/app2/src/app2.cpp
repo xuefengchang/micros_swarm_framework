@@ -221,13 +221,5 @@ namespace app2{
         
         red_swarm.execute(boost::bind(&App2::motion_red, this));
         blue_swarm.execute(boost::bind(&App2::motion_blue, this));
-
-        ros::Rate loop_rate(10);
-        while(ros::ok()) {
-            //red_swarm.print();
-            //blue_swarm.print();
-            ros::spinOnce();
-            loop_rate.sleep();
-        }
     }
 };

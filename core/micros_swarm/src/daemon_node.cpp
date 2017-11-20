@@ -32,12 +32,12 @@ void rtpManagerDestroySigintHandler(int sig)
     // All the default sigint handler does is call shutdown()
     rtp_core->app_manager_->shutdown();
     ros::shutdown();
+    rtp_core.reset();
 }
 
 int main(int argc, char** argv){
     ros::init(argc, argv, "micros_swarm_framework_rtp_node");
 
-    //boost::shared_ptr<micros_swarm_framework::RTPManager> rtp_manager;
     rtp_core.reset(new micros_swarm::RuntimeCore());
     rtp_core->initialize();
 
@@ -47,7 +47,7 @@ int main(int argc, char** argv){
 
     boost::thread t = boost::thread(boost::bind(&ros::spin));
     t.join();
-    rtp_core.reset();
+    //rtp_core.reset();
     return 0;
 }
 

@@ -32,7 +32,7 @@ add_service_files(
   FILES
   AppLoad.srv
   AppUnload.srv
-  RTPDestroy.srv
+  RTDestroy.srv
 )
 
 ## Generate added messages and services with any dependencies listed here

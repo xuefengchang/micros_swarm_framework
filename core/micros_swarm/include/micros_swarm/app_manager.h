@@ -29,6 +29,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 #include <boost/function.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 #include <ros/ros.h>
 #include <pluginlib/class_list_macros.h>
@@ -38,7 +39,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/application.h"
 #include "app_loader/AppLoad.h"
 #include "app_loader/AppUnload.h"
-#include "app_loader/RTPDestroy.h"
+#include "app_loader/RTDestroy.h"
 
 namespace micros_swarm{
     struct AppInstance{
@@ -51,77 +52,18 @@ namespace micros_swarm{
 
     struct Worker{
     public:
-        void addApp(AppInstance* app)
-        {
-            apps_.push_back(app);
-        }
-
-        void removeApp(const std::string& app_name)
-        {
-            std::vector<AppInstance*>::iterator app_it;
-            for(app_it = apps_.begin(); app_it != apps_.end();) {
-                if((*app_it)->app_name_ == app_name) {
-                    app_it = apps_.erase(app_it);
-                }
-                else {
-                    ++app_it;
-                }
-            }
-
-        }
-
-        AppInstance* getAppInstance(const std::string& app_name)
-        {
-            std::vector<AppInstance*>::iterator app_it;
-            for(app_it = apps_.begin(); app_it != apps_.end(); app_it++) {
-                if((*app_it)->app_name_ == app_name) {
-                    return (*app_it);
-                }
-            }
-
-            AppInstance *app_ins = NULL;
-            return app_ins;
-        }
-
+        Worker(int id);
+        ~Worker();
+        void addApp(AppInstance* app);
+        void removeApp(const std::string& app_name);
+        int getAppNum();
+        AppInstance* getAppInstance(const std::string& app_name);
+    private:
+        void workFunc();
+        int id_;
+        volatile bool run_;
         boost::thread* thread_;
         std::vector<AppInstance*> apps_;
-        int id_;
-
-        Worker(int id)
-        {
-            id_ = id;
-            thread_ = new boost::thread(&Worker::workFunc, this);
-            run_ = true;
-            apps_.clear();
-        }
-
-        ~Worker()
-        {
-            run_ = false;
-            thread_->join();
-            for(int i = 0; i < apps_.size(); i++) {
-                delete apps_[i];
-            }
-            apps_.clear();
-        }
-
-    private:
-        volatile bool run_;
-        void workFunc()
-        {
-            while(run_) {
-                std::vector<AppInstance*>::iterator app_it;
-                for(app_it = apps_.begin(); app_it != apps_.end(); app_it++)
-                {
-                    if(!(*app_it)->running_)
-                    {
-                        (*app_it)->app_ptr_->start();
-                        (*app_it)->running_=true;
-                    }
-                }
-                ros::Duration(0.1).sleep();
-            }
-        }
     };
 
     class AppManager

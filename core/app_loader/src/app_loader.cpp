@@ -74,7 +74,7 @@ namespace app_loader{
         }
     }
 
-    bool AppLoader::rtpManagerDestroyCB(app_loader::RTPDestroy::Request &req, app_loader::RTPDestroy::Response &resp)
+    bool AppLoader::rtpManagerDestroyCB(app_loader::RTDestroy::Request &req, app_loader::RTDestroy::Response &resp)
     {
         resp.success = false;
         if(req.code == 1) {
