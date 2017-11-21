@@ -35,7 +35,7 @@ namespace app_loader{
         private_nh.param("app_name", app_name_, std::string("app_demo"));
         private_nh.param("app_type", app_type_, std::string("micros_swarm/AppDemo"));
 
-        ros::ServiceClient client = nh.serviceClient<app_loader::AppLoad>("micros_swarm_framework_load_app");
+        ros::ServiceClient client = nh.serviceClient<app_loader::AppLoad>("app_loader_load_app");
         app_loader::AppLoad srv;
         srv.request.name = app_name_;
         srv.request.type = app_type_;
@@ -49,7 +49,7 @@ namespace app_loader{
         }
 
         //when the rtp manager was destroyed, automatically unload the apps
-        std::string topic_name = "micros_swarm_framework_rtp_manager_destroy_" + app_name_;
+        std::string topic_name = "runtime_core_destroy_" + app_name_;
         rtp_manager_destroy_srv_ = nh.advertiseService(topic_name, &AppLoader::rtpManagerDestroyCB, this);
     }
 
@@ -58,7 +58,7 @@ namespace app_loader{
         rtp_manager_destroy_srv_.shutdown();
         if(!rtp_manager_destroy_) {
             ros::NodeHandle nh;
-            ros::ServiceClient client = nh.serviceClient<app_loader::AppUnload>("micros_swarm_framework_unload_app");
+            ros::ServiceClient client = nh.serviceClient<app_loader::AppUnload>("app_loader_unload_app");
             app_loader::AppUnload srv;
             srv.request.name = app_name_;
             srv.request.type = app_type_;

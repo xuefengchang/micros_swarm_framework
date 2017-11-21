@@ -50,6 +50,12 @@ namespace micros_swarm {
         gen_limit_ = 0;
     }
 
+    Agent::~Agent()
+    {
+        rth_.reset();
+        communicator_.reset();
+    }
+
     void Agent::set_param(float w, float c1, float c2)
     {
         w_ = w;

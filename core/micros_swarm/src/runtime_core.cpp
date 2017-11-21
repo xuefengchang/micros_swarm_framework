@@ -32,14 +32,15 @@ namespace micros_swarm{
 
     RuntimeCore::~RuntimeCore()
     {
+        app_manager_.reset();
         spin_thread_->interrupt();
         spin_thread_->join();
         delete spin_thread_;
 
         rth_.reset();
         parser_.reset();
+        Singleton<CommInterface>::deleteSingleton();
         communicator_.reset();
-        app_manager_.reset();
         ci_loader_.unloadLibraryForClass(comm_type_);
     }
     

@@ -40,7 +40,10 @@ namespace micros_swarm{
             rth = Singleton<RuntimeHandle>::getSingleton();
         }
 
-        virtual ~Application(){}
+        virtual ~Application()
+        {
+            rth.reset();
+        }
 
         //application api
         const int robot_id()

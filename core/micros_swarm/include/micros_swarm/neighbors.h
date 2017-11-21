@@ -59,7 +59,7 @@ namespace micros_swarm{
             
             ~Neighbors()
             {
-            
+                rth_.reset();
             }
             
             std::map<int, Type>& data()
@@ -263,6 +263,11 @@ namespace micros_swarm{
                 data_.clear();
                 data_=n.data_;
                 return *this;
+            }
+
+            ~Neighbors()
+            {
+                rth_.reset();
             }
             
             std::map<int, NeighborBase>& data()

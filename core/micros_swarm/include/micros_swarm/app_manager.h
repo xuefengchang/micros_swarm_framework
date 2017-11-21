@@ -78,6 +78,9 @@ namespace micros_swarm{
         void addRecord(const std::string& name, int worker_id);
         void removeRecord(const std::string& name);
         int allocateWorker();
+        void insertOrUpdatePluginUseCount(const std::string& type);
+        void decreasePluginUseCount(const std::string& type);
+        int getPluginUseCount(const std::string& type);
         bool loadService(app_loader::AppLoad::Request &req, app_loader::AppLoad::Response &resp);
         bool unloadService(app_loader::AppUnload::Request &req, app_loader::AppUnload::Response &resp);
         pluginlib::ClassLoader<micros_swarm::Application> app_loader_;
@@ -87,6 +90,7 @@ namespace micros_swarm{
         std::vector<Worker*> worker_table_;
         std::vector<uint16_t> load_table_;
         std::map<std::string, int> apps_record_;
+        std::map<std::string, int> plugin_use_count_;
     };
 };
 

@@ -51,13 +51,13 @@
     <group ns="robot_1">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node8" output="screen">
             <param name="app_name" type="string" value="app9"/>
-            <param name="app_type" type="string" value="app3/App3"/>
+            <param name="app_type" type="string" value="app1/App1"/>
         </node>
     </group>
     <group ns="robot_1">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node9" output="screen">
             <param name="app_name" type="string" value="app10"/>
-            <param name="app_type" type="string" value="app3/App3"/>
+            <param name="app_type" type="string" value="app1/App1"/>
         </node>
     </group>
     
@@ -82,13 +82,13 @@
     <group ns="robot_2">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node13" output="screen">
             <param name="app_name" type="string" value="app14"/>
-            <param name="app_type" type="string" value="app3/App3"/>
+            <param name="app_type" type="string" value="app2/App2"/>
         </node>
     </group>
     <group ns="robot_2">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node14" output="screen">
             <param name="app_name" type="string" value="app15"/>
-            <param name="app_type" type="string" value="app3/App3"/>
+            <param name="app_type" type="string" value="app2/App2"/>
         </node>
     </group>
     
@@ -107,7 +107,7 @@
     <group ns="robot_3">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node17" output="screen">
             <param name="app_name" type="string" value="app18"/>
-            <param name="app_type" type="string" value="app1/App1"/>
+            <param name="app_type" type="string" value="app2/App2"/>
         </node>
     </group>
     <group ns="robot_3">

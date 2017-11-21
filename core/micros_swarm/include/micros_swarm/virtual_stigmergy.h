@@ -69,7 +69,11 @@ namespace micros_swarm{
                 return *this;
             }
             
-            ~VirtualStigmergy(){}
+            ~VirtualStigmergy()
+            {
+                rth_.reset();
+                communicator_.reset();
+            }
             
             void put(const std::string& key, const Type& data)
             {

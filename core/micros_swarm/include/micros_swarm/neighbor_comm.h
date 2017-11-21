@@ -40,6 +40,12 @@ namespace micros_swarm{
                 rth_=Singleton<RuntimeHandle>::getSingleton();
                 communicator_=Singleton<CommInterface>::getExistedSingleton();
             }
+
+            ~Broadcaster()
+            {
+                rth_.reset();
+                communicator_.reset();
+            }
             
             void broadcast(const Type& value)
             {
@@ -81,6 +87,12 @@ namespace micros_swarm{
                 
                 helper_.reset(new ListenerHelperT<Type>(key, callback));
                 rth_->insertOrUpdateListenerHelper(key_, helper_);
+            }
+
+            ~Listener()
+            {
+                rth_.reset();
+                helper_.reset();
             }
             
             void ignore()

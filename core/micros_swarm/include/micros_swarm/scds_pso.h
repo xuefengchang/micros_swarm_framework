@@ -42,6 +42,7 @@ namespace micros_swarm{
         public:
             Agent();
             Agent(std::string name);
+            ~Agent();
             void set_param(float w, float c1, float c2);
             void set_dim(int dim);
             void set_fitness(const boost::function<float(const std::vector<float>& )>& fitness);

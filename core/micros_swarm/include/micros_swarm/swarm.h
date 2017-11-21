@@ -69,7 +69,8 @@ namespace micros_swarm{
             
             ~Swarm()
             {
-            
+                rth_.reset();
+                communicator_.reset();
             }
             
             const int id()  const

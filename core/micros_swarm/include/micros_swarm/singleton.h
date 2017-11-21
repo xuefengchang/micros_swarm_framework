@@ -38,114 +38,104 @@ namespace micros_swarm{
         public:
             static void makeSingleton(boost::shared_ptr<T>& existed_ptr)  //make an esisted ptr to be a singleton
             {
-                if(existed_ptr.use_count() == 0)
-                {
+                if(existed_ptr.use_count() == 0) {
                     std::cout<<"WRONG: using an empty ptr to get singleton, exit."<<std::endl;
                     exit(-1);
                 }
-                else
-                {
-                    micros_swarm_framework_mut.lock();
-                    object = existed_ptr;
-                    micros_swarm_framework_mut.unlock();
+                else {
+                    singleton_mutex_.lock();
+                    singleton_object_ = existed_ptr;
+                    singleton_mutex_.unlock();
                 }
             }
 
             static boost::shared_ptr<T> getExistedSingleton()  //get the existed singleton. it is in pairs with makeSingleton()
             {
-                if(object.use_count() == 0)
-                {
+                if(singleton_object_.use_count() == 0) {
                     std::cout<<"WRONG: try to get an not existed ptr, exit."<<std::endl;
                     exit(-1);
                 }
-                return object;
+                return singleton_object_;
+            }
+
+            static void deleteSingleton()  //delete the singleton which was created by the makeSingleton()
+            {
+                if(singleton_object_.use_count() != 0) {
+                    singleton_mutex_.lock();
+                    singleton_object_.reset();
+                    singleton_mutex_.unlock();
+                }
             }
 
             static boost::shared_ptr<T> getSingleton()  //none parameter contruction
             {
-                if(object.use_count() == 0)
-                {
-                    micros_swarm_framework_mut.lock();
-                    if(object.use_count()==0)
-                        object = boost::shared_ptr<T>(new T());
-                    micros_swarm_framework_mut.unlock();
+                if(singleton_object_.use_count() == 0) {
+                    singleton_mutex_.lock();
+                    if(singleton_object_.use_count() == 0) {
+                        singleton_object_ = boost::shared_ptr<T>(new T());
+                    }
+                    singleton_mutex_.unlock();
                 }
-                return object;
-            }
-
-            static boost::shared_ptr<T> getSingleton(boost::shared_ptr<T>& existed_ptr)  //use esisted ptr to contruct
-            {
-                if(existed_ptr.use_count() == 0)
-                {
-                    std::cout<<"WRONG: using an empty ptr to initialize, exit."<<std::endl;
-                    exit(-1);
-                }
-                else
-                {
-                    micros_swarm_framework_mut.lock();
-                    object = existed_ptr;
-                    micros_swarm_framework_mut.unlock();
-                }
-                return object;
+                return singleton_object_;
             }
             
             template<class P1>
             static boost::shared_ptr<T> getSingleton(P1 p1)  //one parameter construction
             {
-                if(object.use_count() == 0)
-                {
-                    micros_swarm_framework_mut.lock();
-                    if(object.use_count()==0)
-                        object = boost::shared_ptr<T>(new T(p1));
-                    micros_swarm_framework_mut.unlock();
+                if(singleton_object_.use_count() == 0) {
+                    singleton_mutex_.lock();
+                    if(singleton_object_.use_count() == 0) {
+                        singleton_object_ = boost::shared_ptr<T>(new T(p1));
+                    }
+                    singleton_mutex_.unlock();
                 }
-                return object;
+                return singleton_object_;
             }
             
             template<class P1, class P2>
             static boost::shared_ptr<T> getSingleton(P1 p1, P2 p2)  //two parameters construction
             {
-                if(object.use_count() == 0)
-                {
-                    micros_swarm_framework_mut.lock();
-                    if(object.use_count()==0)
-                        object = boost::shared_ptr<T>(new T(p1, p2));
-                    micros_swarm_framework_mut.unlock();
+                if(singleton_object_.use_count() == 0) {
+                    singleton_mutex_.lock();
+                    if(singleton_object_.use_count() == 0) {
+                        singleton_object_ = boost::shared_ptr<T>(new T(p1, p2));
+                    }
+                    singleton_mutex_.unlock();
                 }
-                return object;
+                return singleton_object_;
             }
             
             template<class P1, class P2, class P3>
             static boost::shared_ptr<T> getSingleton(P1 p1, P2 p2, P3 p3)  //three parameter construction
             {
-                if(object.use_count() == 0)
-                {
-                    micros_swarm_framework_mut.lock();
-                    if(object.use_count()==0)
-                        object = boost::shared_ptr<T>(new T(p1, p2, p3));
-                    micros_swarm_framework_mut.unlock();
+                if(singleton_object_.use_count() == 0) {
+                    singleton_mutex_.lock();
+                    if(singleton_object_.use_count() == 0) {
+                        singleton_object_ = boost::shared_ptr<T>(new T(p1, p2, p3));
+                    }
+                    singleton_mutex_.unlock();
                 }
-                return object;
+                return singleton_object_;
             }
             
             static int use_count()
             {
-                return object.use_count();
+                return singleton_object_.use_count();
             }
             
             ~Singleton(){}
         private:
             Singleton(){}
         private:
-            static boost::shared_ptr<T> object;
-            static boost::mutex micros_swarm_framework_mut;  //TODO, is this ok for multi thread???
+            static boost::shared_ptr<T> singleton_object_;
+            static boost::mutex singleton_mutex_;  //TODO, is this ok for multi thread???
     };
     
     template<class T>
-    boost::shared_ptr<T> Singleton<T>::object;
+    boost::shared_ptr<T> Singleton<T>::singleton_object_;
     
     template<class T>
-    boost::mutex Singleton<T>::micros_swarm_framework_mut;
+    boost::mutex Singleton<T>::singleton_mutex_;
 };
     
 #endif

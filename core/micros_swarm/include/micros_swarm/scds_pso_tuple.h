@@ -61,7 +61,11 @@ namespace micros_swarm{
                 return *this;
             }
             
-            ~SCDSPSOTuple(){}
+            ~SCDSPSOTuple()
+            {
+                rth_.reset();
+                communicator_.reset();
+            }
             
             void put(const std::string& key, const SCDSPSODataTuple& data)
             {

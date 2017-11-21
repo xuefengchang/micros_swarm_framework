@@ -76,7 +76,11 @@ namespace micros_swarm{
                 return *this;
             }
             
-            ~BlackBoard(){}
+            ~BlackBoard()
+            {
+                rth_.reset();
+                communicator_.reset();
+            }
             
             void put(const std::string& key, const Type& data)
             {
