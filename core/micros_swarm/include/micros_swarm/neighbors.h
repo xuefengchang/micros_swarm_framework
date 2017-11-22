@@ -39,21 +39,22 @@ namespace micros_swarm{
             Neighbors()
             {
                 data_.clear();
-                rth_=Singleton<RuntimeHandle>::getSingleton();
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
             }
             
             Neighbors(const Neighbors<Type>& n)
             {
-                rth_=Singleton<RuntimeHandle>::getSingleton();
-                data_=n.data_;
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                data_ = n.data_;
             }
             
             Neighbors& operator=(const Neighbors<Type>& n)
             {
-                if(this==&n)
+                if(this == &n) {
                     return *this;
+                }
                 data_.clear();
-                data_=n.data_;
+                data_ = n.data_;
                 return *this;
             }
             
@@ -71,8 +72,7 @@ namespace micros_swarm{
             {
                 typename std::map<int, Type>::iterator it;
                 
-                for(it=data_.begin();it!=data_.end();it++)
-                {
+                for(it = data_.begin(); it != data_.end(); it++) {
                     std::cout<<"---"<<it->first<<","<<it->second<<"---"<<std::endl;
                 }
             }
@@ -81,8 +81,7 @@ namespace micros_swarm{
             {
                 typename std::map<int, Type>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
                     (*f)(n_it->second);
                 }
             }
@@ -91,8 +90,7 @@ namespace micros_swarm{
             {
                 typename std::map<int, Type>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
                     f(n_it->second);
                 }
             }
@@ -103,10 +101,8 @@ namespace micros_swarm{
                 Neighbors<T2> n2;
                 typename std::map<int, Type>::iterator n_it1;
     
-                for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
-                {
-                    T2 temp=(*f)(n_it1->second);
-            
+                for(n_it1 = data_.begin(); n_it1 != data_.end(); n_it1++) {
+                    T2 temp = (*f)(n_it1->second);
                     n2.data_.insert(std::pair<int, T2>(n_it1->first,temp));
                 }        
                 return n2;
@@ -118,10 +114,8 @@ namespace micros_swarm{
                 Neighbors<T2> n2;
                 typename std::map<int, Type>::iterator n_it1;
     
-                for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
-                {
-                    T2 temp=f(n_it1->second);
-            
+                for(n_it1 = data_.begin(); n_it1 != data_.end(); n_it1++) {
+                    T2 temp = f(n_it1->second);
                     n2.data_.insert(std::pair<int, T2>(n_it1->first,temp));
                 }        
                 return n2;
@@ -132,9 +126,8 @@ namespace micros_swarm{
             {
                 typename std::map<int, Type>::iterator n_it1;
     
-                for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
-                {
-                    t2=(*f)(n_it1->second, t2);
+                for(n_it1 = data_.begin(); n_it1 != data_.end(); n_it1++) {
+                    t2 = (*f)(n_it1->second, t2);
                 }
             
                 return t2;
@@ -145,9 +138,8 @@ namespace micros_swarm{
             {
                 typename std::map<int, Type>::iterator n_it1;
     
-                for(n_it1=data_.begin(); n_it1!=data_.end();n_it1++)
-                {
-                    t2=f(n_it1->second, t2);
+                for(n_it1 = data_.begin(); n_it1 != data_.end(); n_it1++) {
+                    t2 = f(n_it1->second, t2);
                 }
             
                 return t2;
@@ -159,10 +151,8 @@ namespace micros_swarm{
             
                 typename std::map<int, Type>::iterator n_it;
                 
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
-                    if((*f)(n_it->first, n_it->second))
-                    {
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
+                    if((*f)(n_it->first, n_it->second)) {
                         result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
                     }
                 }
@@ -175,10 +165,8 @@ namespace micros_swarm{
             
                 typename std::map<int, Type>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
-                    if(f(n_it->first, n_it->second))
-                    {
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
+                    if(f(n_it->first, n_it->second)) {
                         result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
                     }
                 }
@@ -191,10 +179,8 @@ namespace micros_swarm{
             
                 typename std::map<int, Type>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
-                    if(rth_->inNeighborSwarm(n_it->first, swarm_id))
-                    {
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
+                    if(rth_->inNeighborSwarm(n_it->first, swarm_id)) {
                         result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
                     }
                 }
@@ -208,10 +194,8 @@ namespace micros_swarm{
             
                 typename std::map<int, Type>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
-                    if(!rth_->inNeighborSwarm(n_it->first, swarm_id))
-                    {
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
+                    if(!rth_->inNeighborSwarm(n_it->first, swarm_id)) {
                         result.data_.insert(std::pair<int, Type>(n_it->first,n_it->second));
                     }
                 }
@@ -232,36 +216,35 @@ namespace micros_swarm{
             Neighbors()
             {
                 data_.clear();
-                rth_=Singleton<RuntimeHandle>::getSingleton();
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
             }
             
             Neighbors(bool get_data_now)
             {
-                if(get_data_now)
-                {
+                if(get_data_now) {
                     data_.clear();
-                    rth_=Singleton<RuntimeHandle>::getSingleton();
+                    rth_ = Singleton<RuntimeHandle>::getSingleton();
                     rth_->getNeighbors(data_);
                 }
-                else
-                {
+                else {
                     data_.clear();
-                    rth_=Singleton<RuntimeHandle>::getSingleton();
+                    rth_ = Singleton<RuntimeHandle>::getSingleton();
                 }
             }
             
             Neighbors(const Neighbors<NeighborBase>& n)
             {
-                rth_=Singleton<RuntimeHandle>::getSingleton();
-                data_=n.data_;
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                data_ = n.data_;
             }
             
             Neighbors& operator=(const Neighbors<NeighborBase>& n)
             {
-                if(this==&n)
+                if(this == &n) {
                     return *this;
+                }
                 data_.clear();
-                data_=n.data_;
+                data_ = n.data_;
                 return *this;
             }
 
@@ -279,8 +262,7 @@ namespace micros_swarm{
             {
                 typename std::map<int, NeighborBase>::iterator it;
                 
-                for(it=data_.begin();it!=data_.end();it++)
-                {
+                for(it = data_.begin(); it != data_.end(); it++) {
                     std::cout<<"---"<<it->first<<":  "<<it->second.distance<<","<< \
                         it->second.azimuth<<","<<it->second.elevation<<","<< \
                         it->second.x<<","<<it->second.y<<","<<it->second.z<< \
@@ -293,8 +275,7 @@ namespace micros_swarm{
             {
                 typename std::map<int, NeighborBase>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
                     (*f)(n_it->second);
                 }
             }
@@ -303,8 +284,7 @@ namespace micros_swarm{
             {
                 typename std::map<int, NeighborBase>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
                     f(n_it->second);
                 }
             }
@@ -315,10 +295,8 @@ namespace micros_swarm{
                 Neighbors<T> n;
                 typename std::map<int, NeighborBase>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
-                    T temp=(*f)(n_it->second);
-            
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
+                    T temp = (*f)(n_it->second);
                     n.data_.insert(std::pair<int, T>(n_it->first,temp));
                 }
                 
@@ -331,10 +309,8 @@ namespace micros_swarm{
                 Neighbors<T> n;
                 typename std::map<int, NeighborBase>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
-                    T temp=f(n_it->second);
-            
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
+                    T temp = f(n_it->second);
                     n.data_.insert(std::pair<int, T>(n_it->first,temp));
                 }
                 
@@ -346,9 +322,8 @@ namespace micros_swarm{
             {
                 typename std::map<int, NeighborBase>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
-                    t=(*f)(n_it->second, t);
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
+                    t = (*f)(n_it->second, t);
                 }
             
                 return t;
@@ -359,9 +334,8 @@ namespace micros_swarm{
             {
                 typename std::map<int, NeighborBase>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
-                    t=f(n_it->second, t);
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
+                    t = f(n_it->second, t);
                 }
             
                 return t;
@@ -373,10 +347,8 @@ namespace micros_swarm{
             
                 typename std::map<int, NeighborBase>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
-                    if((*f)(n_it->first, n_it->second))
-                    {
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
+                    if((*f)(n_it->first, n_it->second)) {
                         result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
                 }
@@ -390,10 +362,8 @@ namespace micros_swarm{
             
                 typename std::map<int, NeighborBase>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
-                    if(f(n_it->first, n_it->second))
-                    {
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
+                    if(f(n_it->first, n_it->second)) {
                         result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
                 }
@@ -407,10 +377,8 @@ namespace micros_swarm{
             
                 typename std::map<int, NeighborBase>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
-                    if(rth_->inNeighborSwarm(n_it->first, swarm_id))
-                    {
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
+                    if(rth_->inNeighborSwarm(n_it->first, swarm_id)) {
                         result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
                 }
@@ -424,10 +392,8 @@ namespace micros_swarm{
             
                 typename std::map<int, NeighborBase>::iterator n_it;
     
-                for(n_it=data_.begin(); n_it!=data_.end();n_it++)
-                {
-                    if(!rth_->inNeighborSwarm(n_it->first, swarm_id))
-                    {
+                for(n_it = data_.begin(); n_it != data_.end(); n_it++) {
+                    if(!rth_->inNeighborSwarm(n_it->first, swarm_id)) {
                         result.data_.insert(std::pair<int, NeighborBase>(n_it->first,n_it->second));
                     }
                 }

@@ -47,7 +47,7 @@ namespace opensplice_dds_broker{
         dds_msg.packet_version=packet.packet_version;
         dds_msg.packet_type=packet.packet_type;
         dds_msg.packet_data=packet.packet_data.data();
-        dds_msg.package_check_sum=packet.package_check_sum;
+        dds_msg.package_check_sum=packet.check_sum;
 
         packet_publisher_->publish(dds_msg);
     }
@@ -59,7 +59,7 @@ namespace opensplice_dds_broker{
         packet.packet_version=dds_msg.packet_version;
         packet.packet_type=dds_msg.packet_type;
         packet.packet_data=dds_msg.packet_data;
-        packet.package_check_sum=dds_msg.package_check_sum;
+        packet.check_sum=dds_msg.package_check_sum;
 
         parser_.parse(packet);
     }

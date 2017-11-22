@@ -33,9 +33,9 @@ namespace micros_swarm{
 
     class CommInterface{
         public:
-            virtual void init(std::string name, const micros_swarm::PacketParser& parser)=0;
-            virtual void broadcast(const micros_swarm::CommPacket& packet)=0;
-            virtual void receive()=0;
+            virtual void init(std::string name, const micros_swarm::PacketParser& parser) = 0;
+            virtual void broadcast(const micros_swarm::CommPacket& packet) = 0;
+            virtual void receive() = 0;
     };
 };
 #endif

@@ -61,7 +61,7 @@ namespace ros_broker{
             ros_msg.packet_version=packet.packet_version;
             ros_msg.packet_type=packet.packet_type;
             ros_msg.packet_data=packet.packet_data;
-            ros_msg.package_check_sum=packet.package_check_sum;
+            ros_msg.package_check_sum=packet.check_sum;
             packet_publisher_.publish(ros_msg);
         }
     }
@@ -73,7 +73,7 @@ namespace ros_broker{
         packet.packet_version=ros_msg.packet_version;
         packet.packet_type=ros_msg.packet_type;
         packet.packet_data=ros_msg.packet_data;
-        packet.package_check_sum=ros_msg.package_check_sum;
+        packet.check_sum=ros_msg.package_check_sum;
 
         parser_.parse(packet);
     }

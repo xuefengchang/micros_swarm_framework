@@ -28,12 +28,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 namespace micros_swarm{
 
     struct CommPacket{
-        int packet_source;
-        int packet_version;
-        int packet_type;
+        uint16_t packet_source;
+        uint8_t packet_type;
+        uint16_t data_len;
+        uint8_t packet_version;
+        uint16_t check_sum;
         std::string packet_data;
-        double package_check_sum;
-        CommPacket():packet_source(-1),packet_version(1),packet_type(-1),packet_data(""),package_check_sum(0.0){}
+        CommPacket():packet_source(-1),packet_type(-1),data_len(0),packet_version(1),check_sum(0),packet_data(""){}
     };
 };
 #endif

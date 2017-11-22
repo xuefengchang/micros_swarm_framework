@@ -44,10 +44,10 @@ namespace micros_swarm{
         
             bool isNeighbor(const Base& self, const Base& neighbor)
             {
-                float distance=sqrt((self.x-neighbor.x)*(self.x-neighbor.x)+(self.y-neighbor.y)*(self.y-neighbor.y)+
+                float distance = sqrt((self.x-neighbor.x)*(self.x-neighbor.x)+(self.y-neighbor.y)*(self.y-neighbor.y)+
                     (self.z-neighbor.z)*(self.z-neighbor.z));
                     
-                if(distance<(neighbor_distance_))
+                if(distance < (neighbor_distance_))
                     return true;
                     
                 return false;

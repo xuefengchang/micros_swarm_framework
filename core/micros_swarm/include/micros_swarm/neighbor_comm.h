@@ -36,9 +36,9 @@ namespace micros_swarm{
         public:
             Broadcaster(const std::string& key)
             {
-                key_=key;
-                rth_=Singleton<RuntimeHandle>::getSingleton();
-                communicator_=Singleton<CommInterface>::getExistedSingleton();
+                key_ = key;
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                communicator_ = Singleton<CommInterface>::getExistedSingleton();
             }
 
             ~Broadcaster()
@@ -52,23 +52,22 @@ namespace micros_swarm{
                 std::ostringstream archiveStream;
                 boost::archive::text_oarchive archive(archiveStream);
                 archive<<value;
-                std::string value_str=archiveStream.str();
+                std::string value_str = archiveStream.str();
                 
                 NeighborBroadcastKeyValue nbkv(key_, value_str);
                 
                 std::ostringstream archiveStream2;
                 boost::archive::text_oarchive archive2(archiveStream2);
                 archive2<<nbkv;
-                std::string nbkv_str=archiveStream2.str();  
+                std::string nbkv_str = archiveStream2.str();
                 
                 micros_swarm::CommPacket p;
-                p.packet_source=rth_->getRobotID();
-                p.packet_version=1;
-                p.packet_type=NEIGHBOR_BROADCAST_KEY_VALUE;
-                p.packet_data=nbkv_str;
-                p.package_check_sum=0;
-                
-                //communicator_->broadcast(p);
+                p.packet_source = rth_->getRobotID();
+                p.packet_type = NEIGHBOR_BROADCAST_KEY_VALUE;
+                p.data_len = nbkv_str.length();
+                p.packet_version = 1;
+                p.check_sum = 0;
+                p.packet_data = nbkv_str;
                 rth_->getOutMsgQueue()->pushNcMsgQueue(p);
             }
         private:
@@ -82,8 +81,8 @@ namespace micros_swarm{
         public:        
             Listener(const std::string& key, const boost::function<void(const Type&)>& callback)
             {
-                key_=key;
-                rth_=Singleton<RuntimeHandle>::getSingleton();
+                key_ = key;
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
                 
                 helper_.reset(new ListenerHelperT<Type>(key, callback));
                 rth_->insertOrUpdateListenerHelper(key_, helper_);

@@ -39,31 +39,32 @@ namespace micros_swarm{
         public:
             Swarm()
             {
-                swarm_id_=-1;
+                swarm_id_ = -1;
             }
             
             Swarm(int swarm_id)
             {
-                swarm_id_=swarm_id;
-                rth_=Singleton<RuntimeHandle>::getSingleton();
-                communicator_=Singleton<micros_swarm::CommInterface>::getExistedSingleton();
+                swarm_id_ = swarm_id;
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                communicator_ = Singleton<micros_swarm::CommInterface>::getExistedSingleton();
                 rth_->insertOrUpdateSwarm(swarm_id_, 0);
             }
             
             Swarm(const Swarm& s)
             {
-                rth_=Singleton<RuntimeHandle>::getSingleton();
-                communicator_=Singleton<micros_swarm::CommInterface>::getExistedSingleton();
-                swarm_id_=s.swarm_id_;
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                communicator_ = Singleton<micros_swarm::CommInterface>::getExistedSingleton();
+                swarm_id_ = s.swarm_id_;
             }
             
             Swarm& operator=(const Swarm& s)
             {
-                if(this==&s)
+                if(this == &s) {
                     return *this;
-                rth_=Singleton<RuntimeHandle>::getSingleton();
-                communicator_=Singleton<CommInterface>::getExistedSingleton();
-                swarm_id_=s.swarm_id_;
+                }
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                swarm_id_ = s.swarm_id_;
                 return *this;
             }
             
@@ -88,7 +89,7 @@ namespace micros_swarm{
             
             void join()
             {
-                int robot_id=rth_->getRobotID();
+                int robot_id = rth_->getRobotID();
                 rth_->insertOrUpdateSwarm(swarm_id_, 1);
         
                 SingleRobotJoinSwarm srjs(robot_id, swarm_id_);
@@ -96,21 +97,21 @@ namespace micros_swarm{
                 std::ostringstream archiveStream;
                 boost::archive::text_oarchive archive(archiveStream);
                 archive<<srjs;
-                std::string srjs_str=archiveStream.str();   
+                std::string srjs_str = archiveStream.str();
                       
                 micros_swarm::CommPacket p;
-                p.packet_source=robot_id;
-                p.packet_version=1;
-                p.packet_type=SINGLE_ROBOT_JOIN_SWARM;
-                p.packet_data=srjs_str;
-                p.package_check_sum=0;
-                
+                p.packet_source = robot_id;
+                p.packet_type = SINGLE_ROBOT_JOIN_SWARM;
+                p.data_len = srjs_str.length();
+                p.packet_version = 1;
+                p.check_sum = 0;
+                p.packet_data = srjs_str;
                 rth_->getOutMsgQueue()->pushSwarmMsgQueue(p);
             }
             
             void leave()
             {
-                int robot_id=rth_->getRobotID();
+                int robot_id = rth_->getRobotID();
                 rth_->insertOrUpdateSwarm(swarm_id_, 0);
         
                 SingleRobotLeaveSwarm srls(robot_id, swarm_id_);
@@ -118,60 +119,59 @@ namespace micros_swarm{
                 std::ostringstream archiveStream;
                 boost::archive::text_oarchive archive(archiveStream);
                 archive<<srls;
-                std::string srjs_str=archiveStream.str();   
+                std::string srjs_str = archiveStream.str();
                       
                 micros_swarm::CommPacket p;
-                p.packet_source=robot_id;
-                p.packet_version=1;
-                p.packet_type=SINGLE_ROBOT_LEAVE_SWARM;
-                p.packet_data=srjs_str;
-                p.package_check_sum=0;
-                
+                p.packet_source = robot_id;
+                p.packet_type = SINGLE_ROBOT_LEAVE_SWARM;
+                p.data_len = srjs_str.length();
+                p.packet_version = 1;
+                p.check_sum = 0;
+                p.packet_data = srjs_str;
                 rth_->getOutMsgQueue()->pushSwarmMsgQueue(p);
             }
             
             void select(const boost::function<bool()>& bf)
             {
-                if(bf())
-                {
+                if(bf()) {
                     join();
                 }
-                else
-                {
+                else {
                     //do nothiong
                 }
             }
             
             void unselect(const boost::function<bool()>& bf)
             {
-                if(bf())
-                {
+                if(bf()) {
                     leave();
                 }
-                else
-                {
+                else {
                     //do nothiong
                 }
             }
             
             const bool in() const
             {
-                if(rth_->getSwarmFlag(swarm_id_))
+                if(rth_->getSwarmFlag(swarm_id_)) {
                     return true;
+                }
                 return false;
             }
             
             //execute a function
             void execute(const boost::function<void()>& f)
             {
-                if(in())
+                if(in()) {
                     f();
+                }
             }
             
             void breakup()
             {
-                if(in())
+                if(in()) {
                     leave();
+                }
                 rth_->deleteSwarm(swarm_id_);
                 this->~Swarm();
             }
@@ -195,8 +195,7 @@ namespace micros_swarm{
     
                 std::set<int>::iterator it;  
                 it = result.find(robot_id);
-                if(it != result.end())
-                {
+                if(it != result.end()) {
                     result_swarm.join();
                 }
         
@@ -218,12 +217,11 @@ namespace micros_swarm{
     
                 Swarm result_swarm(new_swarm_id);
         
-                int robot_id=rth_->getRobotID();
+                int robot_id = rth_->getRobotID();
     
                 std::set<int>::iterator it;  
                 it = result.find(robot_id);
-                if(it != result.end())
-                {
+                if(it != result.end()) {
                     result_swarm.join();
                 }
         
@@ -244,12 +242,11 @@ namespace micros_swarm{
     
                 Swarm result_swarm(new_swarm_id);
     
-                int robot_id=rth_->getRobotID();
+                int robot_id = rth_->getRobotID();
     
                 std::set<int>::iterator it;  
                 it = result.find(robot_id);
-                if(it != result.end())
-                {
+                if(it != result.end()) {
                     result_swarm.join();
                 }
         
@@ -261,12 +258,11 @@ namespace micros_swarm{
                 Swarm result_swarm(new_swarm_id);
                 std::set<int> a;
                 rth_->getSwarmMembers(swarm_id_, a);
-                int robot_id=rth_->getRobotID();
+                int robot_id = rth_->getRobotID();
     
                 std::set<int>::iterator it;  
                 it = a.find(robot_id);
-                if(it == a.end())
-                {
+                if(it == a.end()) {
                     result_swarm.join();
                 }
         
@@ -278,12 +274,11 @@ namespace micros_swarm{
                 std::set<int> s;
                 rth_->getSwarmMembers(swarm_id_, s);
         
-                int robot_id=rth_->getRobotID();
+                int robot_id = rth_->getRobotID();
     
                 std::set<int>::iterator it;  
                 std::cout<<"swarm "<<swarm_id_<<" members: "<<std::endl;
-                for(it=s.begin();it!=s.end();it++)
-                {
+                for(it = s.begin(); it != s.end(); it++) {
                     std::cout<<*it<<", ";
                 }
                 std::cout<<std::endl;

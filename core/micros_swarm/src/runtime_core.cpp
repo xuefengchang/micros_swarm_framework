@@ -89,20 +89,19 @@ namespace micros_swarm{
         std::string bs_string=archiveStream.str();
     
         micros_swarm::CommPacket p;
-        p.packet_source=robot_id;
-        p.packet_version=1;
-        p.packet_type=micros_swarm::BARRIER_SYN;
-        p.packet_data=bs_string;
-        p.package_check_sum=0;
+        p.packet_source = robot_id;
+        p.packet_type = micros_swarm::BARRIER_SYN;
+        p.data_len = bs_string.length();
+        p.packet_version = 1;
+        p.check_sum = 0;
+        p.packet_data = bs_string;
         rth_->getOutMsgQueue()->pushBarrierMsgQueue(p);
     }
     
     void RuntimeCore::publish_robot_base(const ros::TimerEvent&)
     {
         int robot_id=rth_->getRobotID();
-        
         const Base& l=rth_->getRobotBase();
-        
         SingleRobotBroadcastBase srbb(robot_id, l.x, l.y, l.z, l.vx, l.vy, l.vz, l.valid);
         
         std::ostringstream archiveStream;
@@ -111,37 +110,35 @@ namespace micros_swarm{
         std::string srbb_str=archiveStream.str();
                       
         micros_swarm::CommPacket p;
-        p.packet_source=robot_id;
-        p.packet_version=1;
-        p.packet_type=SINGLE_ROBOT_BROADCAST_BASE;
-        p.packet_data=srbb_str;
-        p.package_check_sum=0;
-        
+        p.packet_source = robot_id;
+        p.packet_type = SINGLE_ROBOT_BROADCAST_BASE;
+        p.data_len = srbb_str.length();
+        p.packet_version = 1;
+        p.check_sum = 0;
+        p.packet_data = srbb_str;
         rth_->getOutMsgQueue()->pushBaseMsgQueue(p);
     }
     
     void RuntimeCore::publish_swarm_list(const ros::TimerEvent&)
     {
         int robot_id=rth_->getRobotID();
-        
         std::vector<int> swarm_list;
         swarm_list.clear();
         rth_->getSwarmList(swarm_list);
         
         SingleRobotSwarmList srsl(robot_id, swarm_list);
-        
         std::ostringstream archiveStream;
         boost::archive::text_oarchive archive(archiveStream);
         archive<<srsl;
         std::string srsl_str=archiveStream.str();
                       
         micros_swarm::CommPacket p;
-        p.packet_source=robot_id;
-        p.packet_version=1;
-        p.packet_type=SINGLE_ROBOT_SWARM_LIST;
-        p.packet_data=srsl_str;
-        p.package_check_sum=0;
-
+        p.packet_source = robot_id;
+        p.packet_type = SINGLE_ROBOT_SWARM_LIST;
+        p.data_len = srsl_str.length();
+        p.packet_version = 1;
+        p.check_sum = 0;
+        p.packet_data = srsl_str;
         rth_->getOutMsgQueue()->pushSwarmMsgQueue(p);
     }
     

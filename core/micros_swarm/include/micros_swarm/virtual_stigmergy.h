@@ -43,29 +43,30 @@ namespace micros_swarm{
             
             VirtualStigmergy(int vstig_id)
             {
-                vstig_id_=vstig_id;
-                rth_=Singleton<RuntimeHandle>::getSingleton();
-                communicator_=Singleton<CommInterface>::getExistedSingleton();
+                vstig_id_ = vstig_id;
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                communicator_ = Singleton<CommInterface>::getExistedSingleton();
                 rth_->createVirtualStigmergy(vstig_id_);
-                robot_id_=rth_->getRobotID();
+                robot_id_ = rth_->getRobotID();
             }
             
             VirtualStigmergy(const VirtualStigmergy& vs)
             {
-                rth_=Singleton<RuntimeHandle>::getSingleton();
-                communicator_=Singleton<CommInterface>::getExistedSingleton();
-                vstig_id_=vs.vstig_id_;
-                robot_id_=vs.robot_id_;
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                vstig_id_ = vs.vstig_id_;
+                robot_id_ = vs.robot_id_;
             }
             
             VirtualStigmergy& operator=(const VirtualStigmergy& vs)
             {
-                if(this==&vs)
+                if(this == &vs) {
                     return *this;
-                rth_=Singleton<RuntimeHandle>::getSingleton();
-                communicator_=Singleton<CommInterface>::getExistedSingleton();
-                vstig_id_=vs.vstig_id_;
-                robot_id_=vs.robot_id_;
+                }
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                vstig_id_ = vs.vstig_id_;
+                robot_id_ = vs.robot_id_;
                 return *this;
             }
             
@@ -80,7 +81,7 @@ namespace micros_swarm{
                 std::ostringstream archiveStream;
                 boost::archive::text_oarchive archive(archiveStream);
                 archive<<data;
-                std::string s=archiveStream.str();
+                std::string s = archiveStream.str();
 
                 if(rth_->isVirtualStigmergyTupleExist(vstig_id_, key)) {
                     VirtualStigmergyTuple vst;
@@ -105,11 +106,11 @@ namespace micros_swarm{
 
                     micros_swarm::CommPacket p;
                     p.packet_source = rth_->getRobotID();
-                    p.packet_version = 1;
                     p.packet_type = VIRTUAL_STIGMERGY_PUT;
+                    p.data_len = vsp_str.length();
+                    p.packet_version = 1;
+                    p.check_sum = 0;
                     p.packet_data = vsp_str;
-                    p.package_check_sum = 0;
-
                     rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
                 }
             }
@@ -119,8 +120,7 @@ namespace micros_swarm{
                 VirtualStigmergyTuple vst;
                 bool success = rth_->getVirtualStigmergyTuple(vstig_id_, key, vst);
                 
-                if(!success)
-                {
+                if(!success) {
                     std::cout<<"ID "<<vstig_id_<<" virtual stigmergy, "<<key<<" is not exist."<<std::endl;
                     exit(-1);
                 }
@@ -150,11 +150,11 @@ namespace micros_swarm{
 
                         micros_swarm::CommPacket p;
                         p.packet_source = robot_id_;
-                        p.packet_version = 1;
                         p.packet_type = VIRTUAL_STIGMERGY_QUERY;
+                        p.data_len = vsq_str.length();
+                        p.packet_version = 1;
+                        p.check_sum = 0;
                         p.packet_data = vsq_str;
-                        p.package_check_sum = 0;
-
                         rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
                     }
                 }

@@ -42,22 +42,23 @@ namespace micros_swarm{
 
             SCDSPSOTuple()
             {
-                rth_=Singleton<RuntimeHandle>::getSingleton();
-                communicator_=Singleton<CommInterface>::getExistedSingleton();
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                communicator_ = Singleton<CommInterface>::getExistedSingleton();
             }
 
             SCDSPSOTuple(const SCDSPSOTuple& t)
             {
-                rth_=Singleton<RuntimeHandle>::getSingleton();
-                communicator_=Singleton<CommInterface>::getExistedSingleton();
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                communicator_ = Singleton<CommInterface>::getExistedSingleton();
             }
 
             SCDSPSOTuple& operator=(const SCDSPSOTuple& t)
             {
-                if(this==&t)
+                if(this == &t) {
                     return *this;
-                rth_=Singleton<RuntimeHandle>::getSingleton();
-                communicator_=Singleton<CommInterface>::getExistedSingleton();
+                }
+                rth_ = Singleton<RuntimeHandle>::getSingleton();
+                communicator_ = Singleton<CommInterface>::getExistedSingleton();
                 return *this;
             }
             
@@ -79,20 +80,19 @@ namespace micros_swarm{
                 std::string scds_put_string=archiveStream2.str();
 
                 micros_swarm::CommPacket p;
-                p.packet_source=rth_->getRobotID();
-                p.packet_version=1;
-                p.packet_type=SCDS_PSO_PUT;
-                p.packet_data=scds_put_string;
-                p.package_check_sum=0;
-
+                p.packet_source = rth_->getRobotID();
+                p.packet_type = SCDS_PSO_PUT;
+                p.data_len = scds_put_string.length();
+                p.packet_version = 1;
+                p.check_sum = 0;
+                p.packet_data = scds_put_string;
                 rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(p);
             }
 
             SCDSPSODataTuple get(const std::string& key)
             {
                 SCDSPSODataTuple data;
-                if (!rth_->getSCDSPSOValue(key, data))
-                {
+                if (!rth_->getSCDSPSOValue(key, data)) {
                     std::cout<<"scds pso tuple, "<<key<<" is not exist."<<std::endl;
                     exit(-1);
                 }
@@ -105,12 +105,12 @@ namespace micros_swarm{
                 std::string scds_get_string=archiveStream2.str();
 
                 micros_swarm::CommPacket p;
-                p.packet_source=rth_->getRobotID();
-                p.packet_version=1;
-                p.packet_type=SCDS_PSO_GET;
-                p.packet_data=scds_get_string;
-                p.package_check_sum=0;
-
+                p.packet_source = rth_->getRobotID();
+                p.packet_type = SCDS_PSO_GET;
+                p.data_len = scds_get_string.length();
+                p.packet_version = 1;
+                p.check_sum = 0;
+                p.packet_data = scds_get_string;
                 rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(p);
                 
                 return data;  
