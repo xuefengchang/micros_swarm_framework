@@ -93,7 +93,7 @@ namespace micros_swarm{
                     (*app_it)->running_ = true;
                 }
             }
-            ros::Duration(0.5).sleep();
+            ros::Duration(0.2).sleep();
         }
     }
 
@@ -131,7 +131,7 @@ namespace micros_swarm{
         plugin_use_count_.clear();
     }
 
-    void AppManager::shutdown()
+    void AppManager::stop()
     {
         ros::NodeHandle nh;
         std::map<std::string, int>::iterator it;

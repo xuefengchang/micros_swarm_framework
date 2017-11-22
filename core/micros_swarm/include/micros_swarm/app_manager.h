@@ -72,7 +72,7 @@ namespace micros_swarm{
         AppManager();
         AppManager(int worker_num);
         ~AppManager();
-        void shutdown();
+        void stop();
     private:
         bool recordExist(const std::string& name);
         void addRecord(const std::string& name, int worker_id);
