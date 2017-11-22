@@ -64,6 +64,7 @@ namespace micros_swarm{
         RuntimeCore();
         ~RuntimeCore();
         void initialize();
+        void shutdown();
         void setParameters();
         void spin_msg_queue();
         void publish_robot_base(const ros::TimerEvent&);

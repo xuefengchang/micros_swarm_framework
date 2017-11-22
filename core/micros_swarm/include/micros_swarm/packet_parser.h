@@ -31,6 +31,7 @@ namespace micros_swarm{
     class PacketParser{
         public:
             PacketParser();
+            ~PacketParser();
             void parse(const micros_swarm::CommPacket& packet);
         private:
             boost::shared_ptr<micros_swarm::RuntimeHandle> rth_;

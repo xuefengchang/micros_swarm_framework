@@ -30,14 +30,13 @@ void rtpManagerDestroySigintHandler(int sig)
     // Do some custom action.
     // For example, publish a stop message to some other nodes.
     // All the default sigint handler does is call shutdown()
-    rtp_core_->app_manager_->stop();
-    if(ros::ok()) {
-        ros::shutdown();
-    }
+    rtp_core_->shutdown();
     rtp_core_.reset();
+    ros::shutdown();
 }
 
-int main(int argc, char** argv){
+int main(int argc, char** argv)
+{
     ros::init(argc, argv, "micros_swarm_framework_rtp_node");
 
     rtp_core_.reset(new micros_swarm::RuntimeCore());

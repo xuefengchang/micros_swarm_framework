@@ -58,7 +58,7 @@ namespace micros_swarm{
                 return singleton_object_;
             }
 
-            static void deleteSingleton()  //delete the singleton which was created by the makeSingleton()
+            static void deleteSingleton()  //delete the singleton
             {
                 if(singleton_object_.use_count() != 0) {
                     singleton_mutex_.lock();

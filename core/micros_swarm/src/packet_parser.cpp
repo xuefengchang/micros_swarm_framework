@@ -35,8 +35,14 @@ namespace micros_swarm{
 
     PacketParser::PacketParser()
     {
-        rth_=Singleton<RuntimeHandle>::getSingleton();
+        rth_ = Singleton<RuntimeHandle>::getSingleton();
         cni_.reset(new CheckNeighbor(rth_->getNeighborDistance()));
+    }
+
+    PacketParser::~PacketParser()
+    {
+        rth_.reset();
+        cni_.reset();
     }
 
     void PacketParser::parse(const micros_swarm::CommPacket& packet)

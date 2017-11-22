@@ -35,10 +35,7 @@ namespace micros_swarm{
     
     class CheckNeighbor : public CheckNeighborInterface{
         public:
-            CheckNeighbor(const float& neighbor_distance):neighbor_distance_(neighbor_distance)
-            {
-                //neighbor_distance_ = neighbor_distance;
-            }
+            CheckNeighbor(const float& neighbor_distance):neighbor_distance_(neighbor_distance) {}
         
             float getNeighborDistance()
             {

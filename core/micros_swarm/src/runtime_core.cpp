@@ -26,68 +26,44 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 //#define PUBLISH_SWARM_LIST_DURATION 5
 
 namespace micros_swarm{
-    RuntimeCore::RuntimeCore():ci_loader_("micros_swarm", "micros_swarm::CommInterface")
-    {
-    }
-
-    RuntimeCore::~RuntimeCore()
-    {
-        app_manager_.reset();
-        spin_thread_->interrupt();
-        spin_thread_->join();
-        delete spin_thread_;
-
-        rth_.reset();
-        parser_.reset();
-        Singleton<CommInterface>::deleteSingleton();
-        communicator_.reset();
-        ci_loader_.unloadLibraryForClass(comm_type_);
-    }
+    RuntimeCore::RuntimeCore():ci_loader_("micros_swarm", "micros_swarm::CommInterface") {}
+    RuntimeCore::~RuntimeCore() {}
     
     void RuntimeCore::spin_msg_queue()
     {
-        for(;;)
-        {
+        for(;;) {
             boost::shared_lock<boost::shared_mutex> lock(rth_->getOutMsgQueue()->msg_queue_mutex);
     
-            if(!rth_->getOutMsgQueue()->baseMsgQueueEmpty())
-            {
+            if(!rth_->getOutMsgQueue()->baseMsgQueueEmpty()) {
                 communicator_->broadcast(rth_->getOutMsgQueue()->baseMsgQueueFront());
                 rth_->getOutMsgQueue()->popBaseMsgQueue();
             }
-            if(!rth_->getOutMsgQueue()->ncMsgQueueEmpty())
-            {
+            if(!rth_->getOutMsgQueue()->ncMsgQueueEmpty()) {
                 communicator_->broadcast(rth_->getOutMsgQueue()->ncMsgQueueFront());
                 rth_->getOutMsgQueue()->popNcMsgQueue();
             }
-            if(!rth_->getOutMsgQueue()->swarmMsgQueueEmpty())
-            {
+            if(!rth_->getOutMsgQueue()->swarmMsgQueueEmpty()) {
                 communicator_->broadcast(rth_->getOutMsgQueue()->swarmMsgQueueFront());
                 rth_->getOutMsgQueue()->popSwarmMsgQueue();
             }
-            if(!rth_->getOutMsgQueue()->vstigMsgQueueEmpty())
-            {
+            if(!rth_->getOutMsgQueue()->vstigMsgQueueEmpty()) {
                 communicator_->broadcast(rth_->getOutMsgQueue()->vstigMsgQueueFront());
                 rth_->getOutMsgQueue()->popVstigMsgQueue();
             }
-            if(!rth_->getOutMsgQueue()->bbMsgQueueEmpty())
-            {
+            if(!rth_->getOutMsgQueue()->bbMsgQueueEmpty()) {
                 communicator_->broadcast(rth_->getOutMsgQueue()->bbMsgQueueFront());
                 rth_->getOutMsgQueue()->popBbMsgQueue();
             }
-            if(!rth_->getOutMsgQueue()->barrierMsgQueueEmpty())
-            {
+            if(!rth_->getOutMsgQueue()->barrierMsgQueueEmpty()) {
                 communicator_->broadcast(rth_->getOutMsgQueue()->barrierMsgQueueFront());
                 rth_->getOutMsgQueue()->popBarrierMsgQueue();
             }
-            if(!rth_->getOutMsgQueue()->SCDSPSOMsgQueueEmpty())
-            {
+            if(!rth_->getOutMsgQueue()->SCDSPSOMsgQueueEmpty()) {
                 communicator_->broadcast(rth_->getOutMsgQueue()->SCDSPSOMsgQueueFront());
                 rth_->getOutMsgQueue()->popSCDSPSOMsgQueue();
             }
             
-            while(rth_->getOutMsgQueue()->allOutMsgQueueEmpty())
-            {
+            while(rth_->getOutMsgQueue()->allOutMsgQueueEmpty()) {
                 rth_->getOutMsgQueue()->msg_queue_condition.wait(lock);
             }
         }
@@ -96,8 +72,7 @@ namespace micros_swarm{
     void RuntimeCore::barrier_check(const ros::TimerEvent&)
     {
         int barrier_size=rth_->getBarrierSize();
-        if(barrier_size>=total_robot_numbers_-1)
-        {
+        if(barrier_size>=total_robot_numbers_-1) {
             std::cout<<"robot "<<rth_->getRobotID()<<" daemon node start."<<std::endl;
             barrier_timer_.stop();
         }
@@ -173,47 +148,47 @@ namespace micros_swarm{
     void RuntimeCore::setParameters()
     {
         bool param_ok =node_handle_.getParam("/publish_robot_id_duration", publish_robot_base_duration_);
-        if(!param_ok)
-        {
+        if(!param_ok) {
             std::cout<<"could not get parameter publish_robot_id_duration! use the default value."<<std::endl;
             publish_robot_base_duration_=0.1;
-        }else{
+        }
+        else {
             std::cout<<"publish_robot_id_duration: "<<publish_robot_base_duration_<<std::endl;
         }
         
         param_ok =node_handle_.getParam("/publish_swarm_list_duration", publish_swarm_list_duration_);
-        if(!param_ok)
-        {
+        if(!param_ok) {
             std::cout<<"could not get parameter publish_swarm_list_duration! use the default value."<<std::endl;
             publish_swarm_list_duration_=5.0;
-        }else{
+        }
+        else {
             std::cout<<"publish_swarm_list_duration: "<<publish_swarm_list_duration_<<std::endl;
         }
         
         param_ok =node_handle_.getParam("/default_neighbor_distance", default_neighbor_distance_);
-        if(!param_ok)
-        {
+        if(!param_ok) {
             std::cout<<"could not get parameter default_neighbor_distance! use the default value."<<std::endl;
             default_neighbor_distance_=50;
-        }else{
+        }
+        else {
             std::cout<<"default_neighbor_distance: "<<default_neighbor_distance_<<std::endl;
         }
         
         param_ok =node_handle_.getParam("/total_robot_numbers", total_robot_numbers_);
-        if(!param_ok)
-        {
+        if(!param_ok) {
             std::cout<<"could not get parameter total_robot_numbers! use the default value."<<std::endl;
             total_robot_numbers_=1;
-        }else{
+        }
+        else {
             std::cout<<"total_robot_numbers: "<<total_robot_numbers_<<std::endl;
         }
 
         param_ok =node_handle_.getParam("/comm_type", comm_type_);
-        if(!param_ok)
-        {
+        if(!param_ok) {
             std::cout<<"could not get parameter comm_type, use the default ros_comm."<<std::endl;
             comm_type_="ros_comm/ROSComm";
-        }else{
+        }
+        else {
             std::cout<<"comm_type: "<<comm_type_<<std::endl;
         }
 
@@ -249,5 +224,23 @@ namespace micros_swarm{
         publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(publish_swarm_list_duration_), &RuntimeCore::publish_swarm_list, this);
         //barrier_timer_=node_handle_.createTimer(ros::Duration(1), &RuntimeCore::barrier_check, this);
         std::cout<<"robot "<<rth_->getRobotID()<<" daemon node start."<<std::endl;
+    }
+
+    void RuntimeCore::shutdown()
+    {
+        spin_thread_->interrupt();
+        spin_thread_->join();
+        delete spin_thread_;
+
+        app_manager_->stop();
+        Singleton<AppManager>::deleteSingleton();
+        app_manager_.reset();
+        Singleton<CommInterface>::deleteSingleton();
+        communicator_.reset();
+        ci_loader_.unloadLibraryForClass(comm_type_);
+        Singleton<PacketParser>::deleteSingleton();
+        parser_.reset();
+        Singleton<RuntimeHandle>::deleteSingleton();
+        rth_.reset();
     }
 };
