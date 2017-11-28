@@ -5,7 +5,7 @@ project(opensplice_dds_broker)
 set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 
 option(USE_OPENSPLICE_DDS "Using OpenSplice DDS" OFF)
-set(USE_OPENSPLICE_DDS ON CACHE BOOL "Using OpenSplice DDS" FORCE)
+set(USE_OPENSPLICE_DDS OFF CACHE BOOL "Using OpenSplice DDS" FORCE)
 
 if (${USE_OPENSPLICE_DDS})
   if (NOT DEFINED ENV{OSPL_HOME})
