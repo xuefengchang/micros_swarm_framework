@@ -31,6 +31,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/vector.hpp>
+#include <ros/time.h>
 
 namespace micros_swarm{
     //Robot position in the world coordinate system
@@ -105,21 +106,24 @@ namespace micros_swarm{
     };
     
     struct VirtualStigmergyTuple{
-        std::string vstig_value;
-        unsigned int lamport_clock;
+        std::vector<uint8_t> vstig_value;
+        int lamport_clock;
         time_t write_timestamp;
         unsigned int read_count;
         //the id of the robot which last change the virtual stigmergy
         int robot_id;
             
-        VirtualStigmergyTuple():vstig_value(""), lamport_clock(0), write_timestamp(0), read_count(0), robot_id(-1){}
+        VirtualStigmergyTuple(): lamport_clock(0), write_timestamp(0), read_count(0), robot_id(-1){}
             
-        VirtualStigmergyTuple(const std::string& value_, unsigned int clock_, time_t time_, unsigned int count_, int id_)
+        VirtualStigmergyTuple(const std::vector<uint8_t>& value_, int clock_, time_t time_, unsigned int count_, int id_)
             :vstig_value(value_), lamport_clock(clock_), write_timestamp(time_), read_count(count_), robot_id(id_){}
             
         void print()
         {
-            std::cout<<vstig_value<<", "<<lamport_clock<<", "<<write_timestamp<<", "<<read_count<<", "<<robot_id<<std::endl;
+            for(int i = 0; i < vstig_value.size(); i++) {
+                std::cout<<vstig_value[i];
+            }
+            std::cout<<", "<<lamport_clock<<", "<<write_timestamp<<", "<<read_count<<", "<<robot_id<<std::endl;
         }
 
         double getTemperature()
@@ -141,19 +145,22 @@ namespace micros_swarm{
     };
 
     struct BlackBoardTuple{
-        std::string bb_value;
-        time_t bb_timestamp;
+        std::vector<uint8_t> bb_value;
+        ros::Time timestamp;
         //the id of the robot which last change the blackboard
         int robot_id;
 
-        BlackBoardTuple():bb_value(""), bb_timestamp(0), robot_id(-1){}
+        BlackBoardTuple(): timestamp(ros::Time(0,0)), robot_id(-1){}
 
-        BlackBoardTuple(const std::string& value_, time_t time_, int id_)
-                :bb_value(value_), bb_timestamp(time_), robot_id(id_){}
+        BlackBoardTuple(const std::vector<uint8_t>& value_, const ros::Time& timestamp_, int id_)
+                :bb_value(value_), timestamp(timestamp_), robot_id(id_){}
 
         void print()
         {
-            std::cout<<bb_value<<", "<<bb_timestamp<<", "<<robot_id<<std::endl;
+            for(int i = 0; i < bb_value.size(); i++) {
+                std::cout<<bb_value[i];
+            }
+            std::cout<<", "<<timestamp<<", "<<robot_id<<std::endl;
         }
     };
 
@@ -178,7 +185,7 @@ namespace micros_swarm{
     };
     
     //this macro definition is used to serialize the user-defined data type
-    #define BOOST_SERIALIZE  template<class Archive>\
+    /*#define BOOST_SERIALIZE  template<class Archive>\
                              void serialize(Archive & ar, const unsigned int version)
                        
     #define MEMBER ar&
@@ -209,7 +216,7 @@ namespace micros_swarm{
             std::cout<<"b = "<<b<<std::endl;
             std::cout<<"c = "<<c<<std::endl;
         }
-    };
+    };*/
 };
 
 #endif

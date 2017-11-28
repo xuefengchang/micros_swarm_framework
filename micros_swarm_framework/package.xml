@@ -42,6 +42,7 @@
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
 
+  <run_depend>gsdf_msgs</run_depend>
   <run_depend>micros_swarm</run_depend>
   <run_depend>app_loader</run_depend>
   <run_depend>ros_broker</run_depend>

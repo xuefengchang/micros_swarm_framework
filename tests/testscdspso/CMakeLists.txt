@@ -126,6 +126,7 @@ include_directories(
 # )
 
 add_library(TestSCDSPSO src/testscdspso.cpp)
+add_dependencies(TestSCDSPSO ${micros_swarm_EXPORTED_TARGETS})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

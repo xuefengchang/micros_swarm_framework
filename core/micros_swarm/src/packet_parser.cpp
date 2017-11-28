@@ -45,49 +45,45 @@ namespace micros_swarm{
         cni_.reset();
     }
 
-    void PacketParser::parse(const micros_swarm::CommPacket& packet)
+    void PacketParser::parse(const std::vector<uint8_t>& data)
     {
+        gsdf_msgs::CommPacket packet = deserialize_ros<gsdf_msgs::CommPacket>(data);
+        int packet_source = packet.header.source;
         int shm_rid = rth_->getRobotID();
-        int packet_source = packet.packet_source;
         
         //ignore the packet of the local robot
         if(packet_source == shm_rid) {
             return;
         }
+
         try {
-            const int packet_type=packet.packet_type;
-            std::string packet_data=packet.packet_data;
-        
-            std::istringstream archiveStream(packet_data);
-            boost::archive::text_iarchive archive(archiveStream);
+            const int packet_type = packet.header.type;
+            std::vector<uint8_t> packet_data = packet.content.buf;
 
             switch(packet_type) {
                 case SINGLE_ROBOT_BROADCAST_BASE: {
-                    micros_swarm::SingleRobotBroadcastBase srbb;
-                    archive>>srbb;
+                    gsdf_msgs::RobotBase rb = deserialize_ros<gsdf_msgs::RobotBase>(packet_data);
                 
-                    if(srbb.valid!=1) {  //ignore the default Base value.
+                    if(rb.valid != 1) {  //ignore the default Base value.
                         return;
                     }
                 
-                    const Base& self=rth_->getRobotBase();
-                    Base neighbor(srbb.robot_x, srbb.robot_y, srbb.robot_z, srbb.robot_vx, srbb.robot_vy, srbb.robot_vz);
-
-                    //std::cout<<"neighbor distance: "<<cni_->getNeighborDistance()<<std::endl;
+                    const Base& self = rth_->getRobotBase();
+                    Base neighbor(rb.px, rb.py, rb.pz, rb.vx, rb.vy, rb.vz);
                 
-                    if(cni_->isNeighbor(self, neighbor))
-                        rth_->insertOrUpdateNeighbor(srbb.robot_id, 0, 0, 0, srbb.robot_x, srbb.robot_y, srbb.robot_z, srbb.robot_vx, srbb.robot_vy, srbb.robot_vz);
-                    else
-                        rth_->deleteNeighbor(srbb.robot_id);
+                    if(cni_->isNeighbor(self, neighbor)) {
+                        rth_->insertOrUpdateNeighbor(rb.id, 0, 0, 0, rb.px, rb.py, rb.pz, rb.vx, rb.vy, rb.vz);
+                    }
+                    else {
+                        rth_->deleteNeighbor(rb.id);
+                    }
                 
                     break;
                 }
                 case SINGLE_ROBOT_JOIN_SWARM: {
                     //if(!rth_->inNeighbors(packet_source))
                     //    return;
-                    SingleRobotJoinSwarm srjs;
-                    archive>>srjs;
-
+                    gsdf_msgs::JoinSwarm srjs = deserialize_ros<gsdf_msgs::JoinSwarm>(packet_data);
                     rth_->joinNeighborSwarm(srjs.robot_id, srjs.swarm_id);
                 
                     break;
@@ -95,9 +91,7 @@ namespace micros_swarm{
                 case SINGLE_ROBOT_LEAVE_SWARM: {
                     //if(!rth_->inNeighbors(packet_source))
                     //    return;
-                    SingleRobotLeaveSwarm srls;
-                    archive>>srls;
-
+                    gsdf_msgs::LeaveSwarm srls = deserialize_ros<gsdf_msgs::LeaveSwarm>(packet_data);
                     rth_->leaveNeighborSwarm(srls.robot_id, srls.swarm_id);
                 
                     break;
@@ -105,9 +99,7 @@ namespace micros_swarm{
                 case SINGLE_ROBOT_SWARM_LIST: {
                     //if(!rth_->inNeighbors(packet_source))
                     //    return;
-                    SingleRobotSwarmList srsl;
-                    archive>>srsl;
-                
+                    gsdf_msgs::SwarmList srsl = deserialize_ros<gsdf_msgs::SwarmList>(packet_data);
                     rth_->insertOrRefreshNeighborSwarm(srsl.robot_id, srsl.swarm_list);
                 
                     break;
@@ -115,58 +107,55 @@ namespace micros_swarm{
                 case VIRTUAL_STIGMERGY_QUERY: {
                     //if(!rth_->inNeighbors(packet_source))
                     //    return;
-                    VirtualStigmergyQuery vsq;
-                    archive>>vsq;
-                
+                    gsdf_msgs::VirtualStigmergyQuery vsq = deserialize_ros<gsdf_msgs::VirtualStigmergyQuery>(packet_data);
                     VirtualStigmergyTuple local;
-                    bool exist=rth_->getVirtualStigmergyTuple(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, local);
+                    bool exist = rth_->getVirtualStigmergyTuple(vsq.vstig_id, vsq.key, local);
                 
                     //local tuple is not exist or the local timestamp is smaller
                     if(!exist||(local.lamport_clock<vsq.lamport_clock)) {
-                        rth_->createVirtualStigmergy(vsq.virtual_stigmergy_id);
-                        rth_->insertOrUpdateVirtualStigmergy(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, vsq.virtual_stigmergy_value,
-                                                                 vsq.lamport_clock, time(NULL), 0, vsq.robot_id);
+                        rth_->createVirtualStigmergy(vsq.vstig_id);
+                        rth_->insertOrUpdateVirtualStigmergy(vsq.vstig_id, vsq.key, vsq.value, vsq.lamport_clock, time(NULL), 0, vsq.robot_id);
 
                         if(!rth_->checkNeighborsOverlap(packet_source)) {
-                            VirtualStigmergyPut vsp_new(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key,
-                                                        vsq.virtual_stigmergy_value,
-                                                        vsq.lamport_clock, vsq.robot_id);
+                            gsdf_msgs::VirtualStigmergyPut vsp_new;
+                            vsp_new.vstig_id = vsq.vstig_id;
+                            vsp_new.key = vsq.key;
+                            vsp_new.value = vsq.value;
+                            vsp_new.lamport_clock = vsq.lamport_clock;
+                            vsp_new.robot_id = vsq.robot_id;
+                            std::vector<uint8_t> vsp_new_vec = serialize_ros(vsp_new);
 
-                            std::ostringstream archiveStream2;
-                            boost::archive::text_oarchive archive2(archiveStream2);
-                            archive2 << vsp_new;
-                            std::string vsp_new_string = archiveStream2.str();
-
-                            micros_swarm::CommPacket p;
-                            p.packet_source = shm_rid;
-                            p.packet_type = VIRTUAL_STIGMERGY_PUT;
-                            p.data_len = vsp_new_string.length();
-                            p.packet_version = 1;
-                            p.check_sum = 0;
-                            p.packet_data = vsp_new_string;
-
-                            rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
+                            gsdf_msgs::CommPacket p;
+                            p.header.source = shm_rid;
+                            p.header.type = VIRTUAL_STIGMERGY_PUT;
+                            p.header.data_len = vsp_new_vec.size();
+                            p.header.version = 1;
+                            p.header.checksum = 0;
+                            p.content.buf = vsp_new_vec;
+                            std::vector<uint8_t> msg_data = serialize_ros(p);
+                            rth_->getOutMsgQueue()->pushVstigMsgQueue(msg_data);
                         }
                     }
                     else if(local.lamport_clock > vsq.lamport_clock) {  //local timestamp is larger
-                        VirtualStigmergyPut vsp(vsq.virtual_stigmergy_id, vsq.virtual_stigmergy_key, local.vstig_value,
-                                                local.lamport_clock, local.robot_id);
-                        std::ostringstream archiveStream2;
-                        boost::archive::text_oarchive archive2(archiveStream2);
-                        archive2<<vsp;
-                        std::string vsp_string=archiveStream2.str();
+                        gsdf_msgs::VirtualStigmergyPut vsp;
+                        vsp.vstig_id = vsq.vstig_id;
+                        vsp.key = vsq.key;
+                        vsp.value = local.vstig_value;
+                        vsp.lamport_clock = local.lamport_clock;
+                        vsp.robot_id = local.robot_id;
+                        std::vector<uint8_t> vsp_vec = serialize_ros(vsp);
                     
-                        micros_swarm::CommPacket p;
-                        p.packet_source = shm_rid;
-                        p.packet_type = VIRTUAL_STIGMERGY_PUT;
-                        p.data_len = vsp_string.length();
-                        p.packet_version = 1;
-                        p.check_sum = 0;
-                        p.packet_data = vsp_string;
-                    
-                        rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
+                        gsdf_msgs::CommPacket p;
+                        p.header.source = shm_rid;
+                        p.header.type = VIRTUAL_STIGMERGY_PUT;
+                        p.header.data_len = vsp_vec.size();
+                        p.header.version = 1;
+                        p.header.checksum = 0;
+                        p.content.buf = vsp_vec;
+                        std::vector<uint8_t> msg_data = serialize_ros(p);
+                        rth_->getOutMsgQueue()->pushVstigMsgQueue(msg_data);
                     }
-                    else if((local.lamport_clock == vsq.lamport_clock)&&(local.robot_id != vsq.robot_id)) {
+                    else if((local.lamport_clock == vsq.lamport_clock) && (local.robot_id != vsq.robot_id)) {
                         //std::cout<<"query conflict"<<std::endl;
                     }
                     else {
@@ -178,36 +167,34 @@ namespace micros_swarm{
                 case VIRTUAL_STIGMERGY_PUT: {
                     //if(!rth_->inNeighbors(packet_source))
                     //    return;
-                    VirtualStigmergyPut vsp;
-                    archive>>vsp;
+                    gsdf_msgs::VirtualStigmergyPut vsp = deserialize_ros<gsdf_msgs::VirtualStigmergyPut>(packet_data);
                 
                     VirtualStigmergyTuple local;
-                    bool exist = rth_->getVirtualStigmergyTuple(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, local);
+                    bool exist = rth_->getVirtualStigmergyTuple(vsp.vstig_id, vsp.key, local);
                 
                     //local tuple is not exist or local timestamp is smaller
-                    if(!exist||(local.lamport_clock<vsp.lamport_clock)) {
-                        rth_->createVirtualStigmergy(vsp.virtual_stigmergy_id);
-                        rth_->insertOrUpdateVirtualStigmergy(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key, vsp.virtual_stigmergy_value,
-                                                             vsp.lamport_clock, time(NULL), 0, vsp.robot_id);
+                    if(!exist||(local.lamport_clock < vsp.lamport_clock)) {
+                        rth_->createVirtualStigmergy(vsp.vstig_id);
+                        rth_->insertOrUpdateVirtualStigmergy(vsp.vstig_id, vsp.key, vsp.value, vsp.lamport_clock, time(NULL), 0, vsp.robot_id);
 
                         if(!rth_->checkNeighborsOverlap(packet_source)) {
-                            VirtualStigmergyPut vsp_new(vsp.virtual_stigmergy_id, vsp.virtual_stigmergy_key,
-                                                        vsp.virtual_stigmergy_value,
-                                                        vsp.lamport_clock, vsp.robot_id);
-                            std::ostringstream archiveStream2;
-                            boost::archive::text_oarchive archive2(archiveStream2);
-                            archive2 << vsp_new;
-                            std::string vsp_new_string = archiveStream2.str();
+                            gsdf_msgs::VirtualStigmergyPut vsp_new;
+                            vsp_new.vstig_id = vsp.vstig_id;
+                            vsp_new.key = vsp.key;
+                            vsp_new.value = vsp.value;
+                            vsp_new.lamport_clock = vsp.lamport_clock;
+                            vsp_new.robot_id = vsp.robot_id;
+                            std::vector<uint8_t> vsp_new_vec = serialize_ros(vsp_new);
 
-                            micros_swarm::CommPacket p;
-                            p.packet_source = shm_rid;
-                            p.packet_type = VIRTUAL_STIGMERGY_PUT;
-                            p.data_len = vsp_new_string.length();
-                            p.packet_version = 1;
-                            p.check_sum = 0;
-                            p.packet_data = vsp_new_string;
-
-                            rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
+                            gsdf_msgs::CommPacket p;
+                            p.header.source = shm_rid;
+                            p.header.type = VIRTUAL_STIGMERGY_PUT;
+                            p.header.data_len = vsp_new_vec.size();
+                            p.header.version = 1;
+                            p.header.checksum = 0;
+                            p.content.buf = vsp_new_vec;
+                            std::vector<uint8_t> msg_data = serialize_ros(p);
+                            rth_->getOutMsgQueue()->pushVstigMsgQueue(msg_data);
                         }
                     }
                     else if((local.lamport_clock==vsp.lamport_clock)&&(local.robot_id!=vsp.robot_id)) {
@@ -222,19 +209,17 @@ namespace micros_swarm{
                 case BLACKBOARD_PUT: {
                     //if(!rth_->inNeighbors(packet_source))
                     //    return;
-                    BlackBoardPut bbp;
-                    archive>>bbp;
-                    int robot_id=rth_->getRobotID();
-                    std::string bb_key=bbp.bb_key;
-                    if(bbp.on_robot_id==robot_id) {
+                    gsdf_msgs::BlackBoardPut bbp = deserialize_ros<gsdf_msgs::BlackBoardPut>(packet_data);
+                    int robot_id = rth_->getRobotID();
+                    std::string bb_key = bbp.key;
+                    if(bbp.on_robot_id == robot_id) {
                         rth_->createBlackBoard(bbp.bb_id);
-                        BlackBoardTuple bbt(bbp.bb_value, bbp.bb_timestamp, bbp.robot_id);
                         BlackBoardTuple local;
-                        rth_->getBlackBoardTuple(bbp.bb_id, bbp.bb_key, local);
+                        rth_->getBlackBoardTuple(bbp.bb_id, bbp.key, local);
 
                         //local tuple is not exist or the local timestamp is smaller
-                        if((local.bb_timestamp == 0) || (local.bb_timestamp < bbp.bb_timestamp)) {
-                            rth_->insertOrUpdateBlackBoard(bbp.bb_id, bbp.bb_key, bbp.bb_value, bbp.bb_timestamp, bbp.robot_id);
+                        if(!rth_->isBlackBoardTupleExist(bbp.bb_id, bbp.key) || local.timestamp < bbp.timestamp) {
+                            rth_->insertOrUpdateBlackBoard(bbp.bb_id, bbp.key, bbp.value, bbp.timestamp, bbp.robot_id);
                         }
                     }
                     else{
@@ -246,29 +231,31 @@ namespace micros_swarm{
                 case BLACKBOARD_QUERY: {
                     //if(!rth_->inNeighbors(packet_source))
                     //    return;
-                    BlackBoardQuery bbq;
-                    archive>>bbq;
+                    gsdf_msgs::BlackBoardQuery bbq = deserialize_ros<gsdf_msgs::BlackBoardQuery>(packet_data);
                     int robot_id = rth_->getRobotID();
-                    std::string bb_key = bbq.bb_key;
+                    std::string bb_key = bbq.key;
 
                     if(bbq.on_robot_id == robot_id) {
                         BlackBoardTuple local;
-                        rth_->getBlackBoardTuple(bbq.bb_id, bbq.bb_key, local);
+                        rth_->getBlackBoardTuple(bbq.bb_id, bbq.key, local);
+                        gsdf_msgs::BlackBoardAck bba;
+                        bba.bb_id = bbq.bb_id;
+                        bba.on_robot_id = bbq.on_robot_id;
+                        bba.key = bbq.key;
+                        bba.value = local.bb_value;
+                        bba.timestamp = local.timestamp;
+                        bba.robot_id = bbq.robot_id;
+                        std::vector<uint8_t> bbqa_vec = serialize_ros(bba);
 
-                        BlackBoardQueryAck bbqa(bbq.bb_id, bbq.on_robot_id, bbq.bb_key, local.bb_value, time(0), bbq.robot_id);
-                        std::ostringstream archiveStream2;
-                        boost::archive::text_oarchive archive2(archiveStream2);
-                        archive2<<bbqa;
-                        std::string bbqa_string=archiveStream2.str();
-
-                        micros_swarm::CommPacket p;
-                        p.packet_source = shm_rid;
-                        p.packet_type = BLACKBOARD_QUERY_ACK;
-                        p.data_len = bbqa_string.length();
-                        p.packet_version = 1;
-                        p.check_sum = 0;
-                        p.packet_data = bbqa_string;
-                        rth_->getOutMsgQueue()->pushBbMsgQueue(p);
+                        gsdf_msgs::CommPacket p;
+                        p.header.source = shm_rid;
+                        p.header.type = BLACKBOARD_QUERY_ACK;
+                        p.header.data_len = bbqa_vec.size();
+                        p.header.version = 1;
+                        p.header.checksum = 0;
+                        p.content.buf = bbqa_vec;
+                        std::vector<uint8_t> msg_data = serialize_ros(p);
+                        rth_->getOutMsgQueue()->pushBbMsgQueue(msg_data);
                     }
                     else{
 
@@ -279,17 +266,16 @@ namespace micros_swarm{
                 case BLACKBOARD_QUERY_ACK: {
                     //if(!rth_->inNeighbors(packet_source))
                     //    return;
-                    BlackBoardQueryAck bbqa;
-                    archive>>bbqa;
-                    int robot_id=rth_->getRobotID();
-                    std::string bb_key=bbqa.bb_key;
+                    gsdf_msgs::BlackBoardAck bba = deserialize_ros<gsdf_msgs::BlackBoardAck>(packet_data);
+                    int robot_id = rth_->getRobotID();
+                    std::string bb_key = bba.key;
 
-                    if(bbqa.on_robot_id == robot_id) {
+                    if(bba.on_robot_id == robot_id) {
 
                     }
                     else {
-                        rth_->createBlackBoard(bbqa.bb_id);
-                        rth_->insertOrUpdateBlackBoard(bbqa.bb_id, bbqa.bb_key, bbqa.bb_value, bbqa.bb_timestamp, bbqa.robot_id);
+                        rth_->createBlackBoard(bba.bb_id);
+                        rth_->insertOrUpdateBlackBoard(bba.bb_id, bba.key, bba.value, bba.timestamp, bba.robot_id);
                     }
 
                     break;
@@ -297,15 +283,12 @@ namespace micros_swarm{
                 case SCDS_PSO_PUT: {
                     //if(!rth_->inNeighbors(packet_source))
                     //    return;
-                    SCDSPSOPut scds_put;
-                    archive>>scds_put;
-
+                    gsdf_msgs::SCDSPSOPut scds_put = deserialize_ros<gsdf_msgs::SCDSPSOPut>(packet_data);
                     SCDSPSODataTuple local;
                     bool exist = rth_->getSCDSPSOValue(scds_put.key, local);
 
                     //local tuple is not exist or local timestamp is smaller
                     if ((!exist) || (local.val < scds_put.val)) {
-                        //std::cout<<"iiiiiii"<<std::endl;
                         SCDSPSODataTuple new_data;
                         new_data.pos = scds_put.pos;
                         new_data.val = scds_put.val;
@@ -314,14 +297,15 @@ namespace micros_swarm{
                         new_data.timestamp = scds_put.timestamp;
                         rth_->insertOrUpdateSCDSPSOValue(scds_put.key, new_data);
 
-                        micros_swarm::CommPacket p;
-                        p.packet_source = shm_rid;
-                        p.packet_type = SCDS_PSO_PUT;
-                        p.data_len = packet_data.length();
-                        p.packet_version = 1;
-                        p.check_sum = 0;
-                        p.packet_data = packet_data;
-                        rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(p);
+                        gsdf_msgs::CommPacket p;
+                        p.header.source = shm_rid;
+                        p.header.type = SCDS_PSO_PUT;
+                        p.header.data_len = packet_data.size();
+                        p.header.version = 1;
+                        p.header.checksum = 0;
+                        p.content.buf = packet_data;
+                        std::vector<uint8_t> msg_data = serialize_ros(p);
+                        rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(msg_data);
                     }
 
                     break;
@@ -329,9 +313,7 @@ namespace micros_swarm{
                 case SCDS_PSO_GET: {
                     //if(!rth_->inNeighbors(packet_source))
                     //    return;
-                    SCDSPSOGet scds_get;
-                    archive>>scds_get;
-
+                    gsdf_msgs::SCDSPSOGet scds_get = deserialize_ros<gsdf_msgs::SCDSPSOGet>(packet_data);
                     SCDSPSODataTuple local;
                     bool exist = rth_->getSCDSPSOValue(scds_get.key, local);
 
@@ -345,31 +327,35 @@ namespace micros_swarm{
                         new_data.timestamp = scds_get.timestamp;
                         rth_->insertOrUpdateSCDSPSOValue(scds_get.key, new_data);
 
-                        micros_swarm::CommPacket p;
-                        p.packet_source = shm_rid;
-                        p.packet_type = SCDS_PSO_PUT;
-                        p.data_len = packet_data.length();
-                        p.packet_version = 1;
-                        p.check_sum=0;
-                        p.packet_data = packet_data;
-                        rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(p);
+                        gsdf_msgs::CommPacket p;
+                        p.header.source = shm_rid;
+                        p.header.type = SCDS_PSO_PUT;
+                        p.header.data_len = packet_data.size();
+                        p.header.version = 1;
+                        p.header.checksum = 0;
+                        p.content.buf = packet_data;
+                        std::vector<uint8_t> msg_data = serialize_ros(p);
+                        rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(msg_data);
                     }
                     else if(local.val > scds_get.val) {
-                        SCDSPSOPut scds_put(scds_get.key, local.pos, local.val, local.robot_id, local.gen, local.timestamp);
+                        gsdf_msgs::SCDSPSOPut scds_put;
+                        scds_put.key = scds_get.key;
+                        scds_put.pos = local.pos;
+                        scds_put.val = local.val;
+                        scds_put.robot_id = local.robot_id;
+                        scds_put.gen = local.gen;
+                        scds_put.timestamp = local.timestamp;
+                        std::vector<uint8_t> scds_put_vec = serialize_ros(scds_put);;
 
-                        std::ostringstream archiveStream2;
-                        boost::archive::text_oarchive archive2(archiveStream2);
-                        archive2<<scds_put;
-                        std::string scds_put_string=archiveStream2.str();
-
-                        micros_swarm::CommPacket p;
-                        p.packet_source = shm_rid;
-                        p.packet_type = SCDS_PSO_PUT;
-                        p.data_len = scds_put_string.length();
-                        p.packet_version = 1;
-                        p.check_sum = 0;
-                        p.packet_data = scds_put_string;
-                        rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(p);
+                        gsdf_msgs::CommPacket p;
+                        p.header.source = shm_rid;
+                        p.header.type = SCDS_PSO_PUT;
+                        p.header.data_len = scds_put_vec.size();
+                        p.header.version = 1;
+                        p.header.checksum = 0;
+                        p.content.buf = scds_put_vec;
+                        std::vector<uint8_t> msg_data = serialize_ros(p);
+                        rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(msg_data);
                     }
                     else {
 
@@ -380,10 +366,8 @@ namespace micros_swarm{
                 case NEIGHBOR_BROADCAST_KEY_VALUE: {
                     //if(!rth_->inNeighbors(packet_source))
                     //    return;
-                    NeighborBroadcastKeyValue nbkv;
-                    archive>>nbkv;
-                        
-                    boost::shared_ptr<ListenerHelper> helper=rth_->getListenerHelper(nbkv.key);
+                    gsdf_msgs::NeighborBroadcastKeyValue nbkv = deserialize_ros<gsdf_msgs::NeighborBroadcastKeyValue>(packet_data);
+                    boost::shared_ptr<ListenerHelper> helper = rth_->getListenerHelper(nbkv.key);
                     if(helper == NULL) {
                         return;
                     }
@@ -394,37 +378,33 @@ namespace micros_swarm{
                 case BARRIER_SYN: {
                     //if(!rth_->inNeighbors(packet_source))
                     //    return;
-                    Barrier_Syn bs;
-                    archive>>bs;
+                    gsdf_msgs::BarrierSyn bs = deserialize_ros<gsdf_msgs::BarrierSyn>(packet_data);
                     if(bs.s != "SYN") {
                         return;
                     }
-                
-                    Barrier_Ack ba(packet.packet_source);
-                
-                    std::ostringstream archiveStream2;
-                    boost::archive::text_oarchive archive2(archiveStream2);
-                    archive2<<ba;
-                    std::string ba_string=archiveStream2.str();
+
+                    gsdf_msgs::BarrierAck ba;
+                    ba.robot_id = packet.header.source;
+                    std::vector<uint8_t> ba_vec = serialize_ros(ba);
                     
-                    micros_swarm::CommPacket p;
-                    p.packet_source = shm_rid;
-                    p.packet_type = BARRIER_ACK;
-                    p.data_len = ba_string.length();
-                    p.packet_version = 1;
-                    p.check_sum = 0;
-                    p.packet_data = ba_string;
-                    rth_->getOutMsgQueue()->pushBarrierMsgQueue(p);
+                    gsdf_msgs::CommPacket p;
+                    p.header.source = shm_rid;
+                    p.header.type = BARRIER_ACK;
+                    p.header.data_len = ba_vec.size();
+                    p.header.version = 1;
+                    p.header.checksum = 0;
+                    p.content.buf = ba_vec;
+                    std::vector<uint8_t> msg_data = serialize_ros(p);
+                    rth_->getOutMsgQueue()->pushBarrierMsgQueue(msg_data);
                     break;
                 }
                 case BARRIER_ACK: {
                     //if(!rth_->inNeighbors(packet_source))
                     //    return;
-                    Barrier_Ack ba;
-                    archive>>ba;
+                    gsdf_msgs::BarrierAck ba = deserialize_ros<gsdf_msgs::BarrierAck>(packet_data);
                 
                     if(shm_rid == ba.robot_id) {
-                        rth_->insertBarrier(packet.packet_source);
+                        rth_->insertBarrier(packet.header.source);
                     }
                     
                     break;
@@ -435,8 +415,34 @@ namespace micros_swarm{
                 }
             }
         }
-        catch(const boost::archive::archive_exception&) {
+        catch(char *err_str) {
+            std::cout<<err_str<<std::endl;
             return;
         }
+    }
+
+    void PacketParser::PacketParser::parse(const std::vector<char>& data)
+    {
+        std::vector<uint8_t> seq;
+        for(int i = 0; i < data.size(); i++) {
+            uint8_t c = (uint8_t)(data[i]);
+            seq.push_back(c);
+        }
+        parse(seq);
+    }
+
+    void PacketParser::parse(uint8_t* data, int len)
+    {
+        std::vector<uint8_t> seq;
+        for(int i = 0; i < len; i++) {
+            seq.push_back(*(data+i));
+        }
+        parse(seq);
+    }
+
+    void PacketParser::parse(char* data, int len)
+    {
+        uint8_t *p = (uint8_t*)data;
+        parse(p, len);
     }
 };

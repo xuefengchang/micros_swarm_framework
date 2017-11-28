@@ -24,6 +24,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define TESTNC_H_
 
 #include "std_msgs/String.h"
+#include "std_msgs/Float32.h"
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/Twist.h"
 
@@ -36,7 +37,7 @@ namespace testnc{
         public:
             TestNC();
             ~TestNC();
-            void callback(const float& value);
+            void callback(const std_msgs::Float32& value);
             virtual void start(); 
     };
 };

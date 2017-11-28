@@ -33,6 +33,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/singleton.h"
 #include "micros_swarm/runtime_handle.h"
 #include "micros_swarm/comm_interface.h"
+#include "gsdf_msgs/SCDSPSOGet.h"
+#include "gsdf_msgs/SCDSPSOPut.h"
 
 namespace micros_swarm{
 
@@ -72,21 +74,24 @@ namespace micros_swarm{
             {
                 rth_->insertOrUpdateSCDSPSOValue(key, data);
 
-                SCDSPSOPut scds_put(key, data.pos, data.val, data.robot_id, data.gen, data.timestamp);
+                gsdf_msgs::SCDSPSOPut scds_put;
+                scds_put.key = key;
+                scds_put.pos = data.pos;
+                scds_put.val = data.val;
+                scds_put.robot_id = data.robot_id;
+                scds_put.gen = data.gen;
+                scds_put.timestamp = data.timestamp;
+                std::vector<uint8_t> scds_put_vec = serialize_ros(scds_put);
 
-                std::ostringstream archiveStream2;
-                boost::archive::text_oarchive archive2(archiveStream2);
-                archive2<<scds_put;
-                std::string scds_put_string=archiveStream2.str();
-
-                micros_swarm::CommPacket p;
-                p.packet_source = rth_->getRobotID();
-                p.packet_type = SCDS_PSO_PUT;
-                p.data_len = scds_put_string.length();
-                p.packet_version = 1;
-                p.check_sum = 0;
-                p.packet_data = scds_put_string;
-                rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(p);
+                gsdf_msgs::CommPacket p;
+                p.header.source = rth_->getRobotID();
+                p.header.type = SCDS_PSO_PUT;
+                p.header.data_len = scds_put_vec.size();
+                p.header.version = 1;
+                p.header.checksum = 0;
+                p.content.buf = scds_put_vec;
+                std::vector<uint8_t> msg_data = serialize_ros(p);
+                rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(msg_data);
             }
 
             SCDSPSODataTuple get(const std::string& key)
@@ -97,21 +102,24 @@ namespace micros_swarm{
                     exit(-1);
                 }
 
-                SCDSPSOPut scds_get(key, data.pos, data.val, data.robot_id, data.gen, data.timestamp);
+                gsdf_msgs::SCDSPSOGet scds_get;
+                scds_get.key = key;
+                scds_get.pos = data.pos;
+                scds_get.val = data.val;
+                scds_get.robot_id = data.robot_id;
+                scds_get.gen = data.gen;
+                scds_get.timestamp = data.timestamp;
+                std::vector<uint8_t> scds_get_vec = serialize_ros(scds_get);
 
-                std::ostringstream archiveStream2;
-                boost::archive::text_oarchive archive2(archiveStream2);
-                archive2<<scds_get;
-                std::string scds_get_string=archiveStream2.str();
-
-                micros_swarm::CommPacket p;
-                p.packet_source = rth_->getRobotID();
-                p.packet_type = SCDS_PSO_GET;
-                p.data_len = scds_get_string.length();
-                p.packet_version = 1;
-                p.check_sum = 0;
-                p.packet_data = scds_get_string;
-                rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(p);
+                gsdf_msgs::CommPacket p;
+                p.header.source = rth_->getRobotID();
+                p.header.type = SCDS_PSO_GET;
+                p.header.data_len = scds_get_vec.size();
+                p.header.version = 1;
+                p.header.checksum = 0;
+                p.content.buf = scds_get_vec;
+                std::vector<uint8_t> msg_data = serialize_ros(p);
+                rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(msg_data);
                 
                 return data;  
             }

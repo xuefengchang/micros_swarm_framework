@@ -71,119 +71,123 @@ namespace micros_swarm{
     
     void RuntimeCore::barrier_check(const ros::TimerEvent&)
     {
-        int barrier_size=rth_->getBarrierSize();
-        if(barrier_size>=total_robot_numbers_-1) {
+        int barrier_size = rth_->getBarrierSize();
+        if(barrier_size >= total_robot_numbers_-1) {
             std::cout<<"robot "<<rth_->getRobotID()<<" daemon node start."<<std::endl;
             barrier_timer_.stop();
         }
                 
         //barrier
-        int robot_id=rth_->getRobotID();
+        int robot_id = rth_->getRobotID();
     
         std::string syn="SYN";
-        micros_swarm::Barrier_Syn bs(syn);
-                
-        std::ostringstream archiveStream;
-        boost::archive::text_oarchive archive(archiveStream);
-        archive<<bs;
-        std::string bs_string=archiveStream.str();
+        gsdf_msgs::BarrierSyn bs;
+        bs.s = syn;
+        std::vector<uint8_t> bs_vec = serialize_ros(bs);
     
-        micros_swarm::CommPacket p;
-        p.packet_source = robot_id;
-        p.packet_type = micros_swarm::BARRIER_SYN;
-        p.data_len = bs_string.length();
-        p.packet_version = 1;
-        p.check_sum = 0;
-        p.packet_data = bs_string;
-        rth_->getOutMsgQueue()->pushBarrierMsgQueue(p);
+        gsdf_msgs::CommPacket p;
+        p.header.source = robot_id;
+        p.header.type = micros_swarm::BARRIER_SYN;
+        p.header.data_len = bs_vec.size();
+        p.header.version = 1;
+        p.header.checksum = 0;
+        p.content.buf = bs_vec;
+        std::vector<uint8_t> msg_data = serialize_ros(p);
+        rth_->getOutMsgQueue()->pushBarrierMsgQueue(msg_data);
     }
     
     void RuntimeCore::publish_robot_base(const ros::TimerEvent&)
     {
-        int robot_id=rth_->getRobotID();
-        const Base& l=rth_->getRobotBase();
-        SingleRobotBroadcastBase srbb(robot_id, l.x, l.y, l.z, l.vx, l.vy, l.vz, l.valid);
-        
-        std::ostringstream archiveStream;
-        boost::archive::text_oarchive archive(archiveStream);
-        archive<<srbb;
-        std::string srbb_str=archiveStream.str();
+        int robot_id = rth_->getRobotID();
+        const Base& l = rth_->getRobotBase();
+        gsdf_msgs::RobotBase rb;
+        rb.id = robot_id;
+        rb.px = l.x;
+        rb.py = l.y;
+        rb.pz = l.z;
+        rb.vx = l.vx;
+        rb.vy = l.vy;
+        rb.vz = l.vz;
+        rb.theta = 0;
+        rb.valid = l.valid;
+        std::vector<uint8_t> rb_vec = serialize_ros(rb);
                       
-        micros_swarm::CommPacket p;
-        p.packet_source = robot_id;
-        p.packet_type = SINGLE_ROBOT_BROADCAST_BASE;
-        p.data_len = srbb_str.length();
-        p.packet_version = 1;
-        p.check_sum = 0;
-        p.packet_data = srbb_str;
-        rth_->getOutMsgQueue()->pushBaseMsgQueue(p);
+        gsdf_msgs::CommPacket p;
+        p.header.source = robot_id;
+        p.header.type = SINGLE_ROBOT_BROADCAST_BASE;
+        p.header.data_len = rb_vec.size();
+        p.header.version = 1;
+        p.header.checksum = 0;
+        p.content.buf = rb_vec;
+        std::vector<uint8_t> msg_data = serialize_ros(p);
+        rth_->getOutMsgQueue()->pushBaseMsgQueue(msg_data);
     }
     
     void RuntimeCore::publish_swarm_list(const ros::TimerEvent&)
     {
-        int robot_id=rth_->getRobotID();
+        int robot_id = rth_->getRobotID();
         std::vector<int> swarm_list;
         swarm_list.clear();
         rth_->getSwarmList(swarm_list);
         
-        SingleRobotSwarmList srsl(robot_id, swarm_list);
-        std::ostringstream archiveStream;
-        boost::archive::text_oarchive archive(archiveStream);
-        archive<<srsl;
-        std::string srsl_str=archiveStream.str();
+        gsdf_msgs::SwarmList sl;
+        sl.robot_id = robot_id;
+        sl.swarm_list = swarm_list;
+        std::vector<uint8_t> sl_vec = serialize_ros(sl);
                       
-        micros_swarm::CommPacket p;
-        p.packet_source = robot_id;
-        p.packet_type = SINGLE_ROBOT_SWARM_LIST;
-        p.data_len = srsl_str.length();
-        p.packet_version = 1;
-        p.check_sum = 0;
-        p.packet_data = srsl_str;
-        rth_->getOutMsgQueue()->pushSwarmMsgQueue(p);
+        gsdf_msgs::CommPacket p;
+        p.header.source = robot_id;
+        p.header.type = SINGLE_ROBOT_SWARM_LIST;
+        p.header.data_len = sl_vec.size();
+        p.header.version = 1;
+        p.header.checksum = 0;
+        p.content.buf = sl_vec;
+        std::vector<uint8_t> msg_data = serialize_ros(p);
+        rth_->getOutMsgQueue()->pushSwarmMsgQueue(msg_data);
     }
     
     void RuntimeCore::setParameters()
     {
-        bool param_ok =node_handle_.getParam("/publish_robot_id_duration", publish_robot_base_duration_);
+        bool param_ok = node_handle_.getParam("/publish_robot_id_duration", publish_robot_base_duration_);
         if(!param_ok) {
             std::cout<<"could not get parameter publish_robot_id_duration! use the default value."<<std::endl;
-            publish_robot_base_duration_=0.1;
+            publish_robot_base_duration_ = 0.1;
         }
         else {
             std::cout<<"publish_robot_id_duration: "<<publish_robot_base_duration_<<std::endl;
         }
         
-        param_ok =node_handle_.getParam("/publish_swarm_list_duration", publish_swarm_list_duration_);
+        param_ok = node_handle_.getParam("/publish_swarm_list_duration", publish_swarm_list_duration_);
         if(!param_ok) {
             std::cout<<"could not get parameter publish_swarm_list_duration! use the default value."<<std::endl;
-            publish_swarm_list_duration_=5.0;
+            publish_swarm_list_duration_ = 5.0;
         }
         else {
             std::cout<<"publish_swarm_list_duration: "<<publish_swarm_list_duration_<<std::endl;
         }
         
-        param_ok =node_handle_.getParam("/default_neighbor_distance", default_neighbor_distance_);
+        param_ok = node_handle_.getParam("/default_neighbor_distance", default_neighbor_distance_);
         if(!param_ok) {
             std::cout<<"could not get parameter default_neighbor_distance! use the default value."<<std::endl;
-            default_neighbor_distance_=50;
+            default_neighbor_distance_ = 50;
         }
         else {
             std::cout<<"default_neighbor_distance: "<<default_neighbor_distance_<<std::endl;
         }
         
-        param_ok =node_handle_.getParam("/total_robot_numbers", total_robot_numbers_);
+        param_ok = node_handle_.getParam("/total_robot_numbers", total_robot_numbers_);
         if(!param_ok) {
             std::cout<<"could not get parameter total_robot_numbers! use the default value."<<std::endl;
-            total_robot_numbers_=1;
+            total_robot_numbers_ = 1;
         }
         else {
             std::cout<<"total_robot_numbers: "<<total_robot_numbers_<<std::endl;
         }
 
-        param_ok =node_handle_.getParam("/comm_type", comm_type_);
+        param_ok = node_handle_.getParam("/comm_type", comm_type_);
         if(!param_ok) {
             std::cout<<"could not get parameter comm_type, use the default ros_comm."<<std::endl;
-            comm_type_="ros_comm/ROSComm";
+            comm_type_ = "ros_comm/ROSComm";
         }
         else {
             std::cout<<"comm_type: "<<comm_type_<<std::endl;
@@ -202,7 +206,7 @@ namespace micros_swarm{
     {
         setParameters();
         //construct runtime platform
-        rth_=Singleton<RuntimeHandle>::getSingleton(robot_id_);
+        rth_ = Singleton<RuntimeHandle>::getSingleton(robot_id_);
         rth_->setNeighborDistance(default_neighbor_distance_);
         //construct communicator
         communicator_ = ci_loader_.createInstance(comm_type_);
@@ -213,9 +217,8 @@ namespace micros_swarm{
         communicator_->init(comm_type_, *parser_);
         communicator_->receive();
         //construct app manager
-        app_manager_=Singleton<AppManager>::getSingleton(worker_num_);
-        
-        //boost::thread spin_thread(&RuntimePlatformCore::spin_msg_queue, this);
+        app_manager_ = Singleton<AppManager>::getSingleton(worker_num_);
+
         spin_thread_ = new boost::thread(&RuntimeCore::spin_msg_queue, this);
         publish_robot_base_timer_ = node_handle_.createTimer(ros::Duration(publish_robot_base_duration_), &RuntimeCore::publish_robot_base, this);
         publish_swarm_list_timer_ = node_handle_.createTimer(ros::Duration(publish_swarm_list_duration_), &RuntimeCore::publish_swarm_list, this);

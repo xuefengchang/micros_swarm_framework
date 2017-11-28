@@ -26,7 +26,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <iostream>
 #include <boost/function.hpp>
 
-#include "micros_swarm/comm_packet.h"
+#include "gsdf_msgs/CommPacket.h"
 #include "micros_swarm/packet_parser.h"
 
 namespace micros_swarm{
@@ -34,7 +34,7 @@ namespace micros_swarm{
     class CommInterface{
         public:
             virtual void init(std::string name, const micros_swarm::PacketParser& parser) = 0;
-            virtual void broadcast(const micros_swarm::CommPacket& packet) = 0;
+            virtual void broadcast(const std::vector<uint8_t>& msg_data) = 0;
             virtual void receive() = 0;
     };
 };

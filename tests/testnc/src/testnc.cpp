@@ -35,22 +35,23 @@ namespace testnc{
     {
     }
     
-    void TestNC::callback(const float& value)
+    void TestNC::callback(const std_msgs::Float32& value)
     {
-        ROS_INFO("I received the value: %f.", value);
+        //ROS_INFO("I received the value: %f.", value);
     }
     
     void TestNC::start()
     {
         std::cout<<"TestNC step into start..."<<std::endl;
-        micros_swarm::Broadcaster<float> bc("testkey");
-        boost::function<void(const float&)> cb=boost::bind(&TestNC::callback, this, _1);
-        micros_swarm::Listener<float> ls("testkey", cb);
+        micros_swarm::Broadcaster<std_msgs::Float32> bc("testkey");
+        boost::function<void(const std_msgs::Float32&)> cb=boost::bind(&TestNC::callback, this, _1);
+        micros_swarm::Listener<std_msgs::Float32> ls("testkey", cb);
         //ls.ignore();
         
-        for(int i=0;i<10;i++)
-        {
-            bc.broadcast(3.141);
+        for(int i = 0; i < 10; i++) {
+            std_msgs::Float32 val;
+            val.data = 3.141;
+            bc.broadcast(val);
             ros::Duration(1).sleep();
         }
     }

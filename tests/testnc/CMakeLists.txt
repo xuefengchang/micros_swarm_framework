@@ -126,6 +126,7 @@ include_directories(
 # )
 
 add_library(TestNc src/testnc.cpp)
+add_dependencies(TestNc ${micros_swarm_EXPORTED_TARGETS})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

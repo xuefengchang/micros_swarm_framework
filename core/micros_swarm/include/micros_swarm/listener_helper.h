@@ -29,12 +29,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/vector.hpp>
+#include "micros_swarm/message.h"
 
 namespace micros_swarm{
     
     class ListenerHelper{
         public:
-            virtual void call(const std::string& value_str)=0;
+            virtual void call(const std::vector<uint8_t>& value_vec)=0;
     };
     
     template<typename Type>
@@ -42,22 +43,18 @@ namespace micros_swarm{
         public:
             ListenerHelperT(const std::string& key, const boost::function<void(const Type&)>& callback)
             {
-                key_=key;
-                callback_=callback;
+                key_ = key;
+                callback_ = callback;
             }
     
-            virtual void call(const std::string& value_str)
+            virtual void call(const std::vector<uint8_t>& value_vec)
             {
-                callback_(convertType(value_str));
+                callback_(convertType(value_vec));
             }
         
-            Type convertType(const std::string& value_str)
+            Type convertType(const std::vector<uint8_t>& value_vec)
             {
-                std::istringstream archiveStream(value_str);
-                boost::archive::text_iarchive archive(archiveStream); 
-                Type value;
-                archive>>value;
-                
+                Type value = deserialize_ros<Type>(value_vec);
                 return value;
             }
         

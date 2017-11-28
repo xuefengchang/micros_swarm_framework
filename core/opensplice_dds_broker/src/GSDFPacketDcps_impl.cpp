@@ -744,8 +744,7 @@ opensplice_dds_broker::GSDFPacketDataReaderView_impl::lookup_instance(
 
 
 
-const char * ::opensplice_dds_broker::GSDFPacketTypeSupport::metaDescriptor[] = {"<MetaData version=\"1.0.0\"><Module name=\"opensplice_dds_broker\"><Struct name=\"GSDFPacket\"><Member name=\"packet_source\">",
-"<Long/></Member><Member name=\"packet_version\"><UShort/></Member><Member name=\"packet_type\"><UShort/>",
-"</Member><Member name=\"packet_data\"><String/></Member><Member name=\"package_check_sum\"><LongLong/>",
+const char * ::opensplice_dds_broker::GSDFPacketTypeSupport::metaDescriptor[] = {"<MetaData version=\"1.0.0\"><Module name=\"opensplice_dds_broker\"><TypeDef name=\"CharSeq\"><Sequence>",
+"<Char/></Sequence></TypeDef><Struct name=\"GSDFPacket\"><Member name=\"data\"><Type name=\"CharSeq\"/>",
 "</Member></Struct></Module></MetaData>"};
-const ::DDS::ULong (::opensplice_dds_broker::GSDFPacketTypeSupport::metaDescriptorArrLength) = 4;
+const ::DDS::ULong (::opensplice_dds_broker::GSDFPacketTypeSupport::metaDescriptorArrLength) = 3;

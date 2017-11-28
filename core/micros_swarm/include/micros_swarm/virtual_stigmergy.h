@@ -33,6 +33,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/singleton.h"
 #include "micros_swarm/runtime_handle.h"
 #include "micros_swarm/comm_interface.h"
+#include "gsdf_msgs/VirtualStigmergyQuery.h"
+#include "gsdf_msgs/VirtualStigmergyPut.h"
 
 namespace micros_swarm{
     
@@ -78,10 +80,7 @@ namespace micros_swarm{
             
             void put(const std::string& key, const Type& data)
             {
-                std::ostringstream archiveStream;
-                boost::archive::text_oarchive archive(archiveStream);
-                archive<<data;
-                std::string s = archiveStream.str();
+                std::vector<uint8_t> s = serialize_ros(data);
 
                 if(rth_->isVirtualStigmergyTupleExist(vstig_id_, key)) {
                     VirtualStigmergyTuple vst;
@@ -97,21 +96,23 @@ namespace micros_swarm{
                 VirtualStigmergyTuple local;
                 bool success = rth_->getVirtualStigmergyTuple(vstig_id_, key, local);
                 if(success) {
-                    VirtualStigmergyPut vsp(vstig_id_, key, local.vstig_value, local.lamport_clock, robot_id_);
+                    gsdf_msgs::VirtualStigmergyPut vsp;
+                    vsp.vstig_id = vstig_id_;
+                    vsp.key = key;
+                    vsp.value = local.vstig_value;
+                    vsp.lamport_clock = local.lamport_clock;
+                    vsp.robot_id = robot_id_;
+                    std::vector<uint8_t> vsp_vec = serialize_ros(vsp);
 
-                    std::ostringstream archiveStream2;
-                    boost::archive::text_oarchive archive2(archiveStream2);
-                    archive2 << vsp;
-                    std::string vsp_str = archiveStream2.str();
-
-                    micros_swarm::CommPacket p;
-                    p.packet_source = rth_->getRobotID();
-                    p.packet_type = VIRTUAL_STIGMERGY_PUT;
-                    p.data_len = vsp_str.length();
-                    p.packet_version = 1;
-                    p.check_sum = 0;
-                    p.packet_data = vsp_str;
-                    rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
+                    gsdf_msgs::CommPacket p;
+                    p.header.source = rth_->getRobotID();
+                    p.header.type = VIRTUAL_STIGMERGY_PUT;
+                    p.header.data_len = vsp_vec.size();
+                    p.header.version = 1;
+                    p.header.checksum = 0;
+                    p.content.buf = vsp_vec;
+                    std::vector<uint8_t> msg_data = serialize_ros(p);
+                    rth_->getOutMsgQueue()->pushVstigMsgQueue(msg_data);
                 }
             }
             
@@ -125,11 +126,8 @@ namespace micros_swarm{
                     exit(-1);
                 }
 
-                std::string data_str = vst.vstig_value;
-                Type data;
-                std::istringstream archiveStream(data_str);
-                boost::archive::text_iarchive archive(archiveStream);
-                archive >> data;
+                std::vector<uint8_t> data_vec = vst.vstig_value;
+                Type data = deserialize_ros<Type>(data_vec);
 
                 rth_->updateVirtualStigmergyTupleReadCount(vstig_id_, key, vst.read_count+1);
                 VirtualStigmergyTuple new_local;
@@ -140,22 +138,23 @@ namespace micros_swarm{
                     double  rt = (double)rand()/RAND_MAX;
                     //std::cout<<"<<"<<temperature<<", "<<rt<<">>"<<std::endl;
                     if(rt <= temperature) {
-                        VirtualStigmergyQuery vsq(vstig_id_, key, new_local.vstig_value, new_local.lamport_clock,
-                                                  new_local.robot_id);
+                        gsdf_msgs::VirtualStigmergyQuery vsq;
+                        vsq.vstig_id = vstig_id_;
+                        vsq.key = key;
+                        vsq.value = new_local.vstig_value;
+                        vsq.lamport_clock = new_local.lamport_clock;
+                        vsq.robot_id = new_local.robot_id;
+                        std::vector<uint8_t> vsq_vec = serialize_ros(vsq);
 
-                        std::ostringstream archiveStream2;
-                        boost::archive::text_oarchive archive2(archiveStream2);
-                        archive2 << vsq;
-                        std::string vsq_str = archiveStream2.str();
-
-                        micros_swarm::CommPacket p;
-                        p.packet_source = robot_id_;
-                        p.packet_type = VIRTUAL_STIGMERGY_QUERY;
-                        p.data_len = vsq_str.length();
-                        p.packet_version = 1;
-                        p.check_sum = 0;
-                        p.packet_data = vsq_str;
-                        rth_->getOutMsgQueue()->pushVstigMsgQueue(p);
+                        gsdf_msgs::CommPacket p;
+                        p.header.source = robot_id_;
+                        p.header.type = VIRTUAL_STIGMERGY_QUERY;
+                        p.header.data_len = vsq_vec.size();
+                        p.header.version = 1;
+                        p.header.checksum = 0;
+                        p.content.buf = vsq_vec;
+                        std::vector<uint8_t> msg_data = serialize_ros(p);
+                        rth_->getOutMsgQueue()->pushVstigMsgQueue(msg_data);
                     }
                 }
                 

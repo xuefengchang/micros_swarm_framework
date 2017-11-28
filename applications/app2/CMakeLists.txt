@@ -126,6 +126,7 @@ include_directories(
 # )
 
 add_library(App2 src/app2.cpp)
+add_dependencies(App2 ${micros_swarm_EXPORTED_TARGETS})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

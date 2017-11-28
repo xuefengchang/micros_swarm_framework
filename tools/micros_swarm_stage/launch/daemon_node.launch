@@ -6,8 +6,8 @@
     <param name="total_robot_numbers" type="int" value="20"/>
     
     <!--comm type-->
-    <param name="comm_type" type="string" value="ros_broker/ROSBroker"/>
-    <!--param name="comm_type" type="string" value="opensplice_dds_broker/OpenSpliceDDSBroker"/-->
+    <!--param name="comm_type" type="string" value="ros_broker/ROSBroker"/-->
+    <param name="comm_type" type="string" value="opensplice_dds_broker/OpenSpliceDDSBroker"/>
 
     <group ns="robot_0">
         <node pkg="micros_swarm" type="daemon_node" name="daemon_node0" output="screen">

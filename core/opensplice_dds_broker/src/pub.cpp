@@ -24,35 +24,64 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <vector>
 #include "opensplice_dds_broker/check_status.h"
 #include "opensplice_dds_broker/publisher.h"
+#include "gsdf_msgs/CommPacket.h"
+#include "gsdf_msgs/JoinSwarm.h"
+#include "micros_swarm/message.h"
 
-#define MAX_PACKET_LEN 256
+#define MAX_PACKET_LEN 1024
 #define NUM_PACKET 1000000
 
 using namespace DDS;
 
+void dump_string(const std::string& s)
+{
+    std::cout<<"length: "<<s.length()<<", data: ";
+    for(int i = 0; i < s.length(); i++) {
+        std::cout<<(int)s[i];
+    }
+    std::cout<<std::endl;
+}
+
+void dump_char_seq(char* s, int len)
+{
+    std::cout<<"length: "<<len<<", data: ";
+    for(int i = 0; i < len; i++) {
+        std::cout<<(int)(*(s+i));
+    }
+    std::cout<<std::endl;
+}
+
+void dump_char_vec(std::vector<uint8_t> vec)
+{
+    std::cout<<"length: "<<vec.size()<<", data: ";
+    for(int i = 0; i < vec.size(); i++) {
+        std::cout<<(int)(vec[i]);
+    }
+    std::cout<<std::endl;
+}
+
 int main()
 {
-    opensplice_dds_broker::MSFPPacket packet;
+    opensplice_dds_broker::GSDFPacket packet;
     checkHandle(&packet, "new MSFPPacket");
-    
     char buf[MAX_PACKET_LEN];
     
-    std::string test=NULL;
-
+    std::string test = "";
     opensplice_dds_broker::Publisher publisher("micros_swarm_framework_topic");
-    
-    for (int i = 1; i <= NUM_PACKET; i++) 
-    {
-        packet.packet_source = 1;
-        packet.packet_version = 0;
-        packet.packet_type = 0;
-        snprintf(buf, MAX_PACKET_LEN, "Packet no. %d", i);
-        packet.packet_data = string_dup(buf);
-        packet.package_check_sum=0;
-        std::cout << "Writing packet: \"" << packet.packet_data << "\"" << endl;
+
+    gsdf_msgs::JoinSwarm js;
+    js.robot_id = 1;
+    js.swarm_id = 2;
+    std::vector<uint8_t> msg_data = micros_swarm::serialize_ros(js);
+
+    unsigned int bufsize = msg_data.size();
+    std::cout<<bufsize<<std::endl;
+    packet.data.replace(bufsize, bufsize, (char*)(&msg_data[0]), false);
+
+    for (int i = 1; i <= NUM_PACKET; i++) {
+        dump_char_vec(msg_data);
         publisher.publish(packet);
         sleep (1); 
     }
-
     return 0;
 }

@@ -36,46 +36,32 @@ namespace ros_broker{
 
     void ROSBroker::init(std::string name, const micros_swarm::PacketParser& parser)
     {
-        name_=name;
-        parser_=parser;
+        name_ = name;
+        parser_ = parser;
     }
             
-    void ROSBroker::broadcast(const micros_swarm::CommPacket& packet)
+    void ROSBroker::broadcast(const std::vector<uint8_t>& msg_data)
     {
-        static bool flag=false;
-        if(!flag)
-        {
+        static bool flag = false;
+        if(!flag) {
             ros::Duration(1).sleep();
-            if(!packet_publisher_)
-            {
+            if(!packet_publisher_) {
                 ROS_INFO("ROS communicator could not initialize!");
                 exit(-1);
             }
             flag=true;
         }
         
-        if(ros::ok())
-        {
+        if(ros::ok()) {
             ros_broker::GSDFPacket ros_msg;
-            ros_msg.packet_source=packet.packet_source;
-            ros_msg.packet_version=packet.packet_version;
-            ros_msg.packet_type=packet.packet_type;
-            ros_msg.packet_data=packet.packet_data;
-            ros_msg.package_check_sum=packet.check_sum;
+            ros_msg.data = msg_data;
             packet_publisher_.publish(ros_msg);
         }
     }
             
     void ROSBroker::callback(const ros_broker::GSDFPacket& ros_msg)
     {
-        micros_swarm::CommPacket packet;
-        packet.packet_source=ros_msg.packet_source;
-        packet.packet_version=ros_msg.packet_version;
-        packet.packet_type=ros_msg.packet_type;
-        packet.packet_data=ros_msg.packet_data;
-        packet.check_sum=ros_msg.package_check_sum;
-
-        parser_.parse(packet);
+        parser_.parse(ros_msg.data);
     }
 
     void ROSBroker::receive()

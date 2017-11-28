@@ -24,7 +24,23 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define PACKET_PARSER_H_
 
 #include "micros_swarm/runtime_handle.h"
-#include "micros_swarm/comm_packet.h"
+#include "gsdf_msgs/CommHeader.h"
+#include "gsdf_msgs/CommContent.h"
+#include "gsdf_msgs/CommPacket.h"
+#include "gsdf_msgs/RobotBase.h"
+#include "gsdf_msgs/JoinSwarm.h"
+#include "gsdf_msgs/LeaveSwarm.h"
+#include "gsdf_msgs/SwarmList.h"
+#include "gsdf_msgs/VirtualStigmergyQuery.h"
+#include "gsdf_msgs/VirtualStigmergyPut.h"
+#include "gsdf_msgs/BlackBoardQuery.h"
+#include "gsdf_msgs/BlackBoardAck.h"
+#include "gsdf_msgs/BlackBoardPut.h"
+#include "gsdf_msgs/SCDSPSOGet.h"
+#include "gsdf_msgs/SCDSPSOPut.h"
+#include "gsdf_msgs/NeighborBroadcastKeyValue.h"
+#include "gsdf_msgs/BarrierSyn.h"
+#include "gsdf_msgs/BarrierAck.h"
 
 namespace micros_swarm{
 
@@ -32,7 +48,10 @@ namespace micros_swarm{
         public:
             PacketParser();
             ~PacketParser();
-            void parse(const micros_swarm::CommPacket& packet);
+            void parse(const std::vector<uint8_t>& data);
+            void parse(const std::vector<char>& data);
+            void parse(uint8_t* data, int len);
+            void parse(char* data, int len);
         private:
             boost::shared_ptr<micros_swarm::RuntimeHandle> rth_;
             boost::shared_ptr<CheckNeighborInterface> cni_;

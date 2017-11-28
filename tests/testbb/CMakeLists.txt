@@ -126,6 +126,7 @@ include_directories(
 # )
 
 add_library(TestBb src/testbb.cpp)
+add_dependencies(TestBb ${micros_swarm_EXPORTED_TARGETS})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

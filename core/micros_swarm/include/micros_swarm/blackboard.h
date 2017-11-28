@@ -90,33 +90,30 @@ namespace micros_swarm{
             
             void put(const std::string& key, const Type& data)
             {
+                std::vector<uint8_t> s = serialize_ros(data);
+                ros::Time timestamp = ros::Time::now();
                 if(is_local_) {
-                    std::ostringstream archiveStream;
-                    boost::archive::text_oarchive archive(archiveStream);
-                    archive<<data;
-                    std::string s = archiveStream.str();
-                    rth_->insertOrUpdateBlackBoard(bb_id_, key, s, time(0), rth_->getRobotID());
+                    rth_->insertOrUpdateBlackBoard(bb_id_, key, s, timestamp, rth_->getRobotID());
                 }
                 else {
-                    std::ostringstream archiveStream;
-                    boost::archive::text_oarchive archive(archiveStream);
-                    archive<<data;
-                    std::string s = archiveStream.str();
-                    BlackBoardPut bbp(bb_id_,on_robot_id_, key, s, time(0), rth_->getRobotID());
+                    gsdf_msgs::BlackBoardPut bbp;
+                    bbp.bb_id = bb_id_;
+                    bbp.on_robot_id = on_robot_id_;
+                    bbp.key = key;
+                    bbp.value = s;
+                    bbp.timestamp = timestamp;
+                    bbp.robot_id = rth_->getRobotID();
+                    std::vector<uint8_t> bbp_vec = serialize_ros(bbp);
 
-                    std::ostringstream archiveStream2;
-                    boost::archive::text_oarchive archive2(archiveStream2);
-                    archive2<<bbp;
-                    std::string bbp_str = archiveStream2.str();
-
-                    micros_swarm::CommPacket p;
-                    p.packet_source = rth_->getRobotID();
-                    p.packet_type = BLACKBOARD_PUT;
-                    p.data_len = bbp_str.length();
-                    p.packet_version = 1;
-                    p.check_sum = 0;
-                    p.packet_data = bbp_str;
-                    rth_->getOutMsgQueue()->pushBbMsgQueue(p);
+                    gsdf_msgs::CommPacket p;
+                    p.header.source = rth_->getRobotID();
+                    p.header.type = BLACKBOARD_PUT;
+                    p.header.data_len = bbp_vec.size();
+                    p.header.version = 1;
+                    p.header.checksum = 0;
+                    p.content.buf = bbp_vec;
+                    std::vector<uint8_t> msg_data = serialize_ros(p);
+                    rth_->getOutMsgQueue()->pushBbMsgQueue(msg_data);
                 }
             }
             
@@ -126,35 +123,39 @@ namespace micros_swarm{
                     BlackBoardTuple bb;
                     rth_->getBlackBoardTuple(bb_id_, key, bb);
 
-                    if (bb.bb_timestamp == 0) {
+                    if ((bb.timestamp.sec == 0) && (bb.timestamp.nsec == 0)) {
                         std::cout << "ID " << bb_id_ << " blackboard, " << key << " is not exist." << std::endl;
                         exit(-1);
                     }
 
-                    std::string data_str = bb.bb_value;
-                    Type data;
-                    std::istringstream archiveStream(data_str);
-                    boost::archive::text_iarchive archive(archiveStream);
-                    archive >> data;
+                    Type data = deserialize_ros<Type>(bb.bb_value);
                     return data;
                 }
                 else {
-                    BlackBoardQuery bbq(bb_id_, on_robot_id_, key, time(0), robot_id_);
-                    std::ostringstream archiveStream2;
-                    boost::archive::text_oarchive archive2(archiveStream2);
-                    archive2 << bbq;
-                    std::string bbq_str = archiveStream2.str();
+                    gsdf_msgs::BlackBoardQuery bbq;
+                    bbq.bb_id = bb_id_;
+                    bbq.on_robot_id = on_robot_id_;
+                    bbq.key = key;
+                    bbq.timestamp = ros::Time::now();
+                    bbq.robot_id = robot_id_;
+                    std::vector<uint8_t> bbq_vec = serialize_ros(bbq);
 
-                    micros_swarm::CommPacket p;
-                    p.packet_source = rth_->getRobotID();
-                    p.packet_type = BLACKBOARD_QUERY;
-                    p.data_len = bbq_str.length();
-                    p.packet_version = 1;
-                    p.check_sum = 0;
-                    p.packet_data = bbq_str;
+                    gsdf_msgs::CommPacket p;
+                    p.header.source = rth_->getRobotID();
+                    p.header.type = BLACKBOARD_QUERY;
+                    p.header.data_len = bbq_vec.size();
+                    p.header.version = 1;
+                    p.header.checksum = 0;
+                    p.content.buf = bbq_vec;
                     rth_->createBlackBoard(bb_id_);
-                    rth_->insertOrUpdateBlackBoard(bb_id_, key, "", 0, -1);
-                    rth_->getOutMsgQueue()->pushBbMsgQueue(p);
+                    ros::Time timestamp;
+                    timestamp.sec = 0;
+                    timestamp.nsec = 0;
+                    std::vector<uint8_t> empty_vec;
+                    empty_vec.clear();
+                    rth_->insertOrUpdateBlackBoard(bb_id_, key, empty_vec, timestamp, -1);
+                    std::vector<uint8_t> msg_data = serialize_ros(p);
+                    rth_->getOutMsgQueue()->pushBbMsgQueue(msg_data);
 
                     Type data;
                     BlackBoardTuple bbt;
@@ -162,11 +163,8 @@ namespace micros_swarm{
                     int count = 0;
                     while(count < 500) {
                         rth_->getBlackBoardTuple(bb_id_, key, bbt);
-                        if(bbt.bb_value != "") {
-                            std::string data_str = bbt.bb_value;
-                            std::istringstream archiveStream(data_str);
-                            boost::archive::text_iarchive archive(archiveStream);
-                            archive>>data;
+                        if(bbt.bb_value.size() != 0) {
+                            data = deserialize_ros<Type>(bbt.bb_value);
                             rth_->deleteBlackBoardValue(bb_id_, key);
                             break;
                         }

@@ -24,6 +24,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define TESTVSTIG_H_
 
 #include "std_msgs/String.h"
+#include "std_msgs/Int32.h"
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/Twist.h"
 
@@ -38,7 +39,7 @@ namespace testvstig{
             ros::Publisher pub;
             ros::Subscriber sub;
             
-            micros_swarm::VirtualStigmergy<int> vs;
+            micros_swarm::VirtualStigmergy<std_msgs::Int32> vs;
             void loop(const ros::TimerEvent&);
             void baseCallback(const nav_msgs::Odometry& lmsg);
 

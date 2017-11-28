@@ -23,12 +23,55 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <iostream>
 #include "opensplice_dds_broker/check_status.h"
 #include "opensplice_dds_broker/subscriber.h"
+#include "gsdf_msgs/CommPacket.h"
+#include "gsdf_msgs/JoinSwarm.h"
+#include "micros_swarm/message.h"
 
 using namespace DDS;
 
-void callBack(const opensplice_dds_broker::MSFPPacket& packet)
+void dump_string(const std::string& s)
 {
-    std::cout<<packet.packet_source<<": "<<packet.packet_version<<", "<<packet.packet_type<<", "<<packet.packet_data<<", "<<packet.package_check_sum<<std::endl;
+    std::cout<<"length: "<<s.length()<<", data: ";
+    for(int i = 0; i < s.length(); i++) {
+        std::cout<<(int)s[i];
+    }
+    std::cout<<std::endl;
+}
+
+void dump_char_seq(char* s, int len)
+{
+    std::cout<<"length: "<<len<<", data: ";
+    for(int i = 0; i < len; i++) {
+        std::cout<<(int)(*(s+i));
+    }
+    std::cout<<std::endl;
+}
+
+void dump_char_vec(std::vector<uint8_t> vec)
+{
+    std::cout<<"length: "<<vec.size()<<", data: ";
+    for(int i = 0; i < vec.size(); i++) {
+        std::cout<<(int)(vec[i]);
+    }
+    std::cout<<std::endl;
+}
+
+void callBack(const opensplice_dds_broker::GSDFPacket& packet)
+{
+    int msgLen = packet.data.length();
+    if (msgLen == 0) {
+        std::cout<<"opensplice dds recv error."<<std::endl;
+    }
+    else {
+        uint8_t* buf = (uint8_t*)malloc(sizeof(uint8_t)*msgLen);
+        memcpy(buf, packet.data.get_buffer(), msgLen);
+        std::vector<uint8_t> vec;
+        vec.resize(msgLen);
+        std::copy(buf, buf + msgLen, vec.begin());
+        dump_char_vec(vec);
+        gsdf_msgs::JoinSwarm js = micros_swarm::deserialize_ros<gsdf_msgs::JoinSwarm>(vec);
+        std::cout<<"js: "<<js.robot_id<<", "<<js.swarm_id<<std::endl;
+    }
 }
 
 int main()
@@ -36,10 +79,8 @@ int main()
     opensplice_dds_broker::Subscriber subscriber("micros_swarm_framework_topic");
     subscriber.subscribe(callBack);
     
-    while(1)
-    {
+    while(true) {
         sleep(1);
     }
-    
     return 0;
 }

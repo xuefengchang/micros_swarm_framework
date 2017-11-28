@@ -86,14 +86,15 @@ int main(int argc, char** argv)
     
     rth.createVirtualStigmergy(1);
     rth.createVirtualStigmergy(2);
-    rth.insertOrUpdateVirtualStigmergy(1, "key1", "value1", 1, time(0), 0, 1);
-    rth.insertOrUpdateVirtualStigmergy(1, "key2", "value2", 1, time(0), 0, 1);
-    rth.insertOrUpdateVirtualStigmergy(1, "key2", "value2", 1, time(0), 0, 1);
-    rth.insertOrUpdateVirtualStigmergy(1, "key3", "value3", 1, time(0), 0, 1);
-    rth.insertOrUpdateVirtualStigmergy(2, "key1", "value1", 1, time(0), 0, 2);
-    rth.insertOrUpdateVirtualStigmergy(2, "key2", "value2", 1, time(0), 0, 2);
-    rth.insertOrUpdateVirtualStigmergy(2, "key2", "value2", 1, time(0), 0, 2);
-    rth.insertOrUpdateVirtualStigmergy(2, "key3", "value3", 1, time(0), 0, 2);
+    std::vector<uint8_t> val1;
+    val1.push_back(1);
+    rth.insertOrUpdateVirtualStigmergy(1, "key1", val1, 1, time(0), 0, 1);
+    std::vector<uint8_t> val2;
+    val2.push_back(2);
+    rth.insertOrUpdateVirtualStigmergy(1, "key2", val2, 1, time(0), 0, 1);
+    std::vector<uint8_t> val3;
+    val3.push_back(3);
+    rth.insertOrUpdateVirtualStigmergy(1, "key3", val3, 1, time(0), 0, 1);
     rth.printVirtualStigmergy();
     VirtualStigmergyTuple vst1;
     rth.getVirtualStigmergyTuple(1, "key2", vst1);

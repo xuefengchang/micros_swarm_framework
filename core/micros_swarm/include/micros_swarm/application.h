@@ -71,9 +71,9 @@ namespace micros_swarm{
             rth->setNeighborDistance(neighbor_distance);
         }
 
-        //entry function
         void init();
-        virtual void start()=0;
+        //entry function
+        virtual void start() = 0;
         void pause();
         void stop();
     private:

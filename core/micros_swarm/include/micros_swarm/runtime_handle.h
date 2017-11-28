@@ -52,9 +52,6 @@ namespace micros_swarm{
             const Base& getRobotBase();
             void setRobotBase(const Base& robot_base);
             void printRobotBase();
-
-            int getFloodingFactor();
-            void setFloodingFactor(int flooding_factor);
             
             void getNeighbors(std::map<int, NeighborBase>& neighbors);
             std::map<int, NeighborBase> getNeighbors();
@@ -85,7 +82,7 @@ namespace micros_swarm{
             void printNeighborSwarm();
             
             void createVirtualStigmergy(int id);
-            void insertOrUpdateVirtualStigmergy(int id, const std::string& key, const std::string& value, \
+            void insertOrUpdateVirtualStigmergy(int id, const std::string& key, const std::vector<uint8_t>& value, \
                                                        unsigned int lclock, time_t wtime, unsigned int rcount, int robot_id);
             bool isVirtualStigmergyTupleExist(int id, const std::string& key);
             bool getVirtualStigmergyTuple(int id, const std::string& key, VirtualStigmergyTuple& vstig_tuple);
@@ -97,7 +94,8 @@ namespace micros_swarm{
             bool checkNeighborsOverlap(int robot_id);
 
             void createBlackBoard(int id);
-            void insertOrUpdateBlackBoard(int id, const std::string& key, const std::string& value, const time_t& time_now, int robot_id);
+            void insertOrUpdateBlackBoard(int id, const std::string& key, const std::vector<uint8_t>& value, const ros::Time& timestamp, int robot_id);
+            bool isBlackBoardTupleExist(int id, const std::string& key);
             void getBlackBoardTuple(int id, const std::string& key, BlackBoardTuple& bb_tuple);
             int getBlackBoardSize(int id);
             void deleteBlackBoard(int id);
@@ -111,38 +109,43 @@ namespace micros_swarm{
             const boost::shared_ptr<ListenerHelper> getListenerHelper(const std::string& key);
             void deleteListenerHelper(const std::string& key);
             
-            boost::shared_ptr<MsgQueueManager>& getOutMsgQueue();
-            
             void insertBarrier(int robot_id);
             int getBarrierSize();
 
             bool getSCDSPSOValue(const std::string& aKey, SCDSPSODataTuple& aT);
             void insertOrUpdateSCDSPSOValue(const std::string& aKey, const SCDSPSODataTuple& aT);
 
+            boost::shared_ptr<MsgQueueManager>& getOutMsgQueue();
+
         private:
             int robot_id_;
+            boost::shared_mutex id_mutex_;
             int robot_type_;  //TODO
+            boost::shared_mutex type_mutex_;
             int robot_status_;  //TODO
+            boost::shared_mutex status_mutex_;
             Base robot_base_;
-            int flooding_factor_;
+            boost::shared_mutex base_mutex_;
             std::map<int, NeighborBase> neighbors_;
+            boost::shared_mutex neighbor_mutex_;
             std::map<int, bool> swarms_;
+            boost::shared_mutex swarm_mutex_;
             std::map<int, NeighborSwarmTuple> neighbor_swarms_;
+            boost::shared_mutex neighbor_swarm_mutex_;
             std::map<int, std::map<std::string, VirtualStigmergyTuple> > virtual_stigmergy_;
+            boost::shared_mutex vstig_mutex_;
             std::map<int, std::map<std::string, BlackBoardTuple> > blackboard_;
+            boost::shared_mutex bb_mutex_;
             float neighbor_distance_;
+            boost::shared_mutex neighbor_distance_mutex_;
             std::map<std::string, boost::shared_ptr<ListenerHelper> > listener_helpers_;
+            boost::shared_mutex listener_helpers_mutex_;
             std::set<int> barrier_;
-
-            boost::shared_ptr<CheckNeighborInterface> cni_;
-
+            boost::shared_mutex barrier_mutex_;
             std::map<std::string, SCDSPSODataTuple> scds_pso_tuple_;
-            
+            boost::shared_mutex scds_pso_tuple_mutex_;
             boost::shared_ptr<MsgQueueManager> out_msg_queue_;
-            
-            boost::shared_mutex mutex1_, mutex2_, mutex3_, mutex4_, mutex5_,
-                                mutex6_, mutex7_, mutex8_, mutex9_, mutex10_,
-                                mutex11_, bb_mutex_, scds_pso_tuple_mutex_;
+            boost::shared_ptr<CheckNeighborInterface> cni_;
     };
 };
 

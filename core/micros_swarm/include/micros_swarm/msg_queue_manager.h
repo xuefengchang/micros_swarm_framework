@@ -25,10 +25,7 @@ ARISING IN ANY WAY OUType OF TypeHE USE OF TypeHIS SOFTypeWARE, EVEN IF ADVISED 
    
 #include <iostream>
 #include <boost/thread.hpp>
-
-#include "micros_swarm/semaphore.h"
 #include "micros_swarm/circular_queue.h"
-#include "micros_swarm/comm_packet.h"
 
 namespace micros_swarm{
     class MsgQueueManager
@@ -36,24 +33,24 @@ namespace micros_swarm{
         public:
             explicit MsgQueueManager()
             {
-                base_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
-                swarm_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
-                vstig_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
-                bb_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
-                nc_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
-                barrier_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
-                scds_pso_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(5000));
+                base_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(1000));
+                swarm_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(1000));
+                vstig_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(1000));
+                bb_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(1000));
+                nc_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(1000));
+                barrier_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(1000));
+                scds_pso_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(5000));
             }
             
             explicit MsgQueueManager(int num1, int num2, int num3, int num4, int num5)
             {
-                base_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num1));
-                swarm_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num2));
-                vstig_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num3));
-                bb_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num4));
-                nc_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num5));
-                barrier_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(num5));
-                scds_pso_msg_queue_.reset(new cqueue<micros_swarm::CommPacket>(1000));
+                base_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(num1));
+                swarm_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(num2));
+                vstig_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(num3));
+                bb_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(num4));
+                nc_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(num5));
+                barrier_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(num5));
+                scds_pso_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(5000));
             }
 
             //check that whether all the msg queue is empty
@@ -80,7 +77,7 @@ namespace micros_swarm{
                 return base_msg_queue_->empty();
             }
     
-            const micros_swarm::CommPacket& baseMsgQueueFront()
+            const std::vector<uint8_t>& baseMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(base_msg_mutex_);
                 return base_msg_queue_->front();
@@ -98,7 +95,7 @@ namespace micros_swarm{
                 base_msg_queue_->pop();
             }
     
-            void pushBaseMsgQueue(const micros_swarm::CommPacket& p)
+            void pushBaseMsgQueue(const std::vector<uint8_t>& p)
             {
                 boost::unique_lock<boost::shared_mutex> lock(base_msg_mutex_);
                 base_msg_queue_->push(p);
@@ -117,7 +114,7 @@ namespace micros_swarm{
                 return swarm_msg_queue_->empty();
             }
     
-            const micros_swarm::CommPacket& swarmMsgQueueFront()
+            const std::vector<uint8_t>& swarmMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(swarm_msg_mutex_);
                 return swarm_msg_queue_->front();
@@ -135,7 +132,7 @@ namespace micros_swarm{
                 swarm_msg_queue_->pop();
             }
     
-            void pushSwarmMsgQueue(const micros_swarm::CommPacket& p)
+            void pushSwarmMsgQueue(const std::vector<uint8_t>& p)
             {
                 boost::unique_lock<boost::shared_mutex> lock(swarm_msg_mutex_);
                 swarm_msg_queue_->push(p);
@@ -154,7 +151,7 @@ namespace micros_swarm{
                 return vstig_msg_queue_->empty();
             }
     
-            const micros_swarm::CommPacket& vstigMsgQueueFront()
+            const std::vector<uint8_t>& vstigMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(vstig_msg_mutex_);
                 return vstig_msg_queue_->front();
@@ -172,7 +169,7 @@ namespace micros_swarm{
                 vstig_msg_queue_->pop();
             }
     
-            void pushVstigMsgQueue(const micros_swarm::CommPacket& p)
+            void pushVstigMsgQueue(const std::vector<uint8_t>& p)
             {
                 boost::unique_lock<boost::shared_mutex> lock(vstig_msg_mutex_);
                 vstig_msg_queue_->push(p);
@@ -191,7 +188,7 @@ namespace micros_swarm{
                 return bb_msg_queue_->empty();
             }
 
-            const micros_swarm::CommPacket& bbMsgQueueFront()
+            const std::vector<uint8_t>& bbMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(bb_msg_mutex_);
                 return bb_msg_queue_->front();
@@ -209,7 +206,7 @@ namespace micros_swarm{
                 bb_msg_queue_->pop();
             }
 
-            void pushBbMsgQueue(const micros_swarm::CommPacket& p)
+            void pushBbMsgQueue(const std::vector<uint8_t>& p)
             {
                 boost::unique_lock<boost::shared_mutex> lock(bb_msg_mutex_);
                 bb_msg_queue_->push(p);
@@ -228,7 +225,7 @@ namespace micros_swarm{
                 return nc_msg_queue_->empty();
             }
     
-            const micros_swarm::CommPacket& ncMsgQueueFront()
+            const std::vector<uint8_t>& ncMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(nc_msg_mutex_);
                 return nc_msg_queue_->front();
@@ -246,7 +243,7 @@ namespace micros_swarm{
                 nc_msg_queue_->pop();
             }
     
-            void pushNcMsgQueue(const micros_swarm::CommPacket& p)
+            void pushNcMsgQueue(const std::vector<uint8_t>& p)
             {
                 boost::unique_lock<boost::shared_mutex> lock(nc_msg_mutex_);
                 nc_msg_queue_->push(p);
@@ -265,7 +262,7 @@ namespace micros_swarm{
                 return barrier_msg_queue_->empty();
             }
 
-            const micros_swarm::CommPacket& barrierMsgQueueFront()
+            const std::vector<uint8_t>& barrierMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(barrier_msg_mutex_);
                 return barrier_msg_queue_->front();
@@ -283,7 +280,7 @@ namespace micros_swarm{
                 barrier_msg_queue_->pop();
             }
 
-            void pushBarrierMsgQueue(const micros_swarm::CommPacket& p)
+            void pushBarrierMsgQueue(const std::vector<uint8_t>& p)
             {
                 boost::unique_lock<boost::shared_mutex> lock(barrier_msg_mutex_);
                 barrier_msg_queue_->push(p);
@@ -302,7 +299,7 @@ namespace micros_swarm{
                 return scds_pso_msg_queue_->empty();
             }
 
-            const micros_swarm::CommPacket& SCDSPSOMsgQueueFront()
+            const std::vector<uint8_t>& SCDSPSOMsgQueueFront()
             {
                 boost::shared_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
                 return scds_pso_msg_queue_->front();
@@ -320,7 +317,7 @@ namespace micros_swarm{
                 scds_pso_msg_queue_->pop();
             }
 
-            void pushSCDSPSOMsgQueue(const micros_swarm::CommPacket& p)
+            void pushSCDSPSOMsgQueue(const std::vector<uint8_t>& p)
             {
                 boost::unique_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
                 scds_pso_msg_queue_->push(p);
@@ -330,13 +327,13 @@ namespace micros_swarm{
             boost::shared_mutex msg_queue_mutex;
             boost::condition_variable_any msg_queue_condition;
         private:
-            boost::shared_ptr<cqueue<micros_swarm::CommPacket> > base_msg_queue_;
-            boost::shared_ptr<cqueue<micros_swarm::CommPacket> > swarm_msg_queue_;
-            boost::shared_ptr<cqueue<micros_swarm::CommPacket> > vstig_msg_queue_;
-            boost::shared_ptr<cqueue<micros_swarm::CommPacket> > bb_msg_queue_;
-            boost::shared_ptr<cqueue<micros_swarm::CommPacket> > nc_msg_queue_;
-            boost::shared_ptr<cqueue<micros_swarm::CommPacket> > barrier_msg_queue_;
-            boost::shared_ptr<cqueue<micros_swarm::CommPacket> > scds_pso_msg_queue_;
+            boost::shared_ptr<cqueue<std::vector<uint8_t> > > base_msg_queue_;
+            boost::shared_ptr<cqueue<std::vector<uint8_t> > > swarm_msg_queue_;
+            boost::shared_ptr<cqueue<std::vector<uint8_t> > > vstig_msg_queue_;
+            boost::shared_ptr<cqueue<std::vector<uint8_t> > > bb_msg_queue_;
+            boost::shared_ptr<cqueue<std::vector<uint8_t> > > nc_msg_queue_;
+            boost::shared_ptr<cqueue<std::vector<uint8_t> > > barrier_msg_queue_;
+            boost::shared_ptr<cqueue<std::vector<uint8_t> > > scds_pso_msg_queue_;
             
             boost::shared_mutex base_msg_mutex_, swarm_msg_mutex_,
                                 vstig_msg_mutex_, bb_msg_mutex_,

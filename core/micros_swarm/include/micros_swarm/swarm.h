@@ -32,6 +32,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/singleton.h"
 #include "micros_swarm/runtime_handle.h"
 #include "micros_swarm/comm_interface.h"
+#include "gsdf_msgs/JoinSwarm.h"
+#include "gsdf_msgs/LeaveSwarm.h"
 
 namespace micros_swarm{
     
@@ -91,44 +93,42 @@ namespace micros_swarm{
             {
                 int robot_id = rth_->getRobotID();
                 rth_->insertOrUpdateSwarm(swarm_id_, 1);
-        
-                SingleRobotJoinSwarm srjs(robot_id, swarm_id_);
-        
-                std::ostringstream archiveStream;
-                boost::archive::text_oarchive archive(archiveStream);
-                archive<<srjs;
-                std::string srjs_str = archiveStream.str();
+
+                gsdf_msgs::JoinSwarm js;
+                js.robot_id = robot_id;
+                js.swarm_id = swarm_id_;
+                std::vector<uint8_t> js_vec = serialize_ros(js);
                       
-                micros_swarm::CommPacket p;
-                p.packet_source = robot_id;
-                p.packet_type = SINGLE_ROBOT_JOIN_SWARM;
-                p.data_len = srjs_str.length();
-                p.packet_version = 1;
-                p.check_sum = 0;
-                p.packet_data = srjs_str;
-                rth_->getOutMsgQueue()->pushSwarmMsgQueue(p);
+                gsdf_msgs::CommPacket p;
+                p.header.source = robot_id;
+                p.header.type = SINGLE_ROBOT_JOIN_SWARM;
+                p.header.data_len = js_vec.size();
+                p.header.version = 1;
+                p.header.checksum = 0;
+                p.content.buf = js_vec;
+                std::vector<uint8_t> msg_data = serialize_ros(p);
+                rth_->getOutMsgQueue()->pushSwarmMsgQueue(msg_data);
             }
             
             void leave()
             {
                 int robot_id = rth_->getRobotID();
                 rth_->insertOrUpdateSwarm(swarm_id_, 0);
-        
-                SingleRobotLeaveSwarm srls(robot_id, swarm_id_);
-        
-                std::ostringstream archiveStream;
-                boost::archive::text_oarchive archive(archiveStream);
-                archive<<srls;
-                std::string srjs_str = archiveStream.str();
+
+                gsdf_msgs::LeaveSwarm ls;
+                ls.robot_id = robot_id;
+                ls.swarm_id = swarm_id_;
+                std::vector<uint8_t> ls_vec = serialize_ros(ls);
                       
-                micros_swarm::CommPacket p;
-                p.packet_source = robot_id;
-                p.packet_type = SINGLE_ROBOT_LEAVE_SWARM;
-                p.data_len = srjs_str.length();
-                p.packet_version = 1;
-                p.check_sum = 0;
-                p.packet_data = srjs_str;
-                rth_->getOutMsgQueue()->pushSwarmMsgQueue(p);
+                gsdf_msgs::CommPacket p;
+                p.header.source = robot_id;
+                p.header.type = SINGLE_ROBOT_LEAVE_SWARM;
+                p.header.data_len = ls_vec.size();
+                p.header.version = 1;
+                p.header.checksum = 0;
+                p.content.buf = ls_vec;
+                std::vector<uint8_t> msg_data = serialize_ros(p);
+                rth_->getOutMsgQueue()->pushSwarmMsgQueue(msg_data);
             }
             
             void select(const boost::function<bool()>& bf)

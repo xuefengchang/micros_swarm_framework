@@ -27,6 +27,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <time.h>
 #include <fstream>
 #include <sstream>
+#include <ros/ros.h>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/string.hpp> 
@@ -37,7 +38,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 namespace micros_swarm{
 
     /*
-    *MSFPPacket type
+    *GSDFPacket type
     */
     enum MSFPPacketType
     {
@@ -62,10 +63,10 @@ namespace micros_swarm{
         BARRIER_SYN,  //userd for barrier, syn
         BARRIER_ACK,  //used for barrier, ack
         
-        MSFP_PACKET_TYPE_COUNT  //MSFPPacket type count
+        GSDF_PACKET_TYPE_COUNT  //GSDF Packet type count
     };
 
-    struct SingleRobotBroadcastBase{
+    /*struct SingleRobotBroadcastBase{
         int robot_id;
             
         float robot_x;
@@ -366,6 +367,75 @@ namespace micros_swarm{
        
         Barrier_Ack(){};
         Barrier_Ack(unsigned int robot_id_):robot_id(robot_id_){}
-    };
+    };*/
+
+    // serializer using Boost.
+    template<class T>
+    std::string serialize_boost(T t) {
+        std::ostringstream archiveStream;
+        boost::archive::text_oarchive archive(archiveStream);
+        archive<<t;
+        return archiveStream.str();
+    }
+    // deserializer using Boost.
+    template<class T>
+    T deserialize_boost(std::string str) {
+        T t;
+        std::istringstream archiveStream(str);
+        boost::archive::text_iarchive archive(archiveStream);
+        archive>>t;
+        return t;
+    }
+
+    // serializer using ROS.
+    /*template<class T>
+    std::string serialize_ros(T t)
+    {
+        std::string str;
+        uint32_t serial_size = ros::serialization::serializationLength(t);
+        boost::shared_array<uint8_t> buffer(new uint8_t[serial_size]);
+        ros::serialization::OStream ostream(buffer.get(), serial_size);
+        ros::serialization::serialize(ostream, t);
+        std::copy(buffer.get(), buffer.get() + serial_size, std::back_inserter(str));
+        return str;
+    }
+    // deserializer using ROS.
+    template<class T>
+    T deserialize_ros(std::string str)
+    {
+        T t;
+        uint32_t serial_size = str.length();
+        std::vector<uint8_t> buffer(serial_size);
+        std::copy(str.begin(), str.begin() + serial_size, buffer.begin());
+        ros::serialization::IStream istream(buffer.data(), serial_size);
+        ros::serialization::Serializer<T>::read(istream, t);
+        return t;
+    }*/
+
+    // serializer using ROS.
+    template<class T>
+    std::vector<uint8_t> serialize_ros(T t)
+    {
+        std::vector<uint8_t> vec;
+        uint32_t serial_size = ros::serialization::serializationLength(t);
+        boost::shared_array<uint8_t> buffer(new uint8_t[serial_size]);
+        ros::serialization::OStream ostream(buffer.get(), serial_size);
+        ros::serialization::serialize(ostream, t);
+        vec.resize(serial_size);
+        std::copy(buffer.get(), buffer.get() + serial_size, vec.begin());
+        return vec;
+    }
+    // deserializer using ROS.
+    template<class T>
+    T deserialize_ros(const std::vector<uint8_t>& vec)
+    {
+        T t;
+        uint32_t serial_size = vec.size();
+        std::vector<uint8_t> buffer(serial_size);
+        std::copy(vec.begin(), vec.begin() + serial_size, buffer.begin());
+        ros::serialization::IStream istream(buffer.data(), serial_size);
+        ros::serialization::Serializer<T>::read(istream, t);
+        return t;
+    }
 };
 #endif

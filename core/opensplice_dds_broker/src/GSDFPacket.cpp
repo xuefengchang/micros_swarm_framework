@@ -4,13 +4,16 @@
 //  
 //  File name: GSDFPacket.cpp
 //  Source: GSDFPacket.idl
-//  Generated: Thu Jun  1 21:09:08 2017
+//  Generated: Tue Nov 28 13:14:39 2017
 //  OpenSplice V6.4.140407OSS
 //  
 //******************************************************************
 
 #include "opensplice_dds_broker/GSDFPacket.h"
 
+#if DDS_USE_EXPLICIT_TEMPLATES
+template class DDS_DCPSUFLSeq < DDS::Char, struct CharSeq_uniq_>;
+#endif
 
 
 

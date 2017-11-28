@@ -39,7 +39,9 @@ namespace testbb{
     {   
         static int count=0;
         std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
-        bb.put(robot_id_string, robot_id()+count);
+        std_msgs::Int32 val;
+        val.data = robot_id()+count;
+        bb.put(robot_id_string, val);
         count++;
         //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
         //bb.get(robot_id_string);
@@ -48,10 +50,11 @@ namespace testbb{
     void TestBb::start()
     {
         ros::NodeHandle nh;
-        
-        bb=micros_swarm::BlackBoard<int>(0,0);
+        bb=micros_swarm::BlackBoard<std_msgs::Int32>(0,0);
         //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
-        //bb.put(robot_id_string, robot_id());
+        //std_msgs::Int32 val;
+        //val.data = robot_id();
+        //bb.put(robot_id_string, val);
 
         timer = nh.createTimer(ros::Duration(0.1), &TestBb::loop, this);
     }

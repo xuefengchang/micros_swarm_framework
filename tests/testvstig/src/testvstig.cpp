@@ -37,7 +37,7 @@ namespace testvstig{
     
     void TestVstig::loop(const ros::TimerEvent&)
     {
-        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
+        std::string robot_id_string = "robot_"+boost::lexical_cast<std::string>(robot_id());
         //static int count=0;
         //vs.put(robot_id_string, robot_id()+count);
         //count++;
@@ -70,9 +70,11 @@ namespace testvstig{
         ros::Duration(1).sleep();
         set_neighbor_distance(11);
         //test virtual stigmergy
-        vs=micros_swarm::VirtualStigmergy<int>(1);
+        vs=micros_swarm::VirtualStigmergy<std_msgs::Int32>(1);
         std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
-        vs.put(robot_id_string, robot_id());
+        std_msgs::Int32 val;
+        val.data = robot_id();
+        vs.put(robot_id_string, val);
         timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop, this);
     }
 };

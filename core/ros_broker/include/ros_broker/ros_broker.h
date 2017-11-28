@@ -27,10 +27,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <ros/ros.h>
 #include <pluginlib/class_list_macros.h>
 
-#include "ros_broker/GSDFPacket.h"
-
-#include "micros_swarm/comm_packet.h"
 #include "micros_swarm/comm_interface.h"
+#include "ros_broker/GSDFPacket.h"
 
 namespace ros_broker{
     
@@ -38,11 +36,10 @@ namespace ros_broker{
         public:
             ROSBroker();
             void init(std::string name, const micros_swarm::PacketParser& parser);
-            void broadcast(const micros_swarm::CommPacket& packet);
+            void broadcast(const std::vector<uint8_t>& msg_data);
             void receive();
         private:
             void callback(const GSDFPacket& ros_msg);
-
             std::string name_;
             micros_swarm::PacketParser parser_;
             ros::NodeHandle node_handle_;

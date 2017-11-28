@@ -126,6 +126,7 @@ include_directories(
 # )
 
 add_library(TestRth src/testrth.cpp)
+add_dependencies(TestRth ${micros_swarm_EXPORTED_TARGETS})
 #target_link_libraries(TestRth
 #  ${Boost_THREAD_LIBRARY}
 #  ${Boost_REGEX_LIBRARY}

@@ -4,7 +4,7 @@
 //  
 //  File name: GSDFPacket.h
 //  Source: GSDFPacket.idl
-//  Generated: Thu Jun  1 21:09:08 2017
+//  Generated: Tue Nov 28 13:14:39 2017
 //  OpenSplice V6.4.140407OSS
 //  
 //******************************************************************
@@ -18,14 +18,14 @@
 namespace opensplice_dds_broker
 {
    struct GSDFPacket;
+   struct CharSeq_uniq_ {};
+   typedef DDS_DCPSUFLSeq < DDS::Char, struct CharSeq_uniq_> CharSeq;
+   typedef DDS_DCPSSequence_var < CharSeq> CharSeq_var;
+   typedef DDS_DCPSSequence_out < CharSeq> CharSeq_out;
 
    struct GSDFPacket
    {
-         DDS::Long packet_source;
-         DDS::UShort packet_version;
-         DDS::UShort packet_type;
-         DDS::String_mgr packet_data;
-         DDS::LongLong package_check_sum;
+         CharSeq data;
    };
 
    typedef DDS_DCPSStruct_var < GSDFPacket> GSDFPacket_var;

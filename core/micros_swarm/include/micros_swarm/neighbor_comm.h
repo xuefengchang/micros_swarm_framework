@@ -28,6 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/runtime_handle.h"
 #include "micros_swarm/listener_helper.h"
 #include "micros_swarm/comm_interface.h"
+#include "gsdf_msgs/NeighborBroadcastKeyValue.h"
 
 namespace micros_swarm{
     
@@ -49,26 +50,22 @@ namespace micros_swarm{
             
             void broadcast(const Type& value)
             {
-                std::ostringstream archiveStream;
-                boost::archive::text_oarchive archive(archiveStream);
-                archive<<value;
-                std::string value_str = archiveStream.str();
+                std::vector<uint8_t> value_vec = serialize_ros(value);
+                gsdf_msgs::NeighborBroadcastKeyValue nbkv;
+
+                nbkv.key = key_;
+                nbkv.value = value_vec;
+                std::vector<uint8_t> nbkv_vec = serialize_ros(nbkv);
                 
-                NeighborBroadcastKeyValue nbkv(key_, value_str);
-                
-                std::ostringstream archiveStream2;
-                boost::archive::text_oarchive archive2(archiveStream2);
-                archive2<<nbkv;
-                std::string nbkv_str = archiveStream2.str();
-                
-                micros_swarm::CommPacket p;
-                p.packet_source = rth_->getRobotID();
-                p.packet_type = NEIGHBOR_BROADCAST_KEY_VALUE;
-                p.data_len = nbkv_str.length();
-                p.packet_version = 1;
-                p.check_sum = 0;
-                p.packet_data = nbkv_str;
-                rth_->getOutMsgQueue()->pushNcMsgQueue(p);
+                gsdf_msgs::CommPacket p;
+                p.header.source = rth_->getRobotID();
+                p.header.type = NEIGHBOR_BROADCAST_KEY_VALUE;
+                p.header.data_len = nbkv_vec.size();
+                p.header.version = 1;
+                p.header.checksum = 0;
+                p.content.buf = nbkv_vec;
+                std::vector<uint8_t> msg_data = serialize_ros(p);
+                rth_->getOutMsgQueue()->pushNcMsgQueue(msg_data);
             }
         private:
             boost::shared_ptr<RuntimeHandle> rth_;

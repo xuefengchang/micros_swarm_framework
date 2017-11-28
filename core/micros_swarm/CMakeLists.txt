@@ -11,6 +11,9 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   app_loader
+  gsdf_msgs
+  message_generation
+  roscpp_serialization
 )
 
 find_package(Boost REQUIRED COMPONENTS
@@ -30,7 +33,7 @@ include_directories(
 catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS
-    roscpp rospy std_msgs app_loader
+    roscpp rospy std_msgs message_runtime app_loader gsdf_msgs
 )
 
 link_directories(
@@ -41,15 +44,18 @@ link_directories(
 )
 
 ## Declare a C++ library
-add_library(rtp_core
+add_library(runtime_core
   src/packet_parser.cpp
   src/runtime_handle.cpp
   src/runtime_core.cpp
   src/app_manager.cpp
   src/scds_pso.cpp
 )
+add_dependencies(runtime_core gsdf_msgs_gencpp)
+add_dependencies(runtime_core ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_custom_target(${PROJECT_NAME} DEPENDS gsdf_msgs_gencpp)
 
-target_link_libraries(rtp_core
+target_link_libraries(runtime_core
   ${Boost_THREAD_LIBRARY}
   ${Boost_REGEX_LIBRARY}
   ${Boost_SERIALIZATION_LIBRARY}
@@ -59,10 +65,10 @@ target_link_libraries(rtp_core
 add_executable(daemon_node
   src/daemon_node.cpp
 )
-target_link_libraries(daemon_node rtp_core)
+target_link_libraries(daemon_node runtime_core)
 
 ## Mark executables and/or libraries for installation
-install(TARGETS rtp_core daemon_node
+install(TARGETS runtime_core daemon_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

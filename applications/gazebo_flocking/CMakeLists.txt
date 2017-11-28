@@ -126,6 +126,7 @@ include_directories(
 # )
 
 add_library(GazeboFlocking src/gazebo_flocking.cpp)
+add_dependencies(GazeboFlocking ${micros_swarm_EXPORTED_TARGETS})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

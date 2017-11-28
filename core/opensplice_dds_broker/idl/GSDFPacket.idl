@@ -1,12 +1,7 @@
-
 module opensplice_dds_broker{
-
+    typedef sequence<char> CharSeq;
     struct GSDFPacket {
-        long packet_source;
-        unsigned short packet_version;
-        unsigned short packet_type;
-        string packet_data;
-        long long package_check_sum;
+        CharSeq data;
     };
-  #pragma keylist GSDFPacket
+    #pragma keylist GSDFPacket
 };

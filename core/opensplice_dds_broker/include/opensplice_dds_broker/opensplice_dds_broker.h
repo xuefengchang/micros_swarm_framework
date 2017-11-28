@@ -32,7 +32,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "publisher.h"
 #include "subscriber.h"
 
-#include "micros_swarm/comm_packet.h"
 #include "micros_swarm/comm_interface.h"
 
 namespace opensplice_dds_broker{
@@ -41,11 +40,10 @@ namespace opensplice_dds_broker{
         public:
             OpenSpliceDDSBroker();
             void init(std::string name, const micros_swarm::PacketParser& parser);
-            void broadcast(const micros_swarm::CommPacket& packet);
+            void broadcast(const std::vector<uint8_t>& msg_data);
             void receive();
         private:
             void callback(const opensplice_dds_broker::GSDFPacket& dds_msg);
-
             std::string name_;
             micros_swarm::PacketParser parser_;
             boost::shared_ptr<opensplice_dds_broker::Publisher> packet_publisher_;

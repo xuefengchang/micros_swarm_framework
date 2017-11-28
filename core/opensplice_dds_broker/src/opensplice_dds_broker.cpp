@@ -21,7 +21,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 */
 
 #include <iostream>
-
 #include "opensplice_dds_broker/opensplice_dds_broker.h"
 
 PLUGINLIB_EXPORT_CLASS(opensplice_dds_broker::OpenSpliceDDSBroker, micros_swarm::CommInterface)
@@ -36,37 +35,36 @@ namespace opensplice_dds_broker{
 
     void OpenSpliceDDSBroker::init(std::string name, const micros_swarm::PacketParser& parser)
     {
-        name_=name;
-        parser_=parser;
+        name_ = name;
+        parser_ = parser;
     }
 
-    void OpenSpliceDDSBroker::broadcast(const micros_swarm::CommPacket& packet)
+    void OpenSpliceDDSBroker::broadcast(const std::vector<uint8_t>& msg_data)
     {
         opensplice_dds_broker::GSDFPacket dds_msg;
-        dds_msg.packet_source=packet.packet_source;
-        dds_msg.packet_version=packet.packet_version;
-        dds_msg.packet_type=packet.packet_type;
-        dds_msg.packet_data=packet.packet_data.data();
-        dds_msg.package_check_sum=packet.check_sum;
-
-        packet_publisher_->publish(dds_msg);
+        unsigned int bufsize = msg_data.size();
+        if(!msg_data.empty()) {
+            dds_msg.data.replace(bufsize, bufsize, (char*)(&msg_data[0]), false);
+            packet_publisher_->publish(dds_msg);
+        }
     }
 
     void OpenSpliceDDSBroker::callback(const opensplice_dds_broker::GSDFPacket& dds_msg)
     {
-        micros_swarm::CommPacket packet;
-        packet.packet_source=dds_msg.packet_source;
-        packet.packet_version=dds_msg.packet_version;
-        packet.packet_type=dds_msg.packet_type;
-        packet.packet_data=dds_msg.packet_data;
-        packet.check_sum=dds_msg.package_check_sum;
-
-        parser_.parse(packet);
+        int msgLen = dds_msg.data.length();
+        if (msgLen == 0) {
+            std::cout<<"opensplice dds recv error."<<std::endl;
+        }
+        else {
+            uint8_t* buf = (uint8_t*)malloc(sizeof(uint8_t)*msgLen);
+            memcpy(buf, dds_msg.data.get_buffer(), msgLen);
+            parser_.parse(buf, msgLen);
+        }
     }
             
     void OpenSpliceDDSBroker::receive()
     {
-        boost::function<void(const opensplice_dds_broker::GSDFPacket&)> func=boost::bind(&OpenSpliceDDSBroker::callback,this,_1);
+        boost::function<void(const opensplice_dds_broker::GSDFPacket&)> func = boost::bind(&OpenSpliceDDSBroker::callback, this, _1);
         packet_subscriber_->subscribe(func);
     }
 };
