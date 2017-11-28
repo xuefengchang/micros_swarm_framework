@@ -20,15 +20,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <iostream>
-#include <time.h>
-#include <vector>
-#include <map>
-
-#include "micros_swarm/message.h"
-#include "micros_swarm/singleton.h"
-#include "micros_swarm/check_neighbor.h"
-
 #include "micros_swarm/packet_parser.h"
 
 namespace micros_swarm{

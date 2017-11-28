@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      packet_parser.h
+\file      packet_type.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,52 +20,39 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef PACKET_PARSER_H_
-#define PACKET_PARSER_H_
+#ifndef PACKET_TYPE_H_
+#define PACKET_TYPE_H_
 
 #include <iostream>
-#include <time.h>
-#include <vector>
-#include <map>
-
-#include "micros_swarm/packet_type.h"
-#include "micros_swarm/serialize.h"
-#include "micros_swarm/runtime_handle.h"
-#include "micros_swarm/singleton.h"
-#include "micros_swarm/check_neighbor.h"
-
-#include "gsdf_msgs/CommHeader.h"
-#include "gsdf_msgs/CommContent.h"
-#include "gsdf_msgs/CommPacket.h"
-#include "gsdf_msgs/RobotBase.h"
-#include "gsdf_msgs/JoinSwarm.h"
-#include "gsdf_msgs/LeaveSwarm.h"
-#include "gsdf_msgs/SwarmList.h"
-#include "gsdf_msgs/VirtualStigmergyQuery.h"
-#include "gsdf_msgs/VirtualStigmergyPut.h"
-#include "gsdf_msgs/BlackBoardQuery.h"
-#include "gsdf_msgs/BlackBoardAck.h"
-#include "gsdf_msgs/BlackBoardPut.h"
-#include "gsdf_msgs/SCDSPSOGet.h"
-#include "gsdf_msgs/SCDSPSOPut.h"
-#include "gsdf_msgs/NeighborBroadcastKeyValue.h"
-#include "gsdf_msgs/BarrierSyn.h"
-#include "gsdf_msgs/BarrierAck.h"
 
 namespace micros_swarm{
 
-    class PacketParser{
-        public:
-            PacketParser();
-            ~PacketParser();
-            void parse(const std::vector<uint8_t>& data);
-            void parse(const std::vector<char>& data);
-            void parse(uint8_t* data, int len);
-            void parse(char* data, int len);
-        private:
-            boost::shared_ptr<micros_swarm::RuntimeHandle> rth_;
-            boost::shared_ptr<CheckNeighborInterface> cni_;
+    /*
+    *GSDFPacket type
+    */
+    enum GSDFPacketType {
+        SINGLE_ROBOT_BROADCAST_BASE,  //broadcast id
+        
+        SINGLE_ROBOT_JOIN_SWARM,  //robot join in a swarm
+        SINGLE_ROBOT_LEAVE_SWARM,  //robot leave a swarm
+        SINGLE_ROBOT_SWARM_LIST,  //broadcast swarm list
+        
+        VIRTUAL_STIGMERGY_QUERY,  //query a value of virtual stigmergy
+        VIRTUAL_STIGMERGY_PUT,  //put a value in virtual stigmergy
+
+        BLACKBOARD_QUERY,  //query a value of blackboard
+        BLACKBOARD_QUERY_ACK,  //query ack
+        BLACKBOARD_PUT,  //put a value into blackboard
+
+        SCDS_PSO_PUT,
+        SCDS_PSO_GET,
+        
+        NEIGHBOR_BROADCAST_KEY_VALUE,  //broadcast <key, value> tuple
+        
+        BARRIER_SYN,  //userd for barrier, syn
+        BARRIER_ACK,  //used for barrier, ack
+        
+        GSDF_PACKET_TYPE_COUNT  //GSDF Packet type count
     };
 };
-
 #endif

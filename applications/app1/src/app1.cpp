@@ -55,20 +55,22 @@ namespace app1{
 
     XY App1::force_sum(micros_swarm::NeighborBase n, XY &s)
     {
-        micros_swarm::Base l=base();
-        float xl=l.x;
-        float yl=l.y;
+        micros_swarm::Base l = base();
+        float xl = l.x;
+        float yl = l.y;
     
-        float xn=n.x;
-        float yn=n.y;
+        float xn = n.x;
+        float yn = n.y;
     
-        float dist=sqrt(pow((xl-xn),2)+pow((yl-yn),2));
+        float dist = sqrt(pow((xl-xn),2)+pow((yl-yn),2));
      
         float fm = force_mag(dist)/1000;
-        if(fm>0.5) fm=0.5;
+        if(fm>0.5){
+            fm = 0.5;
+        }
     
-        float fx=(fm/(dist+0.1))*(xn-xl);
-        float fy=(fm/(dist+0.1))*(yn-yl);
+        float fx = (fm/(dist+0.1))*(xn-xl);
+        float fy = (fm/(dist+0.1))*(yn-yl);
     
         s.x+=fx;
         s.y+=fy;
@@ -78,23 +80,23 @@ namespace app1{
     XY App1::direction()
     {
         XY sum;
-        sum.x=0;
-        sum.y=0;
+        sum.x = 0;
+        sum.y = 0;
     
         micros_swarm::Neighbors<micros_swarm::NeighborBase> n(true);
         //n.print();
-        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf=boost::bind(&App1::force_sum, this, _1, _2);
-        sum=n.reduce(bf, sum);
+        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf = boost::bind(&App1::force_sum, this, _1, _2);
+        sum = n.reduce(bf, sum);
     
         return sum;
     }
     
     void App1::publish_cmd(const ros::TimerEvent&)
     {
-        XY v=direction();
+        XY v = direction();
         geometry_msgs::Twist t;
-        t.linear.x=v.x;
-        t.linear.y=v.y;
+        t.linear.x = v.x;
+        t.linear.y = v.y;
 
         pub.publish(t);
     }
@@ -107,11 +109,11 @@ namespace app1{
     
     void App1::baseCallback(const nav_msgs::Odometry& lmsg)
     {
-        float x=lmsg.pose.pose.position.x;
-        float y=lmsg.pose.pose.position.y;
+        float x = lmsg.pose.pose.position.x;
+        float y = lmsg.pose.pose.position.y;
     
-        float vx=lmsg.twist.twist.linear.x;
-        float vy=lmsg.twist.twist.linear.y;
+        float vx = lmsg.twist.twist.linear.x;
+        float vy = lmsg.twist.twist.linear.y;
     
         micros_swarm::Base l(x, y, 0, vx, vy, 0);
         set_base(l);

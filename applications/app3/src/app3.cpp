@@ -174,8 +174,8 @@ namespace app3{
     void App3::init()
     {
         //set parameters
-        hz=10;
-        interval=1.0/hz;
+        hz = 10;
+        interval = 1.0/hz;
     }
     
     void App3::publish_cmd(const ros::TimerEvent&)
@@ -184,13 +184,12 @@ namespace app3{
         micros_swarm::Neighbors<micros_swarm::NeighborBase> n(true);
 
         typename std::map<int, micros_swarm::NeighborBase>::iterator it;
-        for(it=n.data().begin();it!=n.data().end();it++)
-        {
-            NeighborHandle* nh=new NeighborHandle(it->first, it->second.x, it->second.y, it->second.vx, it->second.vy);
+        for(it = n.data().begin(); it != n.data().end(); it++) {
+            NeighborHandle* nh = new NeighborHandle(it->first, it->second.x, it->second.y, it->second.vx, it->second.vy);
             neighbor_list.push_back(nh);
         }
 
-        micros_swarm::Base nl=base();
+        micros_swarm::Base nl = base();
 
         my_position=pair<double,double>(nl.x, nl.y);
         my_velocity=pair<double,double>(nl.vx, nl.vy);
@@ -199,26 +198,29 @@ namespace app3{
         msg.linear.y += (f_g().second*pm1+f_d().second*pm2+f_r().second*pm3)/hz;
         //cout<<f_g().second<<' '<<f_d().second<<' '<<msg.linear.y<<endl;
       
-        if (msg.linear.x >1)
-            msg.linear.x=1;
-        if (msg.linear.x <-1)
-            msg.linear.x=-1;
-        if (msg.linear.y >1)
-            msg.linear.y=1;
-        if (msg.linear.y <-1)
-            msg.linear.y=-1;
+        if (msg.linear.x > 1) {
+            msg.linear.x = 1;
+        }
+        if (msg.linear.x < -1) {
+            msg.linear.x = -1;
+        }
+        if (msg.linear.y > 1) {
+            msg.linear.y = 1;
+        }
+        if (msg.linear.y <- 1) {
+            msg.linear.y = -1;
+        }
         pub.publish(msg);
-      
         neighbor_list.clear();  
     }
     
     void App3::baseCallback(const nav_msgs::Odometry& lmsg)
     {
-        float x=lmsg.pose.pose.position.x;
-        float y=lmsg.pose.pose.position.y;
+        float x = lmsg.pose.pose.position.x;
+        float y = lmsg.pose.pose.position.y;
     
-        float vx=lmsg.twist.twist.linear.x;
-        float vy=lmsg.twist.twist.linear.y;
+        float vx = lmsg.twist.twist.linear.x;
+        float vy = lmsg.twist.twist.linear.y;
     
         micros_swarm::Base l(x, y, 0, vx, vy, 0);
         set_base(l);

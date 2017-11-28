@@ -179,18 +179,18 @@ namespace gazebo_flocking{
     void GazeboFlocking::init()
     {
         //set parameters
-        hz=10;
-        interval=1.0/hz;
+        hz = 10;
+        interval = 1.0/hz;
     }
 
     int vel_loop_count =0;
 
     bool test_location(float a, float b, float x, float y)
     {
-        float s= sqrt((a-x)*(a-x)+(b-y)*(b-y));
-
-        if(s<=2)
+        float s = sqrt((a-x)*(a-x)+(b-y)*(b-y));
+        if(s <= 2) {
             return true;
+        }
         return false;
     }
 
@@ -199,7 +199,7 @@ namespace gazebo_flocking{
         static double base_angle = 0;
         vel_loop_count++;
         int time_count = vel_loop_count;
-        int hz=10;
+        int hz = 10;
         double baseomega = 0;
         double basespeed = 3;
         /*
@@ -303,7 +303,7 @@ namespace gazebo_flocking{
             else if (sendmsg.linear.y<0)
                 fi= -PI/2;
             double v_scale = sqrt(sendmsg.linear.x*sendmsg.linear.x+sendmsg.linear.y*sendmsg.linear.y);
-            sendmsg.linear.x =  v_scale*cos(fi-my_theta);
+            sendmsg.linear.x = v_scale*cos(fi-my_theta);
             sendmsg.linear.y = v_scale *sin(fi-my_theta);
             pub.publish(sendmsg);}
         //pub.publish(msg);
@@ -313,12 +313,12 @@ namespace gazebo_flocking{
 
     void GazeboFlocking::baseCallback(const nav_msgs::Odometry& lmsg)
     {
-        float x=lmsg.pose.pose.position.x;
-        float y=lmsg.pose.pose.position.y;
+        float x = lmsg.pose.pose.position.x;
+        float y = lmsg.pose.pose.position.y;
 
-        float vx=lmsg.twist.twist.linear.x;
-        float vy=lmsg.twist.twist.linear.y;
-        my_theta =tf::getYaw(lmsg.pose.pose.orientation);
+        float vx = lmsg.twist.twist.linear.x;
+        float vy = lmsg.twist.twist.linear.y;
+        my_theta = tf::getYaw(lmsg.pose.pose.orientation);
         micros_swarm::Base l(x, y, 0, vx, vy, 0);
         set_base(l);
     }
@@ -331,10 +331,9 @@ namespace gazebo_flocking{
         set_neighbor_distance(12);
         pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         ros::Rate loop_rate(10);
-        for(int i=0;i<7*10;i++)
-        {
+        for(int i = 0; i < 7*10; i++) {
             geometry_msgs:: Twist upmsg;
-            upmsg.linear.z=1;
+            upmsg.linear.z = 1;
             pub.publish(upmsg);
             loop_rate.sleep();
         }

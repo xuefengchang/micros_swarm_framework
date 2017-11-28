@@ -178,45 +178,12 @@ namespace micros_swarm{
 
         void print()
         {
-            for(int i=0;i<pos.size();i++)
-                std::cout<<pos[i]<<" ";
+            for(int i=0;i<pos.size();i++) {
+                std::cout << pos[i] << " ";
+            }
             std::cout<<", "<<val<<", "<<robot_id<<", "<<gen<<timestamp<<std::endl;
         }
     };
-    
-    //this macro definition is used to serialize the user-defined data type
-    /*#define BOOST_SERIALIZE  template<class Archive>\
-                             void serialize(Archive & ar, const unsigned int version)
-                       
-    #define MEMBER ar&
-    
-    struct TestVstigDataType{
-        int a;
-        float b;
-        std::string c;
-            
-        BOOST_SERIALIZE
-        {
-            MEMBER a;
-            MEMBER b;
-            MEMBER c;
-        }
-            
-        TestVstigDataType(){}
-        TestVstigDataType(int a_, float b_, std::string c_)
-        {
-            a=a_;
-            b=b_;
-            c=c_;
-        }
-            
-        void printTestVstigDataType()
-        {
-            std::cout<<"a = "<<a<<std::endl;
-            std::cout<<"b = "<<b<<std::endl;
-            std::cout<<"c = "<<c<<std::endl;
-        }
-    };*/
 };
 
 #endif

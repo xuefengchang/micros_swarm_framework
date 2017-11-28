@@ -35,8 +35,7 @@ namespace micros_swarm{
             void P()
             {
                 boost::unique_lock<boost::mutex> lock(mutex_);
-                while(value_ == 0)
-                {
+                while(value_ == 0) {
                     condition_.wait(lock);
                 }
 

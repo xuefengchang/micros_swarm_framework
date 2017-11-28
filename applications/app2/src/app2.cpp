@@ -70,59 +70,63 @@ namespace app2{
 
     XY App2::force_sum_kin(micros_swarm::NeighborBase n, XY &s)
     {
-        micros_swarm::Base l=base();
-        float xl=l.x;
-        float yl=l.y;
+        micros_swarm::Base l = base();
+        float xl = l.x;
+        float yl = l.y;
     
-        float xn=n.x;
-        float yn=n.y;
+        float xn = n.x;
+        float yn = n.y;
     
-        float dist=sqrt(pow((xl-xn),2)+pow((yl-yn),2));
+        float dist = sqrt(pow((xl-xn),2)+pow((yl-yn),2));
     
         float fm = force_mag_kin(dist)/1000;
-        if(fm>0.5) fm=0.5;
+        if(fm>0.5) {
+            fm=0.5;
+        }
     
-        float fx=(fm/(dist+0.1))*(xn-xl);
-        float fy=(fm/(dist+0.1))*(yn-yl);
+        float fx = (fm/(dist+0.1))*(xn-xl);
+        float fy = (fm/(dist+0.1))*(yn-yl);
     
-        s.x+=fx;
-        s.y+=fy;
+        s.x += fx;
+        s.y += fy;
         return s;
     }
 
     XY App2::force_sum_nonkin(micros_swarm::NeighborBase n, XY &s)
     {
-        micros_swarm::Base l=base();
-        float xl=l.x;
-        float yl=l.y;
+        micros_swarm::Base l = base();
+        float xl = l.x;
+        float yl = l.y;
     
-        float xn=n.x;
-        float yn=n.y;
+        float xn = n.x;
+        float yn = n.y;
     
-        float dist=sqrt(pow((xl-xn),2)+pow((yl-yn),2));
+        float dist = sqrt(pow((xl-xn),2)+pow((yl-yn),2));
     
         float fm = force_mag_nonkin(dist)/1000;
-        if(fm>0.5) fm=0.5;
+        if(fm>0.5) {
+            fm=0.5;
+        }
     
-        float fx=(fm/(dist+0.1))*(xn-xl);
-        float fy=(fm/(dist+0.1))*(yn-yl);
+        float fx = (fm/(dist+0.1))*(xn-xl);
+        float fy = (fm/(dist+0.1))*(yn-yl);
     
-        s.x+=fx;
-        s.y+=fy;
+        s.x += fx;
+        s.y += fy;
         return s;
     }
 
     XY App2::direction_red()
     {
         XY sum;
-        sum.x=0;
-        sum.y=0;
+        sum.x = 0;
+        sum.y = 0;
     
         micros_swarm::Neighbors<micros_swarm::NeighborBase> n(true);
-        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf_kin=boost::bind(&App2::force_sum_kin, this, _1, _2);
-        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf_nonkin=boost::bind(&App2::force_sum_nonkin, this, _1, _2);
-        sum=n.kin(RED_SWARM).reduce(bf_kin, sum);
-        sum=n.nonkin(RED_SWARM).reduce(bf_nonkin, sum);
+        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf_kin = boost::bind(&App2::force_sum_kin, this, _1, _2);
+        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf_nonkin = boost::bind(&App2::force_sum_nonkin, this, _1, _2);
+        sum = n.kin(RED_SWARM).reduce(bf_kin, sum);
+        sum = n.nonkin(RED_SWARM).reduce(bf_nonkin, sum);
     
         return sum;
     }
@@ -130,48 +134,50 @@ namespace app2{
     XY App2::direction_blue()
     {
         XY sum;
-        sum.x=0;
-        sum.y=0;
+        sum.x = 0;
+        sum.y = 0;
     
         micros_swarm::Neighbors<micros_swarm::NeighborBase> n(true);
-        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf_kin=boost::bind(&App2::force_sum_kin, this, _1, _2);
-        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf_nonkin=boost::bind(&App2::force_sum_nonkin, this, _1, _2);
-        sum=n.kin(BLUE_SWARM).reduce(bf_kin, sum);
-        sum=n.nonkin(BLUE_SWARM).reduce(bf_nonkin, sum);
+        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf_kin = boost::bind(&App2::force_sum_kin, this, _1, _2);
+        boost::function<XY(micros_swarm::NeighborBase, XY &)> bf_nonkin = boost::bind(&App2::force_sum_nonkin, this, _1, _2);
+        sum = n.kin(BLUE_SWARM).reduce(bf_kin, sum);
+        sum = n.nonkin(BLUE_SWARM).reduce(bf_nonkin, sum);
     
         return sum;
     }
 
     bool App2::red(int id)
     {
-        if(id<=9)
+        if(id <= 9) {
             return true;
+        }
         return false;
     }
 
     bool App2::blue(int id)
     {
-        if(id>=10)
+        if(id >= 10) {
             return true;
+        }
         return false;
     }
     
     void App2::publish_red_cmd(const ros::TimerEvent&)
     {
-        XY v=direction_red();
+        XY v = direction_red();
         geometry_msgs::Twist t;
-        t.linear.x=v.x;
-        t.linear.y=v.y;
+        t.linear.x = v.x;
+        t.linear.y = v.y;
         
         pub.publish(t);
     }
     
     void App2::publish_blue_cmd(const ros::TimerEvent&)
     {
-        XY v=direction_blue();
+        XY v = direction_blue();
         geometry_msgs::Twist t;
-        t.linear.x=v.x;
-        t.linear.y=v.y;
+        t.linear.x = v.x;
+        t.linear.y = v.y;
         
         pub.publish(t);
     }
@@ -190,11 +196,11 @@ namespace app2{
     
     void App2::baseCallback(const nav_msgs::Odometry& lmsg)
     {
-        float x=lmsg.pose.pose.position.x;
-        float y=lmsg.pose.pose.position.y;
+        float x = lmsg.pose.pose.position.x;
+        float y = lmsg.pose.pose.position.y;
     
-        float vx=lmsg.twist.twist.linear.x;
-        float vy=lmsg.twist.twist.linear.y;
+        float vx = lmsg.twist.twist.linear.x;
+        float vy = lmsg.twist.twist.linear.y;
     
         micros_swarm::Base l(x, y, 0, vx, vy, 0);
         set_base(l);
@@ -208,8 +214,8 @@ namespace app2{
         pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         sub = nh.subscribe("base_pose_ground_truth", 1000, &App2::baseCallback, this, ros::TransportHints().udp());
         
-        boost::function<bool()> bfred=boost::bind(&App2::red, this, robot_id());
-        boost::function<bool()> bfblue=boost::bind(&App2::blue, this, robot_id());
+        boost::function<bool()> bfred = boost::bind(&App2::red, this, robot_id());
+        boost::function<bool()> bfblue = boost::bind(&App2::blue, this, robot_id());
     
         micros_swarm::Swarm red_swarm(RED_SWARM);
         red_swarm.select(bfred);

@@ -34,7 +34,7 @@ namespace micros_swarm{
             {
                 tail_ = 0;
                 head_ = 0;
-                capacity_=0;
+                capacity_ = 0;
                 data_ = NULL;
             }
             
@@ -42,27 +42,28 @@ namespace micros_swarm{
             {
                 tail_ = 0;
                 head_ = 0;
-                capacity_=capacity;
+                capacity_ = capacity;
                 data_ = new Type[capacity_];
             }
             
             cqueue(const cqueue& c)
             {
-                tail_=c.tail_;
-                head_=c.head_;
-                capacity_=c.capacity_;
+                tail_ = c.tail_;
+                head_ = c.head_;
+                capacity_ = c.capacity_;
                 data_ = new Type[capacity_];
                 memcpy(data_, c.data_, sizeof(Type)*c.length());
             }
             
             cqueue& operator=(const cqueue& c)
             {
-                if(this==&c)
+                if(this == &c) {
                     return *this;
+                }
                 delete [] data_;
-                tail_=c.tail_;
-                head_=c.head_;
-                capacity_=c.capacity_;
+                tail_ = c.tail_;
+                head_ = c.head_;
+                capacity_ = c.capacity_;
                 data_ = new Type[capacity_];
                 memcpy(data_, c.data_, sizeof(Type)*c.length());
                 return *this;
@@ -75,37 +76,43 @@ namespace micros_swarm{
             
             bool empty()
             {
-                if (head_ == tail_)
+                if (head_ == tail_) {
                     return true;
-                else
+                }
+                else {
                     return false;
+                }
             }
             
             bool full()
             {
-                 if ((tail_+1)%capacity_ == head_)
+                 if ((tail_+1)%capacity_ == head_) {
                      return true;
-                 else
+                 }
+                 else {
                      return false;
+                 }
             }
             
             void push(Type x)
             {
-                if (!full())
-                {
+                if (!full()) {
                     data_[tail_] = x;
                     tail_ = (tail_+1)%capacity_;
                 }
-                else
-                    std::cout << "cqueue is full." << std::endl;
+                else {
+                    std::cout<<"cqueue is full."<<std::endl;
+                }
             }
             
             void pop()
             {
-                if (!empty())
-                    head_ = (head_+1)%capacity_;
-                else
-                    std::cout << "cqueue is empty." << std::endl;
+                if (!empty()) {
+                    head_ = (head_ + 1) % capacity_;
+                }
+                else {
+                    std::cout<<"cqueue is empty."<<std::endl;
+                }
             }
             
             const Type& front()
@@ -121,14 +128,14 @@ namespace micros_swarm{
             void print()
             {
                 int cnt = head_;
-                if (head_ > tail_)
+                if (head_ > tail_) {
                     tail_ += capacity_;
-                while(cnt <= tail_-1)
-                {
+                }
+                while(cnt <= tail_-1) {
                     std::cout << data_[cnt] << " ";
                     cnt++;
                 }
-               std::cout << std::endl;
+               std::cout<<std::endl;
             }
         private:
             Type *data_;

@@ -29,9 +29,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <ros/ros.h>
 
 #include "micros_swarm/random.h"
-#include "micros_swarm/message.h"
 #include "micros_swarm/singleton.h"
 #include "micros_swarm/runtime_handle.h"
+#include "micros_swarm/packet_type.h"
+#include "micros_swarm/serialize.h"
 #include "micros_swarm/comm_interface.h"
 #include "gsdf_msgs/VirtualStigmergyQuery.h"
 #include "gsdf_msgs/VirtualStigmergyPut.h"

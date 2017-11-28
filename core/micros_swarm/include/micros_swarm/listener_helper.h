@@ -25,11 +25,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include <iostream>
 #include <boost/function.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/vector.hpp>
-#include "micros_swarm/message.h"
+#include "micros_swarm/packet_type.h"
+#include "micros_swarm/serialize.h"
 
 namespace micros_swarm{
     
