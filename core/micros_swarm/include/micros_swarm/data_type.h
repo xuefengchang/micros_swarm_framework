@@ -96,10 +96,11 @@ namespace micros_swarm{
         bool swarmIDExist(int swarm_id)
         {
             std::vector<int>::iterator it;
-            it=std::find(swarm_id_vector.begin(), swarm_id_vector.end(), swarm_id);
+            it = std::find(swarm_id_vector.begin(), swarm_id_vector.end(), swarm_id);
     
-            if(it!=swarm_id_vector.end())
+            if(it != swarm_id_vector.end()) {
                 return true;
+            }
             
             return false; 
         }
@@ -178,8 +179,8 @@ namespace micros_swarm{
 
         void print()
         {
-            for(int i=0;i<pos.size();i++) {
-                std::cout << pos[i] << " ";
+            for(int i = 0; i < pos.size(); i++) {
+                std::cout<<pos[i]<< " ";
             }
             std::cout<<", "<<val<<", "<<robot_id<<", "<<gen<<timestamp<<std::endl;
         }
