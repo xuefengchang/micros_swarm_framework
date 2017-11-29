@@ -30,11 +30,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "micros_swarm/singleton.h"
 #include "micros_swarm/runtime_handle.h"
-#include "micros_swarm/comm_interface.h"
-#include "gsdf_msgs/JoinSwarm.h"
-#include "gsdf_msgs/LeaveSwarm.h"
+#include "micros_swarm/msg_queue_manager.h"
 #include "micros_swarm/packet_type.h"
 #include "micros_swarm/serialize.h"
+#include "gsdf_msgs/CommPacket.h"
+#include "gsdf_msgs/JoinSwarm.h"
+#include "gsdf_msgs/LeaveSwarm.h"
 
 namespace micros_swarm{
     
@@ -49,14 +50,14 @@ namespace micros_swarm{
             {
                 swarm_id_ = swarm_id;
                 rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<micros_swarm::CommInterface>::getExistedSingleton();
+                mqm_ = Singleton<MsgQueueManager>::getSingleton();
                 rth_->insertOrUpdateSwarm(swarm_id_, 0);
             }
             
             Swarm(const Swarm& s)
             {
                 rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<micros_swarm::CommInterface>::getExistedSingleton();
+                mqm_ = Singleton<MsgQueueManager>::getSingleton();
                 swarm_id_ = s.swarm_id_;
             }
             
@@ -66,7 +67,7 @@ namespace micros_swarm{
                     return *this;
                 }
                 rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                mqm_ = Singleton<MsgQueueManager>::getSingleton();
                 swarm_id_ = s.swarm_id_;
                 return *this;
             }
@@ -74,7 +75,7 @@ namespace micros_swarm{
             ~Swarm()
             {
                 rth_.reset();
-                communicator_.reset();
+                mqm_.reset();
             }
             
             const int id()  const
@@ -108,7 +109,7 @@ namespace micros_swarm{
                 p.header.checksum = 0;
                 p.content.buf = js_vec;
                 std::vector<uint8_t> msg_data = serialize_ros(p);
-                rth_->getOutMsgQueue()->pushSwarmMsgQueue(msg_data);
+                mqm_->getOutMsgQueue("swarm")->push(msg_data);
             }
             
             void leave()
@@ -129,7 +130,7 @@ namespace micros_swarm{
                 p.header.checksum = 0;
                 p.content.buf = ls_vec;
                 std::vector<uint8_t> msg_data = serialize_ros(p);
-                rth_->getOutMsgQueue()->pushSwarmMsgQueue(msg_data);
+                mqm_->getOutMsgQueue("swarm")->push(msg_data);
             }
             
             void select(const boost::function<bool()>& bf)
@@ -286,8 +287,8 @@ namespace micros_swarm{
             }
         private:
             int swarm_id_; 
-            boost::shared_ptr<RuntimeHandle> rth_;
-            boost::shared_ptr<CommInterface> communicator_;
+            boost::shared_ptr<micros_swarm::RuntimeHandle> rth_;
+            boost::shared_ptr<micros_swarm::MsgQueueManager> mqm_;
     };
 };
 #endif

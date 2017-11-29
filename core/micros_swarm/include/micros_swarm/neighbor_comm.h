@@ -27,7 +27,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "micros_swarm/runtime_handle.h"
 #include "micros_swarm/listener_helper.h"
-#include "micros_swarm/comm_interface.h"
+#include "micros_swarm/msg_queue_manager.h"
 #include "gsdf_msgs/NeighborBroadcastKeyValue.h"
 
 namespace micros_swarm{
@@ -39,13 +39,13 @@ namespace micros_swarm{
             {
                 key_ = key;
                 rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                mqm_ = Singleton<MsgQueueManager>::getSingleton();
             }
 
             ~Broadcaster()
             {
                 rth_.reset();
-                communicator_.reset();
+                mqm_.reset();
             }
             
             void broadcast(const Type& value)
@@ -65,11 +65,11 @@ namespace micros_swarm{
                 p.header.checksum = 0;
                 p.content.buf = nbkv_vec;
                 std::vector<uint8_t> msg_data = serialize_ros(p);
-                rth_->getOutMsgQueue()->pushNcMsgQueue(msg_data);
+                mqm_->getOutMsgQueue("nc")->push(msg_data);
             }
         private:
             boost::shared_ptr<RuntimeHandle> rth_;
-            boost::shared_ptr<CommInterface> communicator_;
+            boost::shared_ptr<micros_swarm::MsgQueueManager> mqm_;
             std::string key_;
     };
     

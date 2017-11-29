@@ -29,11 +29,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <boost/function.hpp>
 #include <ros/ros.h>
 
-#include "micros_swarm/singleton.h"
-#include "micros_swarm/runtime_handle.h"
-#include "micros_swarm/comm_interface.h"
-#include "micros_swarm/data_type.h"
-#include "micros_swarm/random.h"
 #include "micros_swarm/scds_pso_tuple.h"
 
 namespace micros_swarm{
@@ -83,7 +78,6 @@ namespace micros_swarm{
 
             int robot_id_;
             boost::shared_ptr<RuntimeHandle> rth_;
-            boost::shared_ptr<CommInterface> communicator_;
 
             ros::NodeHandle nh_;
             ros::Timer timer_;

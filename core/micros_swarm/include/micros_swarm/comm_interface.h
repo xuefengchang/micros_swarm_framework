@@ -26,7 +26,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <iostream>
 #include <boost/function.hpp>
 
-#include "gsdf_msgs/CommPacket.h"
 #include "micros_swarm/packet_parser.h"
 
 namespace micros_swarm{

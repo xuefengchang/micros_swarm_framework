@@ -24,6 +24,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define CHECK_NEIGHBOR_H_
 
 #include <iostream>
+#include "micros_swarm/data_type.h"
 
 namespace micros_swarm{
     

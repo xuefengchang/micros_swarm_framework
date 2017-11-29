@@ -28,11 +28,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <vector>
 #include <map>
 
+#include "micros_swarm/singleton.h"
 #include "micros_swarm/packet_type.h"
 #include "micros_swarm/serialize.h"
-#include "micros_swarm/runtime_handle.h"
-#include "micros_swarm/singleton.h"
 #include "micros_swarm/check_neighbor.h"
+#include "micros_swarm/runtime_handle.h"
+#include "micros_swarm/msg_queue_manager.h"
 
 #include "gsdf_msgs/CommHeader.h"
 #include "gsdf_msgs/CommContent.h"
@@ -65,6 +66,7 @@ namespace micros_swarm{
         private:
             boost::shared_ptr<micros_swarm::RuntimeHandle> rth_;
             boost::shared_ptr<CheckNeighborInterface> cni_;
+            boost::shared_ptr<micros_swarm::MsgQueueManager> mqm_;
     };
 };
 

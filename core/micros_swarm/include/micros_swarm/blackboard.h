@@ -30,7 +30,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/packet_type.h"
 #include "micros_swarm/serialize.h"
 #include "micros_swarm/runtime_handle.h"
-#include "micros_swarm/comm_interface.h"
+#include "micros_swarm/msg_queue_manager.h"
+#include "gsdf_msgs/CommPacket.h"
+#include "gsdf_msgs/BlackBoardPut.h"
+#include "gsdf_msgs/BlackBoardQuery.h"
+#include "gsdf_msgs/BlackBoardAck.h"
 
 namespace micros_swarm{
     
@@ -51,7 +55,7 @@ namespace micros_swarm{
                 on_robot_id_ = on_robot_id;
                 rth_ = Singleton<RuntimeHandle>::getSingleton();
                 robot_id_ = rth_->getRobotID();
-                communicator_ = Singleton<micros_swarm::CommInterface>::getExistedSingleton();
+                mqm_ = Singleton<MsgQueueManager>::getSingleton();
                 is_local_ = false;
                 if(on_robot_id_ == robot_id_) {
                     rth_->createBlackBoard(bb_id_);
@@ -62,7 +66,7 @@ namespace micros_swarm{
             BlackBoard(const BlackBoard& bb)
             {
                 rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                mqm_ = Singleton<MsgQueueManager>::getSingleton();
                 bb_id_ = bb.bb_id_;
                 on_robot_id_ = bb.on_robot_id_;
                 robot_id_ = bb.robot_id_;
@@ -75,7 +79,7 @@ namespace micros_swarm{
                     return *this;
                 }
                 rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<micros_swarm::CommInterface>::getExistedSingleton();
+                mqm_ = Singleton<MsgQueueManager>::getSingleton();
                 bb_id_ = bb.bb_id_;
                 on_robot_id_ = bb.on_robot_id_;
                 robot_id_ = bb.robot_id_;
@@ -86,7 +90,7 @@ namespace micros_swarm{
             ~BlackBoard()
             {
                 rth_.reset();
-                communicator_.reset();
+                mqm_.reset();
             }
             
             void put(const std::string& key, const Type& data)
@@ -114,7 +118,7 @@ namespace micros_swarm{
                     p.header.checksum = 0;
                     p.content.buf = bbp_vec;
                     std::vector<uint8_t> msg_data = serialize_ros(p);
-                    rth_->getOutMsgQueue()->pushBbMsgQueue(msg_data);
+                    mqm_->getOutMsgQueue("bb")->push(msg_data);
                 }
             }
             
@@ -156,7 +160,7 @@ namespace micros_swarm{
                     empty_vec.clear();
                     rth_->insertOrUpdateBlackBoard(bb_id_, key, empty_vec, timestamp, -1);
                     std::vector<uint8_t> msg_data = serialize_ros(p);
-                    rth_->getOutMsgQueue()->pushBbMsgQueue(msg_data);
+                    mqm_->getOutMsgQueue("bb")->push(msg_data);
 
                     Type data;
                     BlackBoardTuple bbt;
@@ -192,7 +196,7 @@ namespace micros_swarm{
             int on_robot_id_;
             bool is_local_;
             boost::shared_ptr<RuntimeHandle> rth_;
-            boost::shared_ptr<CommInterface> communicator_;
+            boost::shared_ptr<micros_swarm::MsgQueueManager> mqm_;
     };
 }
 #endif

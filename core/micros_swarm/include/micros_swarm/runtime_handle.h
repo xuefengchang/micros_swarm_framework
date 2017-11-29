@@ -27,10 +27,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <vector>
 #include <map>
 #include <boost/shared_ptr.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/shared_mutex.hpp>
 
 #include "micros_swarm/data_type.h"
 #include "micros_swarm/listener_helper.h"
-#include "micros_swarm/msg_queue_manager.h"
 #include "micros_swarm/check_neighbor.h"
 
 namespace micros_swarm{
@@ -38,7 +39,6 @@ namespace micros_swarm{
     class  RuntimeHandle{
         public:
             RuntimeHandle();
-            RuntimeHandle(int robot_id);
             
             int getRobotID();
             void setRobotID(int robot_id);
@@ -115,8 +115,6 @@ namespace micros_swarm{
             bool getSCDSPSOValue(const std::string& aKey, SCDSPSODataTuple& aT);
             void insertOrUpdateSCDSPSOValue(const std::string& aKey, const SCDSPSODataTuple& aT);
 
-            boost::shared_ptr<MsgQueueManager>& getOutMsgQueue();
-
         private:
             int robot_id_;
             boost::shared_mutex id_mutex_;
@@ -144,7 +142,6 @@ namespace micros_swarm{
             boost::shared_mutex barrier_mutex_;
             std::map<std::string, SCDSPSODataTuple> scds_pso_tuple_;
             boost::shared_mutex scds_pso_tuple_mutex_;
-            boost::shared_ptr<MsgQueueManager> out_msg_queue_;
             boost::shared_ptr<CheckNeighborInterface> cni_;
     };
 };

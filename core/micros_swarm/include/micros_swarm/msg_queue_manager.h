@@ -28,316 +28,42 @@ ARISING IN ANY WAY OUType OF TypeHE USE OF TypeHIS SOFTypeWARE, EVEN IF ADVISED 
 #include "micros_swarm/circular_queue.h"
 
 namespace micros_swarm{
+
+    class MsgQueueManager;
+
+    class OutMsgQueue
+    {
+    public:
+        OutMsgQueue(const std::string& name, int size, MsgQueueManager *manager_ptr);
+        ~OutMsgQueue();
+        bool full();
+        bool empty();
+        int size();
+        const std::vector<uint8_t>& front();
+        void pop();
+        void push(const std::vector<uint8_t>& msg);
+    private:
+        std::string name_;
+        int size_;
+        MsgQueueManager *queue_manager_ptr_;
+        boost::shared_mutex mutex_;
+        boost::shared_ptr<cqueue<std::vector<uint8_t> > > queue_;
+    };
+
     class MsgQueueManager
     {
         public:
-            explicit MsgQueueManager()
-            {
-                base_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(1000));
-                swarm_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(1000));
-                vstig_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(1000));
-                bb_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(1000));
-                nc_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(1000));
-                barrier_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(1000));
-                scds_pso_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(5000));
-            }
-            
-            explicit MsgQueueManager(int num1, int num2, int num3, int num4, int num5)
-            {
-                base_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(num1));
-                swarm_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(num2));
-                vstig_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(num3));
-                bb_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(num4));
-                nc_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(num5));
-                barrier_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(num5));
-                scds_pso_msg_queue_.reset(new cqueue<std::vector<uint8_t> >(5000));
-            }
-
-            //check that whether all the msg queue is empty
-            bool allOutMsgQueueEmpty()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(msg_queue_mutex);
-                if(baseMsgQueueEmpty()&&swarmMsgQueueEmpty()&& vstigMsgQueueEmpty()&&
-                   bbMsgQueueEmpty()&&ncMsgQueueEmpty()&&barrierMsgQueueEmpty())
-                {
-                    return true;
-                }
-                return false;
-            }
-        
-            bool baseMsgQueueFull()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(base_msg_mutex_);
-                return base_msg_queue_->full();
-            }
-    
-            bool baseMsgQueueEmpty()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(base_msg_mutex_);
-                return base_msg_queue_->empty();
-            }
-    
-            const std::vector<uint8_t>& baseMsgQueueFront()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(base_msg_mutex_);
-                return base_msg_queue_->front();
-            }
-    
-            int baseMsgQueueSize()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(base_msg_mutex_);
-                return base_msg_queue_->size();
-            }
-    
-            void popBaseMsgQueue()
-            {
-                boost::unique_lock<boost::shared_mutex> lock(base_msg_mutex_);
-                base_msg_queue_->pop();
-            }
-    
-            void pushBaseMsgQueue(const std::vector<uint8_t>& p)
-            {
-                boost::unique_lock<boost::shared_mutex> lock(base_msg_mutex_);
-                base_msg_queue_->push(p);
-                msg_queue_condition.notify_one();
-            }
-    
-            bool swarmMsgQueueFull()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(swarm_msg_mutex_);
-                return swarm_msg_queue_->full();
-            }
-    
-            bool swarmMsgQueueEmpty()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(swarm_msg_mutex_);
-                return swarm_msg_queue_->empty();
-            }
-    
-            const std::vector<uint8_t>& swarmMsgQueueFront()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(swarm_msg_mutex_);
-                return swarm_msg_queue_->front();
-            }
-    
-            int swarmMsgQueueSize()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(swarm_msg_mutex_);
-                return swarm_msg_queue_->size();
-            }
-    
-            void popSwarmMsgQueue()
-            {
-                boost::unique_lock<boost::shared_mutex> lock(swarm_msg_mutex_);
-                swarm_msg_queue_->pop();
-            }
-    
-            void pushSwarmMsgQueue(const std::vector<uint8_t>& p)
-            {
-                boost::unique_lock<boost::shared_mutex> lock(swarm_msg_mutex_);
-                swarm_msg_queue_->push(p);
-                msg_queue_condition.notify_one();
-            }
-    
-            bool vstigMsgQueueFull()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(vstig_msg_mutex_);
-                return vstig_msg_queue_->full();
-            }
-    
-            bool vstigMsgQueueEmpty()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(vstig_msg_mutex_);
-                return vstig_msg_queue_->empty();
-            }
-    
-            const std::vector<uint8_t>& vstigMsgQueueFront()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(vstig_msg_mutex_);
-                return vstig_msg_queue_->front();
-            }
-    
-            int vstigMsgQueueSize()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(vstig_msg_mutex_);
-                return vstig_msg_queue_->size();
-            }
-    
-            void popVstigMsgQueue()
-            {
-                boost::unique_lock<boost::shared_mutex> lock(vstig_msg_mutex_);
-                vstig_msg_queue_->pop();
-            }
-    
-            void pushVstigMsgQueue(const std::vector<uint8_t>& p)
-            {
-                boost::unique_lock<boost::shared_mutex> lock(vstig_msg_mutex_);
-                vstig_msg_queue_->push(p);
-                msg_queue_condition.notify_one();
-            }
-
-            bool bbMsgQueueFull()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(bb_msg_mutex_);
-                return bb_msg_queue_->full();
-            }
-
-            bool bbMsgQueueEmpty()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(bb_msg_mutex_);
-                return bb_msg_queue_->empty();
-            }
-
-            const std::vector<uint8_t>& bbMsgQueueFront()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(bb_msg_mutex_);
-                return bb_msg_queue_->front();
-            }
-
-            int bbMsgQueueSize()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(bb_msg_mutex_);
-                return bb_msg_queue_->size();
-            }
-
-            void popBbMsgQueue()
-            {
-                boost::unique_lock<boost::shared_mutex> lock(bb_msg_mutex_);
-                bb_msg_queue_->pop();
-            }
-
-            void pushBbMsgQueue(const std::vector<uint8_t>& p)
-            {
-                boost::unique_lock<boost::shared_mutex> lock(bb_msg_mutex_);
-                bb_msg_queue_->push(p);
-                msg_queue_condition.notify_one();
-            }
-    
-            bool ncMsgQueueFull()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(nc_msg_mutex_);
-                return nc_msg_queue_->full();
-            }
-    
-            bool ncMsgQueueEmpty()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(nc_msg_mutex_);
-                return nc_msg_queue_->empty();
-            }
-    
-            const std::vector<uint8_t>& ncMsgQueueFront()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(nc_msg_mutex_);
-                return nc_msg_queue_->front();
-            }
-    
-            int ncMsgQueueSize()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(nc_msg_mutex_);
-                return nc_msg_queue_->size();
-            }
-    
-            void popNcMsgQueue()
-            {
-                boost::unique_lock<boost::shared_mutex> lock(nc_msg_mutex_);
-                nc_msg_queue_->pop();
-            }
-    
-            void pushNcMsgQueue(const std::vector<uint8_t>& p)
-            {
-                boost::unique_lock<boost::shared_mutex> lock(nc_msg_mutex_);
-                nc_msg_queue_->push(p);
-                msg_queue_condition.notify_one();
-            }
-
-            bool barrierMsgQueueFull()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(barrier_msg_mutex_);
-                return barrier_msg_queue_->full();
-            }
-
-            bool barrierMsgQueueEmpty()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(barrier_msg_mutex_);
-                return barrier_msg_queue_->empty();
-            }
-
-            const std::vector<uint8_t>& barrierMsgQueueFront()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(barrier_msg_mutex_);
-                return barrier_msg_queue_->front();
-            }
-
-            int barrierMsgQueueSize()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(barrier_msg_mutex_);
-                return barrier_msg_queue_->size();
-            }
-
-            void popBarrierMsgQueue()
-            {
-                boost::unique_lock<boost::shared_mutex> lock(barrier_msg_mutex_);
-                barrier_msg_queue_->pop();
-            }
-
-            void pushBarrierMsgQueue(const std::vector<uint8_t>& p)
-            {
-                boost::unique_lock<boost::shared_mutex> lock(barrier_msg_mutex_);
-                barrier_msg_queue_->push(p);
-                msg_queue_condition.notify_one();
-            }
-
-            bool SCDSPSOMsgQueueFull()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
-                return scds_pso_msg_queue_->full();
-            }
-
-            bool SCDSPSOMsgQueueEmpty()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
-                return scds_pso_msg_queue_->empty();
-            }
-
-            const std::vector<uint8_t>& SCDSPSOMsgQueueFront()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
-                return scds_pso_msg_queue_->front();
-            }
-
-            int SCDSPSOMsgQueueSize()
-            {
-                boost::shared_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
-                return scds_pso_msg_queue_->size();
-            }
-
-            void popSCDSPSOMsgQueue()
-            {
-                boost::unique_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
-                scds_pso_msg_queue_->pop();
-            }
-
-            void pushSCDSPSOMsgQueue(const std::vector<uint8_t>& p)
-            {
-                boost::unique_lock<boost::shared_mutex> lock(scds_pso_msg_mutex_);
-                scds_pso_msg_queue_->push(p);
-                msg_queue_condition.notify_one();
-            }
+            MsgQueueManager();
+            ~MsgQueueManager();
+            void createOutMsgQueue(std::string name, int size);
+            OutMsgQueue* getOutMsgQueue(std::string name);
+            void spinAllOutMsgQueueOnce(std::vector<std::vector<uint8_t> >& msg_vec);
+            bool allOutMsgQueueEmpty();
             
             boost::shared_mutex msg_queue_mutex;
             boost::condition_variable_any msg_queue_condition;
         private:
-            boost::shared_ptr<cqueue<std::vector<uint8_t> > > base_msg_queue_;
-            boost::shared_ptr<cqueue<std::vector<uint8_t> > > swarm_msg_queue_;
-            boost::shared_ptr<cqueue<std::vector<uint8_t> > > vstig_msg_queue_;
-            boost::shared_ptr<cqueue<std::vector<uint8_t> > > bb_msg_queue_;
-            boost::shared_ptr<cqueue<std::vector<uint8_t> > > nc_msg_queue_;
-            boost::shared_ptr<cqueue<std::vector<uint8_t> > > barrier_msg_queue_;
-            boost::shared_ptr<cqueue<std::vector<uint8_t> > > scds_pso_msg_queue_;
-            
-            boost::shared_mutex base_msg_mutex_, swarm_msg_mutex_,
-                                vstig_msg_mutex_, bb_msg_mutex_,
-                                nc_msg_mutex_, barrier_msg_mutex_, scds_pso_msg_mutex_;
+            std::map<std::string, OutMsgQueue*> queue_map_;
     };
 };
 

@@ -30,7 +30,8 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "micros_swarm_framework_main_node");
     ros::NodeHandle nh;
     
-    RuntimeHandle rth(1);
+    RuntimeHandle rth;
+    rth.setRobotID(1);
     
     Base base(1,1,1,2,2,2);
     rth.setRobotBase(base);

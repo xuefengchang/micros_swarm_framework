@@ -32,6 +32,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/serialize.h"
 #include "micros_swarm/runtime_handle.h"
 #include "micros_swarm/comm_interface.h"
+#include "micros_swarm/msg_queue_manager.h"
 #include "micros_swarm/packet_parser.h"
 #include "micros_swarm/app_manager.h"
 
@@ -45,6 +46,7 @@ namespace micros_swarm{
         boost::shared_ptr<CommInterface> communicator_;
         std::string comm_type_;
         pluginlib::ClassLoader<micros_swarm::CommInterface> ci_loader_;
+        boost::shared_ptr<micros_swarm::MsgQueueManager> msg_queue_manager_;
         boost::shared_ptr<micros_swarm::PacketParser> parser_;
         boost::shared_ptr<AppManager> app_manager_;
 

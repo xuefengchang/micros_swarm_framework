@@ -50,10 +50,10 @@ add_library(runtime_core
   src/runtime_core.cpp
   src/app_manager.cpp
   src/scds_pso.cpp
+  src/msg_queue_manager.cpp
 )
 add_dependencies(runtime_core gsdf_msgs_gencpp)
 add_dependencies(runtime_core ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#add_custom_target(${PROJECT_NAME} DEPENDS gsdf_msgs_gencpp)
 
 target_link_libraries(runtime_core
   ${Boost_THREAD_LIBRARY}

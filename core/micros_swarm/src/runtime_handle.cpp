@@ -35,27 +35,10 @@ namespace micros_swarm{
         blackboard_.clear();
         listener_helpers_.clear();
         listener_helpers_.insert(std::pair<std::string, boost::shared_ptr<ListenerHelper> >("" , NULL));
-        out_msg_queue_.reset(new MsgQueueManager());
         barrier_.clear();
         scds_pso_tuple_.clear();
     }
-    
-    RuntimeHandle::RuntimeHandle(int robot_id)
-    {
-        robot_id_ = robot_id;
-        robot_base_ = Base(0,0,0,0,0,0);
-        neighbors_.clear();
-        swarms_.clear();
-        neighbor_swarms_.clear();
-        virtual_stigmergy_.clear();
-        blackboard_.clear();
-        listener_helpers_.clear();
-        listener_helpers_.insert(std::pair<std::string, boost::shared_ptr<ListenerHelper> >("" , NULL));
-        out_msg_queue_.reset(new MsgQueueManager());
-        barrier_.clear();
-        scds_pso_tuple_.clear();
-    }
-    
+
     int RuntimeHandle::getRobotID()
     {
         boost::shared_lock<boost::shared_mutex> lock(id_mutex_);
@@ -758,7 +741,6 @@ namespace micros_swarm{
         }
         else
             scds_pso_tuple_[aKey]=aT;*/
-
         if(iter != scds_pso_tuple_.end()) {
             boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
             iter->second = aT;
@@ -767,10 +749,5 @@ namespace micros_swarm{
             boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
             scds_pso_tuple_[aKey] = aT;
         }
-    }
-
-    boost::shared_ptr<MsgQueueManager>& RuntimeHandle::getOutMsgQueue()
-    {
-        return out_msg_queue_;
     }
 };

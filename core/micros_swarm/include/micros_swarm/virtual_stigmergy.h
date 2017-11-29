@@ -31,9 +31,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/random.h"
 #include "micros_swarm/singleton.h"
 #include "micros_swarm/runtime_handle.h"
+#include "micros_swarm/msg_queue_manager.h"
 #include "micros_swarm/packet_type.h"
 #include "micros_swarm/serialize.h"
-#include "micros_swarm/comm_interface.h"
+#include "gsdf_msgs/CommPacket.h"
 #include "gsdf_msgs/VirtualStigmergyQuery.h"
 #include "gsdf_msgs/VirtualStigmergyPut.h"
 
@@ -48,7 +49,7 @@ namespace micros_swarm{
             {
                 vstig_id_ = vstig_id;
                 rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                mqm_ = Singleton<MsgQueueManager>::getSingleton();
                 rth_->createVirtualStigmergy(vstig_id_);
                 robot_id_ = rth_->getRobotID();
             }
@@ -56,7 +57,7 @@ namespace micros_swarm{
             VirtualStigmergy(const VirtualStigmergy& vs)
             {
                 rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                mqm_ = Singleton<MsgQueueManager>::getSingleton();
                 vstig_id_ = vs.vstig_id_;
                 robot_id_ = vs.robot_id_;
             }
@@ -67,7 +68,7 @@ namespace micros_swarm{
                     return *this;
                 }
                 rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                mqm_ = Singleton<MsgQueueManager>::getSingleton();
                 vstig_id_ = vs.vstig_id_;
                 robot_id_ = vs.robot_id_;
                 return *this;
@@ -76,7 +77,7 @@ namespace micros_swarm{
             ~VirtualStigmergy()
             {
                 rth_.reset();
-                communicator_.reset();
+                mqm_.reset();
             }
             
             void put(const std::string& key, const Type& data)
@@ -113,7 +114,7 @@ namespace micros_swarm{
                     p.header.checksum = 0;
                     p.content.buf = vsp_vec;
                     std::vector<uint8_t> msg_data = serialize_ros(p);
-                    rth_->getOutMsgQueue()->pushVstigMsgQueue(msg_data);
+                    mqm_->getOutMsgQueue("vstig")->push(msg_data);
                 }
             }
             
@@ -155,7 +156,7 @@ namespace micros_swarm{
                         p.header.checksum = 0;
                         p.content.buf = vsq_vec;
                         std::vector<uint8_t> msg_data = serialize_ros(p);
-                        rth_->getOutMsgQueue()->pushVstigMsgQueue(msg_data);
+                        mqm_->getOutMsgQueue("vstig")->push(msg_data);
                     }
                 }
                 
@@ -175,7 +176,7 @@ namespace micros_swarm{
             int vstig_id_;
             int robot_id_;
             boost::shared_ptr<RuntimeHandle> rth_;
-            boost::shared_ptr<CommInterface> communicator_;
+            boost::shared_ptr<micros_swarm::MsgQueueManager> mqm_;
     };
 }
 #endif

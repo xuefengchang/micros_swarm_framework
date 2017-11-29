@@ -31,7 +31,6 @@ namespace micros_swarm {
         c2_ = 1.49445;
         best_tuple_ = SCDSPSOTuple();
         rth_ = Singleton<RuntimeHandle>::getSingleton();
-        communicator_ = Singleton<CommInterface>::getExistedSingleton();
         robot_id_ = rth_->getRobotID();
         cur_gen_ = 0;
         gen_limit_ = 0;
@@ -44,7 +43,6 @@ namespace micros_swarm {
         c2_ = 1.49445;
         best_tuple_ = SCDSPSOTuple();
         rth_ = Singleton<RuntimeHandle>::getSingleton();
-        communicator_ = Singleton<CommInterface>::getExistedSingleton();
         robot_id_ = rth_->getRobotID();
         cur_gen_ = 0;
         gen_limit_ = 0;
@@ -53,7 +51,6 @@ namespace micros_swarm {
     Agent::~Agent()
     {
         rth_.reset();
-        communicator_.reset();
     }
 
     void Agent::set_param(float w, float c1, float c2)
@@ -201,8 +198,9 @@ namespace micros_swarm {
 
     void Agent::loop(const ros::TimerEvent &)
     {
-        if(!run_)
+        if(!run_) {
             return;
+        }
 
         cur_gen_++;
         //srand(time(NULL));

@@ -28,12 +28,14 @@ namespace micros_swarm{
     {
         rth_ = Singleton<RuntimeHandle>::getSingleton();
         cni_.reset(new CheckNeighbor(rth_->getNeighborDistance()));
+        mqm_ = Singleton<MsgQueueManager>::getSingleton();
     }
 
     PacketParser::~PacketParser()
     {
         rth_.reset();
         cni_.reset();
+        mqm_.reset();
     }
 
     void PacketParser::parse(const std::vector<uint8_t>& data)
@@ -124,7 +126,7 @@ namespace micros_swarm{
                             p.header.checksum = 0;
                             p.content.buf = vsp_new_vec;
                             std::vector<uint8_t> msg_data = serialize_ros(p);
-                            rth_->getOutMsgQueue()->pushVstigMsgQueue(msg_data);
+                            mqm_->getOutMsgQueue("vstig")->push(msg_data);
                         }
                     }
                     else if(local.lamport_clock > vsq.lamport_clock) {  //local timestamp is larger
@@ -144,7 +146,7 @@ namespace micros_swarm{
                         p.header.checksum = 0;
                         p.content.buf = vsp_vec;
                         std::vector<uint8_t> msg_data = serialize_ros(p);
-                        rth_->getOutMsgQueue()->pushVstigMsgQueue(msg_data);
+                        mqm_->getOutMsgQueue("vstig")->push(msg_data);
                     }
                     else if((local.lamport_clock == vsq.lamport_clock) && (local.robot_id != vsq.robot_id)) {
                         //std::cout<<"query conflict"<<std::endl;
@@ -185,7 +187,7 @@ namespace micros_swarm{
                             p.header.checksum = 0;
                             p.content.buf = vsp_new_vec;
                             std::vector<uint8_t> msg_data = serialize_ros(p);
-                            rth_->getOutMsgQueue()->pushVstigMsgQueue(msg_data);
+                            mqm_->getOutMsgQueue("vstig")->push(msg_data);
                         }
                     }
                     else if((local.lamport_clock==vsp.lamport_clock)&&(local.robot_id!=vsp.robot_id)) {
@@ -246,7 +248,7 @@ namespace micros_swarm{
                         p.header.checksum = 0;
                         p.content.buf = bbqa_vec;
                         std::vector<uint8_t> msg_data = serialize_ros(p);
-                        rth_->getOutMsgQueue()->pushBbMsgQueue(msg_data);
+                        mqm_->getOutMsgQueue("bb")->push(msg_data);
                     }
                     else{
 
@@ -296,7 +298,7 @@ namespace micros_swarm{
                         p.header.checksum = 0;
                         p.content.buf = packet_data;
                         std::vector<uint8_t> msg_data = serialize_ros(p);
-                        rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(msg_data);
+                        mqm_->getOutMsgQueue("scds_pso")->push(msg_data);
                     }
 
                     break;
@@ -326,7 +328,7 @@ namespace micros_swarm{
                         p.header.checksum = 0;
                         p.content.buf = packet_data;
                         std::vector<uint8_t> msg_data = serialize_ros(p);
-                        rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(msg_data);
+                        mqm_->getOutMsgQueue("scds_pso")->push(msg_data);
                     }
                     else if(local.val > scds_get.val) {
                         gsdf_msgs::SCDSPSOPut scds_put;
@@ -346,7 +348,7 @@ namespace micros_swarm{
                         p.header.checksum = 0;
                         p.content.buf = scds_put_vec;
                         std::vector<uint8_t> msg_data = serialize_ros(p);
-                        rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(msg_data);
+                        mqm_->getOutMsgQueue("scds_pso")->push(msg_data);
                     }
                     else {
 
@@ -386,7 +388,7 @@ namespace micros_swarm{
                     p.header.checksum = 0;
                     p.content.buf = ba_vec;
                     std::vector<uint8_t> msg_data = serialize_ros(p);
-                    rth_->getOutMsgQueue()->pushBarrierMsgQueue(msg_data);
+                    mqm_->getOutMsgQueue("barrier")->push(msg_data);
                     break;
                 }
                 case BARRIER_ACK: {

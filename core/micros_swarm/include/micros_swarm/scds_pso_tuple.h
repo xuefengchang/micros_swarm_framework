@@ -33,7 +33,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/packet_type.h"
 #include "micros_swarm/serialize.h"
 #include "micros_swarm/runtime_handle.h"
-#include "micros_swarm/comm_interface.h"
+#include "micros_swarm/msg_queue_manager.h"
+#include "gsdf_msgs/CommPacket.h"
 #include "gsdf_msgs/SCDSPSOGet.h"
 #include "gsdf_msgs/SCDSPSOPut.h"
 
@@ -41,18 +42,16 @@ namespace micros_swarm{
 
     class SCDSPSOTuple{
         public:
-            //SCDSPSOTuple(){}
-
             SCDSPSOTuple()
             {
                 rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                mqm_ = Singleton<MsgQueueManager>::getSingleton();
             }
 
             SCDSPSOTuple(const SCDSPSOTuple& t)
             {
                 rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                mqm_ = Singleton<MsgQueueManager>::getSingleton();
             }
 
             SCDSPSOTuple& operator=(const SCDSPSOTuple& t)
@@ -61,14 +60,14 @@ namespace micros_swarm{
                     return *this;
                 }
                 rth_ = Singleton<RuntimeHandle>::getSingleton();
-                communicator_ = Singleton<CommInterface>::getExistedSingleton();
+                mqm_ = Singleton<MsgQueueManager>::getSingleton();
                 return *this;
             }
             
             ~SCDSPSOTuple()
             {
                 rth_.reset();
-                communicator_.reset();
+                mqm_.reset();
             }
             
             void put(const std::string& key, const SCDSPSODataTuple& data)
@@ -92,7 +91,7 @@ namespace micros_swarm{
                 p.header.checksum = 0;
                 p.content.buf = scds_put_vec;
                 std::vector<uint8_t> msg_data = serialize_ros(p);
-                rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(msg_data);
+                mqm_->getOutMsgQueue("scds_pso")->push(msg_data);
             }
 
             SCDSPSODataTuple get(const std::string& key)
@@ -120,13 +119,13 @@ namespace micros_swarm{
                 p.header.checksum = 0;
                 p.content.buf = scds_get_vec;
                 std::vector<uint8_t> msg_data = serialize_ros(p);
-                rth_->getOutMsgQueue()->pushSCDSPSOMsgQueue(msg_data);
+                mqm_->getOutMsgQueue("scds_pso")->push(msg_data);
                 
                 return data;  
             }
         private:
             boost::shared_ptr<RuntimeHandle> rth_;
-            boost::shared_ptr<CommInterface> communicator_;
+            boost::shared_ptr<MsgQueueManager> mqm_;
     };
 }
 #endif
