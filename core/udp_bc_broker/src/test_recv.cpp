@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      ros_broker.h
+\file      recv.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,31 +20,24 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef ROS_BROKER_H_
-#define ROS_BROKER_H_
+#include "udp_bc_broker/recv.h"
 
-#include <iostream>
-#include <ros/ros.h>
-#include <pluginlib/class_list_macros.h>
+using namespace std;
 
-#include "micros_swarm/comm_interface.h"
-#include "ros_broker/GSDFPacket.h"
+void callback(const vector<uint8_t>& msg)
+{
+    for(int i = 0; i < msg.size(); i++) {
+        std::cout<<(char)msg[i];
+    }
+    std::cout<<std::endl;
+}
 
-namespace ros_broker{
-    
-    class ROSBroker : public micros_swarm::CommInterface {
-        public:
-            ROSBroker();
-            void init(std::string name, const micros_swarm::PacketParser& parser);
-            void broadcast(const std::vector<uint8_t>& msg_data);
-            void receive();
-        private:
-            void callback(const GSDFPacket& ros_msg);
-            std::string name_;
-            micros_swarm::PacketParser parser_;
-            ros::NodeHandle node_handle_;
-            ros::Publisher packet_publisher_;
-            ros::Subscriber packet_subscriber_;
-    };
-};
-#endif
+int main()
+{
+    udp_bc_broker::UdpRecver recver(12321);
+    recver.receive(callback);
+
+    while(true) {
+        sleep (1);
+    }
+}

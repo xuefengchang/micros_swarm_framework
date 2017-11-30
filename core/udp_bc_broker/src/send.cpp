@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      ros_broker.h
+\file      send.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,31 +20,51 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef ROS_BROKER_H_
-#define ROS_BROKER_H_
+#include "udp_bc_broker/send.h"
 
-#include <iostream>
-#include <ros/ros.h>
-#include <pluginlib/class_list_macros.h>
+using namespace std;
 
-#include "micros_swarm/comm_interface.h"
-#include "ros_broker/GSDFPacket.h"
+namespace udp_bc_broker{
 
-namespace ros_broker{
-    
-    class ROSBroker : public micros_swarm::CommInterface {
-        public:
-            ROSBroker();
-            void init(std::string name, const micros_swarm::PacketParser& parser);
-            void broadcast(const std::vector<uint8_t>& msg_data);
-            void receive();
-        private:
-            void callback(const GSDFPacket& ros_msg);
-            std::string name_;
-            micros_swarm::PacketParser parser_;
-            ros::NodeHandle node_handle_;
-            ros::Publisher packet_publisher_;
-            ros::Subscriber packet_subscriber_;
+    UdpSender::UdpSender(int port)
+    {
+        setvbuf(stdout, NULL, _IONBF, 0);
+        fflush(stdout);
+
+        sock = -1;
+        if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+            cout<<"socket is error!"<<endl;
+            exit(-1);
+        }
+
+        const int opt = 1;
+        int nb = 0;
+        nb = setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (char *)&opt, sizeof(opt));
+        if(nb == -1) {
+            cout<<"set socket error!"<<endl;
+            exit(-1);
+        }
+
+        bzero(&addrto, sizeof(struct sockaddr_in));
+        addrto.sin_family = AF_INET;
+        addrto.sin_addr.s_addr = htonl(INADDR_BROADCAST);
+        addrto.sin_port = htons(port);
+        nlen = sizeof(addrto);
     };
+
+    void UdpSender::send(const char* msg, int len)
+    {
+        int ret = sendto(sock, msg, len, 0, (sockaddr*)&addrto, nlen);
+        if(ret < 0) {
+            cout<<"send error, ret = "<<ret<<endl;
+        }
+        else {
+            /*cout<<"send msg len: "<<len<<", data: ";
+
+            for(int i = 0; i < ret; i++) {
+                std::cout<<(int)msg[i];
+            }
+            std::cout<<endl;*/
+        }
+    }
 };
-#endif

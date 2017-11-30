@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      ros_broker.h
+\file      recv.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,31 +20,43 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef ROS_BROKER_H_
-#define ROS_BROKER_H_
+#ifndef UDP_BC_BROKER_RECV_H_
+#define UDP_BC_BROKER_RECV_H_
 
 #include <iostream>
-#include <ros/ros.h>
-#include <pluginlib/class_list_macros.h>
+#include <stdio.h>
+#include <vector>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <string.h>
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+#include <boost/thread.hpp>
 
-#include "micros_swarm/comm_interface.h"
-#include "ros_broker/GSDFPacket.h"
+using namespace std;
 
-namespace ros_broker{
-    
-    class ROSBroker : public micros_swarm::CommInterface {
+namespace udp_bc_broker{
+
+    class UdpRecver {
         public:
-            ROSBroker();
-            void init(std::string name, const micros_swarm::PacketParser& parser);
-            void broadcast(const std::vector<uint8_t>& msg_data);
-            void receive();
+            UdpRecver(int port);
+            ~UdpRecver();
+            void receive(boost::function<void(const vector<uint8_t>&)> callBack);
         private:
-            void callback(const GSDFPacket& ros_msg);
-            std::string name_;
-            micros_swarm::PacketParser parser_;
-            ros::NodeHandle node_handle_;
-            ros::Publisher packet_publisher_;
-            ros::Subscriber packet_subscriber_;
+            void process_msg();
+            boost::function<void(const vector<uint8_t>&)> callback;
+            int sock;
+            struct sockaddr_in addrto;
+            struct sockaddr_in from;
+            int nlen;
+            int len;
+            char *buf;
+            boost::thread* process_thread_;
     };
 };
+
 #endif

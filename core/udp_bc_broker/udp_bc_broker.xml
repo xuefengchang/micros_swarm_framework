@@ -1,0 +1,5 @@
+<library path="lib/libUDPBCBroker">
+    <class name="udp_bc_broker/UDPBCBroker" type="udp_bc_broker::UDPBCBroker" base_class_type="micros_swarm::CommInterface">
+        <description>Udp bc broker plugin.</description>
+    </class>
+</library>

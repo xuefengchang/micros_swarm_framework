@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      testvstig.cpp 
+\file      udp_bc_broker.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,62 +20,47 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "testvstig/testvstig.h"
+#include <iostream>
+#include <ros/ros.h>
 
-// Register the application
-PLUGINLIB_EXPORT_CLASS(testvstig::TestVstig, micros_swarm::Application)
+#include "udp_bc_broker/udp_bc_broker.h"
 
-namespace testvstig{
+PLUGINLIB_EXPORT_CLASS(udp_bc_broker::UDPBCBroker, micros_swarm::CommInterface)
 
-    TestVstig::TestVstig()
+namespace udp_bc_broker{
+
+    UDPBCBroker::UDPBCBroker()
     {
-    }
-    
-    TestVstig::~TestVstig()
-    {
-    }
-    
-    void TestVstig::loop(const ros::TimerEvent&)
-    {
-        std::string robot_id_string = "robot_"+boost::lexical_cast<std::string>(robot_id());
-        //static int count=0;
-        //vs.put(robot_id_string, robot_id()+count);
-        //count++;
-        std_msgs::Int32 val = vs.get(robot_id_string);
-        std::cout<<robot_id_string<<": "<<vs.size()<<", "<<val.data<<std::endl;
-
-
-        //if(robot_id() == 6) {
-        //    vs.print();
-        //}
+        rth_ = micros_swarm::Singleton<micros_swarm::RuntimeHandle>::getSingleton();
+        int port = 12321;
+        sender_.reset(new UdpSender(port));
+        recver_.reset(new UdpRecver(port));
     }
 
-    void TestVstig::baseCallback(const nav_msgs::Odometry& lmsg)
+    void UDPBCBroker::init(std::string name, const micros_swarm::PacketParser& parser)
     {
-        float x=lmsg.pose.pose.position.x;
-        float y=lmsg.pose.pose.position.y;
-
-        float vx=lmsg.twist.twist.linear.x;
-        float vy=lmsg.twist.twist.linear.y;
-
-        micros_swarm::Base l(x, y, 0, vx, vy, 0);
-        set_base(l);
-        //std::cout<<"<<<"<<x<<", "<<y<<">>>"<<std::endl;
+        name_ = name;
+        parser_ = parser;
     }
-    
-    void TestVstig::start()
+            
+    void UDPBCBroker::broadcast(const std::vector<uint8_t>& msg_data)
     {
-        ros::NodeHandle nh;
-        sub = nh.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
-        ros::Duration(1).sleep();
-        set_neighbor_distance(11);
-        //test virtual stigmergy
-        vs=micros_swarm::VirtualStigmergy<std_msgs::Int32>(1);
-        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
-        std_msgs::Int32 val;
-        val.data = robot_id();
-        vs.put(robot_id_string, val);
-        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop, this);
+        int len = msg_data.size();
+        char *data = new char[len];
+        for(int i = 0; i < len; i++) {
+            *(data + i) = (char)(msg_data[i]);
+        }
+        sender_->send(data, len);
+    }
+            
+    void UDPBCBroker::callback(const std::vector<uint8_t>& msg_vec)
+    {
+        parser_.parse(msg_vec);
+    }
+
+    void UDPBCBroker::receive()
+    {
+        boost::function<void(const std::vector<uint8_t>&)> func = boost::bind(&UDPBCBroker::callback, this, _1);
+        recver_->receive(func);
     }
 };
-

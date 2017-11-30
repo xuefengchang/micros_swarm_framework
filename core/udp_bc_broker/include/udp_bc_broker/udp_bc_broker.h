@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      ros_broker.h
+\file      udp_bc_broker.h
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,8 +20,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef ROS_BROKER_H_
-#define ROS_BROKER_H_
+#ifndef UDP_BC_BROKER_H_
+#define UDP_BC_BROKER_H_
 
 #include <iostream>
 #include <ros/ros.h>
@@ -30,21 +30,27 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "micros_swarm/comm_interface.h"
 #include "ros_broker/GSDFPacket.h"
 
-namespace ros_broker{
+#include "micros_swarm/singleton.h"
+#include "micros_swarm/runtime_handle.h"
+
+#include "udp_bc_broker/send.h"
+#include "udp_bc_broker/recv.h"
+
+namespace udp_bc_broker{
     
-    class ROSBroker : public micros_swarm::CommInterface {
+    class UDPBCBroker : public micros_swarm::CommInterface{
         public:
-            ROSBroker();
+            UDPBCBroker();
             void init(std::string name, const micros_swarm::PacketParser& parser);
             void broadcast(const std::vector<uint8_t>& msg_data);
             void receive();
         private:
-            void callback(const GSDFPacket& ros_msg);
+            void callback(const std::vector<uint8_t>& msg_vec);
             std::string name_;
             micros_swarm::PacketParser parser_;
-            ros::NodeHandle node_handle_;
-            ros::Publisher packet_publisher_;
-            ros::Subscriber packet_subscriber_;
+            boost::shared_ptr<UdpSender> sender_;
+            boost::shared_ptr<UdpRecver> recver_;
+            boost::shared_ptr<micros_swarm::RuntimeHandle> rth_;
     };
 };
 #endif
