@@ -33,14 +33,12 @@ namespace app1{
         float y;
     };
 
-    App1::App1()
-    {
-    }
+    App1::App1() {}
     
-    App1::~App1()
-    {
-    }
-    
+    App1::~App1() {}
+
+    void App1::stop() {}
+
     void App1::init()
     {
         //set parameters
@@ -55,7 +53,7 @@ namespace app1{
 
     XY App1::force_sum(micros_swarm::NeighborBase n, XY &s)
     {
-        micros_swarm::Base l = base();
+        micros_swarm::Base l = get_base();
         float xl = l.x;
         float yl = l.y;
     

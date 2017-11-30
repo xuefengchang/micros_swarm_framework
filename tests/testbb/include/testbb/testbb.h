@@ -45,7 +45,9 @@ namespace testbb{
             
             TestBb();
             ~TestBb();
-            virtual void start(); 
+            virtual void init();
+            virtual void start();
+            virtual void stop();
     };
 };
 

@@ -163,13 +163,11 @@ PLUGINLIB_EXPORT_CLASS(olfati_saber_flocking::OlfatiSaberFlocking, micros_swarm:
 
 namespace olfati_saber_flocking{
 
-    OlfatiSaberFlocking::OlfatiSaberFlocking()
-    {
-    }
+    OlfatiSaberFlocking::OlfatiSaberFlocking() {}
 
-    OlfatiSaberFlocking::~OlfatiSaberFlocking()
-    {
-    }
+    OlfatiSaberFlocking::~OlfatiSaberFlocking() {}
+
+    void OlfatiSaberFlocking::stop() {}
 
     void OlfatiSaberFlocking::init()
     {
@@ -190,7 +188,7 @@ namespace olfati_saber_flocking{
             neighbor_list.push_back(nh);
         }
 
-        micros_swarm::Base nl=base();
+        micros_swarm::Base nl = get_base();
 
         my_position=pair<double,double>(nl.x, nl.y);
         my_velocity=pair<double,double>(nl.vx, nl.vy);
@@ -229,7 +227,7 @@ namespace olfati_saber_flocking{
         init();
 
         ros::NodeHandle nh;
-        set_neighbor_distance(12);
+        set_dis(12);
         pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         sub = nh.subscribe("base_pose_ground_truth", 1000, &OlfatiSaberFlocking::baseCallback, this, ros::TransportHints().udp());
         ros::Duration(5).sleep();  //this is necessary, in order that the runtime platform kernel of the robot has enough time to publish it's base information.

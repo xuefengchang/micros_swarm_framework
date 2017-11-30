@@ -48,7 +48,9 @@ namespace testscdspso{
 
             TestSCDSPSO();
             ~TestSCDSPSO();
-            virtual void start(); 
+            virtual void init();
+            virtual void start();
+            virtual void stop();
     };
 };
 

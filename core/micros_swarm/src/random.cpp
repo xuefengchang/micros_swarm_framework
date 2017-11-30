@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      check_neighbor.h
+\file      random.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,28 +20,35 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CHECK_NEIGHBOR_H_
-#define CHECK_NEIGHBOR_H_
-
-#include <iostream>
-#include "micros_swarm/data_type.h"
+#include "micros_swarm/random.h"
 
 namespace micros_swarm{
-    
-    class CheckNeighborInterface{
-        public:
-            virtual float getNeighborDistance() = 0;
-            virtual bool isNeighbor(const Base& self, const Base& neighbor) = 0;
-    };
-    
-    class CheckNeighbor : public CheckNeighborInterface{
-        public:
-            CheckNeighbor(const float& neighbor_distance);
-            float getNeighborDistance();
-            bool isNeighbor(const Base& self, const Base& neighbor);
-        private:
-            const float& neighbor_distance_;
-    };
-};
 
-#endif
+    int random_int(int min, int max)
+    {
+        srand((unsigned)time(NULL));
+        return (rand() % (max - min + 1)) + min;
+    }
+
+    int random_int(int min, int max, int seed)
+    {
+        srand(seed);
+        return (rand() % (max - min + 1)) + min;
+    }
+
+    float random_float(float min, float max, unsigned int seed)
+    {
+        srand(seed);
+        float tmp_rand = rand() / float(RAND_MAX);
+        return min + max * tmp_rand;
+    }
+
+    /*int test(void)
+    {
+        for (int i = 0; i < 15; i++) {
+            std::cout<<random_int(0, 15, time(NULL)) << " ";
+        }
+        std::cout<<std::endl;
+        return 0;
+    }*/
+};

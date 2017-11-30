@@ -42,87 +42,12 @@ namespace micros_swarm{
 
     class SCDSPSOTuple{
         public:
-            SCDSPSOTuple()
-            {
-                rth_ = Singleton<RuntimeHandle>::getSingleton();
-                mqm_ = Singleton<MsgQueueManager>::getSingleton();
-            }
-
-            SCDSPSOTuple(const SCDSPSOTuple& t)
-            {
-                rth_ = Singleton<RuntimeHandle>::getSingleton();
-                mqm_ = Singleton<MsgQueueManager>::getSingleton();
-            }
-
-            SCDSPSOTuple& operator=(const SCDSPSOTuple& t)
-            {
-                if(this == &t) {
-                    return *this;
-                }
-                rth_ = Singleton<RuntimeHandle>::getSingleton();
-                mqm_ = Singleton<MsgQueueManager>::getSingleton();
-                return *this;
-            }
-            
-            ~SCDSPSOTuple()
-            {
-                rth_.reset();
-                mqm_.reset();
-            }
-            
-            void put(const std::string& key, const SCDSPSODataTuple& data)
-            {
-                rth_->insertOrUpdateSCDSPSOValue(key, data);
-
-                gsdf_msgs::SCDSPSOPut scds_put;
-                scds_put.key = key;
-                scds_put.pos = data.pos;
-                scds_put.val = data.val;
-                scds_put.robot_id = data.robot_id;
-                scds_put.gen = data.gen;
-                scds_put.timestamp = data.timestamp;
-                std::vector<uint8_t> scds_put_vec = serialize_ros(scds_put);
-
-                gsdf_msgs::CommPacket p;
-                p.header.source = rth_->getRobotID();
-                p.header.type = SCDS_PSO_PUT;
-                p.header.data_len = scds_put_vec.size();
-                p.header.version = 1;
-                p.header.checksum = 0;
-                p.content.buf = scds_put_vec;
-                std::vector<uint8_t> msg_data = serialize_ros(p);
-                mqm_->getOutMsgQueue("scds_pso")->push(msg_data);
-            }
-
-            SCDSPSODataTuple get(const std::string& key)
-            {
-                SCDSPSODataTuple data;
-                if (!rth_->getSCDSPSOValue(key, data)) {
-                    std::cout<<"scds pso tuple, "<<key<<" is not exist."<<std::endl;
-                    exit(-1);
-                }
-
-                gsdf_msgs::SCDSPSOGet scds_get;
-                scds_get.key = key;
-                scds_get.pos = data.pos;
-                scds_get.val = data.val;
-                scds_get.robot_id = data.robot_id;
-                scds_get.gen = data.gen;
-                scds_get.timestamp = data.timestamp;
-                std::vector<uint8_t> scds_get_vec = serialize_ros(scds_get);
-
-                gsdf_msgs::CommPacket p;
-                p.header.source = rth_->getRobotID();
-                p.header.type = SCDS_PSO_GET;
-                p.header.data_len = scds_get_vec.size();
-                p.header.version = 1;
-                p.header.checksum = 0;
-                p.content.buf = scds_get_vec;
-                std::vector<uint8_t> msg_data = serialize_ros(p);
-                mqm_->getOutMsgQueue("scds_pso")->push(msg_data);
-                
-                return data;  
-            }
+            SCDSPSOTuple();
+            SCDSPSOTuple(const SCDSPSOTuple& t);
+            SCDSPSOTuple& operator=(const SCDSPSOTuple& t);
+            ~SCDSPSOTuple();
+            void put(const std::string& key, const SCDSPSODataTuple& data);
+            SCDSPSODataTuple get(const std::string& key);
         private:
             boost::shared_ptr<RuntimeHandle> rth_;
             boost::shared_ptr<MsgQueueManager> mqm_;

@@ -51,10 +51,11 @@ namespace gazebo_flocking{
 
             GazeboFlocking();
             ~GazeboFlocking();
+            virtual void init();
             virtual void start();
+            virtual void stop();
             
             //app functions
-            void init();
             void publish_cmd(const ros::TimerEvent&);
             void baseCallback(const nav_msgs::Odometry& lmsg);  
     };

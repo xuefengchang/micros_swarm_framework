@@ -29,13 +29,13 @@ PLUGINLIB_EXPORT_CLASS(testscdspso::TestSCDSPSO, micros_swarm::Application)
 
 namespace testscdspso{
 
-    TestSCDSPSO::TestSCDSPSO()
-    {
-    }
+    TestSCDSPSO::TestSCDSPSO() {}
 
-    TestSCDSPSO::~TestSCDSPSO()
-    {
-    }
+    TestSCDSPSO::~TestSCDSPSO() {}
+
+    void TestSCDSPSO::init() {}
+
+    void TestSCDSPSO::stop() {}
     
     void TestSCDSPSO::loop(const ros::TimerEvent&)
     {
@@ -43,11 +43,11 @@ namespace testscdspso{
         if(i<50)
             i++;
         micros_swarm::SCDSPSODataTuple data;
-        data.val = robot_id()+i;
+        data.val = get_id() + i;
         tuple.put("test_scds_pso", data);
 
         micros_swarm::SCDSPSODataTuple best = tuple.get("test_scds_pso");
-        std::cout<<"robot: "<<robot_id()<<", best: "<<best.val<<std::endl;
+        std::cout<<"robot: "<<get_id()<<", best: "<<best.val<<std::endl;
     }
 
     void TestSCDSPSO::baseCallback(const nav_msgs::Odometry& lmsg)

@@ -27,17 +27,17 @@ PLUGINLIB_EXPORT_CLASS(testvstig::TestVstig, micros_swarm::Application)
 
 namespace testvstig{
 
-    TestVstig::TestVstig()
-    {
-    }
+    TestVstig::TestVstig() {}
     
-    TestVstig::~TestVstig()
-    {
-    }
+    TestVstig::~TestVstig() {}
+
+    void TestVstig::init() {}
+
+    void TestVstig::stop() {}
     
     void TestVstig::loop(const ros::TimerEvent&)
     {
-        std::string robot_id_string = "robot_"+boost::lexical_cast<std::string>(robot_id());
+        std::string robot_id_string = "robot_"+boost::lexical_cast<std::string>(get_id());
         //static int count=0;
         //vs.put(robot_id_string, robot_id()+count);
         //count++;
@@ -68,12 +68,12 @@ namespace testvstig{
         ros::NodeHandle nh;
         sub = nh.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
         ros::Duration(1).sleep();
-        set_neighbor_distance(11);
+        set_dis(11);
         //test virtual stigmergy
         vs=micros_swarm::VirtualStigmergy<std_msgs::Int32>(1);
-        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
+        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
         std_msgs::Int32 val;
-        val.data = robot_id();
+        val.data = get_id();
         vs.put(robot_id_string, val);
         timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop, this);
     }

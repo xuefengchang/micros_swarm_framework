@@ -49,10 +49,11 @@ namespace app2{
             
             App2();
             ~App2();
+            virtual void init();
             virtual void start();
+            virtual void stop();
             
             //app functions
-            void init();
             float force_mag_kin(float dist);
             float force_mag_nonkin(float dist);
             XY force_sum_kin(micros_swarm::NeighborBase n, XY &s);

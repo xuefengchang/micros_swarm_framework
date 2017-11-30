@@ -39,14 +39,11 @@ namespace app2{
         float y;
     };
 
-    App2::App2()
-    {
-        
-    }
+    App2::App2() {}
     
-    App2::~App2()
-    {
-    }
+    App2::~App2() {}
+
+    void App2::stop() {}
     
     void App2::init()
     {
@@ -70,7 +67,7 @@ namespace app2{
 
     XY App2::force_sum_kin(micros_swarm::NeighborBase n, XY &s)
     {
-        micros_swarm::Base l = base();
+        micros_swarm::Base l = get_base();
         float xl = l.x;
         float yl = l.y;
     
@@ -94,7 +91,7 @@ namespace app2{
 
     XY App2::force_sum_nonkin(micros_swarm::NeighborBase n, XY &s)
     {
-        micros_swarm::Base l = base();
+        micros_swarm::Base l = get_base();
         float xl = l.x;
         float yl = l.y;
     
@@ -214,8 +211,8 @@ namespace app2{
         pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         sub = nh.subscribe("base_pose_ground_truth", 1000, &App2::baseCallback, this, ros::TransportHints().udp());
         
-        boost::function<bool()> bfred = boost::bind(&App2::red, this, robot_id());
-        boost::function<bool()> bfblue = boost::bind(&App2::blue, this, robot_id());
+        boost::function<bool()> bfred = boost::bind(&App2::red, this, get_id());
+        boost::function<bool()> bfblue = boost::bind(&App2::blue, this, get_id());
     
         micros_swarm::Swarm red_swarm(RED_SWARM);
         red_swarm.select(bfred);

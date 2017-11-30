@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      check_neighbor.h
+\file      check_neighbor.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,28 +20,25 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CHECK_NEIGHBOR_H_
-#define CHECK_NEIGHBOR_H_
-
-#include <iostream>
-#include "micros_swarm/data_type.h"
+#include "micros_swarm/check_neighbor.h"
 
 namespace micros_swarm{
-    
-    class CheckNeighborInterface{
-        public:
-            virtual float getNeighborDistance() = 0;
-            virtual bool isNeighbor(const Base& self, const Base& neighbor) = 0;
-    };
-    
-    class CheckNeighbor : public CheckNeighborInterface{
-        public:
-            CheckNeighbor(const float& neighbor_distance);
-            float getNeighborDistance();
-            bool isNeighbor(const Base& self, const Base& neighbor);
-        private:
-            const float& neighbor_distance_;
-    };
-};
 
-#endif
+    CheckNeighbor::CheckNeighbor(const float& neighbor_distance):neighbor_distance_(neighbor_distance) {}
+
+    float CheckNeighbor::getNeighborDistance()
+    {
+        return neighbor_distance_;
+    }
+
+    bool CheckNeighbor::isNeighbor(const Base& self, const Base& neighbor)
+    {
+        float distance = sqrt((self.x-neighbor.x)*(self.x-neighbor.x)+(self.y-neighbor.y)*(self.y-neighbor.y)+
+                              (self.z-neighbor.z)*(self.z-neighbor.z));
+
+        if(distance < (neighbor_distance_))
+            return true;
+
+        return false;
+    }
+};

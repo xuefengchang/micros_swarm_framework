@@ -27,13 +27,13 @@ PLUGINLIB_EXPORT_CLASS(testnc::TestNC, micros_swarm::Application)
 
 namespace testnc{
 
-    TestNC::TestNC()
-    {
-    }
+    TestNC::TestNC() {}
     
-    TestNC::~TestNC()
-    {
-    }
+    TestNC::~TestNC() {}
+
+    void TestNC::init() {}
+
+    void TestNC::stop() {}
     
     void TestNC::callback(const std_msgs::Float32& value)
     {

@@ -38,7 +38,9 @@ namespace testnc{
             TestNC();
             ~TestNC();
             void callback(const std_msgs::Float32& value);
-            virtual void start(); 
+            virtual void init();
+            virtual void start();
+            virtual void stop();
     };
 };
 

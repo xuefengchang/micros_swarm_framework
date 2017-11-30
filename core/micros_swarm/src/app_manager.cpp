@@ -89,6 +89,7 @@ namespace micros_swarm{
             std::vector<AppInstance*>::iterator app_it;
             for(app_it = apps_.begin(); app_it != apps_.end(); app_it++) {
                 if(!(*app_it)->running_) {
+                    (*app_it)->app_ptr_->init();
                     (*app_it)->app_ptr_->start();
                     (*app_it)->running_ = true;
                 }
@@ -154,6 +155,7 @@ namespace micros_swarm{
             int worker_id = it->second;
             AppInstance *instance = worker_table_[worker_id]->getAppInstance(it->first);
             if(instance != NULL) {
+                instance->app_ptr_->stop();
                 instance->app_ptr_.reset();
                 std::string app_type = instance->app_type_;
                 worker_table_[worker_id]->removeApp(it->first);

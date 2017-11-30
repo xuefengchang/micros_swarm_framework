@@ -27,20 +27,20 @@ PLUGINLIB_EXPORT_CLASS(testbb::TestBb, micros_swarm::Application)
 
 namespace testbb{
 
-    TestBb::TestBb()
-    {
-    }
+    TestBb::TestBb() {}
 
-    TestBb::~TestBb()
-    {
-    }
+    TestBb::~TestBb() {}
+
+    void TestBb::init() {}
+
+    void TestBb::stop() {}
     
     void TestBb::loop(const ros::TimerEvent&)
     {   
         static int count=0;
-        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
+        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
         std_msgs::Int32 val;
-        val.data = robot_id()+count;
+        val.data = get_id()+count;
         bb.put(robot_id_string, val);
         count++;
         //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());

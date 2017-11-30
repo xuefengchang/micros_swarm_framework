@@ -46,10 +46,11 @@ namespace app1{
             
             App1();
             ~App1();
+            virtual void init();
             virtual void start();
+            virtual void stop();
             
             //app functions
-            void init();
             float force_mag(float dist);
             XY force_sum(micros_swarm::NeighborBase n, XY &s);
             XY direction();

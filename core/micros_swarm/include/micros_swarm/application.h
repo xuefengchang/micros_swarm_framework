@@ -35,47 +35,20 @@ namespace micros_swarm{
     class Application
     {
     public:
-        Application()
-        {
-            rth = Singleton<RuntimeHandle>::getSingleton();
-        }
-
-        virtual ~Application()
-        {
-            rth.reset();
-        }
-
+        Application();
+        virtual ~Application();
         //application api
-        const int robot_id()
-        {
-            return rth->getRobotID();
-        }
-
-        const Base& base()
-        {
-            return rth->getRobotBase();
-        }
-
-        void set_base(const Base& robot_base)
-        {
-            rth->setRobotBase(robot_base);
-        }
-
-        float neighbor_distance()
-        {
-            return rth->getNeighborDistance();
-        }
-
-        void set_neighbor_distance(float neighbor_distance)
-        {
-            rth->setNeighborDistance(neighbor_distance);
-        }
-
-        void init();
-        //entry function
+        const int get_id();
+        const Base& get_base();
+        void set_base(const Base& robot_base);
+        float get_dis();
+        void set_dis(float neighbor_distance);
+        //init
+        virtual void init() = 0;
+        //entry
         virtual void start() = 0;
-        void pause();
-        void stop();
+        //stop
+        virtual void stop() = 0;
     private:
         boost::shared_ptr<RuntimeHandle> rth;
     };

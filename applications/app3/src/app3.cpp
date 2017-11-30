@@ -163,13 +163,11 @@ PLUGINLIB_EXPORT_CLASS(app3::App3, micros_swarm::Application)
 
 namespace app3{
 
-    App3::App3()
-    {
-    }
+    App3::App3() {}
     
-    App3::~App3()
-    {
-    }
+    App3::~App3() {}
+
+    void App3::stop(){}
     
     void App3::init()
     {
@@ -189,7 +187,7 @@ namespace app3{
             neighbor_list.push_back(nh);
         }
 
-        micros_swarm::Base nl = base();
+        micros_swarm::Base nl = get_base();
 
         my_position=pair<double,double>(nl.x, nl.y);
         my_velocity=pair<double,double>(nl.vx, nl.vy);
@@ -231,7 +229,7 @@ namespace app3{
         init();
 
         ros::NodeHandle nh;
-        set_neighbor_distance(12);
+        set_dis(12);
         pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         sub = nh.subscribe("base_pose_ground_truth", 1000, &App3::baseCallback, this, ros::TransportHints().udp());
         ros::Duration(5).sleep();  //this is necessary, in order that the runtime platform kernel of the robot has enough time to publish it's base information.

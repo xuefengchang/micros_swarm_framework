@@ -45,7 +45,9 @@ namespace testvstig{
 
         TestVstig();
             ~TestVstig();
-            virtual void start(); 
+            virtual void init();
+            virtual void start();
+            virtual void stop();
     };
 };
 

@@ -31,33 +31,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 namespace micros_swarm{
 
-    int random_int(int min, int max)
-    {
-        srand((unsigned)time(NULL));
-        return (rand() % (max - min + 1)) + min;
-    }
-
-    int random_int(int min, int max, int seed = 0)
-    {
-        srand(seed);
-        return (rand() % (max - min + 1)) + min;
-    }
-
-    float random_float(float min, float max, unsigned int seed = 0)
-    {
-        srand(seed);
-        float tmp_rand = rand() / float(RAND_MAX);
-        return min + max * tmp_rand;
-    }
-
-    int test(void)
-    {
-        for (int i = 0; i < 15; i++) {
-            std::cout<<random_int(0, 15, time(NULL)) << " ";
-        }
-        std::cout<<std::endl;
-        return 0;
-    }
+    int random_int(int min, int max);
+    int random_int(int min, int max, int seed);
+    float random_float(float min, float max, unsigned int seed);
 };
 
 #endif

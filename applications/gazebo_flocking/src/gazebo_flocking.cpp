@@ -168,13 +168,11 @@ PLUGINLIB_EXPORT_CLASS(gazebo_flocking::GazeboFlocking, micros_swarm::Applicatio
 
 namespace gazebo_flocking{
 
-    GazeboFlocking::GazeboFlocking()
-    {
-    }
+    GazeboFlocking::GazeboFlocking() {}
 
-    GazeboFlocking::~GazeboFlocking()
-    {
-    }
+    GazeboFlocking::~GazeboFlocking() {}
+
+    void GazeboFlocking::stop() {}
 
     void GazeboFlocking::init()
     {
@@ -262,7 +260,7 @@ namespace gazebo_flocking{
             neighbor_list.push_back(nh);
         }
 
-        micros_swarm::Base nl=base();
+        micros_swarm::Base nl = get_base();
 
         my_position=pair<double,double>(nl.x, nl.y);
         my_velocity=pair<double,double>(nl.vx, nl.vy);
@@ -328,7 +326,7 @@ namespace gazebo_flocking{
         init();
 
         ros::NodeHandle nh;
-        set_neighbor_distance(12);
+        set_dis(12);
         pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         ros::Rate loop_rate(10);
         for(int i = 0; i < 7*10; i++) {

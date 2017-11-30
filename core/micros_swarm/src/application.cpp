@@ -1,6 +1,6 @@
 /**
 Software License Agreement (BSD)
-\file      check_neighbor.h
+\file      application.cpp
 \authors Xuefeng Chang <changxuefengcn@163.com>
 \copyright Copyright (c) 2016, the micROS Team, HPCL (National University of Defense Technology), All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -20,28 +20,43 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CHECK_NEIGHBOR_H_
-#define CHECK_NEIGHBOR_H_
-
-#include <iostream>
-#include "micros_swarm/data_type.h"
+#include "micros_swarm/application.h"
 
 namespace micros_swarm{
-    
-    class CheckNeighborInterface{
-        public:
-            virtual float getNeighborDistance() = 0;
-            virtual bool isNeighbor(const Base& self, const Base& neighbor) = 0;
-    };
-    
-    class CheckNeighbor : public CheckNeighborInterface{
-        public:
-            CheckNeighbor(const float& neighbor_distance);
-            float getNeighborDistance();
-            bool isNeighbor(const Base& self, const Base& neighbor);
-        private:
-            const float& neighbor_distance_;
-    };
-};
 
-#endif
+    Application::Application()
+    {
+        rth = Singleton<RuntimeHandle>::getSingleton();
+    }
+
+    Application::~Application()
+    {
+        rth.reset();
+    }
+
+    //application api
+    const int Application::get_id()
+    {
+        return rth->getRobotID();
+    }
+
+    const Base& Application::get_base()
+    {
+        return rth->getRobotBase();
+    }
+
+    void Application::set_base(const Base& robot_base)
+    {
+        rth->setRobotBase(robot_base);
+    }
+
+    float Application::get_dis()
+    {
+        return rth->getNeighborDistance();
+    }
+
+    void Application::set_dis(float neighbor_distance)
+    {
+        rth->setNeighborDistance(neighbor_distance);
+    }
+};
