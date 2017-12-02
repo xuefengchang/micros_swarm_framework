@@ -280,7 +280,7 @@ namespace micros_swarm{
                     SCDSPSODataTuple local;
                     bool exist = rth_->getSCDSPSOValue(scds_put.key, local);
 
-                    //local tuple is not exist or local timestamp is smaller
+                    //local tuple is not exist or local value is smaller
                     if ((!exist) || (local.val < scds_put.val)) {
                         SCDSPSODataTuple new_data;
                         new_data.pos = scds_put.pos;
@@ -310,7 +310,7 @@ namespace micros_swarm{
                     SCDSPSODataTuple local;
                     bool exist = rth_->getSCDSPSOValue(scds_get.key, local);
 
-                    //local tuple is not exist or local timestamp is smaller
+                    //local tuple is not exist or local value is smaller
                     if ((!exist) || (local.val < scds_get.val)) {
                         SCDSPSODataTuple new_data;
                         new_data.pos = scds_get.pos;

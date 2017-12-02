@@ -66,47 +66,42 @@ namespace testscdspso{
     {
         float x = vec[0];
         float y = vec[1];
-        float fitness = sin(sqrt(x*x+y*y))/(sqrt(x*x+y*y)) + exp((cos(2*PI*x)+cos(2*PI*y))/2) - 2.71289;
+        float fitness = -(20+x*x+y*y-10*cos(2*PI*x)-10*cos(2*PI*y));
         return fitness;
     }
     
     void TestSCDSPSO::start()
     {
-        /*ros::NodeHandle nh;
-        sub = nh.subscribe("base_pose_ground_truth", 1000, &TestSCDSPSO::baseCallback, this, ros::TransportHints().udp());
-        tuple = micros_swarm::SCDSPSOTuple();
-        timer = nh.createTimer(ros::Duration(0.1), &TestSCDSPSO::loop, this);*/
-
         agent.set_param(1, 1.49445, 1.49445);
         agent.set_dim(2);
         agent.set_fitness(boost::bind(&TestSCDSPSO::fitness, this, _1));
 
         std::vector<float> max_pos;
         max_pos.resize(2);
-        max_pos[0] = 2;
-        max_pos[1] = 2;
+        max_pos[0] = 5.12;
+        max_pos[1] = 5.12;
         agent.set_max_pos(max_pos);
 
         std::vector<float> min_pos;
         min_pos.resize(2);
-        min_pos[0] = -2;
-        min_pos[1] = -2;
+        min_pos[0] = -5.12;
+        min_pos[1] = -5.12;
         agent.set_min_pos(min_pos);
 
         std::vector<float> max_vel;
         max_vel.resize(2);
-        max_vel[0] = 0.5;
-        max_vel[1] = 0.5;
+        max_vel[0] = 0.2;
+        max_vel[1] = 0.2;
         agent.set_max_vel(max_vel);
 
         std::vector<float> min_vel;
         min_vel.resize(2);
-        min_vel[0] = -0.5;
-        min_vel[1] = -0.5;
+        min_vel[0] = -0.2;
+        min_vel[1] = -0.2;
         agent.set_min_vel(min_vel);
 
         agent.rand_init();
-        agent.start(300);
+        agent.start(1000);
     }
 };
 
