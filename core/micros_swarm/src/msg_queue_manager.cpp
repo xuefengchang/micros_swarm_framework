@@ -110,9 +110,17 @@ namespace micros_swarm{
         for(it = queue_map_.begin(); it != queue_map_.end(); it++) {
             std::string name = it->first;
             OutMsgQueue *msg_queue = getOutMsgQueue(name);
-            if(!msg_queue->empty()) {
-                msg_vec.push_back(msg_queue->front());
-                msg_queue->pop();
+            if(name == "scds_pso") {
+                for(int i = 0; i < msg_queue->size(); i++) {
+                    msg_vec.push_back(msg_queue->front());
+                    msg_queue->pop();
+                }
+            }
+            else {
+                if (!msg_queue->empty()) {
+                    msg_vec.push_back(msg_queue->front());
+                    msg_queue->pop();
+                }
             }
         }
         while(allOutMsgQueueEmpty()) {

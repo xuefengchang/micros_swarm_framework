@@ -24,6 +24,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define SCDS_PSO_H_
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <set>
 #include <boost/function.hpp>
@@ -81,6 +82,8 @@ namespace micros_swarm{
 
             ros::NodeHandle nh_;
             ros::Timer timer_;
+
+            std::ofstream file;
     };
 };
 

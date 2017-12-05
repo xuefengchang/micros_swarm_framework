@@ -2,7 +2,7 @@
     <!--set runtime core parameters-->
     <param name="publish_robot_id_duration" type="double" value="0.1"/>
     <param name="publish_swarm_list_duration" type="double" value="5.0"/>
-    <param name="default_neighbor_distance" type="double" value="50"/>
+    <param name="default_neighbor_distance" type="double" value="40"/>
     <param name="total_robot_numbers" type="int" value="20"/>
     
     <!--comm type-->

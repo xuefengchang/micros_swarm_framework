@@ -1,14 +1,14 @@
 include "swarm.inc"
 include "turtlebot_intruder.inc"
 
-define floorplan model
+define floorplan model 
 (
   # sombre, sensible, artistic
   color "gray30"
-
-  # most maps will need a bounding box
+  
+  # most maps will need a bounding box 
   boundary 1
-
+  
   gui_nose 0
   gui_grid 0
   gui_outline 0
@@ -38,7 +38,6 @@ floorplan
   pose [ 20.0 20.0 0.0 0.0]
 )
 
-
 define block model
 (
 size [0.5 7 0.5]
@@ -65,4 +64,3 @@ swarm( pose [ 18.0 22.0 0 0 ] name "era17" color "red")
 swarm( pose [ 20.0 22.0 0 0 ] name "era18" color "red")
 swarm( pose [ 22.0 22.0 0 0 ] name "era19" color "red")
 swarm( pose [ 24.0 22.0 0 0 ] name "era20" color "red")
-

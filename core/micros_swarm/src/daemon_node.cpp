@@ -21,6 +21,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 */
 
 #include <signal.h>
+#include <time.h>
 #include "micros_swarm/runtime_core.h"
 
 boost::shared_ptr<micros_swarm::RuntimeCore> rtp_core_;

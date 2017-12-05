@@ -290,15 +290,17 @@ namespace micros_swarm{
                         new_data.timestamp = scds_put.timestamp;
                         rth_->insertOrUpdateSCDSPSOValue(scds_put.key, new_data);
 
-                        gsdf_msgs::CommPacket p;
-                        p.header.source = shm_rid;
-                        p.header.type = SCDS_PSO_PUT;
-                        p.header.data_len = packet_data.size();
-                        p.header.version = 1;
-                        p.header.checksum = 0;
-                        p.content.buf = packet_data;
-                        std::vector<uint8_t> msg_data = serialize_ros(p);
-                        mqm_->getOutMsgQueue("scds_pso")->push(msg_data);
+                        if(!rth_->checkNeighborsOverlap(packet_source)) {
+                            gsdf_msgs::CommPacket p;
+                            p.header.source = shm_rid;
+                            p.header.type = SCDS_PSO_PUT;
+                            p.header.data_len = packet_data.size();
+                            p.header.version = 1;
+                            p.header.checksum = 0;
+                            p.content.buf = packet_data;
+                            std::vector <uint8_t> msg_data = serialize_ros(p);
+                            mqm_->getOutMsgQueue("scds_pso")->push(msg_data);
+                        }
                     }
 
                     break;
@@ -320,15 +322,17 @@ namespace micros_swarm{
                         new_data.timestamp = scds_get.timestamp;
                         rth_->insertOrUpdateSCDSPSOValue(scds_get.key, new_data);
 
-                        gsdf_msgs::CommPacket p;
-                        p.header.source = shm_rid;
-                        p.header.type = SCDS_PSO_PUT;
-                        p.header.data_len = packet_data.size();
-                        p.header.version = 1;
-                        p.header.checksum = 0;
-                        p.content.buf = packet_data;
-                        std::vector<uint8_t> msg_data = serialize_ros(p);
-                        mqm_->getOutMsgQueue("scds_pso")->push(msg_data);
+                        if(!rth_->checkNeighborsOverlap(packet_source)) {
+                            gsdf_msgs::CommPacket p;
+                            p.header.source = shm_rid;
+                            p.header.type = SCDS_PSO_PUT;
+                            p.header.data_len = packet_data.size();
+                            p.header.version = 1;
+                            p.header.checksum = 0;
+                            p.content.buf = packet_data;
+                            std::vector <uint8_t> msg_data = serialize_ros(p);
+                            mqm_->getOutMsgQueue("scds_pso")->push(msg_data);
+                        }
                     }
                     else if(local.val > scds_get.val) {
                         gsdf_msgs::SCDSPSOPut scds_put;

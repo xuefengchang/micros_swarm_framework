@@ -26,19 +26,11 @@ namespace micros_swarm{
 
     int random_int(int min, int max)
     {
-        srand((unsigned)time(NULL));
         return (rand() % (max - min + 1)) + min;
     }
 
-    int random_int(int min, int max, int seed)
+    float random_float(float min, float max)
     {
-        srand(seed);
-        return (rand() % (max - min + 1)) + min;
-    }
-
-    float random_float(float min, float max, unsigned int seed)
-    {
-        srand(seed);
         float tmp_rand = rand() / float(RAND_MAX);
         return min + max * tmp_rand;
     }

@@ -90,18 +90,18 @@ namespace testscdspso{
 
         std::vector<float> max_vel;
         max_vel.resize(2);
-        max_vel[0] = 0.2;
-        max_vel[1] = 0.2;
+        max_vel[0] = 1;
+        max_vel[1] = 1;
         agent.set_max_vel(max_vel);
 
         std::vector<float> min_vel;
         min_vel.resize(2);
-        min_vel[0] = -0.2;
-        min_vel[1] = -0.2;
+        min_vel[0] = -1;
+        min_vel[1] = -1;
         agent.set_min_vel(min_vel);
 
         agent.rand_init();
-        agent.start(1000);
+        agent.start(1500);
     }
 };
 

@@ -51,7 +51,7 @@ namespace app2{
         delta_kin = 5;
         epsilon_kin = 100;
 
-        delta_nonkin = 30;
+        delta_nonkin = 25;
         epsilon_nonkin = 1000;
     }
     
@@ -208,6 +208,7 @@ namespace app2{
         init();
 
         ros::NodeHandle nh;
+        set_dis(40);
         pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         sub = nh.subscribe("base_pose_ground_truth", 1000, &App2::baseCallback, this, ros::TransportHints().udp());
         

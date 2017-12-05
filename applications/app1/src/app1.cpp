@@ -122,6 +122,7 @@ namespace app1{
         init();
 
         ros::NodeHandle nh;
+        set_dis(8);
         pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         sub = nh.subscribe("base_pose_ground_truth", 1000, &App1::baseCallback, this, ros::TransportHints().udp());
         
