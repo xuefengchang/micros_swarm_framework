@@ -129,6 +129,7 @@ namespace micros_swarm{
                     exit(-1);
                 }
 
+                srand(time(NULL));
                 std::vector<uint8_t> data_vec = vst.vstig_value;
                 Type data = deserialize_ros<Type>(data_vec);
 
@@ -190,7 +191,7 @@ namespace micros_swarm{
                     vsps.robot_id = robot_id_;
                     int neighbor_size = rth_->getNeighborSize();
                     if(neighbor_size < 3) {
-                        vsps.prob = 1;
+                        vsps.prob = 1.0;
                     }
                     else {
                         vsps.prob = 2.0/neighbor_size;

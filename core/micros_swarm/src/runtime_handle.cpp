@@ -27,7 +27,7 @@ namespace micros_swarm{
     RuntimeHandle::RuntimeHandle()
     {
         robot_id_ = 0;
-        robot_base_ = Base(0,0,0,0,0,0);
+        robot_base_ = Base(0,0,0,0,0,0,-1);
         neighbors_.clear();
         swarms_.clear();
         neighbor_swarms_.clear();
@@ -502,6 +502,7 @@ namespace micros_swarm{
             std::cout<<"["<<vst_it->first<<":"<<std::endl;
             std::map<std::string, VirtualStigmergyTuple>* svstt_pointer = &(vst_it->second);
             for (svstt_it = svstt_pointer->begin(); svstt_it != svstt_pointer->end(); svstt_it++) {
+                std::cout<<svstt_it->first<<" ";
                 /*std::cout<<"("<<svstt_it->first<<",  "<< \
                     svstt_it->second.vstig_value<<",  "<<svstt_it->second.lamport_clock<<",  "<<\
                     svstt_it->second.write_timestamp<<",  "<<svstt_it->second.read_count<<",  "<<\
@@ -520,13 +521,13 @@ namespace micros_swarm{
             if(!getNeighborBase(robot_id, nb)) {
                 return false;
             }
-            Base msg_src_neighbor(nb.x, nb.y, nb.z, nb.vx, nb.vy, nb.vz);
+            Base msg_src_neighbor(nb.x, nb.y, nb.z, nb.vx, nb.vy, nb.vz, 1);
             std::map<int, NeighborBase>::iterator it = neighbors_.begin();
             for(it = neighbors_.begin(); it != neighbors_.end(); it++) {
                 if(it->first == robot_id) {
                     continue;
                 }
-                Base neighbor(it->second.x, it->second.y, it->second.z, it->second.vx, it->second.vy, it->second.vz);
+                Base neighbor(it->second.x, it->second.y, it->second.z, it->second.vx, it->second.vy, it->second.vz, 1);
                 if(!cni_->isNeighbor(msg_src_neighbor, neighbor)) {
                     return false;
                 }

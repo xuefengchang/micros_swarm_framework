@@ -1,0 +1,64 @@
+<launch>
+    <group ns="robot_0">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node0" output="screen">
+            <param name="app_name" type="string" value="testvstig"/>
+            <param name="app_type" type="string" value="testvstig/TestVstig"/>
+        </node>
+    </group>
+    <group ns="robot_1">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node1" output="screen">
+            <param name="app_name" type="string" value="testvstig"/>
+            <param name="app_type" type="string" value="testvstig/TestVstig"/>
+        </node>
+    </group>
+    <group ns="robot_2">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node2" output="screen">
+            <param name="app_name" type="string" value="testvstig"/>
+            <param name="app_type" type="string" value="testvstig/TestVstig"/>
+        </node>
+    </group>
+    <group ns="robot_3">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node3" output="screen">
+            <param name="app_name" type="string" value="testvstig"/>
+            <param name="app_type" type="string" value="testvstig/TestVstig"/>
+        </node>
+    </group>
+    <group ns="robot_4">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node4" output="screen">
+            <param name="app_name" type="string" value="testvstig"/>
+            <param name="app_type" type="string" value="testvstig/TestVstig"/>
+        </node>
+    </group>
+    
+    <group ns="robot_5">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node5" output="screen">
+            <param name="app_name" type="string" value="testvstig"/>
+            <param name="app_type" type="string" value="testvstig/TestVstig"/>
+        </node>
+    </group>
+    <group ns="robot_6">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node6" output="screen">
+            <param name="app_name" type="string" value="testvstig"/>
+            <param name="app_type" type="string" value="testvstig/TestVstig"/>
+        </node>
+    </group>
+    <group ns="robot_7">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node7" output="screen">
+            <param name="app_name" type="string" value="testvstig"/>
+            <param name="app_type" type="string" value="testvstig/TestVstig"/>
+        </node>
+    </group>
+    <group ns="robot_8">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node8" output="screen">
+            <param name="app_name" type="string" value="testvstig"/>
+            <param name="app_type" type="string" value="testvstig/TestVstig"/>
+        </node>
+    </group>
+    <group ns="robot_9">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node9" output="screen">
+            <param name="app_name" type="string" value="testvstig"/>
+            <param name="app_type" type="string" value="testvstig/TestVstig"/>
+        </node>
+    </group>
+</launch>
+

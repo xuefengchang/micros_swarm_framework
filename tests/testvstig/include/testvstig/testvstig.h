@@ -40,7 +40,8 @@ namespace testvstig{
             ros::Subscriber sub;
             
             micros_swarm::VirtualStigmergy<std_msgs::Int32> vs;
-            void loop(const ros::TimerEvent&);
+            void loop_write(const ros::TimerEvent&);
+            void loop_read(const ros::TimerEvent&);
             void baseCallback(const nav_msgs::Odometry& lmsg);
 
         TestVstig();

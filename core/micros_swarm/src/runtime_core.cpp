@@ -185,11 +185,11 @@ namespace micros_swarm{
         msg_queue_manager_ = Singleton<MsgQueueManager>::getSingleton();
         msg_queue_manager_->createOutMsgQueue("base", 1000);
         msg_queue_manager_->createOutMsgQueue("swarm", 1000);
-        msg_queue_manager_->createOutMsgQueue("vstig", 1000);
-        msg_queue_manager_->createOutMsgQueue("bb", 1000);
-        msg_queue_manager_->createOutMsgQueue("nc", 1000);
-        msg_queue_manager_->createOutMsgQueue("barrier", 1000);
-        msg_queue_manager_->createOutMsgQueue("scds_pso", 5000);
+        msg_queue_manager_->createOutMsgQueue("vstig", 50000);
+        msg_queue_manager_->createOutMsgQueue("bb", 10000);
+        msg_queue_manager_->createOutMsgQueue("nc", 10000);
+        msg_queue_manager_->createOutMsgQueue("barrier", 10000);
+        msg_queue_manager_->createOutMsgQueue("scds_pso", 10000);
         //construct app manager
         app_manager_ = Singleton<AppManager>::getSingleton(worker_num_);
         //construct timers

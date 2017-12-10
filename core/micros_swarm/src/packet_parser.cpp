@@ -57,12 +57,12 @@ namespace micros_swarm{
                 case SINGLE_ROBOT_BROADCAST_BASE: {
                     gsdf_msgs::RobotBase rb = deserialize_ros<gsdf_msgs::RobotBase>(packet_data);
                 
-                    if(rb.valid != 1) {  //ignore the default Base value.
-                        return;
-                    }
+                    //if(rb.valid != 1) {  //ignore the default Base value.
+                    //    return;
+                    //}
                 
                     const Base& self = rth_->getRobotBase();
-                    Base neighbor(rb.px, rb.py, rb.pz, rb.vx, rb.vy, rb.vz);
+                    Base neighbor(rb.px, rb.py, rb.pz, rb.vx, rb.vy, rb.vz, rb.valid);
                 
                     if(cni_->isNeighbor(self, neighbor)) {
                         rth_->insertOrUpdateNeighbor(rb.id, 0, 0, 0, rb.px, rb.py, rb.pz, rb.vx, rb.vy, rb.vz);
@@ -74,24 +74,36 @@ namespace micros_swarm{
                     break;
                 }
                 case SINGLE_ROBOT_JOIN_SWARM: {
+                    if(!rth_->inNeighbors(packet_source)){
+                        return;
+                    }
                     gsdf_msgs::JoinSwarm srjs = deserialize_ros<gsdf_msgs::JoinSwarm>(packet_data);
                     rth_->joinNeighborSwarm(srjs.robot_id, srjs.swarm_id);
                 
                     break;
                 }
                 case SINGLE_ROBOT_LEAVE_SWARM: {
+                    if(!rth_->inNeighbors(packet_source)){
+                        return;
+                    }
                     gsdf_msgs::LeaveSwarm srls = deserialize_ros<gsdf_msgs::LeaveSwarm>(packet_data);
                     rth_->leaveNeighborSwarm(srls.robot_id, srls.swarm_id);
                 
                     break;
                 }
                 case SINGLE_ROBOT_SWARM_LIST: {
+                    if(!rth_->inNeighbors(packet_source)){
+                        return;
+                    }
                     gsdf_msgs::SwarmList srsl = deserialize_ros<gsdf_msgs::SwarmList>(packet_data);
                     rth_->insertOrRefreshNeighborSwarm(srsl.robot_id, srsl.swarm_list);
                 
                     break;
                 }
                 case VIRTUAL_STIGMERGY_QUERY: {
+                    if(!rth_->inNeighbors(packet_source)){
+                        return;
+                    }
                     gsdf_msgs::VirtualStigmergyQuery vsq = deserialize_ros<gsdf_msgs::VirtualStigmergyQuery>(packet_data);
                     VirtualStigmergyTuple local;
                     bool exist = rth_->getVirtualStigmergyTuple(vsq.vstig_id, vsq.key, local);
@@ -150,6 +162,9 @@ namespace micros_swarm{
                     break;
                 }
                 case VIRTUAL_STIGMERGY_PUT: {
+                    if(!rth_->inNeighbors(packet_source)){
+                        return;
+                    }
                     gsdf_msgs::VirtualStigmergyPut vsp = deserialize_ros<gsdf_msgs::VirtualStigmergyPut>(packet_data);
                 
                     VirtualStigmergyTuple local;
@@ -190,6 +205,10 @@ namespace micros_swarm{
                     break;
                 }
                 case VIRTUAL_STIGMERGY_PUTS: {
+                    if(!rth_->inNeighbors(packet_source)){
+                        return;
+                    }
+                    srand(time(NULL));
                     gsdf_msgs::VirtualStigmergyPuts vsps = deserialize_ros<gsdf_msgs::VirtualStigmergyPuts>(packet_data);
 
                     bool process_msg = false;
@@ -228,6 +247,13 @@ namespace micros_swarm{
                             vsps_new.value = vsps.value;
                             vsps_new.lamport_clock = vsps.lamport_clock;
                             vsps_new.robot_id = vsps.robot_id;
+                            int neighbor_size = rth_->getNeighborSize();
+                            if(neighbor_size < 3) {
+                                vsps_new.prob = 1;
+                            }
+                            else {
+                                vsps_new.prob = 2.0/neighbor_size;
+                            }
                             std::vector<uint8_t> vsps_new_vec = serialize_ros(vsps_new);
 
                             gsdf_msgs::CommPacket p;
@@ -251,6 +277,9 @@ namespace micros_swarm{
                     break;
                 }
                 case BLACKBOARD_PUT: {
+                    if(!rth_->inNeighbors(packet_source)){
+                        return;
+                    }
                     gsdf_msgs::BlackBoardPut bbp = deserialize_ros<gsdf_msgs::BlackBoardPut>(packet_data);
                     int robot_id = rth_->getRobotID();
                     std::string bb_key = bbp.key;
@@ -271,6 +300,9 @@ namespace micros_swarm{
                     break;
                 }
                 case BLACKBOARD_QUERY: {
+                    if(!rth_->inNeighbors(packet_source)){
+                        return;
+                    }
                     gsdf_msgs::BlackBoardQuery bbq = deserialize_ros<gsdf_msgs::BlackBoardQuery>(packet_data);
                     int robot_id = rth_->getRobotID();
                     std::string bb_key = bbq.key;
@@ -304,6 +336,9 @@ namespace micros_swarm{
                     break;
                 }
                 case BLACKBOARD_QUERY_ACK: {
+                    if(!rth_->inNeighbors(packet_source)){
+                        return;
+                    }
                     gsdf_msgs::BlackBoardAck bba = deserialize_ros<gsdf_msgs::BlackBoardAck>(packet_data);
                     int robot_id = rth_->getRobotID();
                     std::string bb_key = bba.key;
@@ -319,6 +354,9 @@ namespace micros_swarm{
                     break;
                 }
                 case SCDS_PSO_PUT: {
+                    if(!rth_->inNeighbors(packet_source)){
+                        return;
+                    }
                     gsdf_msgs::SCDSPSOPut scds_put = deserialize_ros<gsdf_msgs::SCDSPSOPut>(packet_data);
                     SCDSPSODataTuple local;
                     bool exist = rth_->getSCDSPSOValue(scds_put.key, local);
@@ -349,6 +387,9 @@ namespace micros_swarm{
                     break;
                 }
                 case SCDS_PSO_GET: {
+                    if(!rth_->inNeighbors(packet_source)){
+                        return;
+                    }
                     gsdf_msgs::SCDSPSOGet scds_get = deserialize_ros<gsdf_msgs::SCDSPSOGet>(packet_data);
                     SCDSPSODataTuple local;
                     bool exist = rth_->getSCDSPSOValue(scds_get.key, local);
@@ -402,6 +443,9 @@ namespace micros_swarm{
                     break;
                 }
                 case NEIGHBOR_BROADCAST_KEY_VALUE: {
+                    if(!rth_->inNeighbors(packet_source)){
+                        return;
+                    }
                     gsdf_msgs::NeighborBroadcastKeyValue nbkv = deserialize_ros<gsdf_msgs::NeighborBroadcastKeyValue>(packet_data);
                     boost::shared_ptr<ListenerHelper> helper = rth_->getListenerHelper(nbkv.key);
                     if(helper == NULL) {

@@ -33,7 +33,7 @@ int main(int argc, char** argv)
     RuntimeHandle rth;
     rth.setRobotID(1);
     
-    Base base(1,1,1,2,2,2);
+    Base base(1,1,1,2,2,2,1);
     rth.setRobotBase(base);
     rth.printRobotBase();
     std::cout<<std::endl;

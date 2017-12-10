@@ -35,21 +35,23 @@ namespace testvstig{
 
     void TestVstig::stop() {}
     
-    void TestVstig::loop(const ros::TimerEvent&)
+    void TestVstig::loop_write(const ros::TimerEvent&)
     {
         std::string robot_id_string = "robot_"+boost::lexical_cast<std::string>(get_id());
-        static int count = 0;
+        static int count = 1;
         std_msgs::Int32 pval;
         pval.data = get_id() + count;
         vs.puts(robot_id_string, pval);
         count++;
+        std::cout<<robot_id_string<<": "<<vs.size()<<std::endl;
+        //vs.print();
+    }
+
+    void TestVstig::loop_read(const ros::TimerEvent&)
+    {
+        std::string robot_id_string = "robot_"+boost::lexical_cast<std::string>(get_id());
         std_msgs::Int32 gval = vs.get(robot_id_string);
         std::cout<<robot_id_string<<": "<<vs.size()<<", "<<gval.data<<std::endl;
-
-
-        //if(robot_id() == 6) {
-        //    vs.print();
-        //}
     }
 
     void TestVstig::baseCallback(const nav_msgs::Odometry& lmsg)
@@ -60,7 +62,7 @@ namespace testvstig{
         float vx=lmsg.twist.twist.linear.x;
         float vy=lmsg.twist.twist.linear.y;
 
-        micros_swarm::Base l(x, y, 0, vx, vy, 0);
+        micros_swarm::Base l(x, y, 0, vx, vy, 0, 1);
         set_base(l);
         //std::cout<<"<<<"<<x<<", "<<y<<">>>"<<std::endl;
     }
@@ -70,14 +72,15 @@ namespace testvstig{
         ros::NodeHandle nh;
         sub = nh.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
         ros::Duration(1).sleep();
-        set_dis(11);
+        //set_dis(10);
         //test virtual stigmergy
         vs=micros_swarm::VirtualStigmergy<std_msgs::Int32>(1);
-        /*std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
+        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
         std_msgs::Int32 val;
         val.data = get_id();
-        vs.put(robot_id_string, val);*/
-        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop, this);
+        vs.puts(robot_id_string, val);
+        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_write, this);
+        //timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_read, this);
     }
 };
 

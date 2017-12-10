@@ -113,7 +113,7 @@ namespace app1{
         float vx = lmsg.twist.twist.linear.x;
         float vy = lmsg.twist.twist.linear.y;
     
-        micros_swarm::Base l(x, y, 0, vx, vy, 0);
+        micros_swarm::Base l(x, y, 0, vx, vy, 0, 1);
         set_base(l);
     }
     
