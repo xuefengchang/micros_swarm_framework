@@ -55,6 +55,7 @@ namespace micros_swarm{
             
             void getNeighbors(std::map<int, NeighborBase>& neighbors);
             std::map<int, NeighborBase> getNeighbors();
+            int getNeighborSize();
             bool getNeighborBase(int robot_id, NeighborBase& nb);
             void clearNeighbors();
             void insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz);

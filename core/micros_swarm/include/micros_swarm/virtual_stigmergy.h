@@ -37,6 +37,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "gsdf_msgs/CommPacket.h"
 #include "gsdf_msgs/VirtualStigmergyQuery.h"
 #include "gsdf_msgs/VirtualStigmergyPut.h"
+#include "gsdf_msgs/VirtualStigmergyPuts.h"
 
 namespace micros_swarm{
     
@@ -161,6 +162,68 @@ namespace micros_swarm{
                 }
                 
                 return data;  
+            }
+
+            void puts(const std::string& key, const Type& data)
+            {
+                std::vector<uint8_t> s = serialize_ros(data);
+
+                if(rth_->isVirtualStigmergyTupleExist(vstig_id_, key)) {
+                    VirtualStigmergyTuple vst;
+                    bool success = rth_->getVirtualStigmergyTuple(vstig_id_, key, vst);
+                    if(success) {
+                        rth_->insertOrUpdateVirtualStigmergy(vstig_id_, key, s, vst.lamport_clock + 1, time(NULL), 0, robot_id_);
+                    }
+                }
+                else {
+                    rth_->insertOrUpdateVirtualStigmergy(vstig_id_, key, s, 1, time(NULL), 0, robot_id_);
+                }
+
+                VirtualStigmergyTuple local;
+                bool success = rth_->getVirtualStigmergyTuple(vstig_id_, key, local);
+                if(success) {
+                    gsdf_msgs::VirtualStigmergyPuts vsps;
+                    vsps.vstig_id = vstig_id_;
+                    vsps.key = key;
+                    vsps.value = local.vstig_value;
+                    vsps.lamport_clock = local.lamport_clock;
+                    vsps.robot_id = robot_id_;
+                    int neighbor_size = rth_->getNeighborSize();
+                    if(neighbor_size < 3) {
+                        vsps.prob = 1;
+                    }
+                    else {
+                        vsps.prob = 2.0/neighbor_size;
+                    }
+
+                    std::vector<uint8_t> vsps_vec = serialize_ros(vsps);
+
+                    gsdf_msgs::CommPacket p;
+                    p.header.source = rth_->getRobotID();
+                    p.header.type = VIRTUAL_STIGMERGY_PUTS;
+                    p.header.data_len = vsps_vec.size();
+                    p.header.version = 1;
+                    p.header.checksum = 0;
+                    p.content.buf = vsps_vec;
+                    std::vector<uint8_t> msg_data = serialize_ros(p);
+                    mqm_->getOutMsgQueue("vstig")->push(msg_data);
+                }
+            }
+
+            Type gets(const std::string& key)
+            {
+                VirtualStigmergyTuple vst;
+                bool success = rth_->getVirtualStigmergyTuple(vstig_id_, key, vst);
+
+                if(!success) {
+                    std::cout<<"ID "<<vstig_id_<<" virtual stigmergy, "<<key<<" is not exist."<<std::endl;
+                    exit(-1);
+                }
+
+                std::vector<uint8_t> data_vec = vst.vstig_value;
+                Type data = deserialize_ros<Type>(data_vec);
+
+                return data;
             }
             
             int size()

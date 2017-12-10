@@ -38,11 +38,13 @@ namespace testvstig{
     void TestVstig::loop(const ros::TimerEvent&)
     {
         std::string robot_id_string = "robot_"+boost::lexical_cast<std::string>(get_id());
-        //static int count=0;
-        //vs.put(robot_id_string, robot_id()+count);
-        //count++;
-        std_msgs::Int32 val = vs.get(robot_id_string);
-        std::cout<<robot_id_string<<": "<<vs.size()<<", "<<val.data<<std::endl;
+        static int count = 0;
+        std_msgs::Int32 pval;
+        pval.data = get_id() + count;
+        vs.puts(robot_id_string, pval);
+        count++;
+        std_msgs::Int32 gval = vs.get(robot_id_string);
+        std::cout<<robot_id_string<<": "<<vs.size()<<", "<<gval.data<<std::endl;
 
 
         //if(robot_id() == 6) {
@@ -71,10 +73,10 @@ namespace testvstig{
         set_dis(11);
         //test virtual stigmergy
         vs=micros_swarm::VirtualStigmergy<std_msgs::Int32>(1);
-        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
+        /*std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
         std_msgs::Int32 val;
         val.data = get_id();
-        vs.put(robot_id_string, val);
+        vs.put(robot_id_string, val);*/
         timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop, this);
     }
 };

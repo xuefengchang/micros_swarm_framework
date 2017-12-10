@@ -44,6 +44,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "gsdf_msgs/SwarmList.h"
 #include "gsdf_msgs/VirtualStigmergyQuery.h"
 #include "gsdf_msgs/VirtualStigmergyPut.h"
+#include "gsdf_msgs/VirtualStigmergyPuts.h"
 #include "gsdf_msgs/BlackBoardQuery.h"
 #include "gsdf_msgs/BlackBoardAck.h"
 #include "gsdf_msgs/BlackBoardPut.h"

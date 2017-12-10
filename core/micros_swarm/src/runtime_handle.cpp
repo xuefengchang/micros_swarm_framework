@@ -131,6 +131,12 @@ namespace micros_swarm{
         boost::shared_lock<boost::shared_mutex> lock(neighbor_mutex_);
         return neighbors_;
     };
+
+    int RuntimeHandle::getNeighborSize()
+    {
+        boost::shared_lock<boost::shared_mutex> lock(neighbor_mutex_);
+        return neighbors_.size();
+    }
      
     void RuntimeHandle::insertOrUpdateNeighbor(int robot_id, float distance, float azimuth, float elevation, float x, float y, float z, float vx, float vy, float vz)
     {

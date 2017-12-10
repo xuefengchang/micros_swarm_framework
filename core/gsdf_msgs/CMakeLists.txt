@@ -64,6 +64,7 @@ find_package(catkin REQUIRED COMPONENTS
    SwarmList.msg
    VirtualStigmergyQuery.msg
    VirtualStigmergyPut.msg
+   VirtualStigmergyPuts.msg
    BlackBoardQuery.msg
    BlackBoardAck.msg
    BlackBoardPut.msg

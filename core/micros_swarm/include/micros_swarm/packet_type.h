@@ -39,6 +39,7 @@ namespace micros_swarm{
         
         VIRTUAL_STIGMERGY_QUERY,  //query a value of virtual stigmergy
         VIRTUAL_STIGMERGY_PUT,  //put a value in virtual stigmergy
+        VIRTUAL_STIGMERGY_PUTS,  //put a value in virtual stigmergy in cycles
 
         BLACKBOARD_QUERY,  //query a value of blackboard
         BLACKBOARD_QUERY_ACK,  //query ack
