@@ -35,7 +35,7 @@ namespace testvstig{
 
     void TestVstig::stop() {}
     
-    void TestVstig::loop_write(const ros::TimerEvent&)
+    void TestVstig::loop_puts(const ros::TimerEvent&)
     {
         std::string robot_id_string = "robot_"+boost::lexical_cast<std::string>(get_id());
         static int count = 1;
@@ -47,7 +47,26 @@ namespace testvstig{
         //vs.print();
     }
 
-    void TestVstig::loop_read(const ros::TimerEvent&)
+    void TestVstig::loop_gets(const ros::TimerEvent&)
+    {
+        std::string robot_id_string = "robot_"+boost::lexical_cast<std::string>(get_id());
+        std_msgs::Int32 gval = vs.gets(robot_id_string);
+        std::cout<<robot_id_string<<": "<<vs.size()<<", "<<gval.data<<std::endl;
+    }
+
+    void TestVstig::loop_put(const ros::TimerEvent&)
+    {
+        std::string robot_id_string = "robot_"+boost::lexical_cast<std::string>(get_id());
+        static int count = 1;
+        std_msgs::Int32 pval;
+        pval.data = get_id() + count;
+        vs.put(robot_id_string, pval);
+        count++;
+        std::cout<<robot_id_string<<": "<<vs.size()<<std::endl;
+        //vs.print();
+    }
+
+    void TestVstig::loop_get(const ros::TimerEvent&)
     {
         std::string robot_id_string = "robot_"+boost::lexical_cast<std::string>(get_id());
         std_msgs::Int32 gval = vs.get(robot_id_string);
@@ -78,9 +97,18 @@ namespace testvstig{
         std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
         std_msgs::Int32 val;
         val.data = get_id();
-        vs.puts(robot_id_string, val);
-        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_write, this);
-        //timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_read, this);
+
+        //vs.puts(robot_id_string, val);
+
+        vs.put(robot_id_string, val);
+
+        //SCDS puts and gets
+        //timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_puts, this);
+        //timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_gets, this);
+
+        //Vstig put and get
+        //timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_put, this);
+        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_get, this);
     }
 };
 

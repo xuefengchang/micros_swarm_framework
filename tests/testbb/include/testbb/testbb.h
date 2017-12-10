@@ -41,7 +41,9 @@ namespace testbb{
 
             micros_swarm::BlackBoard<std_msgs::Int32> bb;
 
-            void loop(const ros::TimerEvent&);
+            void baseCallback(const nav_msgs::Odometry& lmsg);
+            void loop_put(const ros::TimerEvent&);
+            void loop_get(const ros::TimerEvent&);
             
             TestBb();
             ~TestBb();

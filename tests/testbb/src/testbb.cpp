@@ -34,8 +34,21 @@ namespace testbb{
     void TestBb::init() {}
 
     void TestBb::stop() {}
+
+    void TestBb::baseCallback(const nav_msgs::Odometry& lmsg)
+    {
+        float x=lmsg.pose.pose.position.x;
+        float y=lmsg.pose.pose.position.y;
+
+        float vx=lmsg.twist.twist.linear.x;
+        float vy=lmsg.twist.twist.linear.y;
+
+        micros_swarm::Base l(x, y, 0, vx, vy, 0, 1);
+        set_base(l);
+        //std::cout<<"<<<"<<x<<", "<<y<<">>>"<<std::endl;
+    }
     
-    void TestBb::loop(const ros::TimerEvent&)
+    void TestBb::loop_put(const ros::TimerEvent&)
     {   
         static int count=0;
         std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
@@ -43,20 +56,31 @@ namespace testbb{
         val.data = get_id()+count;
         bb.put(robot_id_string, val);
         count++;
-        //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
-        //bb.get(robot_id_string);
+    }
+
+    void TestBb::loop_get(const ros::TimerEvent&)
+    {
+        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
+        std_msgs::Int32 val = bb.get(robot_id_string);
+        std::cout<<robot_id_string<<": "<<val.data<<std::endl;
     }
     
     void TestBb::start()
     {
         ros::NodeHandle nh;
-        bb=micros_swarm::BlackBoard<std_msgs::Int32>(0,0);
-        //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(robot_id());
-        //std_msgs::Int32 val;
-        //val.data = robot_id();
-        //bb.put(robot_id_string, val);
+        sub = nh.subscribe("base_pose_ground_truth", 1000, &TestBb::baseCallback, this, ros::TransportHints().udp());
+        ros::Duration(1).sleep();
+        bb = micros_swarm::BlackBoard<std_msgs::Int32>(0,0);
 
-        timer = nh.createTimer(ros::Duration(0.1), &TestBb::loop, this);
+        //test put
+        timer = nh.createTimer(ros::Duration(0.1), &TestBb::loop_put, this);
+
+        //test get
+        /*std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
+        std_msgs::Int32 val;
+        val.data = get_id();
+        bb.put(robot_id_string, val);
+        timer = nh.createTimer(ros::Duration(0.1), &TestBb::loop_get, this);*/
     }
 };
 
