@@ -40,12 +40,12 @@ window\n\
 \n\
 floorplan\n\
 (\n\
-  name \"swarm\"\n\
-  bitmap \"../maps/swarm.png\"\n\
-  #size [ 100.0 100.0 2.0 ]\n\
-  #pose [  50.0  50.0 0.0 0.0 ]\n\
-  size [ 40.0 40.0 2.0 ]\n\
-  pose [ 20.0 20.0 0.0 0.0]\n\
+  name \"rand\"\n\
+  bitmap \"../maps/rand.png\"\n\
+  size [ 100.0 100.0 2.0 ]\n\
+  pose [  50.0  50.0 0.0 0.0 ]\n\
+  #size [ 40.0 40.0 2.0 ]\n\
+  #pose [ 20.0 20.0 0.0 0.0]\n\
 )\n\
 \n\
 define block model\n\
@@ -64,11 +64,11 @@ float random_float(float min, float max)
 int main()
 {
     srand(time(NULL));
-    int num = 20;
+    int num = 10;
     float min_pos = 0;
-    float max_pos = 40;
+    float max_pos = 20;
     ofstream file;
-	file.open("rand_world.world");
+	file.open("rand.world");
     stringstream ss;
     
     ss<<world_head;

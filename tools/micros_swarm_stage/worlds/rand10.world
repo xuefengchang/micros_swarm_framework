@@ -1,0 +1,56 @@
+include "swarm.inc"
+include "turtlebot_intruder.inc"
+
+define floorplan model 
+(
+  # sombre, sensible, artistic
+  color "gray30"
+  
+  # most maps will need a bounding box 
+  boundary 1
+  
+  gui_nose 0
+  gui_grid 0
+  gui_outline 0
+  gripper_return 0
+  fiducial_return 0
+  laser_return 1
+)
+
+resolution 0.02
+interval_sim 10  # simulation timestep in milliseconds
+
+window
+(
+  size [ 600.0 700.0 ]
+  center [ 0.0 0.0 ]
+  rotate [ 0.0 0.0 ]
+  scale 60
+)
+
+floorplan
+(
+  name "rand"
+  bitmap "../maps/rand.png"
+  size [ 20.0 20.0 2.0 ]
+  pose [  10.0  10.0 0.0 0.0 ]
+  #size [ 40.0 40.0 2.0 ]
+  #pose [ 20.0 20.0 0.0 0.0]
+)
+
+define block model
+(
+size [0.5 7 0.5]
+gui_nose 1
+)
+
+swarm( pose [4.0024 5.0266 0 0 ] name "era0" color "red")
+swarm( pose [13.5157 15.3352 0 0 ] name "era1" color "red")
+swarm( pose [7.23572 7.55048 0 0 ] name "era2" color "red")
+swarm( pose [16.571 8.6116 0 0 ] name "era3" color "red")
+swarm( pose [15.1475 12.248 0 0 ] name "era4" color "red")
+swarm( pose [6.82239 11.0117 0 0 ] name "era5" color "red")
+swarm( pose [12.3414 10.2255 0 0 ] name "era6" color "red")
+swarm( pose [6.50656 15.4451 0 0 ] name "era7" color "red")
+swarm( pose [10.1663 5.29578 0 0 ] name "era8" color "red")
+swarm( pose [17.7362 15.4785 0 0 ] name "era9" color "red")

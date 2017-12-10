@@ -1,0 +1,76 @@
+include "swarm.inc"
+include "turtlebot_intruder.inc"
+
+define floorplan model 
+(
+  # sombre, sensible, artistic
+  color "gray30"
+  
+  # most maps will need a bounding box 
+  boundary 1
+  
+  gui_nose 0
+  gui_grid 0
+  gui_outline 0
+  gripper_return 0
+  fiducial_return 0
+  laser_return 1
+)
+
+resolution 0.02
+interval_sim 10  # simulation timestep in milliseconds
+
+window
+(
+  size [ 600.0 700.0 ]
+  center [ 0.0 0.0 ]
+  rotate [ 0.0 0.0 ]
+  scale 60
+)
+
+floorplan
+(
+  name "rand"
+  bitmap "../maps/rand.png"
+  size [ 60.0 60.0 2.0 ]
+  pose [  30.0  30.0 0.0 0.0 ]
+  #size [ 40.0 40.0 2.0 ]
+  #pose [ 20.0 20.0 0.0 0.0]
+)
+
+define block model
+(
+size [0.5 7 0.5]
+gui_nose 1
+)
+
+swarm( pose [52.3656 13.5764 0 0 ] name "era0" color "red")
+swarm( pose [47.9004 36.4798 0 0 ] name "era1" color "red")
+swarm( pose [20.8311 52.5055 0 0 ] name "era2" color "red")
+swarm( pose [22.7459 14.6414 0 0 ] name "era3" color "red")
+swarm( pose [22.7157 47.6871 0 0 ] name "era4" color "red")
+swarm( pose [46.9897 20.0095 0 0 ] name "era5" color "red")
+swarm( pose [13.2313 44.1766 0 0 ] name "era6" color "red")
+swarm( pose [6.78016 13.838 0 0 ] name "era7" color "red")
+swarm( pose [52.9113 39.2571 0 0 ] name "era8" color "red")
+swarm( pose [50.9163 49.9926 0 0 ] name "era9" color "red")
+swarm( pose [29.7956 25.7016 0 0 ] name "era10" color "red")
+swarm( pose [39.6148 42.3271 0 0 ] name "era11" color "red")
+swarm( pose [21.2974 57.4708 0 0 ] name "era12" color "red")
+swarm( pose [30.8798 11.0563 0 0 ] name "era13" color "red")
+swarm( pose [45.2791 33.3193 0 0 ] name "era14" color "red")
+swarm( pose [41.8957 10.3244 0 0 ] name "era15" color "red")
+swarm( pose [41.8042 37.6447 0 0 ] name "era16" color "red")
+swarm( pose [30.1502 29.7961 0 0 ] name "era17" color "red")
+swarm( pose [29.1375 41.7653 0 0 ] name "era18" color "red")
+swarm( pose [45.3224 47.8961 0 0 ] name "era19" color "red")
+swarm( pose [14.28558 35.1732 0 0 ] name "era20" color "red")
+swarm( pose [41.3298 32.3121 0 0 ] name "era21" color "red")
+swarm( pose [41.1501 16.1369 0 0 ] name "era22" color "red")
+swarm( pose [50.3939 43.1099 0 0 ] name "era23" color "red")
+swarm( pose [33.1025 34.0614 0 0 ] name "era24" color "red")
+swarm( pose [54.7631 41.3102 0 0 ] name "era25" color "red")
+swarm( pose [23.6373 57.8981 0 0 ] name "era26" color "red")
+swarm( pose [55.3689 34.3778 0 0 ] name "era27" color "red")
+swarm( pose [40.4341 39.9347 0 0 ] name "era28" color "red")
+swarm( pose [13.254 26.2486 0 0 ] name "era29" color "red")
