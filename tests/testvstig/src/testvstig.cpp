@@ -49,9 +49,11 @@ namespace testvstig{
 
     void TestVstig::loop_gets(const ros::TimerEvent&)
     {
-        std::string robot_id_string = "robot_"+boost::lexical_cast<std::string>(get_id());
-        std_msgs::Int32 gval = vs.gets(robot_id_string);
-        std::cout<<robot_id_string<<": "<<vs.size()<<", "<<gval.data<<std::endl;
+        for(int j = 0; j < 5; j++) {
+            std::string robot_id_string = "robot_" + boost::lexical_cast<std::string>(get_id());
+            std_msgs::Int32 gval = vs.gets(robot_id_string);
+            std::cout << robot_id_string << ": " << vs.size() << ", " << gval.data << std::endl;
+        }
     }
 
     void TestVstig::loop_put(const ros::TimerEvent&)
@@ -68,9 +70,37 @@ namespace testvstig{
 
     void TestVstig::loop_get(const ros::TimerEvent&)
     {
-        std::string robot_id_string = "robot_"+boost::lexical_cast<std::string>(get_id());
-        std_msgs::Int32 gval = vs.get(robot_id_string);
-        std::cout<<robot_id_string<<": "<<vs.size()<<", "<<gval.data<<std::endl;
+        for(int j = 0; j < 5; j++) {
+            std::string robot_id_string = "robot_" + boost::lexical_cast<std::string>(get_id());
+            std_msgs::Int32 gval = vs.get(robot_id_string);
+            std::cout << robot_id_string << ": " << vs.size() << ", " << gval.data << std::endl;
+        }
+    }
+
+    void TestVstig::not_loop_put(const ros::TimerEvent&)
+    {
+        static int count = 1;
+        std_msgs::Int32 pval;
+        pval.data = get_id() + count;
+
+        std::string cur_string="robot_"+boost::lexical_cast<std::string>(get_id())+"/"+boost::lexical_cast<std::string>(count);
+        std::string front_string="robot_"+boost::lexical_cast<std::string>(get_id())+"/"+boost::lexical_cast<std::string>(count-1);
+        vs.put(cur_string, pval);
+        //vs.remove(front_string);
+
+        std::cout<<cur_string<<": "<<vs.size()<<std::endl;
+        count++;
+    }
+
+    void TestVstig::not_loop_get(const ros::TimerEvent&)
+    {
+        for(int j = 0; j < 5; j++) {
+            srand(time(NULL) + get_id());
+            int i = micros_swarm::random_int(0, 4095);
+            std::string cur_string = "tuple/" + boost::lexical_cast<std::string>(i);
+            std_msgs::Int32 gval = vs.get(cur_string);
+            std::cout << cur_string << ": " << vs.size() << ", " << gval.data << std::endl;
+        }
     }
 
     void TestVstig::baseCallback(const nav_msgs::Odometry& lmsg)
@@ -91,24 +121,51 @@ namespace testvstig{
         ros::NodeHandle nh;
         sub = nh.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
         ros::Duration(1).sleep();
-        //set_dis(10);
         //test virtual stigmergy
         vs=micros_swarm::VirtualStigmergy<std_msgs::Int32>(1);
-        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
         std_msgs::Int32 val;
         val.data = get_id();
 
+        /*
+         * loop write and read
+         */
+        //SCDS puts
+        //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
         //vs.puts(robot_id_string, val);
-
-        vs.put(robot_id_string, val);
-
-        //SCDS puts and gets
         //timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_puts, this);
-        //timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_gets, this);
 
-        //Vstig put and get
+        //SCDS gets
+        /*std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
+        vs.put(robot_id_string, val);
+        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_gets, this);*/
+
+        //Vstig put
+        //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
+        //vs.put(robot_id_string, val);
         //timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_put, this);
+
+        //Vstig get
+        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
+        vs.put(robot_id_string, val);
         timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_get, this);
+
+        /*
+         * not loop write and read
+         */
+        //put
+        /*std::string cur_string="robot_"+boost::lexical_cast<std::string>(get_id())+"/"+boost::lexical_cast<std::string>(0);
+        vs.put(cur_string, val);
+        timer = nh.createTimer(ros::Duration(0.5), &TestVstig::not_loop_put, this);*/
+
+        //get
+        /*for(int i = 0; i < 4096; i++) {
+            std::string cur_string="tuple/"+boost::lexical_cast<std::string>(i);
+            std_msgs::Int32 pval;
+            pval.data = i;
+            vs.put(cur_string, pval);
+        }
+        ros::Duration(10).sleep();
+        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::not_loop_get, this);*/
     }
 };
 

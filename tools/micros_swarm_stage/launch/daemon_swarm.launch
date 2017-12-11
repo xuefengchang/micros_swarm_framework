@@ -2,7 +2,7 @@
     <!--set runtime core parameters-->
     <param name="publish_robot_id_duration" type="double" value="0.1"/>
     <param name="publish_swarm_list_duration" type="double" value="5.0"/>
-    <param name="default_neighbor_distance" type="double" value="100"/>
+    <param name="default_neighbor_distance" type="double" value="120"/>
     <!--param name="total_robot_numbers" type="int" value="60"/-->
     
     <!--comm type-->
@@ -111,7 +111,7 @@
         </node>
     </group>
     
-    <group ns="robot_20">
+    <!--group ns="robot_20">
         <node pkg="micros_swarm" type="daemon_node" name="daemon_node10" output="screen">
             <param name="robot_id" type="int" value="20"/>
         </node>
@@ -313,7 +313,7 @@
         <node pkg="micros_swarm" type="daemon_node" name="daemon_node19" output="screen">
             <param name="robot_id" type="int" value="59"/>
         </node>
-    </group>
+    </group-->
 
 </launch>
 

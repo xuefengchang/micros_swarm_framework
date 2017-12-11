@@ -101,7 +101,7 @@ namespace micros_swarm{
                     break;
                 }
                 case VIRTUAL_STIGMERGY_QUERY: {
-                    if(!rth_->inNeighbors(packet_source)){
+                    if(!rth_->inNeighbors(packet_source)) {
                         return;
                     }
                     gsdf_msgs::VirtualStigmergyQuery vsq = deserialize_ros<gsdf_msgs::VirtualStigmergyQuery>(packet_data);
@@ -113,7 +113,7 @@ namespace micros_swarm{
                         rth_->createVirtualStigmergy(vsq.vstig_id);
                         rth_->insertOrUpdateVirtualStigmergy(vsq.vstig_id, vsq.key, vsq.value, vsq.lamport_clock, time(NULL), 0, vsq.robot_id);
 
-                        if(!rth_->checkNeighborsOverlap(packet_source)) {
+                        //if(!rth_->checkNeighborsOverlap(packet_source)) {
                             gsdf_msgs::VirtualStigmergyPut vsp_new;
                             vsp_new.vstig_id = vsq.vstig_id;
                             vsp_new.key = vsq.key;
@@ -131,7 +131,7 @@ namespace micros_swarm{
                             p.content.buf = vsp_new_vec;
                             std::vector<uint8_t> msg_data = serialize_ros(p);
                             mqm_->getOutMsgQueue("vstig")->push(msg_data);
-                        }
+                        //}
                     }
                     else if(local.lamport_clock > vsq.lamport_clock) {  //local timestamp is larger
                         gsdf_msgs::VirtualStigmergyPut vsp;

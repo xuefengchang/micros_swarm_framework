@@ -139,7 +139,8 @@ namespace micros_swarm{
                 Pr = read_count/100.0;
             }
 
-            double P = 0.5*Pw + 0.5*Pr;
+            //double P = 0.5*Pw + 0.5*Pr;
+            double P = Pw + Pr;
             //std::cout<<"<"<<Pw<<", "<<Pr<<">"<<std::endl;
             return P;
         }

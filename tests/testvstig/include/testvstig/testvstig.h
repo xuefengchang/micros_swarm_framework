@@ -29,6 +29,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "geometry_msgs/Twist.h"
 
 #include "micros_swarm/micros_swarm.h"
+#include "micros_swarm/random.h"
 
 namespace testvstig{
     
@@ -44,6 +45,10 @@ namespace testvstig{
             void loop_gets(const ros::TimerEvent&);
             void loop_put(const ros::TimerEvent&);
             void loop_get(const ros::TimerEvent&);
+
+            void not_loop_put(const ros::TimerEvent&);
+            void not_loop_get(const ros::TimerEvent&);
+
             void baseCallback(const nav_msgs::Odometry& lmsg);
 
         TestVstig();

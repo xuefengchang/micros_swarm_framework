@@ -141,7 +141,7 @@ namespace micros_swarm{
                     double temperature = new_local.getTemperature();
                     double  rt = (double)rand()/RAND_MAX;
                     //std::cout<<"<<"<<temperature<<", "<<rt<<">>"<<std::endl;
-                    if(rt <= temperature) {
+                    //if(rt <= temperature) {
                         gsdf_msgs::VirtualStigmergyQuery vsq;
                         vsq.vstig_id = vstig_id_;
                         vsq.key = key;
@@ -159,7 +159,7 @@ namespace micros_swarm{
                         p.content.buf = vsq_vec;
                         std::vector<uint8_t> msg_data = serialize_ros(p);
                         mqm_->getOutMsgQueue("vstig")->push(msg_data);
-                    }
+                    //}
                 }
                 
                 return data;  
@@ -225,6 +225,11 @@ namespace micros_swarm{
                 Type data = deserialize_ros<Type>(data_vec);
 
                 return data;
+            }
+
+            void remove(const std::string& key)
+            {
+                rth_->deleteVirtualStigmergyValue(vstig_id_, key);
             }
             
             int size()
