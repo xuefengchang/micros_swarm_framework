@@ -5,7 +5,7 @@
   <arg name="map_file"       default=" $(find micros_swarm_stage)/maps/rand.yaml"/> <!-- robopark_plan -->
   <arg name="world_file"     default=" $(find micros_swarm_stage)/worlds/rand20.world"/>
 
-  <param name="/use_sim_time" value="true"/>
+  <!--param name="/use_sim_time" value="true"/-->
   
   <!--node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
     <param name="frame_id" value="/map"/>

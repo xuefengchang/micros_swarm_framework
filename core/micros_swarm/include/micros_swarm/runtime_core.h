@@ -24,6 +24,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #define RUNTIME_CORE_H_
 
 #include <iostream>
+#include <unistd.h>
 #include <ros/ros.h>
 #include <pluginlib/class_loader.h>
 

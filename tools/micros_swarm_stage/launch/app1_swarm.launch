@@ -1,0 +1,499 @@
+<launch>
+    <group ns="robot_0">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node0" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_1">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node1" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_2">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node2" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_3">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node3" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_4">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node4" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_5">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node5" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_6">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node6" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_7">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node7" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_8">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node8" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_9">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node9" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_10">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node10" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_11">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node11" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_12">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node12" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_13">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node13" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_14">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node14" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_15">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node15" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_16">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node16" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_17">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node17" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_18">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node18" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_19">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node19" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_20">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node10" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_21">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node11" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_22">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node12" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_23">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node13" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_24">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node14" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_25">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node15" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_26">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node16" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_27">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node17" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_28">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node18" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_29">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node19" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_30">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node10" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_31">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node11" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_32">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node12" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_33">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node13" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_34">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node14" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_35">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node15" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_36">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node16" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_37">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node17" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_38">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node18" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_39">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node19" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_40">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node10" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_41">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node11" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_42">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node12" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_43">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node13" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_44">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node14" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_45">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node15" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_46">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node16" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_47">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node17" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_48">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node18" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_49">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node19" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_50">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node10" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_51">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node11" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_52">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node12" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_53">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node13" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_54">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node14" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_55">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node15" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_56">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node16" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_57">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node17" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_58">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node18" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_59">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node19" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_60">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node10" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_61">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node11" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_62">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node12" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_63">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node13" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_64">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node14" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_65">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node15" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_66">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node16" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_67">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node17" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_68">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node18" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_69">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node19" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_70">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node10" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_71">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node11" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_72">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node12" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_73">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node13" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_74">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node14" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+    <group ns="robot_75">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node15" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_76">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node16" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_77">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node17" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_78">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node18" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    <group ns="robot_79">
+        <node pkg="app_loader" type="app_loader_node" name="app_loader_node19" output="screen">
+            <param name="app_name" type="string" value="app1"/>
+            <param name="app_type" type="string" value="app1/App1"/>
+        </node>
+    </group>
+    
+</launch>
+

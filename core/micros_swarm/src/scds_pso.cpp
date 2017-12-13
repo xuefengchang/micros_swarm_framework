@@ -26,7 +26,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 namespace micros_swarm {
     Agent::Agent():name_(""), run_(false), dim_(0), fitness_(0)
     {
-        srand(time(NULL));
+        //srand(time(NULL));
         w_ = 1;
         c1_ = 1.49445;
         c2_ = 1.49445;
@@ -42,7 +42,7 @@ namespace micros_swarm {
 
     Agent::Agent(std::string name):name_(name), run_(false), dim_(0), fitness_(0)
     {
-        srand(time(NULL));
+        //srand(time(NULL));
         w_ = 1;
         c1_ = 1.49445;
         c2_ = 1.49445;

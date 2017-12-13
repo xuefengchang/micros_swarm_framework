@@ -37,6 +37,7 @@ namespace testbb{
 
     void TestBb::baseCallback(const nav_msgs::Odometry& lmsg)
     {
+        static int msg_count = 0;
         float x=lmsg.pose.pose.position.x;
         float y=lmsg.pose.pose.position.y;
 
@@ -45,6 +46,12 @@ namespace testbb{
 
         micros_swarm::Base l(x, y, 0, vx, vy, 0, 1);
         set_base(l);
+
+        msg_count++;
+        if(msg_count >= 5) {
+            std::cout<<"shutdown sub"<<std::endl;
+            sub.shutdown();
+        }
         //std::cout<<"<<<"<<x<<", "<<y<<">>>"<<std::endl;
     }
     
@@ -73,14 +80,14 @@ namespace testbb{
         bb = micros_swarm::BlackBoard<std_msgs::Int32>(0,0);
 
         //test put
-        timer = nh.createTimer(ros::Duration(0.1), &TestBb::loop_put, this);
+        //timer = nh.createTimer(ros::Duration(0.1), &TestBb::loop_put, this);
 
         //test get
-        /*std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
+        std::string robot_id_string="robot_" + boost::lexical_cast<std::string>(get_id());
         std_msgs::Int32 val;
         val.data = get_id();
         bb.put(robot_id_string, val);
-        timer = nh.createTimer(ros::Duration(0.1), &TestBb::loop_get, this);*/
+        timer = nh.createTimer(ros::Duration(0.1), &TestBb::loop_get, this);
     }
 };
 

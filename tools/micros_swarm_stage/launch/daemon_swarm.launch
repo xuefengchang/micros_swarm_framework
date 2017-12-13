@@ -111,7 +111,7 @@
         </node>
     </group>
     
-    <!--group ns="robot_20">
+    <group ns="robot_20">
         <node pkg="micros_swarm" type="daemon_node" name="daemon_node10" output="screen">
             <param name="robot_id" type="int" value="20"/>
         </node>
@@ -312,6 +312,108 @@
     <group ns="robot_59">
         <node pkg="micros_swarm" type="daemon_node" name="daemon_node19" output="screen">
             <param name="robot_id" type="int" value="59"/>
+        </node>
+    </group>
+    
+    <!--group ns="robot_60">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node10" output="screen">
+            <param name="robot_id" type="int" value="60"/>
+        </node>
+    </group>
+    <group ns="robot_61">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node11" output="screen">
+            <param name="robot_id" type="int" value="61"/>
+        </node>
+    </group>
+    <group ns="robot_62">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node12" output="screen">
+            <param name="robot_id" type="int" value="62"/>
+        </node>
+    </group>
+    <group ns="robot_63">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node13" output="screen">
+            <param name="robot_id" type="int" value="63"/>
+        </node>
+    </group>
+    <group ns="robot_64">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node14" output="screen">
+            <param name="robot_id" type="int" value="64"/>
+        </node>
+    </group>
+    <group ns="robot_65">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node15" output="screen">
+            <param name="robot_id" type="int" value="65"/>
+        </node>
+    </group>
+    <group ns="robot_66">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node16" output="screen">
+            <param name="robot_id" type="int" value="66"/>
+        </node>
+    </group>
+    <group ns="robot_67">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node17" output="screen">
+            <param name="robot_id" type="int" value="67"/>
+        </node>
+    </group>
+    <group ns="robot_68">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node18" output="screen">
+            <param name="robot_id" type="int" value="68"/>
+        </node>
+    </group>
+    <group ns="robot_69">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node19" output="screen">
+            <param name="robot_id" type="int" value="69"/>
+        </node>
+    </group>
+    
+    <group ns="robot_70">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node10" output="screen">
+            <param name="robot_id" type="int" value="70"/>
+        </node>
+    </group>
+    <group ns="robot_71">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node11" output="screen">
+            <param name="robot_id" type="int" value="71"/>
+        </node>
+    </group>
+    <group ns="robot_72">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node12" output="screen">
+            <param name="robot_id" type="int" value="72"/>
+        </node>
+    </group>
+    <group ns="robot_73">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node13" output="screen">
+            <param name="robot_id" type="int" value="73"/>
+        </node>
+    </group>
+    <group ns="robot_74">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node14" output="screen">
+            <param name="robot_id" type="int" value="74"/>
+        </node>
+    </group>
+    <group ns="robot_75">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node15" output="screen">
+            <param name="robot_id" type="int" value="75"/>
+        </node>
+    </group>
+    <group ns="robot_76">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node16" output="screen">
+            <param name="robot_id" type="int" value="76"/>
+        </node>
+    </group>
+    <group ns="robot_77">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node17" output="screen">
+            <param name="robot_id" type="int" value="77"/>
+        </node>
+    </group>
+    <group ns="robot_78">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node18" output="screen">
+            <param name="robot_id" type="int" value="78"/>
+        </node>
+    </group>
+    <group ns="robot_79">
+        <node pkg="micros_swarm" type="daemon_node" name="daemon_node19" output="screen">
+            <param name="robot_id" type="int" value="79"/>
         </node>
     </group-->
 

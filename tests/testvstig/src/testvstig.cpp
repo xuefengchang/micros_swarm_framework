@@ -45,15 +45,22 @@ namespace testvstig{
         count++;
         std::cout<<robot_id_string<<": "<<vs.size()<<std::endl;
         //vs.print();
+        /*static bool flag = true;
+        if(flag) {
+            if(vs.size() == 60) {
+                std::cout<<get_id()<<" get all tuple"<<std::endl;
+                flag = false;
+            }
+        }*/
     }
 
     void TestVstig::loop_gets(const ros::TimerEvent&)
     {
-        for(int j = 0; j < 5; j++) {
+        //for(int j = 0; j < 5; j++) {
             std::string robot_id_string = "robot_" + boost::lexical_cast<std::string>(get_id());
             std_msgs::Int32 gval = vs.gets(robot_id_string);
             std::cout << robot_id_string << ": " << vs.size() << ", " << gval.data << std::endl;
-        }
+        //}
     }
 
     void TestVstig::loop_put(const ros::TimerEvent&)
@@ -70,11 +77,11 @@ namespace testvstig{
 
     void TestVstig::loop_get(const ros::TimerEvent&)
     {
-        for(int j = 0; j < 5; j++) {
+        //for(int j = 0; j < 5; j++) {
             std::string robot_id_string = "robot_" + boost::lexical_cast<std::string>(get_id());
             std_msgs::Int32 gval = vs.get(robot_id_string);
             std::cout << robot_id_string << ": " << vs.size() << ", " << gval.data << std::endl;
-        }
+        //}
     }
 
     void TestVstig::not_loop_put(const ros::TimerEvent&)
@@ -94,17 +101,17 @@ namespace testvstig{
 
     void TestVstig::not_loop_get(const ros::TimerEvent&)
     {
-        for(int j = 0; j < 5; j++) {
-            srand(time(NULL) + get_id());
-            int i = micros_swarm::random_int(0, 4095);
+        //for(int j = 0; j < 5; j++) {
+            int i = micros_swarm::random_int(0, 2047);
             std::string cur_string = "tuple/" + boost::lexical_cast<std::string>(i);
             std_msgs::Int32 gval = vs.get(cur_string);
             std::cout << cur_string << ": " << vs.size() << ", " << gval.data << std::endl;
-        }
+        //}
     }
 
     void TestVstig::baseCallback(const nav_msgs::Odometry& lmsg)
     {
+        static int msg_count = 0;
         float x=lmsg.pose.pose.position.x;
         float y=lmsg.pose.pose.position.y;
 
@@ -113,6 +120,12 @@ namespace testvstig{
 
         micros_swarm::Base l(x, y, 0, vx, vy, 0, 1);
         set_base(l);
+
+        msg_count++;
+        if(msg_count >= 5) {
+            std::cout<<"shutdown sub"<<std::endl;
+            sub.shutdown();
+        }
         //std::cout<<"<<<"<<x<<", "<<y<<">>>"<<std::endl;
     }
     
@@ -120,7 +133,7 @@ namespace testvstig{
     {
         ros::NodeHandle nh;
         sub = nh.subscribe("base_pose_ground_truth", 1000, &TestVstig::baseCallback, this, ros::TransportHints().udp());
-        ros::Duration(1).sleep();
+        //ros::Duration(1).sleep();
         //test virtual stigmergy
         vs=micros_swarm::VirtualStigmergy<std_msgs::Int32>(1);
         std_msgs::Int32 val;
@@ -140,14 +153,14 @@ namespace testvstig{
         timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_gets, this);*/
 
         //Vstig put
-        //std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
-        //vs.put(robot_id_string, val);
-        //timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_put, this);
+        /*std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
+        vs.put(robot_id_string, val);
+        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_put, this);*/
 
         //Vstig get
-        std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
+        /*std::string robot_id_string="robot_"+boost::lexical_cast<std::string>(get_id());
         vs.put(robot_id_string, val);
-        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_get, this);
+        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::loop_get, this);*/
 
         /*
          * not loop write and read
@@ -158,14 +171,14 @@ namespace testvstig{
         timer = nh.createTimer(ros::Duration(0.5), &TestVstig::not_loop_put, this);*/
 
         //get
-        /*for(int i = 0; i < 4096; i++) {
+        for(int i = 0; i < 2048; i++){
             std::string cur_string="tuple/"+boost::lexical_cast<std::string>(i);
             std_msgs::Int32 pval;
             pval.data = i;
             vs.put(cur_string, pval);
         }
-        ros::Duration(10).sleep();
-        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::not_loop_get, this);*/
+        ros::Duration(20).sleep();
+        timer = nh.createTimer(ros::Duration(0.1), &TestVstig::not_loop_get, this);
     }
 };
 

@@ -170,6 +170,8 @@ namespace micros_swarm{
     
     void RuntimeCore::initialize()
     {
+        //srand(time(NULL) + robot_id_);
+        srand(time(NULL) + (int)getpid());
         setParameters();
         //construct runtime platform
         rth_ = Singleton<RuntimeHandle>::getSingleton();

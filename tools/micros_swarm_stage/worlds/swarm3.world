@@ -54,6 +54,7 @@ swarm( pose [ 14 0 0 0 ] name "rob7" color "green")
 swarm( pose [ 16 0 0 0 ] name "rob8" color "blue")
 swarm( pose [ 18 0 0 0 ] name "rob9" color "yellow")
 
+
 swarm( pose [ 0 2 0 0 ] name "rob10" color "blue")
 swarm( pose [ 2 2 0 0 ] name "rob11" color "yellow")
 swarm( pose [ 4 2 0 0 ] name "rob12" color "red")
@@ -108,29 +109,5 @@ swarm( pose [ 12 10 0 0 ] name "rob56" color "red")
 swarm( pose [ 14 10 0 0 ] name "rob57" color "green")
 swarm( pose [ 16 10 0 0 ] name "rob58" color "blue")
 swarm( pose [ 18 10 0 0 ] name "rob59" color "yellow")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
