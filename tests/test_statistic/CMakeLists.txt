@@ -159,6 +159,9 @@ target_link_libraries(app2_statistic ${catkin_LIBRARIES})
 add_executable(app3_statistic src/app3_statistic.cpp)
 target_link_libraries(app3_statistic ${catkin_LIBRARIES})
 
+add_executable(uav_statistic src/uav_statistic.cpp)
+target_link_libraries(uav_statistic ${catkin_LIBRARIES})
+
 add_executable(test_pso src/test_pso.cpp)
 target_link_libraries(test_pso ${catkin_LIBRARIES})
 
