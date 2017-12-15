@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>micros_swarm</name>
-  <version>0.0.16</version>
+  <version>0.0.17</version>
   <description>micros_swarm package.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
