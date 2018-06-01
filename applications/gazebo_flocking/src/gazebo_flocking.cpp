@@ -21,6 +21,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 */
 
 #include "gazebo_flocking/gazebo_flocking.h"
+#include "hector_uav_msgs/EnableMotors.h"
 #include <tf/tf.h>
 #include <cmath>
 
@@ -326,6 +327,18 @@ namespace gazebo_flocking{
         init();
 
         ros::NodeHandle nh;
+        ros::ServiceClient client = nh.serviceClient<hector_uav_msgs::EnableMotors>("enable_motors");
+        hector_uav_msgs::EnableMotors srv;
+        srv.request.enable = true;
+        if (client.call(srv))
+        {
+            ;
+        }
+        else
+        {
+            ROS_ERROR("Failed to call service enable_motors");
+        }
+        
         set_dis(12);
         pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
         ros::Rate loop_rate(10);

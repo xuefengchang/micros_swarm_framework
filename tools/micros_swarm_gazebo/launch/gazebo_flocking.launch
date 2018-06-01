@@ -1,122 +1,122 @@
 <launch>
-    <group ns="robot_0">
+    <group ns="uav0">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node0" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_1">
+    <group ns="uav1">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node1" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_2">
+    <group ns="uav2">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node2" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_3">
+    <group ns="uav3">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node3" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_4">
+    <group ns="uav4">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node4" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
     
-    <group ns="robot_5">
+    <group ns="uav5">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node5" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_6">
+    <group ns="uav6">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node6" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_7">
+    <group ns="uav7">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node7" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_8">
+    <group ns="uav8">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node8" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_9">
+    <group ns="uav9">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node9" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
     
-    <group ns="robot_10">
+    <group ns="uav10">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node10" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_11">
+    <group ns="uav11">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node11" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_12">
+    <group ns="uav12">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node12" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_13">
+    <group ns="uav13">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node13" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_14">
+    <group ns="uav14">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node14" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
     
-    <group ns="robot_15">
+    <group ns="uav15">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node15" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_16">
+    <group ns="uav16">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node16" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_17">
+    <group ns="uav17">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node17" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_18">
+    <group ns="uav18">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node18" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
         </node>
     </group>
-    <group ns="robot_19">
+    <group ns="uav19">
         <node pkg="app_loader" type="app_loader_node" name="app_loader_node19" output="screen">
             <param name="app_name" type="string" value="gazebo_flocking"/>
             <param name="app_type" type="string" value="gazebo_flocking/GazeboFlocking"/>
