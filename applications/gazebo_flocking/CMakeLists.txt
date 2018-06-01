@@ -101,7 +101,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 catkin_package(
    INCLUDE_DIRS include
 #  LIBRARIES test_app
-   CATKIN_DEPENDS micros_swarm roscpp rospy std_msgs nav_msgs tf geometry_msgs
+   CATKIN_DEPENDS micros_swarm roscpp rospy std_msgs nav_msgs tf geometry_msgs hector_uav_msgs
 #  DEPENDS system_lib
 )
 
