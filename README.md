@@ -13,6 +13,9 @@ In order to make it modular and extensible, we chose to decompose the framework 
 We can create new application organized in ROS packages based on micros_swarm_framework.
 There are some demos under the "applications" sub-folder.
 
+## Swarm in Gazebo Configuration
+https://github.com/xuefengchang/micros_swarm_framework/tree/master/tools/micros_swarm_gazebo
+
 ## Simulation
 #### Motion and Spatial Coordination
 
